@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            visible="true">
+         <run
+               class="de.lmu.ifi.dbs.medmon.rcp.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="RCP Perspective"
+            class="de.lmu.ifi.dbs.medmon.rcp.Perspective"
+            id="de.lmu.ifi.dbs.medmon.rcp.HomePerspective">
+      </perspective>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="de.lmu.ifi.dbs.medmon.rcp.application"
+            name="Medmon">
+         <property
+               name="windowImages"
+               value="icons/alt_window_16.gif,icons/alt_window_32.gif">
+         </property>
+      </product>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="de.lmu.ifi.dbs.medmon.rcp.view.HomeView"
+            id="de.lmu.ifi.dbs.medmon.rcp.home"
+            name="Startseite"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="de.lmu.ifi.dbs.medmon.rcp.HomePerspective">
+         <view
+               id="de.lmu.ifi.dbs.medmon.rcp.home"
+               minimized="false"
+               moveable="false"
+               ratio="0.95f"
+               relationship="top"
+               relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               standalone="true"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+   </extension>
+
+</plugin>
