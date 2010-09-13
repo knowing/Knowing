@@ -44,14 +44,6 @@
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
             targetID="de.lmu.ifi.dbs.medmon.patient.PatientManagement">
-         <view
-               id="de.lmu.ifi.dbs.medmon.patient.views.PatientListView"
-               minimized="false"
-               ratio="0.45"
-               relationship="left"
-               relative="org.eclipse.ui.editorss"
-               visible="true">
-         </view>
          <actionSet
                id="de.lmu.ifi.dbs.medmon.patient.actionSet">
          </actionSet>

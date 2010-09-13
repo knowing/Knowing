@@ -7,31 +7,46 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandlerListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.lmu.ifi.dbs.medmon.patient.editor.PatientEditor;
 import de.lmu.ifi.dbs.medmon.patient.editor.PatientEditorInput;
 import de.lmu.ifi.dbs.medmon.patient.sampledata.Patient;
+import de.lmu.ifi.dbs.medmon.patient.sampledata.SampleDataFactory;
 import de.lmu.ifi.dbs.medmon.patient.views.PatientListView;
 
 public class OpenPatientEditorHandler extends AbstractHandler {
 
+	private Object[] result;
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+		Shell shell = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 		IWorkbenchPage page = window.getActivePage();
-		PatientListView view = (PatientListView)page.findView(PatientListView.ID);
-		
-		ISelection selection = view.getSite().getSelectionProvider().getSelection();
-		if(!selection.isEmpty() && selection instanceof IStructuredSelection) {
-			Object obj = ((IStructuredSelection) selection).getFirstElement();
-			// If we had a selection lets open the editor
-			if (obj != null) {
-				Patient person = (Patient) obj;
-				PatientEditorInput input = new PatientEditorInput(person);
+
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(
+				shell, new LabelProvider());
+		dialog.setElements(SampleDataFactory.getData());
+		dialog.setTitle("Patient waehlen");
+		// User pressed cancel
+		if (dialog.open() != Window.OK) {
+			return false;
+		}
+
+		result = dialog.getResult();
+		for (Object o : result) {
+			if (o instanceof Patient) {
+				// If we had a selection lets open the editor
+				Patient patient = (Patient)o;
+				PatientEditorInput input = new PatientEditorInput(patient);
 				try {
 					page.openEditor(input, PatientEditor.ID);
 				} catch (PartInitException e) {
@@ -39,9 +54,9 @@ public class OpenPatientEditorHandler extends AbstractHandler {
 				}
 			}
 		}
-		return null;
+		
+
+		return true;
 	}
-
-
 
 }

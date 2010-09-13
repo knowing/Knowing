@@ -12,19 +12,19 @@ public class PatientEditor extends FormEditor {
 	
 	public static final String ID = "de.lmu.ifi.dbs.medmon.patient.PatientEditor";
 	
-	private GeneralEditorPage generalPage;
+	private PatientEditorPage patientPage;
 
 	private Patient patient;
 
 	public PatientEditor() {
-		generalPage = new GeneralEditorPage(this);
+		patientPage = new PatientEditorPage(this);
 	}
 
 
 	@Override
 	protected void addPages() {
 		try {
-			addPage(generalPage);
+			addPage(patientPage);
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		}

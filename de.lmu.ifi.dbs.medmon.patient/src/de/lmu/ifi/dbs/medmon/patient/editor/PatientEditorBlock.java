@@ -1,5 +1,6 @@
 package de.lmu.ifi.dbs.medmon.patient.editor;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
@@ -16,51 +17,26 @@ import org.eclipse.ui.forms.MasterDetailsBlock;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.ColumnLayout;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class GeneralEditorBlock extends MasterDetailsBlock {
+import de.lmu.ifi.dbs.medmon.patient.Activator;
+import de.lmu.ifi.dbs.medmon.patient.provider.PatientContentProvider;
+import de.lmu.ifi.dbs.medmon.patient.provider.PatientLabelProvider;
+import de.lmu.ifi.dbs.medmon.patient.sampledata.Patient;
+import de.lmu.ifi.dbs.medmon.patient.sampledata.SampleDataFactory;
+
+public class PatientEditorBlock extends MasterDetailsBlock {
 
 	@Override
 	protected void createMasterPart(final IManagedForm managedForm,
 			Composite parent) {
 		FormToolkit toolkit = managedForm.getToolkit();
 
-		GridLayout fLayout = (GridLayout) managedForm.getForm().getBody()
-				.getLayout();
-		fLayout.makeColumnsEqualWidth = false;
-		fLayout.numColumns = 2;
-
-		/* General Information */
-		Section gSection = toolkit.createSection(parent, Section.DESCRIPTION
-				| Section.TITLE_BAR);
-		gSection.setText("Patienteninformationen");
-		gSection.marginWidth = 10;
-		gSection.marginHeight = 5;
-
-		Composite gClient = toolkit.createComposite(gSection, SWT.WRAP);
-		GridLayout gLayout = new GridLayout(2, false);
-		gLayout.marginWidth = 5;
-		gLayout.marginHeight = 5;
-		gClient.setLayout(gLayout);
-	
-		toolkit.createLabel(gClient, "Name");
-		Text firstname = toolkit.createText(gClient, "", SWT.BORDER);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		firstname.setLayoutData(data);
-		toolkit.createLabel(gClient, "Nachname");
-		Text lastname = toolkit.createText(gClient, "", SWT.BORDER);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		lastname.setLayoutData(data);
-		
-		gSection.setClient(gClient);
-		data = new GridData(GridData.FILL_BOTH);
-		data.horizontalSpan = 3;
-		gSection.setLayoutData(data);
-
-		/* Sensordata Section */
+		/* Patient Section */
 		Section sSection = toolkit.createSection(parent, Section.DESCRIPTION
 				| Section.TITLE_BAR);
-		sSection.setText("Sensor Datensaetze");
+		sSection.setText("Patienten");
 		sSection.marginWidth = 10;
 		sSection.marginHeight = 5;
 
@@ -71,7 +47,7 @@ public class GeneralEditorBlock extends MasterDetailsBlock {
 		layout.marginHeight = 2;
 		sensorClient.setLayout(layout);
 		Table t = toolkit.createTable(sensorClient, SWT.NULL);
-		data = new GridData(GridData.FILL_BOTH);
+		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 20;
 		data.widthHint = 100;
 		t.setLayoutData(data);
@@ -88,18 +64,41 @@ public class GeneralEditorBlock extends MasterDetailsBlock {
 				managedForm.fireSelectionChanged(spart, event.getSelection());
 			}
 		});
+		viewer.setContentProvider(new PatientContentProvider());
+		viewer.setLabelProvider(new PatientLabelProvider());
+		viewer.setInput(SampleDataFactory.getData());
 
 	}
 
 	@Override
 	protected void registerPages(DetailsPart detailsPart) {
-		// TODO Auto-generated method stub
+		detailsPart.registerPage(Patient.class, new PatientDetailsPage());
 
 	}
 
 	@Override
 	protected void createToolBarActions(IManagedForm managedForm) {
-		// TODO Auto-generated method stub
+		final ScrolledForm form = managedForm.getForm();
+		Action haction = new Action("hor", Action.AS_RADIO_BUTTON) { //$NON-NLS-1$
+			public void run() {
+				sashForm.setOrientation(SWT.HORIZONTAL);
+				form.reflow(true);
+			}
+		};
+		haction.setChecked(true);
+		haction.setToolTipText("Horizontal"); //$NON-NLS-1$
+		haction.setImageDescriptor(Activator.getImageDescriptor("icons/th_horizontal.gif"));
+		Action vaction = new Action("ver", Action.AS_RADIO_BUTTON) { //$NON-NLS-1$
+			public void run() {
+				sashForm.setOrientation(SWT.VERTICAL);
+				form.reflow(true);
+			}
+		};
+		vaction.setChecked(false);
+		vaction.setToolTipText("Vertical"); //$NON-NLS-1$
+		vaction.setImageDescriptor(Activator.getImageDescriptor("icons/th_vertical.gif"));
+		form.getToolBarManager().add(haction);
+		form.getToolBarManager().add(vaction);
 
 	}
 

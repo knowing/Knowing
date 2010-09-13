@@ -5,16 +5,16 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-public class GeneralEditorPage extends FormPage {
+public class PatientEditorPage extends FormPage {
 
 	public static final String id = "de.lmu.ifi.dbs.medmon.patient.editor.GeneralEditorPage";
 	
-	private GeneralEditorBlock block;
+	private PatientEditorBlock block;
 	
 
-	public GeneralEditorPage(FormEditor editor) {
+	public PatientEditorPage(FormEditor editor) {
 		super(editor, id, "Patientenverwaltung");
-		block = new GeneralEditorBlock();
+		block = new PatientEditorBlock();
 	}
 	
 	@Override
