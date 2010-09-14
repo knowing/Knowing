@@ -6,18 +6,18 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
 
-import de.lmu.ifi.dbs.medmon.patient.sampledata.Patient;
+import de.lmu.ifi.dbs.medmon.sensor.editor.pages.SensorEditorPage;
 
 public class PatientEditor extends FormEditor {
 	
 	public static final String ID = "de.lmu.ifi.dbs.medmon.patient.PatientEditor";
 	
 	private PatientEditorPage patientPage;
-
-	private Patient patient;
+	private SensorEditorPage sensorPage;
 
 	public PatientEditor() {
 		patientPage = new PatientEditorPage(this);
+		sensorPage = new SensorEditorPage(this);
 	}
 
 
@@ -25,6 +25,7 @@ public class PatientEditor extends FormEditor {
 	protected void addPages() {
 		try {
 			addPage(patientPage);
+			addPage(sensorPage);
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		}
@@ -35,8 +36,7 @@ public class PatientEditor extends FormEditor {
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
 		super.init(site, input);
-		patient = ((PatientEditorInput)input).getPatient();
-		setPartName(patient.toString());
+		setPartName("Patienten-Editor");
 	}
 
 

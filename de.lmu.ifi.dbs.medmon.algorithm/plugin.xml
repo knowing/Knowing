@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="de.lmu.ifi.dbs.medmon.algorithm" name="Algorithm Extension" schema="schema/de.lmu.ifi.dbs.medmon.algorithm.exsd"/>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Algorithms Category"
+            id="de.lmu.ifi.dbs.medmon.algorithm">
+      </category>
+      <view
+            name="Algorithm View"
+            icon="icons/sample.gif"
+            category="de.lmu.ifi.dbs.medmon.algorithm"
+            class="de.lmu.ifi.dbs.medmon.algorithm.views.AlgorithmView"
+            id="de.lmu.ifi.dbs.medmon.algorithm.views.AlgorithmView">
+      </view>
+   </extension>
+   <extension
+         point="de.lmu.ifi.dbs.medmon.algorithm">
+      <algorithm
+            class="de.lmu.ifi.dbs.medmon.algorithm.provider.impl.SimpleAnalyzer"
+            description="Simple Analyzer">
+      </algorithm>
+   </extension>
+
+</plugin>

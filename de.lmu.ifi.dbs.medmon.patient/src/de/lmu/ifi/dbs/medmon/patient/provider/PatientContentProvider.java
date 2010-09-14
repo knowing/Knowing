@@ -3,7 +3,8 @@ package de.lmu.ifi.dbs.medmon.patient.provider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import de.lmu.ifi.dbs.medmon.patient.sampledata.Patient;
+import de.lmu.ifi.dbs.medmon.database.model.Patient;
+
 
 public class PatientContentProvider implements IStructuredContentProvider {
 

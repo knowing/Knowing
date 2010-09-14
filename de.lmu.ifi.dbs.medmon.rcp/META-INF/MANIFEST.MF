@@ -10,4 +10,6 @@ Require-Bundle: org.eclipse.ui,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.lmu.ifi.dbs.medmon.patient.perspective,
- de.lmu.ifi.dbs.medmon.patient.views
+ de.lmu.ifi.dbs.medmon.sensor.viewer,
+ de.lmu.ifi.dbs.medmon.visualizer.perspectives,
+ de.lmu.ifi.dbs.medmon.visualizer.views

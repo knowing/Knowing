@@ -4,13 +4,17 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
-import de.lmu.ifi.dbs.medmon.patient.sampledata.Patient;
+import de.lmu.ifi.dbs.medmon.database.model.Patient;
 
 public class PatientEditorInput implements IEditorInput {
-	
-	private final Patient patient;
-	
 
+	private Patient patient;
+
+	
+	public PatientEditorInput() {
+		// TODO Auto-generated constructor stub
+	}
+	
 	public PatientEditorInput(Patient patient) {
 		this.patient = patient;
 	}
@@ -33,7 +37,7 @@ public class PatientEditorInput implements IEditorInput {
 
 	@Override
 	public String getName() {
-		return patient.toString();
+		return "Patientenliste";
 	}
 
 	@Override
@@ -45,7 +49,7 @@ public class PatientEditorInput implements IEditorInput {
 	public String getToolTipText() {
 		return "Editor Tooltip";
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (super.equals(obj)) {
@@ -60,5 +64,6 @@ public class PatientEditorInput implements IEditorInput {
 	public Patient getPatient() {
 		return patient;
 	}
+
 
 }

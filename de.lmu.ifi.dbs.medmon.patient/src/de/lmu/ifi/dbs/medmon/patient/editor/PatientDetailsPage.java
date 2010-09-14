@@ -1,5 +1,7 @@
 package de.lmu.ifi.dbs.medmon.patient.editor;
 
+import java.util.Set;
+
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -20,6 +22,12 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+
+import de.lmu.ifi.dbs.medmon.database.model.SensorData;
+import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
+import de.lmu.ifi.dbs.medmon.sensor.provider.SensorContentProvider;
+import de.lmu.ifi.dbs.medmon.sensor.provider.SensorLabelProvider;
+import de.lmu.ifi.dbs.medmon.sensor.viewer.SensorTableViewer;
 
 public class PatientDetailsPage implements IDetailsPage {
 
@@ -119,8 +127,6 @@ public class PatientDetailsPage implements IDetailsPage {
 		
 		Table table = new Table(sClient, SWT.NULL);
 		data = new GridData(GridData.FILL_BOTH);
-		data.heightHint = 20;
-		data.widthHint = 100;
 		data.horizontalSpan = 3;
 		table.setLayoutData(data);
 		
@@ -134,14 +140,9 @@ public class PatientDetailsPage implements IDetailsPage {
 		toolkit.paintBordersFor(sClient);
 		sSection.setClient(sClient);
 		
-		final SectionPart spart = new SectionPart(sSection);
-		managedForm.addPart(spart);
-		TableViewer viewer = new TableViewer(table);
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				managedForm.fireSelectionChanged(spart, event.getSelection());
-			}
-		});
+		TableViewer viewer = new SensorTableViewer(table);
+		Set<SensorData> set = SampleDataFactory.getSensorData();
+		viewer.setInput(set.toArray(new SensorData[set.size()]));
 		
 	}
 

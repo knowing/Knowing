@@ -11,9 +11,9 @@ import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
 
+import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
 import de.lmu.ifi.dbs.medmon.patient.provider.PatientContentProvider;
 import de.lmu.ifi.dbs.medmon.patient.provider.PatientLabelProvider;
-import de.lmu.ifi.dbs.medmon.patient.sampledata.SampleDataFactory;
 
 /**
  * This sample class demonstrates how to plug-in a new workbench view. The view

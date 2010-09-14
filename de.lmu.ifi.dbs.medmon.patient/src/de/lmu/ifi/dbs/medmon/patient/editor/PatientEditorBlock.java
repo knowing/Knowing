@@ -20,11 +20,11 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
+import de.lmu.ifi.dbs.medmon.database.model.Patient;
+import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
 import de.lmu.ifi.dbs.medmon.patient.Activator;
 import de.lmu.ifi.dbs.medmon.patient.provider.PatientContentProvider;
 import de.lmu.ifi.dbs.medmon.patient.provider.PatientLabelProvider;
-import de.lmu.ifi.dbs.medmon.patient.sampledata.Patient;
-import de.lmu.ifi.dbs.medmon.patient.sampledata.SampleDataFactory;
 
 public class PatientEditorBlock extends MasterDetailsBlock {
 

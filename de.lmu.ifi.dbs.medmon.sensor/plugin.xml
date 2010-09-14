@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="Sensor Preferences"
+            class="de.lmu.ifi.dbs.medmon.sensor.preferences.SensorPreferences"
+            id="de.lmu.ifi.dbs.medmon.sensor.preferences.SensorPreferences">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="de.lmu.ifi.dbs.medmon.sensor.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="de.lmu.ifi.dbs.medmon.sensor.view.SensorDataView"
+            id="de.lmu.ifi.dbs.medmon.sensor.SensorDataView"
+            name="SensorData"
+            restorable="true">
+      </view>
+   </extension>
+
+</plugin>

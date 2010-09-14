@@ -23,7 +23,6 @@ public class PatientEditorPage extends FormPage {
 		form.setText("Patientenverwaltung");
 		block.createContent(managedForm);
 		
-		
 	}
 
 }

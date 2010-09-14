@@ -59,8 +59,9 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="de.lmu.ifi.dbs.medmon.patient.perspective.PatientPerspectiveFactory"
+            icon="IMG_OBJS_INFO_TSK"
             id="de.lmu.ifi.dbs.medmon.patient.PatientManagement"
-            name="Patienten Verwaltung">
+            name="Patienten">
       </perspective>
    </extension>
    <extension

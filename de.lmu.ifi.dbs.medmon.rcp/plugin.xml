@@ -15,9 +15,10 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="RCP Perspective"
             class="de.lmu.ifi.dbs.medmon.rcp.Perspective"
-            id="de.lmu.ifi.dbs.medmon.rcp.HomePerspective">
+            icon="IMG_ETOOL_HOME_NAV"
+            id="de.lmu.ifi.dbs.medmon.rcp.HomePerspective"
+            name="Startseite">
       </perspective>
    </extension>
    <extension
@@ -29,6 +30,10 @@
          <property
                name="windowImages"
                value="icons/alt_window_16.gif,icons/alt_window_32.gif">
+         </property>
+         <property
+               name="appName"
+               value="Medmon">
          </property>
       </product>
    </extension>
@@ -57,6 +62,65 @@
                visible="true">
          </view>
       </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <menu
+               label="Programm">
+            <command
+                  commandId="org.eclipse.ui.perspectives.showPerspective"
+                  label="Ansicht"
+                  style="push">
+            </command>
+            <separator
+                  name="de.lmu.ifi.dbs.medmon.rcp.separator2">
+            </separator>
+            <command
+                  commandId="org.eclipse.ui.file.save"
+                  label="Speichern"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.edit.delete"
+                  label="Entfernen"
+                  style="push">
+            </command>
+            <separator
+                  name="de.lmu.ifi.dbs.medmon.rcp.separator1"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.eclipse.ui.file.exit"
+                  label="Beenden"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="de.lmu.ifi.dbs.medmon.rcp.MainToolbar">
+            <command
+                  commandId="org.eclipse.ui.file.save"
+                  label="Speichern"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.edit.delete"
+                  label="Entfernen"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.file.print"
+                  label="Drucken"
+                  style="push">
+            </command>
+         </toolbar>
+      </menuContribution>
    </extension>
 
 </plugin>

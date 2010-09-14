@@ -15,8 +15,8 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
 import de.lmu.ifi.dbs.medmon.patient.perspective.PatientPerspectiveFactory;
-import de.lmu.ifi.dbs.medmon.patient.views.PatientListView;
 import de.lmu.ifi.dbs.medmon.rcp.Activator;
+import de.lmu.ifi.dbs.medmon.visualizer.perspectives.DefaultPerspectiveFactory;
 
 public class HomeView extends ViewPart {
 
@@ -69,7 +69,16 @@ public class HomeView extends ViewPart {
 		ImageHyperlink visualize = toolkit.createImageHyperlink(form.getBody(), SWT.NONE);
 		visualize.setText("Visualisieren");
 		visualize.setImage(Activator.getImageDescriptor("icons/gtk-chart.svg").createImage());
-		
+		visualize.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
+			public void linkActivated(HyperlinkEvent e) {
+				try {
+					PlatformUI.getWorkbench().showPerspective(DefaultPerspectiveFactory.ID, PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+				} catch (WorkbenchException e1) {
+					e1.printStackTrace();
+				};
+			}
+		});
 
 	}
 

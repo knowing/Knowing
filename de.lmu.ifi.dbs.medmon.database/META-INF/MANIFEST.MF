@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Database
+Bundle-SymbolicName: de.lmu.ifi.dbs.medmon.database;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.lmu.ifi.dbs.medmon.database.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: de.lmu.ifi.dbs.medmon.database.model,
+ de.lmu.ifi.dbs.medmon.database.sample
