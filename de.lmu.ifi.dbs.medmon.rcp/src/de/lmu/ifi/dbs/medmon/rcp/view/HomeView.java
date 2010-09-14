@@ -21,7 +21,7 @@ import de.lmu.ifi.dbs.medmon.visualizer.perspectives.DefaultPerspectiveFactory;
 public class HomeView extends ViewPart {
 
 	private FormToolkit toolkit;
-	
+
 	public HomeView() {
 		// TODO Auto-generated constructor stub
 	}
@@ -31,8 +31,10 @@ public class HomeView extends ViewPart {
 		toolkit = new FormToolkit(parent.getDisplay());
 		ScrolledForm form = toolkit.createScrolledForm(parent);
 		form.setText("Willkommen bei Medmon");
-		//form.getToolBarManager().add(new Action("This is the toolbar", Activator.getImageDescriptor("icons/alt_window_16.gif")) { });	// NEW LINE
-		//form.getToolBarManager().update(true);
+		// form.getToolBarManager().add(new Action("This is the toolbar",
+		// Activator.getImageDescriptor("icons/alt_window_16.gif")) { }); // NEW
+		// LINE
+		// form.getToolBarManager().update(true);
 		ColumnLayout layout = new ColumnLayout();
 		layout.maxNumColumns = 2;
 		layout.leftMargin = 15;
@@ -42,41 +44,56 @@ public class HomeView extends ViewPart {
 		layout.verticalSpacing = 15;
 		layout.horizontalSpacing = 15;
 		form.getBody().setLayout(new ColumnLayout());
-		//form.setBackgroundImage(Activator.getImageDescriptor("icons/medmon_logo.png").createImage());
-		
-		ImageHyperlink patient = toolkit.createImageHyperlink(form.getBody(), SWT.NONE);
+		// form.setBackgroundImage(Activator.getImageDescriptor("icons/medmon_logo.png").createImage());
+
+		ImageHyperlink patient = toolkit.createImageHyperlink(form.getBody(),
+				SWT.NONE);
 		patient.setText("Patient verwalten");
-		patient.setImage(Activator.getImageDescriptor("icons/gtk-open.svg").createImage());
+		patient.setImage(Activator.getImageDescriptor("icons/gtk-open.png")
+				.createImage());
 		patient.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				try {
-					PlatformUI.getWorkbench().showPerspective(PatientPerspectiveFactory.ID, PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+					PlatformUI.getWorkbench().showPerspective(
+							PatientPerspectiveFactory.ID,
+							PlatformUI.getWorkbench()
+									.getActiveWorkbenchWindow());
 				} catch (WorkbenchException e1) {
 					e1.printStackTrace();
 				}
 			}
 		});
-		
-		ImageHyperlink sensor = toolkit.createImageHyperlink(form.getBody(), SWT.NONE);
+
+		ImageHyperlink sensor = toolkit.createImageHyperlink(form.getBody(),
+				SWT.NONE);
 		sensor.setText("Daten importieren");
-		sensor.setImage(Activator.getImageDescriptor("icons/gtk-go-down.svg").createImage());
-		
-		ImageHyperlink analyse = toolkit.createImageHyperlink(form.getBody(), SWT.NONE);
+		sensor.setImage(Activator.getImageDescriptor("icons/gtk-go-down.png")
+				.createImage());
+
+		ImageHyperlink analyse = toolkit.createImageHyperlink(form.getBody(),
+				SWT.NONE);
 		analyse.setText("Analysieren");
-		analyse.setImage(Activator.getImageDescriptor("icons/gtk-zoom-100.svg").createImage());
-		
-		ImageHyperlink visualize = toolkit.createImageHyperlink(form.getBody(), SWT.NONE);
+		analyse.setImage(Activator.getImageDescriptor("icons/gtk-zoom-100.png")
+				.createImage());
+
+		ImageHyperlink visualize = toolkit.createImageHyperlink(form.getBody(),
+				SWT.NONE);
 		visualize.setText("Visualisieren");
-		visualize.setImage(Activator.getImageDescriptor("icons/gtk-chart.svg").createImage());
+		visualize.setImage(Activator.getImageDescriptor("icons/gtk-chart.png")
+				.createImage());
 		visualize.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				try {
-					PlatformUI.getWorkbench().showPerspective(DefaultPerspectiveFactory.ID, PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+					PlatformUI.getWorkbench().showPerspective(
+							DefaultPerspectiveFactory.ID,
+							PlatformUI.getWorkbench()
+									.getActiveWorkbenchWindow());
 				} catch (WorkbenchException e1) {
 					e1.printStackTrace();
-				};
+				}
+				;
 			}
 		});
 
