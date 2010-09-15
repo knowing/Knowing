@@ -13,15 +13,11 @@ public class PatientPerspectiveFactory implements IPerspectiveFactory {
 	public void createInitialLayout(IPageLayout layout) {
 		layout.setEditorAreaVisible(true);
 		
-		System.out.println("PatientPerspective open");
-		
 		IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
 		try {
 			handlerService.executeCommand("de.lmu.ifi.dbs.medmon.patient.OpenPatientEditor", null);
 		} catch (Exception ex) {
-			System.out.println(ex.getMessage());
 			ex.printStackTrace();
-			System.out.println("Hello you?");
 			throw new RuntimeException("de.lmu.ifi.dbs.medmon.patient.OpenPatientEditor");
 		}
 		

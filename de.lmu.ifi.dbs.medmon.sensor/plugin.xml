@@ -25,5 +25,13 @@
             restorable="true">
       </view>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.lmu.ifi.dbs.medmon.sensor.handler.CallImportWizard"
+            id="de.lmu.ifi.dbs.medmon.sensor.CallImportWizard"
+            name="Call ImportWizard">
+      </command>
+   </extension>
 
 </plugin>
