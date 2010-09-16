@@ -12,6 +12,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
@@ -19,9 +20,15 @@ import org.eclipse.ui.PlatformUI;
 
 public class ImportPage2Source extends WizardPage {
 
-	private boolean flip = true;
+	private boolean flip = false;
 
 	private Composite container;
+
+	private Button rFile, rUSB, rDatabase;
+	private Button bFile, usb, testConnection;
+	private Text file, url, user, pw;
+	
+	private ImportPageController controller;
 
 	protected ImportPage2Source() {
 		super("Datenquelle");
@@ -36,18 +43,28 @@ public class ImportPage2Source extends WizardPage {
 
 	@Override
 	public void createControl(Composite parent) {
+		controller = new ImportPageController();
 		container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
 		layout.horizontalSpacing = 10;
 		layout.verticalSpacing = 15;
 		container.setLayout(layout);
 
-		Button rFile = new Button(container, SWT.RADIO);
-		Button file = new Button(container, SWT.PUSH);
-		file.setText("Suche Sensordatei");
+		rFile = new Button(container, SWT.RADIO);
+		rFile.addListener(SWT.Selection, controller);
+		
+		Composite cFile = new Composite(container, SWT.NONE);
+		cFile.setLayout(new GridLayout(2, false));
+		
+		file = new Text(cFile, SWT.BORDER);
+		file.setLayoutData(new GridData(220, SWT.DEFAULT));
+		bFile = new Button(cFile, SWT.PUSH);
+		bFile.setText("Suche Sensordatei");
+		bFile.addListener(SWT.Selection, controller);
 
 		/* External Database */
-		Button rDatabase = new Button(container, SWT.RADIO);
+		rDatabase = new Button(container, SWT.RADIO);
+		rDatabase.addListener(SWT.Selection, controller);
 		GridData data = new GridData();
 		data.verticalAlignment = GridData.BEGINNING;
 		rDatabase.setLayoutData(data);
@@ -56,18 +73,18 @@ public class ImportPage2Source extends WizardPage {
 		database.setLayout(new GridLayout(2, false));
 
 		new Label(database, SWT.NONE).setText("URL: ");
-		Text url = new Text(database, SWT.BORDER);
+		url = new Text(database, SWT.BORDER);
 		url.setLayoutData(new GridData(150, SWT.DEFAULT));
 
 		new Label(database, SWT.NONE).setText("Benutzer: ");
-		Text user = new Text(database, SWT.BORDER);
+		user = new Text(database, SWT.BORDER);
 		user.setLayoutData(new GridData(150, SWT.DEFAULT));
 
 		new Label(database, SWT.NONE).setText("Passwort: ");
-		Text pw = new Text(database, SWT.BORDER | SWT.PASSWORD);
+		pw = new Text(database, SWT.BORDER | SWT.PASSWORD);
 		pw.setLayoutData(new GridData(150, SWT.DEFAULT));
 
-		Button testConnection = new Button(database, SWT.PUSH);
+		testConnection = new Button(database, SWT.PUSH);
 		testConnection.setText("Verbindung testen");
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
@@ -75,11 +92,20 @@ public class ImportPage2Source extends WizardPage {
 
 		/* USB */
 
-		Button rUSB = new Button(container, SWT.RADIO);
-		Button usb = new Button(container, SWT.PUSH);
+		rUSB = new Button(container, SWT.RADIO);
+		rUSB.addListener(SWT.Selection, controller);
+		usb = new Button(container, SWT.PUSH);
 		usb.setText("Suche USB-Sensor");
+		usb.addListener(SWT.Selection, controller);
 
+		rFile.setSelection(true);
 		setControl(container);
+		setPageComplete(false);
+	}
+	
+	private void done() {
+		flip = true;
+		setPageComplete(true);
 	}
 
 	public void importData() {
@@ -94,7 +120,7 @@ public class ImportPage2Source extends WizardPage {
 						if (monitor.isCanceled())
 							return;
 						monitor.subTask("Dataset " + i);
-						sleep(1000);
+						sleep(333);
 						monitor.worked(i);
 					}
 					monitor.done();
@@ -125,9 +151,29 @@ public class ImportPage2Source extends WizardPage {
 		@Override
 		public void handleEvent(Event e) {
 			if(e.type == SWT.Selection) {
+				//Enable the right selection
+				file.setEnabled(rFile.getSelection());
+				bFile.setEnabled(rFile.getSelection());
 				
-			}
-			
+				url.setEnabled(rDatabase.getSelection());
+				user.setEnabled(rDatabase.getSelection());
+				pw.setEnabled(rDatabase.getSelection());
+				testConnection.setEnabled(rDatabase.getSelection());
+				
+				usb.setEnabled(rUSB.getSelection());
+				
+				if(e.widget == bFile) {
+					FileDialog dialog = new FileDialog(container.getShell());
+					String path = dialog.open();
+					if(path != null && !path.isEmpty()) {
+						file.setText(path);
+						done();
+					}
+					
+				} else if(e.widget == usb) {
+					
+				}
+			}		
 		}
 		
 	}

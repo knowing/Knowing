@@ -70,6 +70,12 @@ public class ImportPage1Patient extends WizardPage {
 		setPageComplete(false);
 	}
 	
+	private void done() {
+		flip = true;
+		setPageComplete(true);
+		setMessage(patient.toString());
+	}
+	
 	public Patient getPatient() {
 		return patient;
 	}
@@ -78,16 +84,13 @@ public class ImportPage1Patient extends WizardPage {
 		
 		@Override
 		public void widgetSelected(SelectionEvent e) {
+			select.setEnabled(rSelect.getSelection());
 			if(e.getSource() == rCurrent ) {
 				initCurrentPatient();
-				select.setEnabled(false);
-				//Updates the navigation buttons
-				flip = true;
-				getContainer().updateButtons();
+				done();
 			} else if(e.getSource() == rSelect) {
 				patient = null;
 				flip = false;
-				select.setEnabled(true);
 				getContainer().updateButtons();
 				//setErrorMessage("Bitte einen Patienten auswaehlen");
 			} else if(e.getSource() == select) {
@@ -98,9 +101,7 @@ public class ImportPage1Patient extends WizardPage {
 				if(dialog.open() == Window.OK) {
 					//Assuming that there's only one Patient Selection
 					patient = (Patient) dialog.getResult()[0];
-					flip = true;
-					getContainer().updateButtons();
-					setMessage(patient.toString());
+					done();
 				}
 			}
 		}

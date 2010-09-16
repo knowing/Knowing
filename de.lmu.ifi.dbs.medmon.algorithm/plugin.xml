@@ -24,5 +24,14 @@
             description="Simple Analyzer">
       </algorithm>
    </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="de.lmu.ifi.dbs.medmon.algorithm.editor.AlgorihmEditor"
+            default="false"
+            id="de.lmu.ifi.dbs.medmon.algorithm.AlgorithmEditor"
+            name="Algorithm Editor">
+      </editor>
+   </extension>
 
 </plugin>

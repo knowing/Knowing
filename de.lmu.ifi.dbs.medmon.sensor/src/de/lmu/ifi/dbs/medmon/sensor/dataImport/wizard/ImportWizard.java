@@ -24,15 +24,13 @@ public class ImportWizard extends Wizard {
 		addPage(sourcePage);
 		addPage(dataPage);
 	}
-	
+		
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
-		IWizardPage next_page = super.getNextPage(page);
-		if(next_page instanceof ImportPage3Data) 
+		if(page instanceof ImportPage3Data) 
 			sourcePage.importData();
-		return next_page;
+		return super.getNextPage(page);
 	}
-	
 	
 	@Override
 	public boolean performFinish() {
