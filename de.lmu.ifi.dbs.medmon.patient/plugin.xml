@@ -80,6 +80,25 @@
             id="de.lmu.ifi.dbs.medmon.patient.OpenPatientEditor"
             name="Patienteditor oeffnen">
       </command>
+      <command
+            id="de.lmu.ifi.dbs.medmon.patient.SavePatient"
+            name="Patient Speichern">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="de.lmu.ifi.dbs.medmon.patient.toolbar1">
+            <command
+                  commandId="org.eclipse.ui.file.save"
+                  label="Patient Speichern"
+                  style="push">
+            </command>
+         </toolbar>
+      </menuContribution>
    </extension>
 
 </plugin>

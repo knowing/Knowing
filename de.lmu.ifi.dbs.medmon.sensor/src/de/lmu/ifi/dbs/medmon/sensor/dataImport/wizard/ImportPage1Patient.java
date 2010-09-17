@@ -67,7 +67,7 @@ public class ImportPage1Patient extends WizardPage {
 		select.addSelectionListener(controller);
 
 		setControl(container);
-		setPageComplete(false);
+		setPageComplete(true);
 	}
 	
 	private void done() {

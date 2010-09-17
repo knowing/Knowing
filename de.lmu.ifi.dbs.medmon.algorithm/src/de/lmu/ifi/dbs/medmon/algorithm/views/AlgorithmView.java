@@ -91,6 +91,7 @@ public class AlgorithmView extends ViewPart {
 		Combo combo = new Combo(pClient, SWT.READ_ONLY);
 		combo.add("Pie Chart");
 		combo.add("Bar Chart");
+		combo.select(0);
 		toolkit.adapt(combo);
 		
 		pSection.setClient(pClient);

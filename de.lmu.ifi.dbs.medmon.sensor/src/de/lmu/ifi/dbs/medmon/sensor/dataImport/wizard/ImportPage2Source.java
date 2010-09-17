@@ -1,6 +1,7 @@
 package de.lmu.ifi.dbs.medmon.sensor.dataImport.wizard;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -18,6 +19,9 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
+import de.lmu.ifi.dbs.medmon.database.model.SensorData;
+import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
+
 public class ImportPage2Source extends WizardPage {
 
 	private boolean flip = false;
@@ -29,6 +33,8 @@ public class ImportPage2Source extends WizardPage {
 	private Text file, url, user, pw;
 	
 	private ImportPageController controller;
+	
+	private SensorData[] sensorData;
 
 	protected ImportPage2Source() {
 		super("Datenquelle");
@@ -107,6 +113,11 @@ public class ImportPage2Source extends WizardPage {
 		flip = true;
 		setPageComplete(true);
 	}
+	
+
+	public SensorData[] getSensorData() {
+		return sensorData;
+	}
 
 	public void importData() {
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(PlatformUI
@@ -123,6 +134,8 @@ public class ImportPage2Source extends WizardPage {
 						sleep(333);
 						monitor.worked(i);
 					}
+					Set<SensorData> set = SampleDataFactory.getSensorData();
+					sensorData = set.toArray(new SensorData[set.size()]);
 					monitor.done();
 				}
 			});
@@ -177,6 +190,7 @@ public class ImportPage2Source extends WizardPage {
 		}
 		
 	}
+
 
 
 }
