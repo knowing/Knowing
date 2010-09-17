@@ -16,13 +16,49 @@
             </separator>
          </menu>
          <action
-               label="Patient laden "
-               icon="icons/sample.gif"
-               class="de.lmu.ifi.dbs.medmon.patient.actions.LoadPatient"
-               tooltip="Hello, Eclipse world"
+               definitionId="de.lmu.ifi.dbs.medmon.patient.import"
+               icon="icons/16/gtk-go-down.png"
+               id="de.lmu.ifi.dbs.medmon.patient.importAction"
+               label="Import Patient"
                menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
-               toolbarPath="PatientenverwaltungGroup"
-               id="de.lmu.ifi.dbs.medmon.patient.actions.LoadPatient">
+               style="push"
+               toolbarPath="PatientenverwaltungGroup">
+         </action>
+         <action
+               definitionId="de.lmu.ifi.dbs.medmon.patient.export"
+               icon="icons/16/gtk-go-up.png"
+               id="de.lmu.ifi.dbs.medmon.patient.exportAction"
+               label="Export Patient"
+               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
+               style="push"
+               toolbarPath="PatientenverwaltungGroup">
+         </action>
+         <action
+               definitionId="de.lmu.ifi.dbs.medmon.patient.delete"
+               icon="icons/16/gtk-remove.png"
+               id="de.lmu.ifi.dbs.medmon.patient.deleteAction"
+               label="Patient entfernen"
+               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
+               style="push"
+               toolbarPath="PatientenverwaltungGroup">
+         </action>
+         <action
+               definitionId="de.lmu.ifi.dbs.medmon.patient.OpenPatientEditor"
+               icon="icons/16/gtk-edit.png"
+               id="de.lmu.ifi.dbs.medmon.patient.editAction"
+               label="Patient bearbeiten"
+               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
+               style="push"
+               toolbarPath="PatientenverwaltungGroup">
+         </action>
+         <action
+               definitionId="de.lmu.ifi.dbs.medmon.patient.create"
+               icon="icons/16/gtk-add.png"
+               id="de.lmu.ifi.dbs.medmon.patient.createAction"
+               label="Patient erstellen"
+               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
+               style="push"
+               toolbarPath="PatientenverwaltungGroup">
          </action>
       </actionSet>
    </extension>
@@ -81,24 +117,25 @@
             name="Patienteditor oeffnen">
       </command>
       <command
-            id="de.lmu.ifi.dbs.medmon.patient.SavePatient"
-            name="Patient Speichern">
+            defaultHandler="de.lmu.ifi.dbs.medmon.patient.handler.NewPatientHandler"
+            id="de.lmu.ifi.dbs.medmon.patient.create"
+            name="Patient anlegen">
       </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:org.eclipse.ui.main.toolbar">
-         <toolbar
-               id="de.lmu.ifi.dbs.medmon.patient.toolbar1">
-            <command
-                  commandId="org.eclipse.ui.file.save"
-                  label="Patient Speichern"
-                  style="push">
-            </command>
-         </toolbar>
-      </menuContribution>
+      <command
+            defaultHandler="de.lmu.ifi.dbs.medmon.patient.handler.DeletePatientHandler"
+            id="de.lmu.ifi.dbs.medmon.patient.delete"
+            name="Patient entfernen">
+      </command>
+      <command
+            defaultHandler="de.lmu.ifi.dbs.medmon.patient.handler.PatientImportHandler"
+            id="de.lmu.ifi.dbs.medmon.patient.import"
+            name="Patient importieren">
+      </command>
+      <command
+            defaultHandler="de.lmu.ifi.dbs.medmon.patient.handler.ExportPatientHandler"
+            id="de.lmu.ifi.dbs.medmon.patient.export"
+            name="Patient exportieren">
+      </command>
    </extension>
 
 </plugin>

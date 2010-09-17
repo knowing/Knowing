@@ -9,6 +9,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
+import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
 import de.lmu.ifi.dbs.medmon.patient.editor.PatientEditor;
 import de.lmu.ifi.dbs.medmon.patient.editor.PatientEditorInput;
 
@@ -42,7 +43,7 @@ public class OpenPatientEditorHandler extends AbstractHandler {
 				patients.add((Patient) o);
 		*/
 		
-		PatientEditorInput input = new PatientEditorInput();
+		PatientEditorInput input = new PatientEditorInput(SampleDataFactory.getData()[0]);
 		try {
 			page.openEditor(input, PatientEditor.ID);
 		} catch (PartInitException e) {
