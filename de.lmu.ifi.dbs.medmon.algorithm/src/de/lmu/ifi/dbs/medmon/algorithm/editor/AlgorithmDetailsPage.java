@@ -19,8 +19,11 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 import de.lmu.ifi.dbs.medmon.database.model.SensorData;
+import org.eclipse.swt.widgets.Label;
 
 public class AlgorithmDetailsPage implements IDetailsPage {
+	public AlgorithmDetailsPage() {
+	}
 
 	private IManagedForm managedForm;
 
@@ -82,54 +85,24 @@ public class AlgorithmDetailsPage implements IDetailsPage {
 		FormToolkit toolkit = managedForm.getToolkit();	
 		parent.setLayout(new ColumnLayout());
 		
-
-		/* Patient Information */
-		Section gSection = toolkit.createSection(parent, Section.DESCRIPTION
-				| Section.TITLE_BAR);
-		gSection.setText("Patienteninformationen");
-
-		Composite gClient = toolkit.createComposite(gSection, SWT.WRAP);
-		GridLayout gLayout = new GridLayout(2, false);
-		gLayout.marginWidth = 5;
-		gLayout.marginHeight = 5;
-		gClient.setLayout(gLayout);
-	
-		toolkit.createLabel(gClient, "Name");
-		Text firstname = toolkit.createText(gClient, "", SWT.BORDER);
-		GridData data = new GridData(150, SWT.DEFAULT);
-		firstname.setLayoutData(data);
-		toolkit.createLabel(gClient, "Nachname");
-		Text lastname = toolkit.createText(gClient, "", SWT.BORDER);
-		data = new GridData(150, SWT.DEFAULT);
-		lastname.setLayoutData(data);
-		
-		gSection.setClient(gClient);
-		
 		/* Sensor DB */
 		
-		Section sSection = toolkit.createSection(parent, Section.DESCRIPTION
-				| Section.TITLE_BAR | Section.EXPANDED | Section.TWISTIE);
-		sSection.setText("Sensordaten");
-		sSection.setDescription("Bereits importierte Sensordaten");
+		Section pSection = toolkit.createSection(parent, Section.DESCRIPTION
+				| Section.TITLE_BAR | Section.TWISTIE);
+		pSection.setText("Eigenschaften");
+		pSection.setDescription("Algorithmus konfigurieren");
 		
-		Composite sClient = toolkit.createComposite(sSection);
+		Composite pClient = toolkit.createComposite(pSection);
 		GridLayout sLayout = new GridLayout(3, false);
-		sClient.setLayout(sLayout);
+		pClient.setLayout(sLayout);
 		
-		Table table = new Table(sClient, SWT.NULL);
-		data = new GridData(GridData.FILL_BOTH);
-		data.horizontalSpan = 3;
-		table.setLayoutData(data);
-		
-		Button analyse = toolkit.createButton(sClient, "analysieren", SWT.PUSH);
+		Button analyse = toolkit.createButton(pClient, "speichern", SWT.PUSH);
 		analyse.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		Button delete  = toolkit.createButton(sClient, "entfernen", SWT.PUSH);
-		delete.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		Button iimport = toolkit.createButton(sClient, "importieren", SWT.PUSH);
-		iimport.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+		new Label(pClient, SWT.NONE);
 		
-		toolkit.paintBordersFor(sClient);
-		sSection.setClient(sClient);
+		toolkit.paintBordersFor(pClient);
+		pSection.setClient(pClient);
+		new Label(pClient, SWT.NONE);
 		
 		//TableViewer viewer = new SensorTableViewer(table);
 		//Set<SensorData> set = SampleDataFactory.getSensorData();

@@ -10,12 +10,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.MasterDetailsBlock;
 import org.eclipse.ui.forms.SectionPart;
-import org.eclipse.ui.forms.widgets.ColumnLayout;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
@@ -27,6 +25,8 @@ import de.lmu.ifi.dbs.medmon.patient.provider.PatientContentProvider;
 import de.lmu.ifi.dbs.medmon.patient.provider.PatientLabelProvider;
 
 public class PatientEditorBlock extends MasterDetailsBlock {
+	public PatientEditorBlock() {
+	}
 
 	@Override
 	protected void createMasterPart(final IManagedForm managedForm,

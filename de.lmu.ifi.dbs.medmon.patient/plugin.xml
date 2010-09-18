@@ -5,12 +5,12 @@
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
+            id="de.lmu.ifi.dbs.medmon.patient.actionSet"
             label="Patientenverwaltung Action Set"
-            visible="false"
-            id="de.lmu.ifi.dbs.medmon.patient.actionSet">
+            visible="false">
          <menu
-               label="Patientenverwaltung "
-               id="Patientenverwaltung">
+               id="Patientenverwaltung"
+               label="Patientenverwaltung ">
             <separator
                   name="PatientenverwaltungGroup">
             </separator>
