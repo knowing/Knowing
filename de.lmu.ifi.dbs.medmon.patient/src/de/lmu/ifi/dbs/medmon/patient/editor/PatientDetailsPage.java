@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -11,6 +12,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IDetailsPage;
@@ -23,19 +26,38 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
+import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.database.model.SensorData;
 import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
 import de.lmu.ifi.dbs.medmon.sensor.provider.SensorContentProvider;
 import de.lmu.ifi.dbs.medmon.sensor.provider.SensorLabelProvider;
 import de.lmu.ifi.dbs.medmon.sensor.viewer.SensorTableViewer;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.core.databinding.beans.PojoObservables;
 
 public class PatientDetailsPage implements IDetailsPage {
-
+	
 	private IManagedForm managedForm;
+	
+	private DataBindingContext bindingContext;
+	
+	private Patient patient;	
+	private Text firstname, lastname;
+	private GridData gd_firstname, gd_lastname;
+	private SensorTableViewer viewer;
+	
+	private boolean dirty;
+	
+	public PatientDetailsPage() {
+	}
+	
 
 	@Override
 	public void initialize(IManagedForm managedForm) {
 		this.managedForm = managedForm;
+		
 	}
 
 	@Override
@@ -46,13 +68,12 @@ public class PatientDetailsPage implements IDetailsPage {
 
 	@Override
 	public boolean isDirty() {
-		// TODO Auto-generated method stub
-		return false;
+		return dirty;
 	}
 
 	@Override
 	public void commit(boolean onSave) {
-		// TODO Auto-generated method stub
+		System.out.println("PatientDetialsPage commit save: " + onSave);
 
 	}
 
@@ -76,21 +97,28 @@ public class PatientDetailsPage implements IDetailsPage {
 
 	@Override
 	public void refresh() {
-		// TODO Auto-generated method stub
+		System.out.println("PatientDetailsPage Refresh");
 
 	}
 
 	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		System.out.println("SelectionChanged: " + selection);
-
+		commit(true);
+		if(!selection.isEmpty() && selection instanceof IStructuredSelection) {
+			if(bindingContext != null) bindingContext.dispose();
+			patient = (Patient)((IStructuredSelection)selection).getFirstElement();
+			bindingContext = initDataBindings();
+			//TODO reset viewer input
+		}
 	}
+
 
 	@Override
 	public void createContents(Composite parent) {
 		FormToolkit toolkit = managedForm.getToolkit();	
 		parent.setLayout(new ColumnLayout());
-		
+		DirtyController dirtyController = new DirtyController();
 
 		/* Patient Information */
 		Section gSection = toolkit.createSection(parent, Section.DESCRIPTION
@@ -104,13 +132,16 @@ public class PatientDetailsPage implements IDetailsPage {
 		gClient.setLayout(gLayout);
 	
 		toolkit.createLabel(gClient, "Name");
-		Text firstname = toolkit.createText(gClient, "", SWT.BORDER);
-		GridData data = new GridData(150, SWT.DEFAULT);
-		firstname.setLayoutData(data);
+		firstname = toolkit.createText(gClient, "", SWT.BORDER);
+		gd_firstname = new GridData(150, SWT.DEFAULT);
+		firstname.setLayoutData(gd_firstname);
+		firstname.addListener(SWT.Modify, dirtyController);
+		
 		toolkit.createLabel(gClient, "Nachname");
-		Text lastname = toolkit.createText(gClient, "", SWT.BORDER);
-		data = new GridData(150, SWT.DEFAULT);
-		lastname.setLayoutData(data);
+		lastname = toolkit.createText(gClient, "", SWT.BORDER);
+		gd_lastname = new GridData(150, SWT.DEFAULT);
+		lastname.setLayoutData(gd_lastname);
+		lastname.addListener(SWT.Modify, dirtyController);
 		
 		gSection.setClient(gClient);
 		
@@ -126,7 +157,7 @@ public class PatientDetailsPage implements IDetailsPage {
 		sClient.setLayout(sLayout);
 		
 		Table table = new Table(sClient, SWT.NULL);
-		data = new GridData(GridData.FILL_BOTH);
+		GridData data = new GridData(GridData.FILL_BOTH);
 		data.horizontalSpan = 3;
 		table.setLayoutData(data);
 		
@@ -140,10 +171,30 @@ public class PatientDetailsPage implements IDetailsPage {
 		toolkit.paintBordersFor(sClient);
 		sSection.setClient(sClient);
 		
-		TableViewer viewer = new SensorTableViewer(table);
+		viewer = new SensorTableViewer(table);
 		Set<SensorData> set = SampleDataFactory.getSensorData();
-		viewer.setInput(set.toArray(new SensorData[set.size()]));
+		viewer.setInput(set.toArray(new SensorData[set.size()]));	
 		
 	}
+	protected DataBindingContext initDataBindings() {
+		DataBindingContext bindingContext = new DataBindingContext();
+		//
+		IObservableValue firstnameObserveTextObserveWidget = SWTObservables.observeText(firstname, SWT.Modify);
+		IObservableValue patientFirstnameObserveValue = PojoObservables.observeValue(patient, "firstname");
+		bindingContext.bindValue(firstnameObserveTextObserveWidget, patientFirstnameObserveValue, null, null);
+		//
+		IObservableValue lastnameObserveTextObserveWidget = SWTObservables.observeText(lastname, SWT.Modify);
+		IObservableValue patientLastnameObserveValue = PojoObservables.observeValue(patient, "lastname");
+		bindingContext.bindValue(lastnameObserveTextObserveWidget, patientLastnameObserveValue, null, null);
+		//
+		return bindingContext;
+	}
+	
+	private class DirtyController implements Listener {
 
+		@Override
+		public void handleEvent(Event event) {
+			dirty = true;	
+		}		
+	}
 }

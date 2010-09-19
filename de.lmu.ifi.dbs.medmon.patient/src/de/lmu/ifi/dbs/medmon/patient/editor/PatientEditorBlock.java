@@ -2,6 +2,7 @@ package de.lmu.ifi.dbs.medmon.patient.editor;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -25,7 +26,12 @@ import de.lmu.ifi.dbs.medmon.patient.provider.PatientContentProvider;
 import de.lmu.ifi.dbs.medmon.patient.provider.PatientLabelProvider;
 
 public class PatientEditorBlock extends MasterDetailsBlock {
+	
+	private TableViewer viewer;
+	private PatientDetailsPage detailsPage;
+
 	public PatientEditorBlock() {
+		detailsPage = new PatientDetailsPage();
 	}
 
 	@Override
@@ -58,7 +64,7 @@ public class PatientEditorBlock extends MasterDetailsBlock {
 		sSection.setClient(sensorClient);
 		final SectionPart spart = new SectionPart(sSection);
 		managedForm.addPart(spart);
-		TableViewer viewer = new TableViewer(t);
+		viewer = new TableViewer(t);
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				managedForm.fireSelectionChanged(spart, event.getSelection());
@@ -72,8 +78,7 @@ public class PatientEditorBlock extends MasterDetailsBlock {
 
 	@Override
 	protected void registerPages(DetailsPart detailsPart) {
-		detailsPart.registerPage(Patient.class, new PatientDetailsPage());
-
+		detailsPart.registerPage(Patient.class, detailsPage);
 	}
 
 	@Override
@@ -99,7 +104,8 @@ public class PatientEditorBlock extends MasterDetailsBlock {
 		vaction.setImageDescriptor(Activator.getImageDescriptor("icons/th_vertical.gif"));
 		form.getToolBarManager().add(haction);
 		form.getToolBarManager().add(vaction);
-
 	}
+	
+
 
 }

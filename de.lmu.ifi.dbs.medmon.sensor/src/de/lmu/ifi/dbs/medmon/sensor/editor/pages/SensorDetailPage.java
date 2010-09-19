@@ -1,30 +1,48 @@
 package de.lmu.ifi.dbs.medmon.sensor.editor.pages;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.ColumnLayout;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 import de.lmu.ifi.dbs.medmon.algorithm.provider.AlgorithmContentProvider;
 import de.lmu.ifi.dbs.medmon.algorithm.provider.AlgorithmLabelProvider;
+import de.lmu.ifi.dbs.medmon.database.model.SensorData;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.core.databinding.beans.PojoObservables;
 
 public class SensorDetailPage implements IDetailsPage {
+	
+	private DataBindingContext bindingContext;
+	
+	public SensorDetailPage() {
+	}
 
 	private IManagedForm managedForm;
+	private SensorData data;
+	private Text tImport;
+	private Text tRecord;
 
 	@Override
 	public void initialize(IManagedForm managedForm) {
@@ -76,6 +94,13 @@ public class SensorDetailPage implements IDetailsPage {
 	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		System.out.println("SelectionChanged: " + selection);
+		if(!selection.isEmpty() && selection instanceof IStructuredSelection) {
+			if(bindingContext != null) bindingContext.dispose();
+			data = (SensorData)((IStructuredSelection)selection).getFirstElement();
+			tImport.setText(date2String(data.getTimestamp()));
+			tRecord.setText(date2String(data.getRecorded()));
+			bindingContext = initDataBindings();
+		}
 
 	}
 
@@ -85,7 +110,6 @@ public class SensorDetailPage implements IDetailsPage {
 		FormToolkit toolkit = managedForm.getToolkit();	
 		parent.setLayout(new ColumnLayout());
 		
-
 		/* Comments */
 		Section cSection = toolkit.createSection(parent, Section.DESCRIPTION
 				| Section.TITLE_BAR | Section.EXPANDED | Section.TWISTIE);
@@ -99,10 +123,15 @@ public class SensorDetailPage implements IDetailsPage {
 		cLayout.verticalSpacing = 10;
 		cClient.setLayout(cLayout);
 	
-		toolkit.createLabel(cClient, "Importiert");
-		toolkit.createLabel(cClient, "JJJJ-MM-TT");
+		Label label = toolkit.createLabel(cClient, "Importiert");
+		label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		
+		tImport = toolkit.createText(cClient, "", SWT.READ_ONLY);
+		tImport.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		toolkit.adapt(tImport, true, true);
 		toolkit.createLabel(cClient, "Aufgezeichnet");
-		toolkit.createLabel(cClient, "JJJJ-MM-TT");		
+		tRecord = toolkit.createText(cClient, "", SWT.READ_ONLY);	
 		
 		Text comments = toolkit.createText(cClient, "Kommentare", SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
@@ -146,4 +175,18 @@ public class SensorDetailPage implements IDetailsPage {
 
 	}
 
+	protected DataBindingContext initDataBindings() {
+		DataBindingContext bindingContext = new DataBindingContext();
+		//
+
+		//
+		return bindingContext;
+	}
+	
+	private String date2String(Date date) {
+		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyy");
+		if(date == null)
+			return "";
+		return df.format(date);
+	}
 }

@@ -5,11 +5,9 @@ import java.util.Set;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.forms.DetailsPart;
@@ -21,8 +19,6 @@ import org.eclipse.ui.forms.widgets.Section;
 
 import de.lmu.ifi.dbs.medmon.database.model.SensorData;
 import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
-import de.lmu.ifi.dbs.medmon.sensor.provider.SensorContentProvider;
-import de.lmu.ifi.dbs.medmon.sensor.provider.SensorLabelProvider;
 import de.lmu.ifi.dbs.medmon.sensor.viewer.SensorTableViewer;
 
 public class SensorEditorBlock extends MasterDetailsBlock {

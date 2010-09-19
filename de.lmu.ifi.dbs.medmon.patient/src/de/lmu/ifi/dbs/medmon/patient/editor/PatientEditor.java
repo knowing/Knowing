@@ -42,7 +42,7 @@ public class PatientEditor extends FormEditor {
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
+		System.out.println("PatientEditr doSave");
 		
 	}
 
