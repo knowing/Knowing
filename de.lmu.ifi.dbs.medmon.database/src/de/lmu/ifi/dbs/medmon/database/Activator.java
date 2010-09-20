@@ -3,6 +3,7 @@ package de.lmu.ifi.dbs.medmon.database;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+
 /**
  * The activator class controls the plug-in life cycle
  */

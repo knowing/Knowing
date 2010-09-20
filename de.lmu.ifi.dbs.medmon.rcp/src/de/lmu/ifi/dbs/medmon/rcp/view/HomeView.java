@@ -13,9 +13,8 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 
-import de.lmu.ifi.dbs.medmon.patient.perspective.PatientPerspectiveFactory;
 import de.lmu.ifi.dbs.medmon.rcp.Activator;
-import de.lmu.ifi.dbs.medmon.visualizer.perspectives.DefaultPerspectiveFactory;
+import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 
 public class HomeView extends ViewPart {
 
@@ -49,7 +48,7 @@ public class HomeView extends ViewPart {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				try {
-					PlatformUI.getWorkbench().showPerspective(PatientPerspectiveFactory.ID,
+					PlatformUI.getWorkbench().showPerspective(IMedmonConstants.PATIENT_PERSPECTIVE,
 							PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 				} catch (WorkbenchException e1) {
 					e1.printStackTrace();
@@ -85,7 +84,7 @@ public class HomeView extends ViewPart {
 			public void linkActivated(HyperlinkEvent e) {
 				try {
 					PlatformUI.getWorkbench().showPerspective(
-							DefaultPerspectiveFactory.ID,
+							IMedmonConstants.VISUALIZE_PERSPECTIVE_DEFAULT,
 							PlatformUI.getWorkbench()
 									.getActiveWorkbenchWindow());
 				} catch (WorkbenchException e1) {
