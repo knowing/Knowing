@@ -49,7 +49,6 @@ public class AlgorithmContentProvider implements IStructuredContentProvider {
 		} catch (CoreException ex) {
 			System.out.println(ex.getMessage());
 		}
-
 		return algorithms.toArray(new ISensorDataAlgorithm[algorithms.size()]);
 	}
 
