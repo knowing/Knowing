@@ -6,6 +6,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
+import de.lmu.ifi.dbs.medmon.algorithm.extension.ISensorDataAlgorithm;
+
 /**
  * Simple LabelProvider for ListViewer and TableViewer.
  * TableViewer supports upto three columns: Name | Description | Version

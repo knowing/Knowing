@@ -17,7 +17,7 @@ import org.eclipse.ui.forms.widgets.Section;
 
 import org.eclipse.swt.widgets.Label;
 
-import de.lmu.ifi.dbs.medmon.algorithm.provider.ISensorDataAlgorithm;
+import de.lmu.ifi.dbs.medmon.algorithm.extension.ISensorDataAlgorithm;
 import de.lmu.ifi.dbs.medmon.algorithm.ui.AlgorithmDetailComposite;
 import org.eclipse.swt.layout.FillLayout;
 

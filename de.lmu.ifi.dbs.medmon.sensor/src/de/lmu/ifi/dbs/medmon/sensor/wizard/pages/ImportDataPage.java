@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.medmon.sensor.dataImport.wizard;
+package de.lmu.ifi.dbs.medmon.sensor.wizard.pages;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -14,12 +14,12 @@ import org.eclipse.swt.widgets.Table;
 
 import de.lmu.ifi.dbs.medmon.sensor.viewer.SensorTableViewer;
 
-public class ImportPage3Data extends WizardPage{
+public class ImportDataPage extends WizardPage{
 
 	private Composite container;
 	private SensorTableViewer viewer;
 	
-	protected ImportPage3Data() {
+	public ImportDataPage() {
 		super("Daten auswaehlen");
 		setMessage("Die zu analysierenden Daten auswaehlen");
 		setTitle("Sensordaten");

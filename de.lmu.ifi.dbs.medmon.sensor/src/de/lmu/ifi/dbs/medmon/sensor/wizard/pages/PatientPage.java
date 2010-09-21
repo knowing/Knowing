@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.medmon.sensor.dataImport.wizard;
+package de.lmu.ifi.dbs.medmon.sensor.wizard.pages;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
@@ -15,7 +15,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
 
-public class ImportPage1Patient extends WizardPage {
+public class PatientPage extends WizardPage {
 
 	//User can choose next, but not finish
 	private boolean flip = true;
@@ -29,7 +29,7 @@ public class ImportPage1Patient extends WizardPage {
 	private Button select; //Select special Patient
 	private PatientPageController controller;
 	
-	protected ImportPage1Patient() {
+	public PatientPage() {
 		super("Patient auswaehlen");
 		initCurrentPatient();
 		setDescription("Bitte waehlen sie einen Patienten aus");

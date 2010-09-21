@@ -16,8 +16,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 import de.lmu.ifi.dbs.medmon.algorithm.provider.AlgorithmDetailsPageProvider;
-import de.lmu.ifi.dbs.medmon.algorithm.provider.ISensorDataAlgorithm;
-import de.lmu.ifi.dbs.medmon.algorithm.provider.impl.SimpleAnalyzer;
 import de.lmu.ifi.dbs.medmon.algorithm.ui.AlgorithmTableViewer;
 
 public class AlgorithmEditorBlock extends MasterDetailsBlock {

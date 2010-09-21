@@ -19,7 +19,7 @@ public class SummaryPage extends WizardPage {
 	private String MISSING_IMAGE = "icons/24/gtk-close.png";
 	private String RES_PLUGIN = "de.lmu.ifi.dbs.medmon.rcp";
 
-	protected SummaryPage() {
+	public SummaryPage() {
 		super("Zusammenfassung");
 		setMessage("Patientendaten analyisieren");
 		setTitle("Patienten Wizard");

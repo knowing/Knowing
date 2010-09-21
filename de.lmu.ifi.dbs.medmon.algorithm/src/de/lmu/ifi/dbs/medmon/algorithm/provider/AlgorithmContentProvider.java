@@ -10,6 +10,8 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import de.lmu.ifi.dbs.medmon.algorithm.extension.ISensorDataAlgorithm;
+
 public class AlgorithmContentProvider implements IStructuredContentProvider {
 
 	@Override

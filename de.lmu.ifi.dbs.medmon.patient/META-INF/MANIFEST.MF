@@ -12,15 +12,22 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.databinding.observable,
  org.eclipse.core.databinding.property,
  org.eclipse.jface.databinding,
- com.ibm.icu
+ com.ibm.icu,
+ org.eclipse.equinox.ds;bundle-version="1.2.0",
+ org.eclipse.osgi.services;bundle-version="3.2.100"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.lmu.ifi.dbs.medmon.patient.perspective,
  de.lmu.ifi.dbs.medmon.patient.provider
-Import-Package: de.lmu.ifi.dbs.medmon.algorithm.provider,
+Import-Package: de.lmu.ifi.dbs.medmon.algorithm.extension,
+ de.lmu.ifi.dbs.medmon.algorithm.provider,
+ de.lmu.ifi.dbs.medmon.algorithm.wizards.pages,
  de.lmu.ifi.dbs.medmon.database.model,
  de.lmu.ifi.dbs.medmon.database.sample,
+ de.lmu.ifi.dbs.medmon.patient.service,
  de.lmu.ifi.dbs.medmon.rcp.platform,
  de.lmu.ifi.dbs.medmon.sensor.editor.pages,
  de.lmu.ifi.dbs.medmon.sensor.provider,
- de.lmu.ifi.dbs.medmon.sensor.viewer
+ de.lmu.ifi.dbs.medmon.sensor.viewer,
+ de.lmu.ifi.dbs.medmon.sensor.wizard.pages
+Service-Component: OSGI-INF/component.xml

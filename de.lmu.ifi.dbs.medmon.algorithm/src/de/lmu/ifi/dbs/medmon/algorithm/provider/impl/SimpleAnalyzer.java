@@ -2,7 +2,7 @@ package de.lmu.ifi.dbs.medmon.algorithm.provider.impl;
 
 import java.util.Properties;
 
-import de.lmu.ifi.dbs.medmon.algorithm.provider.ISensorDataAlgorithm;
+import de.lmu.ifi.dbs.medmon.algorithm.extension.ISensorDataAlgorithm;
 import de.lmu.ifi.dbs.medmon.database.model.SensorData;
 
 public class SimpleAnalyzer implements ISensorDataAlgorithm {

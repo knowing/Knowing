@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.medmon.algorithm.provider;
+package de.lmu.ifi.dbs.medmon.algorithm.extension;
 
 import java.util.Properties;
 

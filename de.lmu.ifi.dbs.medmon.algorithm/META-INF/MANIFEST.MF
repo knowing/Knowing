@@ -9,6 +9,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.forms;bundle-version="3.5.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.lmu.ifi.dbs.medmon.database.model
+Import-Package: de.lmu.ifi.dbs.medmon.algorithm.extension,
+ de.lmu.ifi.dbs.medmon.database.model
 Export-Package: de.lmu.ifi.dbs.medmon.algorithm.provider,
  de.lmu.ifi.dbs.medmon.algorithm.wizards.pages

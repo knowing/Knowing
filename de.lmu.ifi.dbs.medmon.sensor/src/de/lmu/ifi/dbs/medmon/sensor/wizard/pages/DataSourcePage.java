@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.medmon.sensor.dataImport.wizard;
+package de.lmu.ifi.dbs.medmon.sensor.wizard.pages;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
@@ -22,7 +22,7 @@ import org.eclipse.ui.PlatformUI;
 import de.lmu.ifi.dbs.medmon.database.model.SensorData;
 import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
 
-public class ImportPage2Source extends WizardPage {
+public class DataSourcePage extends WizardPage {
 
 	private boolean flip = false;
 
@@ -36,7 +36,7 @@ public class ImportPage2Source extends WizardPage {
 	
 	private SensorData[] sensorData;
 
-	protected ImportPage2Source() {
+	public DataSourcePage() {
 		super("Datenquelle");
 		setTitle("Datenquellen");
 		setDescription("Waehlen sie einen Datenquellen fuer die Sensordaten aus");

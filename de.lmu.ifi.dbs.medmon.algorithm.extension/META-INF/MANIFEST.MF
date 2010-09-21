@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Extension
+Bundle-SymbolicName: de.lmu.ifi.dbs.medmon.algorithm.extension
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.lmu.ifi.dbs.medmon.database.model
+Export-Package: de.lmu.ifi.dbs.medmon.algorithm.extension

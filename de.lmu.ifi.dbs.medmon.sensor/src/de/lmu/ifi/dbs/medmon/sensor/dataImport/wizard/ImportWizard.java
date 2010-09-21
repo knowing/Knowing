@@ -4,11 +4,13 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 
 import de.lmu.ifi.dbs.medmon.algorithm.wizards.pages.AnalyzePage;
+import de.lmu.ifi.dbs.medmon.sensor.wizard.pages.PatientPage;
+import de.lmu.ifi.dbs.medmon.sensor.wizard.pages.DataSourcePage;
 
 public class ImportWizard extends Wizard {
 
-	private ImportPage1Patient patientPage;
-	private ImportPage2Source sourcePage;
+	private PatientPage patientPage;
+	private DataSourcePage sourcePage;
 	//private ImportPage3Data dataPage;
 	private AnalyzePage analyzePage;
 	
@@ -19,8 +21,8 @@ public class ImportWizard extends Wizard {
 	
 	@Override
 	public void addPages() {
-		patientPage = new ImportPage1Patient();
-		sourcePage = new ImportPage2Source();
+		patientPage = new PatientPage();
+		sourcePage = new DataSourcePage();
 		analyzePage = new  AnalyzePage();
 		addPage(patientPage);
 		addPage(sourcePage);
@@ -31,7 +33,7 @@ public class ImportWizard extends Wizard {
 			
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
-		if(page instanceof ImportPage2Source) 
+		if(page instanceof DataSourcePage) 
 			sourcePage.importData();
 		return super.getNextPage(page);
 	}

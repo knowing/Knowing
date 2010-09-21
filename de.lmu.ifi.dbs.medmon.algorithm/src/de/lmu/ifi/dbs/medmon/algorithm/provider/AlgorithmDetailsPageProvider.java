@@ -1,9 +1,11 @@
 package de.lmu.ifi.dbs.medmon.algorithm.provider;
 
 import org.eclipse.ui.forms.IDetailsPage;
+
 import org.eclipse.ui.forms.IDetailsPageProvider;
 
 import de.lmu.ifi.dbs.medmon.algorithm.editor.AlgorithmDetailsPage;
+import de.lmu.ifi.dbs.medmon.algorithm.extension.ISensorDataAlgorithm;
 
 /**
  * Provides DetailPages for every class implementing the interface
