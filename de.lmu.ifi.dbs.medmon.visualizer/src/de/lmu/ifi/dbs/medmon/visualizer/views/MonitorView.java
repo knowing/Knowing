@@ -3,13 +3,6 @@ package de.lmu.ifi.dbs.medmon.visualizer.views;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.*;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
 
 import org.jfree.chart.ChartFactory;
@@ -55,7 +48,6 @@ public class MonitorView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		JFreeChart chart = createChart(createDataset());
 		new ChartComposite(parent, SWT.NONE, chart, true);
-
 	}
 	
 	/**

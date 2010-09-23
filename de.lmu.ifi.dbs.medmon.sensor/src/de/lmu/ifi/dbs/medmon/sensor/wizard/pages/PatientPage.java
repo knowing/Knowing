@@ -14,6 +14,8 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
+import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
+import de.lmu.ifi.dbs.medmon.sensor.Activator;
 
 public class PatientPage extends WizardPage {
 
@@ -27,7 +29,11 @@ public class PatientPage extends WizardPage {
 	private Button rCurrent; //Radio Current Patient
 	private Button rSelect; //Radio Select Patient
 	private Button select; //Select special Patient
+	private Label lPatient;
+	
 	private PatientPageController controller;
+
+	
 	
 	public PatientPage() {
 		super("Patient auswaehlen");
@@ -37,9 +43,8 @@ public class PatientPage extends WizardPage {
 	}
 	
 	private void initCurrentPatient() {
-		//TODO Get real DefaultPatient
-		patient = SampleDataFactory.getData()[0];
-		setMessage(patient.toString());
+		patient = (Patient) Activator.getPatientService().getSelection(IPatientService.PATIENT);
+		setMessage("Patient ausgewaehlt: " + patient);
 	}
 	
 	@Override
@@ -56,7 +61,8 @@ public class PatientPage extends WizardPage {
 		rCurrent = new Button(container, SWT.RADIO);
 		rCurrent.addSelectionListener(controller);
 		rCurrent.setSelection(true);
-		new Label(container, SWT.NONE).setText("Aktueller Patient");
+		lPatient = new Label(container, SWT.NONE);
+		lPatient.setText("Aktueller Patient (" + patient + ")");
 		
 		rSelect  = new Button(container, SWT.RADIO);
 		rSelect.addSelectionListener(controller);

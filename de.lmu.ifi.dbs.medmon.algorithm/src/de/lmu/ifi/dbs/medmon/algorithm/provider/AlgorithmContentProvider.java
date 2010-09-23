@@ -31,7 +31,6 @@ public class AlgorithmContentProvider implements IStructuredContentProvider {
 		final LinkedList<ISensorDataAlgorithm> algorithms = new LinkedList<ISensorDataAlgorithm>();
 		try {
 			for (IConfigurationElement e : config) {
-				System.out.println("Evaluating extension");
 				final Object o = e.createExecutableExtension("class");
 				if (o instanceof ISensorDataAlgorithm) {
 					ISafeRunnable runnable = new ISafeRunnable() {

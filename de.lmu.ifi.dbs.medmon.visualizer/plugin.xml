@@ -9,11 +9,12 @@
             id="de.lmu.ifi.dbs.medmon.visualizer">
       </category>
       <view
-            name="Monitor View"
-            icon="icons/sample.gif"
+            allowMultiple="true"
             category="de.lmu.ifi.dbs.medmon.visualizer"
             class="de.lmu.ifi.dbs.medmon.visualizer.views.MonitorView"
-            id="de.lmu.ifi.dbs.medmon.visualizer.views.MonitorView">
+            icon="icons/sample.gif"
+            id="de.lmu.ifi.dbs.medmon.visualizer.views.MonitorView"
+            name="Monitor View">
       </view>
    </extension>
    <extension
@@ -59,6 +60,14 @@
                visible="true">
          </view>
       </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.lmu.ifi.dbs.medmon.visualizer.handler.OpenDefaultPerspectiveHandler"
+            id="de.lmu.ifi.dbs.medmon.visualizer.defaultPerspective"
+            name="Open default visualizer perspective">
+      </command>
    </extension>
 
 </plugin>

@@ -9,5 +9,8 @@ Require-Bundle: org.eclipse.ui,
  de.lmu.ifi.dbs.medmon.jfreechart.libs;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: de.lmu.ifi.dbs.medmon.visualizer.perspectives,
+Export-Package: de.lmu.ifi.dbs.medmon.visualizer.handler,
+ de.lmu.ifi.dbs.medmon.visualizer.perspectives,
  de.lmu.ifi.dbs.medmon.visualizer.views
+Import-Package: de.lmu.ifi.dbs.medmon.algorithm.extension,
+ de.lmu.ifi.dbs.medmon.rcp.platform

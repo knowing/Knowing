@@ -7,6 +7,15 @@ import de.lmu.ifi.dbs.medmon.algorithm.wizards.pages.AnalyzePage;
 import de.lmu.ifi.dbs.medmon.sensor.wizard.pages.PatientPage;
 import de.lmu.ifi.dbs.medmon.sensor.wizard.pages.DataSourcePage;
 
+/**
+ * Wizard to quickly analyze a patient. Asks for:
+ * <li>patient
+ * <li>data source
+ * <li>algorithm
+ * 
+ * @author muki
+ * @version 0.3
+ */
 public class ImportWizard extends Wizard {
 
 	private PatientPage patientPage;
