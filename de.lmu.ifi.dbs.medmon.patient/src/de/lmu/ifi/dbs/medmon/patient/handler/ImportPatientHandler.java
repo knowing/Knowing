@@ -6,11 +6,11 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandlerListener;
 
-public class PatientImportHandler extends AbstractHandler {
+public class ImportPatientHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		System.out.println("PatientImportHandler");
+		System.out.println("PatientImportHandler handle: " + event);
 		return null;
 	}
 

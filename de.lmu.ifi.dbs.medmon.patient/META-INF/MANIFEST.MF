@@ -29,5 +29,6 @@ Import-Package: de.lmu.ifi.dbs.medmon.algorithm.extension,
  de.lmu.ifi.dbs.medmon.sensor.editor.pages,
  de.lmu.ifi.dbs.medmon.sensor.provider,
  de.lmu.ifi.dbs.medmon.sensor.viewer,
- de.lmu.ifi.dbs.medmon.sensor.wizard.pages
+ de.lmu.ifi.dbs.medmon.sensor.wizard.pages,
+ de.lmu.ifi.dbs.medmon.visualizer.handler
 Service-Component: OSGI-INF/component.xml

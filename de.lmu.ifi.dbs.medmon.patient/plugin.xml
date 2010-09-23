@@ -1,67 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-
-   <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            id="de.lmu.ifi.dbs.medmon.patient.actionSet"
-            label="Patientenverwaltung Action Set"
-            visible="false">
-         <menu
-               id="Patientenverwaltung"
-               label="Patientenverwaltung ">
-            <separator
-                  name="PatientenverwaltungGroup">
-            </separator>
-         </menu>
-         <action
-               definitionId="de.lmu.ifi.dbs.medmon.patient.import"
-               icon="icons/16/gtk-go-down.png"
-               id="de.lmu.ifi.dbs.medmon.patient.importAction"
-               label="Import Patient"
-               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
-               style="push"
-               toolbarPath="PatientenverwaltungGroup">
-         </action>
-         <action
-               definitionId="de.lmu.ifi.dbs.medmon.patient.export"
-               icon="icons/16/gtk-go-up.png"
-               id="de.lmu.ifi.dbs.medmon.patient.exportAction"
-               label="Export Patient"
-               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
-               style="push"
-               toolbarPath="PatientenverwaltungGroup">
-         </action>
-         <action
-               definitionId="de.lmu.ifi.dbs.medmon.patient.delete"
-               icon="icons/16/gtk-remove.png"
-               id="de.lmu.ifi.dbs.medmon.patient.deleteAction"
-               label="Patient entfernen"
-               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
-               style="push"
-               toolbarPath="PatientenverwaltungGroup">
-         </action>
-         <action
-               definitionId="de.lmu.ifi.dbs.medmon.patient.OpenPatientEditor"
-               icon="icons/16/gtk-edit.png"
-               id="de.lmu.ifi.dbs.medmon.patient.editAction"
-               label="Patient bearbeiten"
-               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
-               style="push"
-               toolbarPath="PatientenverwaltungGroup">
-         </action>
-         <action
-               definitionId="de.lmu.ifi.dbs.medmon.patient.create"
-               icon="icons/16/gtk-add.png"
-               id="de.lmu.ifi.dbs.medmon.patient.createAction"
-               label="Patient erstellen"
-               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
-               style="push"
-               toolbarPath="PatientenverwaltungGroup">
-         </action>
-      </actionSet>
-   </extension>
    <extension
          point="org.eclipse.ui.views">
       <category
@@ -127,7 +66,7 @@
             name="Patient entfernen">
       </command>
       <command
-            defaultHandler="de.lmu.ifi.dbs.medmon.patient.handler.PatientImportHandler"
+            defaultHandler="de.lmu.ifi.dbs.medmon.patient.handler.ImportPatientHandler"
             id="de.lmu.ifi.dbs.medmon.patient.import"
             name="Patient importieren">
       </command>
@@ -136,6 +75,67 @@
             id="de.lmu.ifi.dbs.medmon.patient.export"
             name="Patient exportieren">
       </command>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="de.lmu.ifi.dbs.medmon.patient.actionSet"
+            label="Patientenverwaltung Action Set"
+            visible="false">
+         <menu
+               id="Patientenverwaltung"
+               label="Patientenverwaltung ">
+            <separator
+                  name="PatientenverwaltungGroup">
+            </separator>
+         </menu>
+         <action
+               definitionId="de.lmu.ifi.dbs.medmon.patient.import"
+               icon="icons/16/gtk-go-down.png"
+               id="de.lmu.ifi.dbs.medmon.patient.importAction"
+               label="Import Patient"
+               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
+               style="push"
+               toolbarPath="PatientenverwaltungGroup">
+         </action>
+         <action
+               definitionId="de.lmu.ifi.dbs.medmon.patient.export"
+               icon="icons/16/gtk-go-up.png"
+               id="de.lmu.ifi.dbs.medmon.patient.exportAction"
+               label="Export Patient"
+               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
+               style="push"
+               toolbarPath="PatientenverwaltungGroup">
+         </action>
+         <action
+               definitionId="de.lmu.ifi.dbs.medmon.patient.delete"
+               icon="icons/16/gtk-remove.png"
+               id="de.lmu.ifi.dbs.medmon.patient.deleteAction"
+               label="Patient entfernen"
+               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
+               style="push"
+               toolbarPath="PatientenverwaltungGroup">
+         </action>
+         <action
+               definitionId="de.lmu.ifi.dbs.medmon.patient.OpenPatientEditor"
+               icon="icons/16/gtk-edit.png"
+               id="de.lmu.ifi.dbs.medmon.patient.editAction"
+               label="Patient bearbeiten"
+               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
+               style="push"
+               toolbarPath="PatientenverwaltungGroup">
+         </action>
+         <action
+               definitionId="de.lmu.ifi.dbs.medmon.patient.create"
+               icon="icons/16/gtk-add.png"
+               id="de.lmu.ifi.dbs.medmon.patient.createAction"
+               label="Patient erstellen"
+               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
+               style="push"
+               toolbarPath="PatientenverwaltungGroup">
+         </action>
+      </actionSet>
    </extension>
 
 </plugin>
