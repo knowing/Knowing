@@ -2,6 +2,7 @@ package de.lmu.ifi.dbs.medmon.algorithm.provider.impl;
 
 import java.util.Properties;
 
+import de.lmu.ifi.dbs.medmon.algorithm.extension.IAnalyzedData;
 import de.lmu.ifi.dbs.medmon.algorithm.extension.ISensorDataAlgorithm;
 import de.lmu.ifi.dbs.medmon.database.model.SensorData;
 
@@ -22,9 +23,9 @@ public class SimpleAnalyzer implements ISensorDataAlgorithm {
 	}
 
 	@Override
-	public Object analyze(SensorData[] data) {
-		// TODO Auto-generated method stub
-		return null;
+	public IAnalyzedData analyze(SensorData[] data) {
+		//TODO InputData missing
+		return new SimpleAnalyzerData();
 	}
 
 	@Override

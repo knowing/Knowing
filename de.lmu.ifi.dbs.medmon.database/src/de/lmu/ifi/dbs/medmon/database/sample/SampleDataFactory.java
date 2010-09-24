@@ -47,6 +47,18 @@ public class SampleDataFactory {
 		return data.toArray(new SensorData[data.size()]);
 	}
 	
+	public static SensorData[] getSensorDataArray(Date date) {
+		Set<SensorData> set = new HashSet<SensorData>();
+		set.add(new SensorData(2, 0, 1,date));
+		set.add(new SensorData(1, 1, 0,date));
+		set.add(new SensorData(3, 0, 0,date));
+		set.add(new SensorData(0, 2, 3,date));
+		set.add(new SensorData(0, 2, 2,date));
+		set.add(new SensorData(1, 4, 2,date));
+		set.add(new SensorData(2, 1, 1,date));
+		return set.toArray(new SensorData[set.size()]);
+	}
+	
 	public static Date randomDate() {
 		Double d = Math.random();
 		if(d == 0.0)

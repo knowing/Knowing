@@ -3,7 +3,9 @@ package de.lmu.ifi.dbs.medmon.patient.editor;
 import javax.management.openmbean.OpenDataException;
 
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -24,8 +26,12 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.handlers.IHandlerService;
 
+import de.lmu.ifi.dbs.medmon.algorithm.extension.ISensorDataAlgorithm;
+import de.lmu.ifi.dbs.medmon.algorithm.provider.AlgorithmContentProvider;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
+import de.lmu.ifi.dbs.medmon.patient.Activator;
+import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.sensor.viewer.SensorTableViewer;
 import de.lmu.ifi.dbs.medmon.visualizer.handler.OpenDefaultPerspectiveHandler;
@@ -74,7 +80,6 @@ public class PatientDetailsPage implements IDetailsPage {
 	@Override
 	public void commit(boolean onSave) {
 		System.out.println("PatientDetialsPage commit save: " + onSave);
-
 	}
 
 	@Override
@@ -115,7 +120,7 @@ public class PatientDetailsPage implements IDetailsPage {
 	public void createContents(Composite parent) {
 		FormToolkit toolkit = managedForm.getToolkit();
 		parent.setLayout(new ColumnLayout());
-		Controller dirtyController = new Controller();
+		Controller controller = new Controller();
 
 		/* Patient Information */
 		Section gSection = toolkit.createSection(parent, Section.DESCRIPTION
@@ -132,13 +137,13 @@ public class PatientDetailsPage implements IDetailsPage {
 		firstname = toolkit.createText(gClient, "", SWT.BORDER);
 		gd_firstname = new GridData(150, SWT.DEFAULT);
 		firstname.setLayoutData(gd_firstname);
-		firstname.addListener(SWT.Modify, dirtyController);
+		firstname.addListener(SWT.Modify, controller);
 
 		toolkit.createLabel(gClient, "Nachname");
 		lastname = toolkit.createText(gClient, "", SWT.BORDER);
 		gd_lastname = new GridData(150, SWT.DEFAULT);
 		lastname.setLayoutData(gd_lastname);
-		lastname.addListener(SWT.Modify, dirtyController);
+		lastname.addListener(SWT.Modify, controller);
 
 		gSection.setClient(gClient);
 
@@ -160,6 +165,7 @@ public class PatientDetailsPage implements IDetailsPage {
 
 		analyse = toolkit.createButton(sClient, "analysieren", SWT.PUSH);
 		analyse.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+		analyse.setEnabled(false);
 		delete = toolkit.createButton(sClient, "entfernen", SWT.PUSH);
 		delete.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 		iimport = toolkit.createButton(sClient, "importieren", SWT.PUSH);
@@ -169,6 +175,7 @@ public class PatientDetailsPage implements IDetailsPage {
 		sSection.setClient(sClient);
 
 		viewer = new SensorTableViewer(table);
+		viewer.addSelectionChangedListener(controller);
 		viewer.setInput(SampleDataFactory.getSensorDataArray());
 		hookActions();
 	}
@@ -191,18 +198,39 @@ public class PatientDetailsPage implements IDetailsPage {
 		analyse.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				Activator.getPatientService().setSelection(viewer.getSelection()); //Set SensorData
+				setDefaultAlgorithm();
 				OpenDefaultPerspectiveHandler.excuteCommand();
 			}
 		});
 		
 	}
+	
+	//TODO Create Configuration for standard algorithm
+	/**
+	 * Uebergangsmethode bis per Konfiguration ein Standardalgorithmus
+	 * gesetzt werden kann!!
+	 */
+	private void setDefaultAlgorithm() {
+		ISensorDataAlgorithm[] algorithms = AlgorithmContentProvider.getAlgorithms();
+		if(algorithms != null && algorithms[0] != null)
+			Activator.getPatientService().setSelection(algorithms[0], IPatientService.ALGORITHM);
+	}
 
-	private class Controller implements Listener {
+	private class Controller implements Listener, ISelectionChangedListener {
 
 		@Override
 		public void handleEvent(Event event) {
 			//TODO hook all buttons
 			dirty = true;
+		}
+
+		@Override
+		public void selectionChanged(SelectionChangedEvent event) {
+			if(event.getSelection().isEmpty())
+				analyse.setEnabled(false);
+			else
+				analyse.setEnabled(true);
 		}
 	}
 }

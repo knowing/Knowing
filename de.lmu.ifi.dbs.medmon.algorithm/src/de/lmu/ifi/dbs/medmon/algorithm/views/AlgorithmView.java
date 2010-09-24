@@ -9,15 +9,13 @@ import org.eclipse.ui.forms.widgets.ColumnLayout;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.*;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
+
+import de.lmu.ifi.dbs.medmon.algorithm.Activator;
+import de.lmu.ifi.dbs.medmon.algorithm.extension.ISensorDataAlgorithm;
+import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 
 /**
  * This sample class demonstrates how to plug-in a new workbench view. The view
@@ -43,6 +41,8 @@ public class AlgorithmView extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
+		System.out.println("Create AlgorithmViewPartControl");
+		ISensorDataAlgorithm algorithm = getAlgorithm();
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 		toolkit.adapt(parent);
 		parent.setLayout(new ColumnLayout());
@@ -50,7 +50,7 @@ public class AlgorithmView extends ViewPart {
 		/* Algorithm Description Section */
 		Section aSection = toolkit.createSection(parent, Section.DESCRIPTION
 				| Section.TWISTIE | Section.EXPANDED | Section.TITLE_BAR);
-		aSection.setText("Algorithmusname");
+		aSection.setText(algorithm.getName());
 		aSection.setDescription("Allgemeine Informationen zum Algorithmus");
 		
 		Composite aClient = toolkit.createComposite(aSection);
@@ -95,8 +95,15 @@ public class AlgorithmView extends ViewPart {
 		toolkit.adapt(combo);
 		
 		pSection.setClient(pClient);
+		
 	}
 
 	public void setFocus() {
+		System.out.println("SetFocus on AlgorithmView");
+	}
+	
+	private ISensorDataAlgorithm getAlgorithm() {
+		return (ISensorDataAlgorithm) Activator.getPatientService()
+				.getSelection(IPatientService.ALGORITHM);
 	}
 }

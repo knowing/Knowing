@@ -6,3 +6,4 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.lmu.ifi.dbs.medmon.database.model
 Export-Package: de.lmu.ifi.dbs.medmon.algorithm.extension
+Require-Bundle: org.eclipse.swt;bundle-version="3.6.0"

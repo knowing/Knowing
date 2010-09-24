@@ -10,6 +10,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 import de.lmu.ifi.dbs.medmon.database.model.SensorData;
+import de.lmu.ifi.dbs.medmon.sensor.data.ISensorDataContainer;
 
 
 public class SensorLabelProvider extends LabelProvider implements
@@ -17,12 +18,20 @@ public class SensorLabelProvider extends LabelProvider implements
 
 	@Override
 	public String getText(Object element) {
-		return getColumnText(element, 0);
+		if(element instanceof SensorData)
+			return getColumnText(element, 0);
+		else if(element instanceof ISensorDataContainer)
+			return ((ISensorDataContainer)element).getName();
+		return element.toString();
 	}
 	
 	@Override
 	public Image getImage(Object element) {	
-		return getColumnImage(element, 0);
+		if(element instanceof SensorData)
+			return getColumnImage(element, 0);
+		else if(element instanceof ISensorDataContainer)
+			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+		return null;
 	}
 	
 	@Override

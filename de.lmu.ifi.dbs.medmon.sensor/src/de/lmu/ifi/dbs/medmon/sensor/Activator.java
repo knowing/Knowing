@@ -3,7 +3,7 @@ package de.lmu.ifi.dbs.medmon.sensor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 
@@ -17,6 +17,8 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
+
+	private static ServiceTracker patientTracker;
 	
 	/**
 	 * The constructor
@@ -31,6 +33,8 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		patientTracker = new ServiceTracker(context, IPatientService.class.getName(), null);
+		patientTracker.open();
 	}
 
 	/*
@@ -40,6 +44,7 @@ public class Activator extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
+		patientTracker.close();
 	}
 
 	/**
@@ -63,10 +68,6 @@ public class Activator extends AbstractUIPlugin {
 	}
 	
 	public static IPatientService getPatientService() {
-		BundleContext context = plugin.getBundle().getBundleContext();
-		ServiceReference reference = context.getServiceReference(IPatientService.class.getName());
-		if(reference != null)
-			return (IPatientService) context.getService(reference);
-		return null;
+		return (IPatientService) patientTracker.getService();
 	}
 }

@@ -9,7 +9,7 @@ import de.lmu.ifi.dbs.medmon.database.model.SensorData;
  * SenorData.
  * 
  * @author muki
- * @version 0.1
+ * @version 1.0
  */
 public interface ISensorDataAlgorithm {
 
@@ -22,7 +22,7 @@ public interface ISensorDataAlgorithm {
 	 * @param data - SensorData which should be analyzed
 	 * @return the new analyzed Object. 
 	 */
-	public Object analyze(SensorData[] data);
+	public IAnalyzedData analyze(SensorData[] data);
 	
 	/**
 	 * If the algorithm has parameters, it should be configured

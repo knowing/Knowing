@@ -12,20 +12,34 @@ import org.eclipse.jface.viewers.Viewer;
 
 import de.lmu.ifi.dbs.medmon.algorithm.extension.ISensorDataAlgorithm;
 
+/**
+ * Needs no specified input element. Provides all registered 
+ * ISensorDataAlgorithm Extensions.
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.2
+ */
 public class AlgorithmContentProvider implements IStructuredContentProvider {
 
 	@Override
 	public void dispose() {
-
 	}
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
 	}
 
 	@Override
 	public Object[] getElements(Object inputElement) {
+		return getAlgorithms();
+	}
+
+	/**
+	 * Provides all registered ISensorDataAlgorithm Extensions.
+	 * 
+	 * @return ISensorDataAlgorihtm[] containing all registered Extensions
+	 */
+	public static ISensorDataAlgorithm[] getAlgorithms() {
 		IConfigurationElement[] config = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(ISensorDataAlgorithm.ALGORITHM_ID);
 		final LinkedList<ISensorDataAlgorithm> algorithms = new LinkedList<ISensorDataAlgorithm>();
@@ -41,7 +55,7 @@ public class AlgorithmContentProvider implements IStructuredContentProvider {
 
 						@Override
 						public void run() throws Exception {
-							algorithms.add((ISensorDataAlgorithm)o);
+							algorithms.add((ISensorDataAlgorithm) o);
 						}
 					};
 					SafeRunner.run(runnable);

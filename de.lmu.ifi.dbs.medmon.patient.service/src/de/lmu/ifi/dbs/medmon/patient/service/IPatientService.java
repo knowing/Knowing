@@ -2,6 +2,7 @@ package de.lmu.ifi.dbs.medmon.patient.service;
 
 import org.eclipse.jface.viewers.ISelection;
 
+import de.lmu.ifi.dbs.medmon.algorithm.extension.IAnalyzedData;
 import de.lmu.ifi.dbs.medmon.algorithm.extension.ISensorDataAlgorithm;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.database.model.SensorData;
@@ -20,6 +21,7 @@ public interface IPatientService {
 	public static final String PATIENT = Patient.class.getName();
 	public static final String SENSOR_DATA = SensorData.class.getName();
 	public static final String ALGORITHM = ISensorDataAlgorithm.class.getName();
+	public static final String ANALYZED_DATA = IAnalyzedData.class.getName();
 	
 	/**
 	 * Checks if the selection is supported and add it.
@@ -27,6 +29,8 @@ public interface IPatientService {
 	 * @return true if the selection was successfully set
 	 */
 	public boolean setSelection(ISelection selection);
+	
+	public boolean setSelection(Object object, String clazz);
 	
 	/**
 	 * 

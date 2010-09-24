@@ -71,7 +71,7 @@ public class PatientEditorBlock extends MasterDetailsBlock {
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				managedForm.fireSelectionChanged(spart, event.getSelection());
-				patientService.setSelection(event.getSelection());
+				patientService.setSelection(event.getSelection()); //Set patient 
 			}
 		});
 		viewer.setContentProvider(new PatientContentProvider());
