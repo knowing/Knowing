@@ -6,7 +6,7 @@
    <extension
          point="org.eclipse.ui.views">
       <category
-            name="Algorithms Category"
+            name="Algorithmen"
             id="de.lmu.ifi.dbs.medmon.algorithm">
       </category>
       <view
@@ -15,6 +15,13 @@
             category="de.lmu.ifi.dbs.medmon.algorithm"
             class="de.lmu.ifi.dbs.medmon.algorithm.views.AlgorithmView"
             id="de.lmu.ifi.dbs.medmon.algorithm.views.AlgorithmView">
+      </view>
+      <view
+            category="de.lmu.ifi.dbs.medmon.algorithm"
+            class="de.lmu.ifi.dbs.medmon.algorithm.views.ManagementView"
+            id="de.lmu.ifi.dbs.medmon.algorithm.Management"
+            name="Algorithmenverwaltung"
+            restorable="true">
       </view>
    </extension>
    <extension

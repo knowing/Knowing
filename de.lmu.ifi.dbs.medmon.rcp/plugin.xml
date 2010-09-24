@@ -97,6 +97,11 @@
                   label="Beenden"
                   style="push">
             </command>
+            <command
+                  commandId="org.eclipse.ui.views.showView"
+                  label="Fenster oeffnen"
+                  style="push">
+            </command>
          </menu>
       </menuContribution>
       <menuContribution

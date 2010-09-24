@@ -18,16 +18,29 @@
    </extension>
    <extension
          point="org.eclipse.ui.views">
+      <category
+            id="de.lmu.ifi.dbs.medmon.sensor.category"
+            name="Sensorverwaltung">
+      </category>
       <view
+            category="de.lmu.ifi.dbs.medmon.sensor.category"
             class="de.lmu.ifi.dbs.medmon.sensor.view.SensorDataView"
             id="de.lmu.ifi.dbs.medmon.sensor.SensorDataView"
             name="SensorData"
             restorable="true">
       </view>
       <view
+            category="de.lmu.ifi.dbs.medmon.sensor.category"
             class="de.lmu.ifi.dbs.medmon.sensor.view.DataTreeView"
             id="de.lmu.ifi.dbs.medmon.sensor.DataTreeView"
             name="SensorDataTreeView"
+            restorable="true">
+      </view>
+      <view
+            category="de.lmu.ifi.dbs.medmon.sensor.category"
+            class="de.lmu.ifi.dbs.medmon.sensor.view.ManagementView"
+            id="de.lmu.ifi.dbs.medmon.sensor.Management"
+            name="Sensorverwaltung"
             restorable="true">
       </view>
    </extension>

@@ -14,6 +14,14 @@
             class="de.lmu.ifi.dbs.medmon.patient.views.PatientListView"
             id="de.lmu.ifi.dbs.medmon.patient.views.PatientListView">
       </view>
+      <view
+            category="de.lmu.ifi.dbs.medmon.PatientView"
+            class="de.lmu.ifi.dbs.medmon.patient.views.ManagementView"
+            icon="icons/sample.gif"
+            id="de.lmu.ifi.dbs.medmon.patient.Management"
+            name="Patientenverwaltung"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -22,6 +30,32 @@
          <actionSet
                id="de.lmu.ifi.dbs.medmon.patient.actionSet">
          </actionSet>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="de.lmu.ifi.dbs.medmon.patient.ManagementPerspective">
+         <view
+               id="de.lmu.ifi.dbs.medmon.patient.Management"
+               minimized="false"
+               relationship="top"
+               relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               visible="true">
+         </view>
+         <view
+               id="de.lmu.ifi.dbs.medmon.sensor.Management"
+               minimized="false"
+               relationship="stack"
+               relative="de.lmu.ifi.dbs.medmon.patient.Management"
+               showTitle="true">
+         </view>
+         <view
+               id="de.lmu.ifi.dbs.medmon.algorithm.Management"
+               minimized="false"
+               relationship="stack"
+               relative="de.lmu.ifi.dbs.medmon.patient.Management"
+               showTitle="true"
+               visible="true">
+         </view>
       </perspectiveExtension>
    </extension>
    <extension
@@ -37,6 +71,11 @@
             icon="IMG_OBJS_INFO_TSK"
             id="de.lmu.ifi.dbs.medmon.patient.PatientManagement"
             name="Patienten">
+      </perspective>
+      <perspective
+            class="de.lmu.ifi.dbs.medmon.patient.perspective.ManagementPerspective"
+            id="de.lmu.ifi.dbs.medmon.patient.ManagementPerspective"
+            name="Verwaltung">
       </perspective>
    </extension>
    <extension
