@@ -7,7 +7,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.layout.GridData;
-import com.swtdesigner.ResourceManager;
+
+import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 
 
 public class SummaryPage extends WizardPage {

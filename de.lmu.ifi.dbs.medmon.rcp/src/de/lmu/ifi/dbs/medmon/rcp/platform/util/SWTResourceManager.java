@@ -1,4 +1,4 @@
-package com.swtdesigner;
+package de.lmu.ifi.dbs.medmon.rcp.platform.util;
 
 import java.io.FileInputStream;
 import java.io.IOException;

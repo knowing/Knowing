@@ -7,30 +7,32 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ColumnLayout;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.Section;
 
 import de.lmu.ifi.dbs.medmon.algorithm.provider.AlgorithmContentProvider;
 import de.lmu.ifi.dbs.medmon.algorithm.provider.AlgorithmLabelProvider;
 import de.lmu.ifi.dbs.medmon.database.model.SensorData;
+import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
+import de.lmu.ifi.dbs.medmon.rcp.platform.util.CommandUtil;
+import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
+
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.core.databinding.beans.PojoObservables;
 
 public class SensorDetailPage implements IDetailsPage {
 	
@@ -51,49 +53,39 @@ public class SensorDetailPage implements IDetailsPage {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public boolean isDirty() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public void commit(boolean onSave) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public boolean setFormInput(Object input) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public boolean isStale() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public void refresh() {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
-		System.out.println("SelectionChanged: " + selection);
 		if(!selection.isEmpty() && selection instanceof IStructuredSelection) {
 			if(bindingContext != null) bindingContext.dispose();
 			data = (SensorData)((IStructuredSelection)selection).getFirstElement();
@@ -106,7 +98,6 @@ public class SensorDetailPage implements IDetailsPage {
 
 	@Override
 	public void createContents(Composite parent) {
-		System.out.println("CreateContents in SensorDetailPage");
 		FormToolkit toolkit = managedForm.getToolkit();	
 		parent.setLayout(new ColumnLayout());
 		
@@ -144,34 +135,24 @@ public class SensorDetailPage implements IDetailsPage {
 		
 		/* Analyse */
 		
-		Section aSection = toolkit.createSection(parent, Section.DESCRIPTION
-				| Section.TITLE_BAR | Section.EXPANDED | Section.TWISTIE);
-		aSection.setText("Analyse-Algorithmen");
-		aSection.setDescription("Bereits importierte Sensordaten");
+		Section bSection = toolkit.createSection(parent, Section.NO_TITLE);	
+		Composite bClient = toolkit.createComposite(bSection);
+		bClient.setLayout(new FillLayout());
 		
-		Composite aClient = toolkit.createComposite(aSection);
-		GridLayout sLayout = new GridLayout(3, false);
-		aClient.setLayout(sLayout);
+		ImageHyperlink sensorLink = toolkit.createImageHyperlink(bClient, SWT.NONE);
+		sensorLink.setImage(ResourceManager.getPluginImage("de.lmu.ifi.dbs.medmon.rcp", "icons/48/gtk-directory.png"));
+		sensorLink.setText("Datenanalyse");
 		
-		Table table = new Table(aClient, SWT.NULL);
-		data = new GridData(GridData.FILL_BOTH);
-		data.horizontalSpan = 3;
-		table.setLayoutData(data);
+		sensorLink.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
+			public void linkActivated(HyperlinkEvent event) {
+				CommandUtil.openView(IMedmonConstants.ALGORITHM_MANAGEMENT);
+			}
+		});
 		
-		Button analyse = toolkit.createButton(aClient, "analysieren", SWT.PUSH);
-		analyse.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		Button delete  = toolkit.createButton(aClient, "entfernen", SWT.PUSH);
-		delete.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		Button iimport = toolkit.createButton(aClient, "importieren", SWT.PUSH);
-		iimport.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+		toolkit.paintBordersFor(bClient);
+		bSection.setClient(bClient);
 		
-		toolkit.paintBordersFor(aClient);
-		aSection.setClient(aClient);
-		
-		TableViewer viewer = new TableViewer(table);
-		viewer.setContentProvider(new AlgorithmContentProvider());
-		viewer.setLabelProvider(new AlgorithmLabelProvider());
-		viewer.setInput(this);
 
 	}
 

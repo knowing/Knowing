@@ -1,7 +1,5 @@
 package de.lmu.ifi.dbs.medmon.patient.editor;
 
-import javax.management.openmbean.OpenDataException;
-
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -9,33 +7,49 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ColumnLayout;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
+
 
 import de.lmu.ifi.dbs.medmon.algorithm.extension.ISensorDataAlgorithm;
 import de.lmu.ifi.dbs.medmon.algorithm.provider.AlgorithmContentProvider;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
-import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
 import de.lmu.ifi.dbs.medmon.patient.Activator;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
+import de.lmu.ifi.dbs.medmon.rcp.platform.util.CommandUtil;
+import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 import de.lmu.ifi.dbs.medmon.sensor.viewer.SensorTableViewer;
 import de.lmu.ifi.dbs.medmon.visualizer.handler.OpenDefaultPerspectiveHandler;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IParameter;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.Parameterization;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -54,7 +68,7 @@ public class PatientDetailsPage implements IDetailsPage {
 	// UI Elements
 	private Patient patient;
 	private Text firstname, lastname;
-	private Button analyse, delete, iimport;
+	private Button analyse;
 	private SensorTableViewer viewer;
 
 	private boolean dirty; // Represents dirty state
@@ -119,7 +133,9 @@ public class PatientDetailsPage implements IDetailsPage {
 	@Override
 	public void createContents(Composite parent) {
 		FormToolkit toolkit = managedForm.getToolkit();
-		parent.setLayout(new ColumnLayout());
+		ColumnLayout parent_layout = new ColumnLayout();
+		parent_layout.maxNumColumns = 2;
+		parent.setLayout(parent_layout);
 		Controller controller = new Controller();
 
 		/* Patient Information */
@@ -147,37 +163,25 @@ public class PatientDetailsPage implements IDetailsPage {
 
 		gSection.setClient(gClient);
 
-		/* Sensor DB */
+		/* Buttons Section */
+		Section bSection = toolkit.createSection(parent, Section.NO_TITLE);
+		
+		Composite bClient = toolkit.createComposite(bSection);
+		bClient.setLayout(new FillLayout());
+		ImageHyperlink sensorLink = toolkit.createImageHyperlink(bClient, SWT.NONE);
+		sensorLink.setImage(ResourceManager.getPluginImage("de.lmu.ifi.dbs.medmon.rcp", "icons/48/gtk-directory.png"));
+		sensorLink.setText("Sensordaten auswaehlen");
+		
+		sensorLink.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
+			public void linkActivated(HyperlinkEvent event) {
+				CommandUtil.openView(IMedmonConstants.SENSOR_MANAGEMENT_VIEW);
+			}
+		});
+		
+		bSection.setClient(bClient);
 
-		Section sSection = toolkit.createSection(parent, Section.DESCRIPTION
-				| Section.TITLE_BAR | Section.EXPANDED | Section.TWISTIE);
-		sSection.setText("Sensordaten");
-		sSection.setDescription("Bereits importierte Sensordaten");
-
-		Composite sClient = toolkit.createComposite(sSection);
-		GridLayout sLayout = new GridLayout(3, false);
-		sClient.setLayout(sLayout);
-
-		Table table = new Table(sClient, SWT.NULL);
-		GridData data = new GridData(GridData.FILL_BOTH);
-		data.horizontalSpan = 3;
-		table.setLayoutData(data);
-
-		analyse = toolkit.createButton(sClient, "analysieren", SWT.PUSH);
-		analyse.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		analyse.setEnabled(false);
-		delete = toolkit.createButton(sClient, "entfernen", SWT.PUSH);
-		delete.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		iimport = toolkit.createButton(sClient, "importieren", SWT.PUSH);
-		iimport.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-
-		toolkit.paintBordersFor(sClient);
-		sSection.setClient(sClient);
-
-		viewer = new SensorTableViewer(table);
-		viewer.addSelectionChangedListener(controller);
-		viewer.setInput(SampleDataFactory.getSensorDataArray());
-		hookActions();
+		//hookActions();
 	}
 
 	protected DataBindingContext initDataBindings() {
@@ -198,7 +202,6 @@ public class PatientDetailsPage implements IDetailsPage {
 		analyse.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Activator.getPatientService().setSelection(viewer.getSelection()); //Set SensorData
 				setDefaultAlgorithm();
 				OpenDefaultPerspectiveHandler.excuteCommand();
 			}

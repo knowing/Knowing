@@ -48,7 +48,7 @@ public class HomeView extends ViewPart {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				try {
-					PlatformUI.getWorkbench().showPerspective(IMedmonConstants.PATIENT_PERSPECTIVE,
+					PlatformUI.getWorkbench().showPerspective(IMedmonConstants.MANAGEMENT_PERSPECTIVE,
 							PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 				} catch (WorkbenchException e1) {
 					e1.printStackTrace();

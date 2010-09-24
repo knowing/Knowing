@@ -9,4 +9,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.forms;bundle-version="3.5.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: de.lmu.ifi.dbs.medmon.rcp.platform
+Export-Package: de.lmu.ifi.dbs.medmon.rcp.platform,
+ de.lmu.ifi.dbs.medmon.rcp.platform.util

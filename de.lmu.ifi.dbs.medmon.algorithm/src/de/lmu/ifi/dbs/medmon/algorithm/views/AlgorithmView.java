@@ -50,7 +50,8 @@ public class AlgorithmView extends ViewPart {
 		/* Algorithm Description Section */
 		Section aSection = toolkit.createSection(parent, Section.DESCRIPTION
 				| Section.TWISTIE | Section.EXPANDED | Section.TITLE_BAR);
-		aSection.setText(algorithm.getName());
+		//aSection.setText(algorithm.getName());
+		aSection.setText("Algorithmus");
 		aSection.setDescription("Allgemeine Informationen zum Algorithmus");
 		
 		Composite aClient = toolkit.createComposite(aSection);
@@ -95,7 +96,6 @@ public class AlgorithmView extends ViewPart {
 		toolkit.adapt(combo);
 		
 		pSection.setClient(pClient);
-		
 	}
 
 	public void setFocus() {
