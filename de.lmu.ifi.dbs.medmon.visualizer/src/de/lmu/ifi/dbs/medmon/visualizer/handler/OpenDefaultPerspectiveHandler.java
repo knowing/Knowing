@@ -27,7 +27,8 @@ public class OpenDefaultPerspectiveHandler extends AbstractHandler {
 		ISensorDataAlgorithm algorithm = (ISensorDataAlgorithm) service.getSelection(IPatientService.ALGORITHM);
 		
 		//Analyze data -> implement job to provide progressbar
-		IAnalyzedData data = algorithm.analyze((SensorData[]) service.getSelection(IPatientService.SENSOR_DATA));
+		SensorData[] sensorData = (SensorData[]) service.getSelection(IPatientService.SENSOR_DATA);
+		IAnalyzedData data = algorithm.analyze(sensorData);
 		//Set the new analyzed data
 		service.setSelection(data, IPatientService.ANALYZED_DATA);
 		//Try to open the corresponding perspective

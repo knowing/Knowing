@@ -7,11 +7,19 @@ Bundle-Activator: de.lmu.ifi.dbs.medmon.algorithm.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.forms;bundle-version="3.5.0",
- de.lmu.ifi.dbs.medmon.jfreechart.libs;bundle-version="1.0.0"
+ de.lmu.ifi.dbs.medmon.jfreechart.libs;bundle-version="1.0.0",
+ org.eclipse.core.databinding,
+ org.eclipse.core.databinding.beans,
+ org.eclipse.core.databinding.observable,
+ org.eclipse.core.databinding.property,
+ org.eclipse.jface.databinding,
+ com.ibm.icu
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.lmu.ifi.dbs.medmon.algorithm.extension,
  de.lmu.ifi.dbs.medmon.database.model,
- de.lmu.ifi.dbs.medmon.patient.service
+ de.lmu.ifi.dbs.medmon.patient.service,
+ de.lmu.ifi.dbs.medmon.rcp.platform,
+ de.lmu.ifi.dbs.medmon.rcp.platform.util
 Export-Package: de.lmu.ifi.dbs.medmon.algorithm.provider,
  de.lmu.ifi.dbs.medmon.algorithm.wizards.pages

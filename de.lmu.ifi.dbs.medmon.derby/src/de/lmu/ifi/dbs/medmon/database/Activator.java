@@ -1,20 +1,11 @@
 package de.lmu.ifi.dbs.medmon.database;
 
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.persistence.config.PersistenceUnitProperties;
-import org.eclipse.persistence.jpa.PersistenceProvider;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import de.lmu.ifi.dbs.medmon.database.model.Patient;
+import de.lmu.ifi.dbs.medmon.database.install.Database;
 
 
 public class Activator extends AbstractUIPlugin {
@@ -24,28 +15,12 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
+
+	//The database
+	private Database database;
 	
 	public Activator() {
-		System.out.println("Activator");
-		PersistenceProvider provider = new PersistenceProvider();
-		
-		Map properties = new HashMap<String, Object>();
-		String home = System.getProperty("user.home");
-		String sep  = System.getProperty("file.separator");
-		String url  = "jdbc:derby:" + home + sep + ".medmon" + sep + "db;create=true";
-		System.out.println(url);
-		properties.put(PersistenceUnitProperties.JDBC_URL, url);
-		
-		System.out.println(new File(url).mkdirs());
-		EntityManagerFactory emf =  provider.createEntityManagerFactory("medmon", properties);
-		EntityManager em = emf.createEntityManager();
-		em.getTransaction().begin();
-		Patient p = new Patient();
-		p.setLastname("Seiler");
-		p.setFirstname("Muki");
-		em.persist(p);
-		em.getTransaction().commit();
-		
+
 	}
 	
 	/*
@@ -55,6 +30,7 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		database = new Database();
 	}
 
 	/*

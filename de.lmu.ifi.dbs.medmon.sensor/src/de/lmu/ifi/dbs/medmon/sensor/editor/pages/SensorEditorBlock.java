@@ -22,6 +22,8 @@ import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
 import de.lmu.ifi.dbs.medmon.sensor.viewer.SensorTableViewer;
 
 public class SensorEditorBlock extends MasterDetailsBlock {
+	public SensorEditorBlock() {
+	}
 
 	@Override
 	protected void createMasterPart(final IManagedForm managedForm, Composite parent) {

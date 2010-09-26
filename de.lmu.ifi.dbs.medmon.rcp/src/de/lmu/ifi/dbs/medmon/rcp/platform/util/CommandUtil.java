@@ -9,8 +9,11 @@ import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
+
+import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 
 public class CommandUtil {
 
@@ -30,6 +33,14 @@ public class CommandUtil {
 		} catch (NotEnabledException e) {
 			e.printStackTrace();
 		} catch (NotHandledException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void openPerpsective(String perspectiveID) {
+		try {
+			PlatformUI.getWorkbench().showPerspective(perspectiveID, PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+		} catch (WorkbenchException e) {
 			e.printStackTrace();
 		}
 	}

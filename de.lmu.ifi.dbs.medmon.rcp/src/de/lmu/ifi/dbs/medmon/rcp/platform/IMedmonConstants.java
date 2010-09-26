@@ -1,6 +1,9 @@
 package de.lmu.ifi.dbs.medmon.rcp.platform;
 
 public interface IMedmonConstants {
+	
+	//Plugin ID
+	public static final String RCP_PLUGIN = "de.lmu.ifi.dbs.medmon.rcp";
 
 	//Perspectives
 	public static final String MANAGEMENT_PERSPECTIVE = "de.lmu.ifi.dbs.medmon.patient.ManagementPerspective";
@@ -28,4 +31,16 @@ public interface IMedmonConstants {
 	
 	//Actionsets
 	public static final String PATIENT_ACTIONSET = "de.lmu.ifi.dbs.medmon.patient.actionSet";
+	
+	//TODO Add all Images
+	
+	//Images 16x16
+	//public static final String CHART_16 = "icons"; 
+	
+	//Images 48x48
+	public static final String DIRECTORY_48 = "icons/48/gtk-directory.png";
+	public static final String CHART_48 = "icons/48/gtk-chart.png";
+	
+	//Images BIG
+	public static final String ARROW_DOWN_BIG = "icons/gtk-go-down.png";
 }

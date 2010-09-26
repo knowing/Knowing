@@ -1,6 +1,6 @@
 package de.lmu.ifi.dbs.medmon.algorithm.extension;
 
-import java.util.Properties;
+import java.util.Map;
 
 import de.lmu.ifi.dbs.medmon.database.model.SensorData;
 
@@ -8,8 +8,8 @@ import de.lmu.ifi.dbs.medmon.database.model.SensorData;
  * Generic Interface to create algorithms analyzing
  * SenorData.
  * 
- * @author muki
- * @version 1.0
+ * @author Nepomuk Seiler
+ * @version 1.2
  */
 public interface ISensorDataAlgorithm {
 
@@ -30,11 +30,21 @@ public interface ISensorDataAlgorithm {
 	 * 
 	 * @return configuration properties for the algorithm
 	 */
-	public Properties getProperties();
+	public Map<String, IAlgorithmParameter> getParameters();
+	
+	public IAlgorithmParameter getParameter(String key);
+	
+	/**
+	 * 
+	 * @param key
+	 * @param parameter
+	 * @return previous value or null if none
+	 */
+	public IAlgorithmParameter setParameter(String key, IAlgorithmParameter parameter);
 	
 	public String getName();
 	
 	public String getDescription();
 	
-	public double getVersion();
+	public String getVersion();
 }

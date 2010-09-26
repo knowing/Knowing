@@ -15,6 +15,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import de.lmu.ifi.dbs.medmon.rcp.Activator;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
+import de.lmu.ifi.dbs.medmon.rcp.platform.util.CommandUtil;
 
 public class HomeView extends ViewPart {
 
@@ -39,35 +40,28 @@ public class HomeView extends ViewPart {
 		layout.horizontalSpacing = 15;
 		form.getBody().setLayout(new ColumnLayout());
 
-		ImageHyperlink patient = toolkit.createImageHyperlink(form.getBody(),
-				SWT.NONE);
+		ImageHyperlink patient = toolkit.createImageHyperlink(form.getBody(),SWT.NONE);
 		patient.setText("Patient verwalten");
-		patient.setImage(Activator.getImageDescriptor("icons/gtk-open.png")
-				.createImage());
+		patient.setImage(Activator.getImageDescriptor("icons/gtk-open.png").createImage());
 		patient.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				try {
-					PlatformUI.getWorkbench().showPerspective(IMedmonConstants.MANAGEMENT_PERSPECTIVE,
-							PlatformUI.getWorkbench().getActiveWorkbenchWindow());
-				} catch (WorkbenchException e1) {
-					e1.printStackTrace();
-				}
+				CommandUtil.openPerpsective(IMedmonConstants.MANAGEMENT_PERSPECTIVE);
 			}
 		});
 
 		ImageHyperlink sensor = toolkit.createImageHyperlink(form.getBody(),SWT.NONE);
 		sensor.setText("Daten importieren");
-		sensor.setImage(Activator.getImageDescriptor("icons/gtk-go-down.png").createImage());
+		sensor.setImage(Activator.getImageDescriptor(IMedmonConstants.ARROW_DOWN_BIG).createImage());
 		sensor.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
 				try {
-					handlerService.executeCommand("de.lmu.ifi.dbs.medmon.sensor.CallImportWizard", null);
+					handlerService.executeCommand(IMedmonConstants.CALL_IMPORT_WIZARD, null);
 				} catch (Exception ex) {
 					ex.printStackTrace();
-					throw new RuntimeException("de.lmu.ifi.dbs.medmon.sensor.CallImportWizard");
+					throw new RuntimeException(IMedmonConstants.CALL_IMPORT_WIZARD);
 				}
 			}
 		});

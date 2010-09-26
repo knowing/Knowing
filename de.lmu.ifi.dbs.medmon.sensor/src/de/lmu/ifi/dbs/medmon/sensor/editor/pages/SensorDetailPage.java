@@ -33,6 +33,7 @@ import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.ui.forms.widgets.ColumnLayoutData;
 
 public class SensorDetailPage implements IDetailsPage {
 	
@@ -52,39 +53,6 @@ public class SensorDetailPage implements IDetailsPage {
 	}
 
 	@Override
-	public void dispose() {
-
-	}
-
-	@Override
-	public boolean isDirty() {
-		return false;
-	}
-
-	@Override
-	public void commit(boolean onSave) {
-	}
-
-	@Override
-	public boolean setFormInput(Object input) {
-		return false;
-	}
-
-	@Override
-	public void setFocus() {
-	}
-
-	@Override
-	public boolean isStale() {
-		return false;
-	}
-
-	@Override
-	public void refresh() {
-
-	}
-
-	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		if(!selection.isEmpty() && selection instanceof IStructuredSelection) {
 			if(bindingContext != null) bindingContext.dispose();
@@ -99,11 +67,16 @@ public class SensorDetailPage implements IDetailsPage {
 	@Override
 	public void createContents(Composite parent) {
 		FormToolkit toolkit = managedForm.getToolkit();	
-		parent.setLayout(new ColumnLayout());
+		ColumnLayout layout_parent = new ColumnLayout();
+		layout_parent.maxNumColumns = 2;
+		parent.setLayout(layout_parent);
 		
 		/* Comments */
 		Section cSection = toolkit.createSection(parent, Section.DESCRIPTION
 				| Section.TITLE_BAR | Section.EXPANDED | Section.TWISTIE);
+		ColumnLayoutData cld_cSection = new ColumnLayoutData();
+		cld_cSection.widthHint = 300;
+		cSection.setLayoutData(cld_cSection);
 		cSection.setText("Allgemein");
 
 		Composite cClient = toolkit.createComposite(cSection, SWT.WRAP);
@@ -140,7 +113,7 @@ public class SensorDetailPage implements IDetailsPage {
 		bClient.setLayout(new FillLayout());
 		
 		ImageHyperlink sensorLink = toolkit.createImageHyperlink(bClient, SWT.NONE);
-		sensorLink.setImage(ResourceManager.getPluginImage("de.lmu.ifi.dbs.medmon.rcp", "icons/48/gtk-directory.png"));
+		sensorLink.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.DIRECTORY_48));
 		sensorLink.setText("Datenanalyse");
 		
 		sensorLink.addHyperlinkListener(new HyperlinkAdapter() {
@@ -162,6 +135,39 @@ public class SensorDetailPage implements IDetailsPage {
 
 		//
 		return bindingContext;
+	}
+	
+	@Override
+	public void dispose() {
+
+	}
+
+	@Override
+	public boolean isDirty() {
+		return false;
+	}
+
+	@Override
+	public void commit(boolean onSave) {
+	}
+
+	@Override
+	public boolean setFormInput(Object input) {
+		return false;
+	}
+
+	@Override
+	public void setFocus() {
+	}
+
+	@Override
+	public boolean isStale() {
+		return false;
+	}
+
+	@Override
+	public void refresh() {
+
 	}
 	
 	private String date2String(Date date) {

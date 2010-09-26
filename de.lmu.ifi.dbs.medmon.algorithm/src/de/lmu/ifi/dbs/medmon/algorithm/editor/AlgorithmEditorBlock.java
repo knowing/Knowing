@@ -15,6 +15,7 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
+import de.lmu.ifi.dbs.medmon.algorithm.Activator;
 import de.lmu.ifi.dbs.medmon.algorithm.provider.AlgorithmDetailsPageProvider;
 import de.lmu.ifi.dbs.medmon.algorithm.ui.AlgorithmTableViewer;
 
@@ -48,6 +49,7 @@ public class AlgorithmEditorBlock extends MasterDetailsBlock {
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				managedForm.fireSelectionChanged(part, event.getSelection());
+				Activator.getPatientService().setSelection(event.getSelection());
 			}
 		});
 		viewer.setInput(this);

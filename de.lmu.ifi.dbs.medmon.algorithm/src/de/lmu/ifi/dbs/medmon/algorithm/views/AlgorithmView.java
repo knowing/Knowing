@@ -1,20 +1,26 @@
 package de.lmu.ifi.dbs.medmon.algorithm.views;
 
+import java.util.Map;
+
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.widgets.ColumnLayout;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.*;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.SWT;
 
 import de.lmu.ifi.dbs.medmon.algorithm.Activator;
+import de.lmu.ifi.dbs.medmon.algorithm.extension.IAlgorithmParameter;
 import de.lmu.ifi.dbs.medmon.algorithm.extension.ISensorDataAlgorithm;
+import de.lmu.ifi.dbs.medmon.algorithm.ui.AlgorithmConfigurationPart;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 
 /**
@@ -39,69 +45,47 @@ public class AlgorithmView extends ViewPart {
 	 */
 	public static final String ID = "de.lmu.ifi.dbs.medmon.algorithm.views.AlgorithmView";
 
+	private ManagedForm managedForm;
+	
 	@Override
 	public void createPartControl(Composite parent) {
-		System.out.println("Create AlgorithmViewPartControl");
-		ISensorDataAlgorithm algorithm = getAlgorithm();
-		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
-		toolkit.adapt(parent);
-		parent.setLayout(new ColumnLayout());
+		managedForm = createManagedForm(parent);
+		managedForm.getForm().getBody().setLayout(new FillLayout());
+		managedForm.getToolkit().adapt(parent);
 
-		/* Algorithm Description Section */
-		Section aSection = toolkit.createSection(parent, Section.DESCRIPTION
-				| Section.TWISTIE | Section.EXPANDED | Section.TITLE_BAR);
-		//aSection.setText(algorithm.getName());
-		aSection.setText("Algorithmus");
-		aSection.setDescription("Allgemeine Informationen zum Algorithmus");
-		
-		Composite aClient = toolkit.createComposite(aSection);
-		GridLayout aLayout = new GridLayout(2, false);
-		aClient.setLayout(aLayout);
-		
-		toolkit.createLabel(aClient, "Version ");
-		Label version = toolkit.createLabel(aClient, "1.0", SWT.END);
-		
-		Text description = toolkit.createText(aClient, "Beschreibung des Algorithmus", SWT.MULTI | SWT.READ_ONLY);
-		GridData data = new GridData(GridData.FILL_BOTH);
-		data.horizontalSpan = 2;
-		description.setLayoutData(data);
-		
-		
-		toolkit.paintBordersFor(aClient);	
-		aSection.setClient(aClient);
-		
-		/* Parameter Section*/
-		Section pSection = toolkit.createSection(parent, Section.DESCRIPTION
-				| Section.TWISTIE | Section.EXPANDED | Section.TITLE_BAR);
-		pSection.setText("Parameter");
-		
-		Composite pClient = toolkit.createComposite(pSection);
-		GridLayout pLayout = new GridLayout(2, false);
-		pClient.setLayout(pLayout);
-		
-		// TODO Generic way to read Property file and create UI
-		toolkit.createLabel(pClient, "Toleranz ");
-		Scale scale = new Scale(pClient, SWT.NONE);
-		scale.setMaximum(100);
-		scale.setMaximum(0);
-		scale.setSelection(50);
-		scale.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		toolkit.adapt(scale, false, false);
-		
-		toolkit.createLabel(pClient, "Darstellung");
-		Combo combo = new Combo(pClient, SWT.READ_ONLY);
-		combo.add("Pie Chart");
-		combo.add("Bar Chart");
-		combo.select(0);
-		toolkit.adapt(combo);
-		
-		pSection.setClient(pClient);
-	}
-
-	public void setFocus() {
-		System.out.println("SetFocus on AlgorithmView");
+		initialize(managedForm);
 	}
 	
+	public void initialize(ManagedForm managedForm) {
+		Section section = new Section(managedForm.getForm().getBody(), Section.NO_TITLE);
+		AlgorithmConfigurationPart part = new AlgorithmConfigurationPart(section, getParameters());
+		managedForm.addPart(part);
+	}
+
+	private Map<String, IAlgorithmParameter> getParameters() {
+		ISensorDataAlgorithm algorithm = (ISensorDataAlgorithm) Activator
+				.getPatientService().getSelection(IPatientService.ALGORITHM);
+		if(algorithm != null)
+			return algorithm.getParameters();
+		return null;
+	}
+
+	protected ManagedForm createManagedForm(final Composite parent) {
+		ManagedForm managedForm = new ManagedForm(parent);
+		managedForm.setContainer(this);
+		GridData gridData = new GridData();
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.grabExcessVerticalSpace = true;
+		gridData.verticalAlignment = SWT.FILL;
+		managedForm.getForm().setLayoutData(gridData);
+		return managedForm;
+	}
+
+	@Override
+	public void setFocus() {
+		managedForm.getForm().setFocus();
+	}
+
 	private ISensorDataAlgorithm getAlgorithm() {
 		return (ISensorDataAlgorithm) Activator.getPatientService()
 				.getSelection(IPatientService.ALGORITHM);

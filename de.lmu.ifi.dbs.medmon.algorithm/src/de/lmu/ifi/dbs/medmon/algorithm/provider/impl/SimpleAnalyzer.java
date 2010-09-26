@@ -1,9 +1,16 @@
 package de.lmu.ifi.dbs.medmon.algorithm.provider.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import de.lmu.ifi.dbs.medmon.algorithm.extension.IAlgorithmParameter;
+import de.lmu.ifi.dbs.medmon.algorithm.extension.NumericParameter;
 import de.lmu.ifi.dbs.medmon.algorithm.extension.IAnalyzedData;
 import de.lmu.ifi.dbs.medmon.algorithm.extension.ISensorDataAlgorithm;
+import de.lmu.ifi.dbs.medmon.algorithm.extension.StringParameter;
 import de.lmu.ifi.dbs.medmon.database.model.SensorData;
 
 public class SimpleAnalyzer implements ISensorDataAlgorithm {
@@ -11,15 +18,18 @@ public class SimpleAnalyzer implements ISensorDataAlgorithm {
 	public static final String PIE_CHART = "Pie-Chart";
 	public static final String BAR_CHART = "Bar-Chart";
 	
-	private final Properties properties = new Properties();
+	private final HashMap<String, IAlgorithmParameter> parameters;
 	
 	public SimpleAnalyzer() {
+		parameters = new HashMap<String, IAlgorithmParameter>();
 		init();
 	}
 	
 	private void init() {
-		properties.put("Toleranz", 3);
-		properties.put("Darstellung", PIE_CHART);
+		NumericParameter toleranz = new NumericParameter("Toleranz", -10, 10, 0);
+		StringParameter display = new StringParameter("Darstellung", new String[] {PIE_CHART, BAR_CHART});
+		parameters.put(toleranz.getName(), toleranz);
+		parameters.put(display.getName(), display);
 	}
 
 	@Override
@@ -27,12 +37,22 @@ public class SimpleAnalyzer implements ISensorDataAlgorithm {
 		//TODO InputData missing
 		return new SimpleAnalyzerData();
 	}
-
+	
 	@Override
-	public Properties getProperties() {
-		return properties;
+	public Map<String, IAlgorithmParameter> getParameters() {
+		return parameters;
+	}
+	
+	@Override
+	public IAlgorithmParameter getParameter(String key) {
+		return parameters.get(key);
 	}
 
+	@Override
+	public IAlgorithmParameter setParameter(String key, IAlgorithmParameter parameter) {
+		return parameters.put(key, parameter);
+	}
+	
 	@Override
 	public String getName() {
 		return "Simple Analyzer";
@@ -44,8 +64,8 @@ public class SimpleAnalyzer implements ISensorDataAlgorithm {
 	}
 
 	@Override
-	public double getVersion() {
-		return 1.0;
+	public String getVersion() {
+		return "0.2";
 	}
 
 }
