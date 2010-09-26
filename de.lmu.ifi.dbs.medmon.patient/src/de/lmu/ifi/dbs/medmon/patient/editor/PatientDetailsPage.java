@@ -82,42 +82,6 @@ public class PatientDetailsPage implements IDetailsPage {
 	}
 
 	@Override
-	public void dispose() {
-	}
-
-	@Override
-	public boolean isDirty() {
-		// return dirty;
-		return false;
-	}
-
-	@Override
-	public void commit(boolean onSave) {
-		System.out.println("PatientDetialsPage commit save: " + onSave);
-	}
-
-	@Override
-	public boolean setFormInput(Object input) {
-		System.out.println("SetFormInput: " + input);
-		return false;
-	}
-
-	@Override
-	public void setFocus() {
-		viewer.getTable().setFocus();
-	}
-
-	@Override
-	public boolean isStale() {
-		return false;
-	}
-
-	@Override
-	public void refresh() {
-		System.out.println("PatientDetailsPage Refresh");
-	}
-
-	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		// commit(true);
 		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
@@ -169,7 +133,7 @@ public class PatientDetailsPage implements IDetailsPage {
 		Composite bClient = toolkit.createComposite(bSection);
 		bClient.setLayout(new FillLayout());
 		ImageHyperlink sensorLink = toolkit.createImageHyperlink(bClient, SWT.NONE);
-		sensorLink.setImage(ResourceManager.getPluginImage("de.lmu.ifi.dbs.medmon.rcp", "icons/48/gtk-directory.png"));
+		sensorLink.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.DIRECTORY_48));
 		sensorLink.setText("Sensordaten auswaehlen");
 		
 		sensorLink.addHyperlinkListener(new HyperlinkAdapter() {
@@ -207,6 +171,42 @@ public class PatientDetailsPage implements IDetailsPage {
 			}
 		});
 		
+	}
+	
+	@Override
+	public void dispose() {
+	}
+
+	@Override
+	public boolean isDirty() {
+		// return dirty;
+		return false;
+	}
+
+	@Override
+	public void commit(boolean onSave) {
+		System.out.println("PatientDetialsPage commit save: " + onSave);
+	}
+
+	@Override
+	public boolean setFormInput(Object input) {
+		System.out.println("SetFormInput: " + input);
+		return false;
+	}
+
+	@Override
+	public void setFocus() {
+		viewer.getTable().setFocus();
+	}
+
+	@Override
+	public boolean isStale() {
+		return false;
+	}
+
+	@Override
+	public void refresh() {
+		System.out.println("PatientDetailsPage Refresh");
 	}
 	
 	//TODO Create Configuration for standard algorithm
