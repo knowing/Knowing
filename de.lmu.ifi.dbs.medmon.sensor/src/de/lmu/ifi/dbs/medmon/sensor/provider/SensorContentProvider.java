@@ -3,7 +3,7 @@ package de.lmu.ifi.dbs.medmon.sensor.provider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import de.lmu.ifi.dbs.medmon.database.model.SensorData;
+import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.sensor.data.ISensorDataContainer;
 
 /**
@@ -16,9 +16,9 @@ public class SensorContentProvider implements  ITreeContentProvider {
 	
 	@Override
 	public Object[] getElements(Object inputElement) {
-		if(inputElement instanceof SensorData[]){
+		if(inputElement instanceof Data[]){
 			System.out.println("SensorData: " + inputElement);
-			return (SensorData[])inputElement;
+			return (Data[])inputElement;
 		} else if(inputElement instanceof ISensorDataContainer){
 			ISensorDataContainer node = (ISensorDataContainer)inputElement;
 			if(node.hasChildren())

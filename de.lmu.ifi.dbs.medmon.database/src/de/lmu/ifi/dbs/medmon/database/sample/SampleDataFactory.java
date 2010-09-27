@@ -1,65 +1,59 @@
 package de.lmu.ifi.dbs.medmon.database.sample;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
 
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
-import de.lmu.ifi.dbs.medmon.database.model.Sensor;
-import de.lmu.ifi.dbs.medmon.database.model.SensorData;
+import de.lmu.ifi.dbs.medmon.database.model.Data;
 
 public class SampleDataFactory {
 
 	public static Patient[] getData() {
 		Patient[] ps = new Patient[4];
 		ps[0] = new Patient("Klara", "Fall");
-		ps[0].setSensorData(getSensorData());
+		ps[0].setData(getSensorData());
 		ps[1] = new Patient("Kurt", "Sichtig");
-		ps[1].setSensorData(getSensorData());
+		ps[1].setData(getSensorData());
 		ps[2] = new Patient("Olga", "Migram");
-		ps[2].setSensorData(getSensorData());
+		ps[2].setData(getSensorData());
 		ps[3] = new Patient("Hans", "Dampf");
-		ps[3].setSensorData(getSensorData());
+		ps[3].setData(getSensorData());
 		return ps;
 	}
-	
-	public static Sensor getSensor() {
-		Sensor sensor = new Sensor("1.0A");
-		sensor.setData(getSensorData());
-		return sensor;
-	}
-	
-	public static Set<SensorData> getSensorData() {
-		Set<SensorData> set = new HashSet<SensorData>();
-		set.add(new SensorData(2, 0, 1,randomDate()));
-		set.add(new SensorData(1, 1, 0,randomDate()));
-		set.add(new SensorData(3, 0, 0,randomDate()));
-		set.add(new SensorData(0, 2, 3,randomDate()));
-		set.add(new SensorData(0, 2, 2,randomDate()));
-		set.add(new SensorData(1, 4, 2,randomDate()));
-		set.add(new SensorData(2, 1, 1,randomDate()));
+		
+	public static Set<Data> getSensorData() {
+		Set<Data> set = new HashSet<Data>();
+		set.add(new Data(2, 0, 1,randomDate()));
+		set.add(new Data(1, 1, 0,randomDate()));
+		set.add(new Data(3, 0, 0,randomDate()));
+		set.add(new Data(0, 2, 3,randomDate()));
+		set.add(new Data(0, 2, 2,randomDate()));
+		set.add(new Data(1, 4, 2,randomDate()));
+		set.add(new Data(2, 1, 1,randomDate()));
 		return set;
 	}
 	
-	public static SensorData[] getSensorDataArray() {
-		Set<SensorData> data = getSensorData();
-		return data.toArray(new SensorData[data.size()]);
+	public static Data[] getSensorDataArray() {
+		Set<Data> data = getSensorData();
+		return data.toArray(new Data[data.size()]);
 	}
 	
-	public static SensorData[] getSensorDataArray(Date date) {
-		Set<SensorData> set = new HashSet<SensorData>();
-		set.add(new SensorData(2, 0, 1,date));
-		set.add(new SensorData(1, 1, 0,date));
-		set.add(new SensorData(3, 0, 0,date));
-		set.add(new SensorData(0, 2, 3,date));
-		set.add(new SensorData(0, 2, 2,date));
-		set.add(new SensorData(1, 4, 2,date));
-		set.add(new SensorData(2, 1, 1,date));
-		return set.toArray(new SensorData[set.size()]);
+	public static Data[] getSensorDataArray(Timestamp date) {
+		Set<Data> set = new HashSet<Data>();
+		set.add(new Data(2, 0, 1,date));
+		set.add(new Data(1, 1, 0,date));
+		set.add(new Data(3, 0, 0,date));
+		set.add(new Data(0, 2, 3,date));
+		set.add(new Data(0, 2, 2,date));
+		set.add(new Data(1, 4, 2,date));
+		set.add(new Data(2, 1, 1,date));
+		return set.toArray(new Data[set.size()]);
 	}
 	
-	public static Date randomDate() {
+	public static Timestamp randomDate() {
 		Double d = Math.random();
 		if(d == 0.0)
 			d = 1.0;
@@ -69,6 +63,6 @@ public class SampleDataFactory {
 		int day = (int) (((d * 100) % 28) + 1);
 		GregorianCalendar date = new GregorianCalendar(year, month, day);
 		
-		return date.getTime();
+		return new Timestamp(date.getTimeInMillis());
 	}
 }

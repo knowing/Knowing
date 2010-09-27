@@ -6,7 +6,7 @@ import java.util.GregorianCalendar;
 
 import org.eclipse.core.runtime.Assert;
 
-import de.lmu.ifi.dbs.medmon.database.model.SensorData;
+import de.lmu.ifi.dbs.medmon.database.model.Data;
 
 /**
  * Wraps SensorData[] for one day. Provides a date field
@@ -19,13 +19,13 @@ public class DaySensorDataContainer extends AbstractSensorDataContainer {
 	
 	private Date date;
 	
-	public DaySensorDataContainer(ISensorDataContainer parent, SensorData[] data) {
+	public DaySensorDataContainer(ISensorDataContainer parent, Data[] data) {
 		super(parent, DAY, data);
 		init(data);
 	}
 
 	
-	public DaySensorDataContainer(SensorData[] data) {
+	public DaySensorDataContainer(Data[] data) {
 		this(null, data);
 	}
 	
@@ -33,17 +33,17 @@ public class DaySensorDataContainer extends AbstractSensorDataContainer {
 	 * Checks and init the date field
 	 * @param data
 	 */
-	private void init(SensorData[] data) {
+	private void init(Data[] data) {
 		Assert.isNotNull(data);
 		GregorianCalendar start = new GregorianCalendar();
 		GregorianCalendar end	= new GregorianCalendar();
 		
-		start.setTime(data[0].getRecorded());
-		end.setTime(data[data.length -1].getRecorded());
+		start.setTime(data[0].getTimestamp());
+		end.setTime(data[data.length -1].getTimestamp());
 		//Simple Check: first and last array entry should have the same date
 		//Assumption that the array is sorted
 		Assert.isTrue(start.get(GregorianCalendar.DAY_OF_YEAR) == end.get(GregorianCalendar.DAY_OF_YEAR));
-		date = data[0].getRecorded();
+		date = data[0].getTimestamp();
 	}
 	
 	public Date getDate() {

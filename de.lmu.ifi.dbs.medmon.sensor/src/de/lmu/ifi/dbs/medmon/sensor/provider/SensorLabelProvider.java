@@ -9,7 +9,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
-import de.lmu.ifi.dbs.medmon.database.model.SensorData;
+import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.sensor.data.ISensorDataContainer;
 
 
@@ -18,7 +18,7 @@ public class SensorLabelProvider extends LabelProvider implements
 
 	@Override
 	public String getText(Object element) {
-		if(element instanceof SensorData)
+		if(element instanceof Data)
 			return getColumnText(element, 0);
 		else if(element instanceof ISensorDataContainer)
 			return ((ISensorDataContainer)element).getName();
@@ -27,7 +27,7 @@ public class SensorLabelProvider extends LabelProvider implements
 	
 	@Override
 	public Image getImage(Object element) {	
-		if(element instanceof SensorData)
+		if(element instanceof Data)
 			return getColumnImage(element, 0);
 		else if(element instanceof ISensorDataContainer)
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
@@ -36,7 +36,7 @@ public class SensorLabelProvider extends LabelProvider implements
 	
 	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
-		SensorData data = (SensorData)element;
+		Data data = (Data)element;
 		switch (columnIndex) {
 		case 0: return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
 		case 1: return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
@@ -50,9 +50,9 @@ public class SensorLabelProvider extends LabelProvider implements
 
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
-		SensorData data = (SensorData)element;
+		Data data = (Data)element;
 		switch (columnIndex) {
-		case 0: return date2String(data.getRecorded());
+		case 0: return date2String(data.getTimestamp());
 		case 1: return date2String(data.getTimestamp());
 		case 2: return data.isAnalyzed() ? date2String(data.getAnalyzedDate()) : "nein";
 		}

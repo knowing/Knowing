@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
-import de.lmu.ifi.dbs.medmon.database.model.SensorData;
+import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
 
 public class DataSourcePage extends WizardPage {
@@ -34,7 +34,7 @@ public class DataSourcePage extends WizardPage {
 	
 	private ImportPageController controller;
 	
-	private SensorData[] sensorData;
+	private Data[] sensorData;
 
 	public DataSourcePage() {
 		super("Datenquelle");
@@ -115,7 +115,7 @@ public class DataSourcePage extends WizardPage {
 	}
 	
 
-	public SensorData[] getSensorData() {
+	public Data[] getSensorData() {
 		return sensorData;
 	}
 
@@ -134,8 +134,8 @@ public class DataSourcePage extends WizardPage {
 						sleep(333);
 						monitor.worked(i);
 					}
-					Set<SensorData> set = SampleDataFactory.getSensorData();
-					sensorData = set.toArray(new SensorData[set.size()]);
+					Set<Data> set = SampleDataFactory.getSensorData();
+					sensorData = set.toArray(new Data[set.size()]);
 					monitor.done();
 				}
 			});

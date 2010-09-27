@@ -1,6 +1,6 @@
 package de.lmu.ifi.dbs.medmon.sensor.data;
 
-import de.lmu.ifi.dbs.medmon.database.model.SensorData;
+import de.lmu.ifi.dbs.medmon.database.model.Data;
 
 /**
  * Interface to create a simple tree out of SensorData.
@@ -43,7 +43,7 @@ public interface ISensorDataContainer {
 	 * 
 	 * @return SensorData[] below this node
 	 */
-	public SensorData[] getSensorData();
+	public Data[] getSensorData();
 	
 	/**
 	 * Used to display the Node correctly.

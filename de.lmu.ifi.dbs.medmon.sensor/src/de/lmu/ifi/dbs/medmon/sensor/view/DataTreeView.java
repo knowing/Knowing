@@ -1,5 +1,6 @@
 package de.lmu.ifi.dbs.medmon.sensor.view;
 
+import java.sql.Timestamp;
 import java.util.GregorianCalendar;
 
 import org.eclipse.jface.viewers.TreeViewer;
@@ -40,13 +41,13 @@ public class DataTreeView extends ViewPart {
 	
 	private ISensorDataContainer sampleData() {
 		GregorianCalendar cal = new GregorianCalendar();
-		DaySensorDataContainer c1 = new DaySensorDataContainer(SampleDataFactory.getSensorDataArray(cal.getTime()));
+		DaySensorDataContainer c1 = new DaySensorDataContainer(SampleDataFactory.getSensorDataArray(new Timestamp(cal.getTimeInMillis())));
 		cal.add(GregorianCalendar.DAY_OF_YEAR, 1);
-		DaySensorDataContainer c2 = new DaySensorDataContainer(SampleDataFactory.getSensorDataArray(cal.getTime()));
+		DaySensorDataContainer c2 = new DaySensorDataContainer(SampleDataFactory.getSensorDataArray(new Timestamp(cal.getTimeInMillis())));
 		cal.add(GregorianCalendar.DAY_OF_YEAR, 1);
-		DaySensorDataContainer c3 = new DaySensorDataContainer(SampleDataFactory.getSensorDataArray(cal.getTime()));
+		DaySensorDataContainer c3 = new DaySensorDataContainer(SampleDataFactory.getSensorDataArray(new Timestamp(cal.getTimeInMillis())));
 		cal.add(GregorianCalendar.DAY_OF_YEAR, 1);
-		DaySensorDataContainer c4 = new DaySensorDataContainer(SampleDataFactory.getSensorDataArray(cal.getTime()));	
+		DaySensorDataContainer c4 = new DaySensorDataContainer(SampleDataFactory.getSensorDataArray(new Timestamp(cal.getTimeInMillis())));	
 		return new RootSensorDataContainer(new ISensorDataContainer[] { c1, c2, c3,c4});
 	}
 

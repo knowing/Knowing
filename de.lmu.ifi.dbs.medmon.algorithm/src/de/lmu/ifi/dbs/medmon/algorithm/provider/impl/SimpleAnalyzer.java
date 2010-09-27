@@ -11,7 +11,7 @@ import de.lmu.ifi.dbs.medmon.algorithm.extension.NumericParameter;
 import de.lmu.ifi.dbs.medmon.algorithm.extension.IAnalyzedData;
 import de.lmu.ifi.dbs.medmon.algorithm.extension.ISensorDataAlgorithm;
 import de.lmu.ifi.dbs.medmon.algorithm.extension.StringParameter;
-import de.lmu.ifi.dbs.medmon.database.model.SensorData;
+import de.lmu.ifi.dbs.medmon.database.model.Data;
 
 public class SimpleAnalyzer implements ISensorDataAlgorithm {
 
@@ -33,7 +33,7 @@ public class SimpleAnalyzer implements ISensorDataAlgorithm {
 	}
 
 	@Override
-	public IAnalyzedData analyze(SensorData[] data) {
+	public IAnalyzedData analyze(Data[] data) {
 		//TODO InputData missing
 		return new SimpleAnalyzerData();
 	}

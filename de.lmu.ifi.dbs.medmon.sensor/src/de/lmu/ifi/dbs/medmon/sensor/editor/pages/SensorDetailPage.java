@@ -26,7 +26,7 @@ import org.eclipse.ui.forms.widgets.Section;
 
 import de.lmu.ifi.dbs.medmon.algorithm.provider.AlgorithmContentProvider;
 import de.lmu.ifi.dbs.medmon.algorithm.provider.AlgorithmLabelProvider;
-import de.lmu.ifi.dbs.medmon.database.model.SensorData;
+import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.CommandUtil;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
@@ -43,7 +43,7 @@ public class SensorDetailPage implements IDetailsPage {
 	}
 
 	private IManagedForm managedForm;
-	private SensorData data;
+	private Data data;
 	private Text tImport;
 	private Text tRecord;
 
@@ -56,9 +56,9 @@ public class SensorDetailPage implements IDetailsPage {
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		if(!selection.isEmpty() && selection instanceof IStructuredSelection) {
 			if(bindingContext != null) bindingContext.dispose();
-			data = (SensorData)((IStructuredSelection)selection).getFirstElement();
+			data = (Data)((IStructuredSelection)selection).getFirstElement();
 			tImport.setText(date2String(data.getTimestamp()));
-			tRecord.setText(date2String(data.getRecorded()));
+			tRecord.setText(date2String(data.getTimestamp()));
 			bindingContext = initDataBindings();
 		}
 

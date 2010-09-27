@@ -2,7 +2,7 @@ package de.lmu.ifi.dbs.medmon.algorithm.extension;
 
 import java.util.Map;
 
-import de.lmu.ifi.dbs.medmon.database.model.SensorData;
+import de.lmu.ifi.dbs.medmon.database.model.Data;
 
 /**
  * Generic Interface to create algorithms analyzing
@@ -22,7 +22,7 @@ public interface ISensorDataAlgorithm {
 	 * @param data - SensorData which should be analyzed
 	 * @return the new analyzed Object. 
 	 */
-	public IAnalyzedData analyze(SensorData[] data);
+	public IAnalyzedData analyze(Data[] data);
 	
 	/**
 	 * If the algorithm has parameters, it should be configured

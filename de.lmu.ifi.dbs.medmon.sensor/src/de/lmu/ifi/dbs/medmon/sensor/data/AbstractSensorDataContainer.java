@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import de.lmu.ifi.dbs.medmon.database.model.SensorData;
+import de.lmu.ifi.dbs.medmon.database.model.Data;
 
 /**
  * Provides basic functionality for ISensorDataContainer
@@ -23,12 +23,12 @@ public abstract class AbstractSensorDataContainer implements
 	private final ArrayList<ISensorDataContainer> children;
 
 	//
-	private SensorData[] data;
+	private Data[] data;
 
 	//Verifiy the tree level of this container
 	private int type;
 
-	public AbstractSensorDataContainer(ISensorDataContainer parent, int type, SensorData[] data) {
+	public AbstractSensorDataContainer(ISensorDataContainer parent, int type, Data[] data) {
 		this.parent = parent;
 		this.type = type;
 		this.data = data;
@@ -77,7 +77,7 @@ public abstract class AbstractSensorDataContainer implements
 	 * of its children
 	 */
 	@Override
-	public SensorData[] getSensorData() {
+	public Data[] getSensorData() {
 		return (data == null) ? evaluateData() : data;
 	}
 
@@ -86,14 +86,14 @@ public abstract class AbstractSensorDataContainer implements
 	 * the tree.
 	 * @return SensorData[] containing all elements
 	 */
-	private SensorData[] evaluateData() {
-		LinkedList<SensorData> ret = new LinkedList<SensorData>();
+	private Data[] evaluateData() {
+		LinkedList<Data> ret = new LinkedList<Data>();
 		for(ISensorDataContainer container : children) {
-			for(SensorData data : container.getSensorData()) {
+			for(Data data : container.getSensorData()) {
 				ret.add(data);
 			}
 		}
-		return ret.toArray(new SensorData[ret.size()]);
+		return ret.toArray(new Data[ret.size()]);
 	}
 	
 	//TODO Implement Listener Support

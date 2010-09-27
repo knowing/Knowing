@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.part.ViewPart;
 
-import de.lmu.ifi.dbs.medmon.database.model.SensorData;
+import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
 import de.lmu.ifi.dbs.medmon.sensor.viewer.SensorTableViewer;
 
@@ -26,8 +26,8 @@ public class SensorDataView extends ViewPart {
 		parent.setLayout(new FillLayout());
 		Table table = new Table(parent, SWT.MULTI | SWT.FULL_SELECTION);
 		viewer = new SensorTableViewer(table);
-		Set<SensorData> set = SampleDataFactory.getSensorData();
-		viewer.setInput(set.toArray(new SensorData[set.size()]));
+		Set<Data> set = SampleDataFactory.getSensorData();
+		viewer.setInput(set.toArray(new Data[set.size()]));
 	}
 
 	@Override

@@ -5,7 +5,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Vector;
 
-import de.lmu.ifi.dbs.medmon.database.model.SensorData;
+import de.lmu.ifi.dbs.medmon.database.model.Data;
 
 public class SensorDataContainer {
 	
@@ -15,11 +15,11 @@ public class SensorDataContainer {
 	
 	private final HashMap<Date, SensorDataContainer> container;
 	
-	private final SensorData[] data;
+	private final Data[] data;
 	private Date date;
 	private int type;
 	
-	public SensorDataContainer(SensorData[] data, int type) {
+	public SensorDataContainer(Data[] data, int type) {
 		container = new HashMap<Date, SensorDataContainer>(data.length);
 		this.data = data;
 		parse(type);
@@ -36,10 +36,10 @@ public class SensorDataContainer {
 	private void parseDay() {
 		container.clear();
 		GregorianCalendar cal = new GregorianCalendar();
-		Vector<SensorData> tmp = new Vector<SensorData>();
+		Vector<Data> tmp = new Vector<Data>();
 		for(int i=0; i < data.length; i++) {
 			tmp.add(data[i]);
-			if(!isEqualDay(data[i].getRecorded(), data[i+1].getRecorded())) {
+			if(!isEqualDay(data[i].getTimestamp(), data[i+1].getTimestamp())) {
 				//container.put(date, tmp.toArray(new SensorData[tmp.size()]));
 			}		
 		}
@@ -60,16 +60,16 @@ public class SensorDataContainer {
 		return diff < day;		
 	}
 
-	private SensorData getData(Date date, int type) {
+	private Data getData(Date date, int type) {
 		return null;
 	}
 	
 	
 	private class QuickSort  {
-		private SensorData[] numbers;
+		private Data[] numbers;
 		private int number;
 
-		public void sort(SensorData[] values) {
+		public void sort(Data[] values) {
 			// Check for empty or null array
 			if (values ==null || values.length==0){
 				return;
@@ -82,18 +82,18 @@ public class SensorDataContainer {
 		private void quicksort(int low, int high) {
 			int i = low, j = high;
 			// Get the pivot element from the middle of the list
-			SensorData pivot = numbers[low + (high-low)/2];
+			Data pivot = numbers[low + (high-low)/2];
 
 			// Divide into two lists
 			while (i <= j) {
 				// If the current value from the left list is smaller then the pivot
 				// element then get the next element from the left list
-				while (numbers[i].getRecorded().before(pivot.getRecorded())) {
+				while (numbers[i].getTimestamp().before(pivot.getTimestamp())) {
 					i++;
 				}
 				// If the current value from the right list is larger then the pivot
 				// element then get the next element from the right list
-				while (numbers[j].getRecorded().after(pivot.getRecorded())) {
+				while (numbers[j].getTimestamp().after(pivot.getTimestamp())) {
 					j--;
 				}
 
@@ -116,7 +116,7 @@ public class SensorDataContainer {
 		}
 
 		private void exchange(int i, int j) {
-			SensorData temp = numbers[i];
+			Data temp = numbers[i];
 			numbers[i] = numbers[j];
 			numbers[j] = temp;
 		}

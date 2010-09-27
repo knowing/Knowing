@@ -1,0 +1,4 @@
+DROP table APP.Comments;
+DROP table APP.Appointment;
+DROP table APP.Patient;
+DROP table APP.Data;

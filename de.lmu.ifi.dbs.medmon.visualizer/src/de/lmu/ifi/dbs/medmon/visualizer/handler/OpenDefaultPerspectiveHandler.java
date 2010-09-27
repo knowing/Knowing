@@ -12,7 +12,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 
 import de.lmu.ifi.dbs.medmon.algorithm.extension.IAnalyzedData;
 import de.lmu.ifi.dbs.medmon.algorithm.extension.ISensorDataAlgorithm;
-import de.lmu.ifi.dbs.medmon.database.model.SensorData;
+import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.visualizer.Activator;
@@ -27,7 +27,7 @@ public class OpenDefaultPerspectiveHandler extends AbstractHandler {
 		ISensorDataAlgorithm algorithm = (ISensorDataAlgorithm) service.getSelection(IPatientService.ALGORITHM);
 		
 		//Analyze data -> implement job to provide progressbar
-		SensorData[] sensorData = (SensorData[]) service.getSelection(IPatientService.SENSOR_DATA);
+		Data[] sensorData = (Data[]) service.getSelection(IPatientService.SENSOR_DATA);
 		IAnalyzedData data = algorithm.analyze(sensorData);
 		//Set the new analyzed data
 		service.setSelection(data, IPatientService.ANALYZED_DATA);

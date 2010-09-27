@@ -10,7 +10,7 @@ public class Patient {
 	private String lastname;
 	private Date birth;
 	private int gender;
-	private Set<SensorData> sensorData;
+	private Set<Data> data;
 	
 	public Patient() {
 		// TODO Auto-generated constructor stub
@@ -69,12 +69,12 @@ public class Patient {
 		return firstname + " " + lastname;
 	}
 
-	public Set<SensorData> getSensorData() {
-		return sensorData;
+	public Set<Data> getData() {
+		return data;
 	}
 
-	public void setSensorData(Set<SensorData> sensorData) {
-		this.sensorData = sensorData;
+	public void setData(Set<Data> sensorData) {
+		this.data = sensorData;
 	}
 	
 	

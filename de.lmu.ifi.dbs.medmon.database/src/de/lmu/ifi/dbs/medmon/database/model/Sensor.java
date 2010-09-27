@@ -7,7 +7,7 @@ public class Sensor {
 	private int id;
 	private String version;
 	private Patient patient;
-	private Set<SensorData> data;
+	private Set<Data> data;
 	
 	public Sensor() {}
 	
@@ -15,7 +15,7 @@ public class Sensor {
 		this.version = version;
 	}
 
-	public Sensor(Patient patient, Set<SensorData> data) {
+	public Sensor(Patient patient, Set<Data> data) {
 		this.patient = patient;
 		this.data = data;
 	}
@@ -44,11 +44,11 @@ public class Sensor {
 		this.patient = patient;
 	}
 
-	public Set<SensorData> getData() {
+	public Set<Data> getData() {
 		return data;
 	}
 
-	public void setData(Set<SensorData> data) {
+	public void setData(Set<Data> data) {
 		this.data = data;
 	}
 	

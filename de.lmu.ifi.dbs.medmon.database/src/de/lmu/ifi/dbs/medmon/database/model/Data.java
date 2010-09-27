@@ -1,28 +1,28 @@
 package de.lmu.ifi.dbs.medmon.database.model;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
-public class SensorData {
+public class Data {
 
 	private int x;
 	private int y;
 	private int z;
-	private Date timestamp;
-	private Date recorded;
+	private Timestamp timestamp;
 	
 	private boolean analyzed;
 	private Date analyzedDate;
 	
-	public SensorData() {
-		timestamp = new Date();
+	public Data() {
+		timestamp = new Timestamp(0);
 	}
 		
-	public SensorData(int x, int y, int z, Date recorded) {
+	public Data(int x, int y, int z, Timestamp timestamp) {
 		this();
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		this.recorded = recorded;
+		this.timestamp = timestamp;
 	}
 
 	public int getX() {
@@ -53,7 +53,7 @@ public class SensorData {
 		return timestamp;
 	}
 
-	public void setTimestamp(Date timestamp) {
+	public void setTimestamp(Timestamp timestamp) {
 		this.timestamp = timestamp;
 	}
 	
@@ -73,14 +73,6 @@ public class SensorData {
 		this.analyzedDate = analyzedDate;
 	}
 	
-	public Date getRecorded() {
-		return recorded;
-	}
-
-	public void setRecorded(Date recorded) {
-		this.recorded = recorded;
-	}
-
 	@Override
 	public String toString() {
 		return "SensorData [x=" + x + ", y=" + y + ", z=" + z + ", timestamp="

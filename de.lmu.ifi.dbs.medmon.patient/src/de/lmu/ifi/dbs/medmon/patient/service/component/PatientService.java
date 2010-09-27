@@ -10,7 +10,7 @@ import org.osgi.service.component.ComponentContext;
 import de.lmu.ifi.dbs.medmon.algorithm.extension.IAnalyzedData;
 import de.lmu.ifi.dbs.medmon.algorithm.extension.ISensorDataAlgorithm;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
-import de.lmu.ifi.dbs.medmon.database.model.SensorData;
+import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 
 /**
@@ -53,17 +53,17 @@ public class PatientService implements IPatientService {
 			selections.put(ALGORITHM, (ISensorDataAlgorithm)first);
 		else if(first instanceof IAnalyzedData)
 			selections.put(ANALYZED_DATA, (IAnalyzedData)first);
-		else if(first instanceof SensorData)
+		else if(first instanceof Data)
 			selections.put(SENSOR_DATA, convert(selection.toArray()));
 		else
 			return false;
 		return true;
 	}
 	
-	private SensorData[] convert(Object[] selection) {
-		SensorData[] data = new SensorData[selection.length];
+	private Data[] convert(Object[] selection) {
+		Data[] data = new Data[selection.length];
 		for(int i=0; i<selection.length; i++)
-			data[i] = (SensorData)selection[i];
+			data[i] = (Data)selection[i];
 		return data;
 	}
 

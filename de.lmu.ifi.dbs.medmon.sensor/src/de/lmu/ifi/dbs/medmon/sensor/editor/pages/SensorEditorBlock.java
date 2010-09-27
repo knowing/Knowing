@@ -17,7 +17,7 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-import de.lmu.ifi.dbs.medmon.database.model.SensorData;
+import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
 import de.lmu.ifi.dbs.medmon.sensor.viewer.SensorTableViewer;
 
@@ -54,8 +54,8 @@ public class SensorEditorBlock extends MasterDetailsBlock {
 				managedForm.fireSelectionChanged(spart, event.getSelection());
 			}
 		});
-		Set<SensorData> set = SampleDataFactory.getSensorData();
-		viewer.setInput(set.toArray(new SensorData[set.size()]));
+		Set<Data> set = SampleDataFactory.getSensorData();
+		viewer.setInput(set.toArray(new Data[set.size()]));
 		
 	}
 	
@@ -73,7 +73,7 @@ public class SensorEditorBlock extends MasterDetailsBlock {
 
 	@Override
 	protected void registerPages(DetailsPart detailsPart) {
-		detailsPart.registerPage(SensorData.class, new SensorDetailPage());
+		detailsPart.registerPage(Data.class, new SensorDetailPage());
 	}
 
 	@Override
