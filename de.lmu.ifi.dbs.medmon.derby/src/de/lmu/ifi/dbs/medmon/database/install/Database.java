@@ -10,6 +10,8 @@ import javax.persistence.EntityManagerFactory;
 import org.eclipse.persistence.config.PersistenceUnitProperties;
 import org.eclipse.persistence.jpa.PersistenceProvider;
 
+import de.lmu.ifi.dbs.medmon.database.model.Patient;
+
 public class Database {
 
 	
@@ -31,9 +33,14 @@ public class Database {
 	}
 	
 	private void init(PersistenceProvider provider) {
-		EntityManagerFactory emf =  provider.createEntityManagerFactory("medmon", properties);
+		EntityManagerFactory emf =  provider.createEntityManagerFactory("medmon", null);
 		EntityManager em = emf.createEntityManager();
-		
+		em.getTransaction().begin();
+		Patient p = new Patient();
+		p.setFirstname("Muki");
+		p.setLastname("Seiler");
+		em.persist(p);
+		em.getTransaction().commit();
 	}
 	
 	public Map<String, Object> getProperties() {

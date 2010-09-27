@@ -1,79 +1,59 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package de.lmu.ifi.dbs.medmon.database.model;
 
 import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.*;
 
 /**
- *
- * @author Muki
+ * The primary key class for the DATA database table.
+ * 
  */
 @Embeddable
 public class DataPK implements Serializable {
-    @Basic(optional = false)
-    @Column(name = "PATIENT_ID")
-    private int patientId;
-    @Basic(optional = false)
-    @Column(name = "SENSOR_ID")
-    private int sensorId;
+	//default serial version id, required for serializable classes.
+	private static final long serialVersionUID = 1L;
+
+	@Column(name="PATIENT_ID", unique=true, nullable=false)
+	private int patientId;
+
+    @Temporal( TemporalType.DATE)
+	@Column(unique=true, nullable=false)
+	private java.util.Date record;
 
     public DataPK() {
     }
+	public int getPatientId() {
+		return this.patientId;
+	}
+	public void setPatientId(int patientId) {
+		this.patientId = patientId;
+	}
+	public java.util.Date getRecord() {
+		return this.record;
+	}
+	public void setRecord(java.util.Date record) {
+		this.record = record;
+	}
 
-    public DataPK(int patientId, int sensorId) {
-        this.patientId = patientId;
-        this.sensorId = sensorId;
+	public boolean equals(Object other) {
+		if (this == other) {
+			return true;
+		}
+		if (!(other instanceof DataPK)) {
+			return false;
+		}
+		DataPK castOther = (DataPK)other;
+		return 
+			(this.patientId == castOther.patientId)
+			&& this.record.equals(castOther.record);
+
     }
-
-    public int getPatientId() {
-        return patientId;
+    
+	public int hashCode() {
+		final int prime = 31;
+		int hash = 17;
+		hash = hash * prime + this.patientId;
+		hash = hash * prime + this.record.hashCode();
+		
+		return hash;
     }
-
-    public void setPatientId(int patientId) {
-        this.patientId = patientId;
-    }
-
-    public int getSensorId() {
-        return sensorId;
-    }
-
-    public void setSensorId(int sensorId) {
-        this.sensorId = sensorId;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += patientId;
-        hash += sensorId;
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof DataPK)) {
-            return false;
-        }
-        DataPK other = (DataPK) object;
-        if (this.patientId != other.patientId) {
-            return false;
-        }
-        if (this.sensorId != other.sensorId) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "demodb.DataPK[patientId=" + patientId + ", sensorId=" + sensorId + "]";
-    }
-
 }

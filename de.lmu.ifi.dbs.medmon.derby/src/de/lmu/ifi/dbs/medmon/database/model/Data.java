@@ -1,134 +1,111 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package de.lmu.ifi.dbs.medmon.database.model;
 
 import java.io.Serializable;
+import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+
 
 /**
- *
- * @author Muki
+ * The persistent class for the DATA database table.
+ * 
  */
 @Entity
-@Table(name = "DATA")
-@NamedQueries({
-    @NamedQuery(name = "Data.findAll", query = "SELECT d FROM Data d"),
-    @NamedQuery(name = "Data.findByPatientId", query = "SELECT d FROM Data d WHERE d.dataPK.patientId = :patientId"),
-    @NamedQuery(name = "Data.findBySensorId", query = "SELECT d FROM Data d WHERE d.dataPK.sensorId = :sensorId"),
-    @NamedQuery(name = "Data.findByDate", query = "SELECT d FROM Data d WHERE d.date = :date")})
+@Table(name="DATA")
 public class Data implements Serializable {
-    private static final long serialVersionUID = 1L;
-    @EmbeddedId
-    protected DataPK dataPK;
-    @Column(name = "DATE")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date date;
-    @Basic(optional = false)
-    @Lob
-    @Column(name = "SENSORDATA")
-    private String sensordata;
-    @JoinColumn(name = "SENSOR_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private Sensor sensor;
-    @JoinColumn(name = "PATIENT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private Patient patient;
+	private static final long serialVersionUID = 1L;
 
-    public Data() {
-    }
+	@EmbeddedId
+	private DataPK id;
 
-    public Data(DataPK dataPK) {
-        this.dataPK = dataPK;
-    }
+	private Timestamp imported;
+	
+	@Column(nullable=false)
+	private int x;
 
-    public Data(DataPK dataPK, String sensordata) {
-        this.dataPK = dataPK;
-        this.sensordata = sensordata;
-    }
+	@Column(nullable=false)
+	private int y;
 
-    public Data(int patientId, int sensorId) {
-        this.dataPK = new DataPK(patientId, sensorId);
-    }
+	@Column(nullable=false)
+	private int z;
 
-    public DataPK getDataPK() {
-        return dataPK;
-    }
+	//bi-directional many-to-one association to Comment
+    @ManyToOne
+	@JoinColumn(name="COMMENT_ID")
+	private Comment comment;
 
-    public void setDataPK(DataPK dataPK) {
-        this.dataPK = dataPK;
-    }
+	//bi-directional many-to-one association to Patient
+    @ManyToOne
+	@JoinColumn(name="PATIENT_ID", nullable=false, insertable=false, updatable=false)
+	private Patient patient;
 
-    public Date getDate() {
-        return date;
-    }
+    public Data() {  }
+  
+    
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+	public Data(int x, int y, int z, Timestamp imported) {
+		super();
+		this.imported = imported;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
 
-    public String getSensordata() {
-        return sensordata;
-    }
+	public DataPK getId() {
+		return this.id;
+	}
 
-    public void setSensordata(String sensordata) {
-        this.sensordata = sensordata;
-    }
+	public void setId(DataPK id) {
+		this.id = id;
+	}
+	
+	public Timestamp getImported() {
+		return this.imported;
+	}
 
-    public Sensor getSensor() {
-        return sensor;
-    }
+	public void setImported(Timestamp imported) {
+		this.imported = imported;
+	}
+	
+	public int getX() {
+		return this.x;
+	}
 
-    public void setSensor(Sensor sensor) {
-        this.sensor = sensor;
-    }
+	public void setX(int x) {
+		this.x = x;
+	}
 
-    public Patient getPatient() {
-        return patient;
-    }
+	public int getY() {
+		return this.y;
+	}
 
-    public void setPatient(Patient patient) {
-        this.patient = patient;
-    }
+	public void setY(int y) {
+		this.y = y;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (dataPK != null ? dataPK.hashCode() : 0);
-        return hash;
-    }
+	public int getZ() {
+		return this.z;
+	}
 
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Data)) {
-            return false;
-        }
-        Data other = (Data) object;
-        if ((this.dataPK == null && other.dataPK != null) || (this.dataPK != null && !this.dataPK.equals(other.dataPK))) {
-            return false;
-        }
-        return true;
-    }
+	public void setZ(int z) {
+		this.z = z;
+	}
 
-    @Override
-    public String toString() {
-        return "demodb.Data[dataPK=" + dataPK + "]";
-    }
+	public Comment getComment() {
+		return this.comment;
+	}
 
+	public void setComment(Comment comment) {
+		this.comment = comment;
+	}
+	
+	public Patient getPatient() {
+		return this.patient;
+	}
+
+	public void setPatient(Patient patient) {
+		this.patient = patient;
+	}
+
+	
 }
