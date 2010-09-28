@@ -29,7 +29,7 @@
             name="Medmon">
          <property
                name="windowImages"
-               value="icons/alt_window_16.gif,icons/alt_window_32.gif">
+               value="icons/16/gtk-info.png,icons/48/gtk-info.png">
          </property>
          <property
                name="appName"
@@ -71,30 +71,32 @@
          <menu
                label="Programm">
             <command
-                  commandId="org.eclipse.ui.perspectives.showPerspective"
-                  label="Ansicht"
-                  style="push">
-            </command>
-            <separator
-                  name="de.lmu.ifi.dbs.medmon.rcp.separator2">
-            </separator>
-            <command
-                  commandId="org.eclipse.ui.file.save"
-                  label="Speichern"
+                  commandId="org.eclipse.equinox.p2.ui.sdk.install"
+                  icon="icons/16/gtk-add.png"
+                  label="Neue Funktionen installieren"
                   style="push">
             </command>
             <command
-                  commandId="org.eclipse.ui.edit.delete"
-                  label="Entfernen"
+                  commandId="org.eclipse.equinox.p2.ui.sdk.update"
+                  icon="icons/16/stock_internet.png"
+                  label="Update"
                   style="push">
             </command>
             <separator
-                  name="de.lmu.ifi.dbs.medmon.rcp.separator1"
-                  visible="true">
+                  name="de.lmu.ifi.dbs.medmon.rcp.separator1">
             </separator>
             <command
                   commandId="org.eclipse.ui.file.exit"
+                  icon="icons/16/gtk-cancel.png"
                   label="Beenden"
+                  style="push">
+            </command>
+         </menu>
+         <menu
+               label="Ansicht">
+            <command
+                  commandId="org.eclipse.ui.perspectives.showPerspective"
+                  label="Ansicht"
                   style="push">
             </command>
             <command

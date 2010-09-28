@@ -40,9 +40,7 @@ public class SensorLabelProvider extends LabelProvider implements
 		switch (columnIndex) {
 		case 0: return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
 		case 1: return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
-		case 2: return data.isAnalyzed() ? 
-					PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_ELCL_SYNCED) : 
-					PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK);
+		case 2: return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK);
 		}
 
 		return null;
@@ -54,7 +52,7 @@ public class SensorLabelProvider extends LabelProvider implements
 		switch (columnIndex) {
 		case 0: return date2String(data.getTimestamp());
 		case 1: return date2String(data.getTimestamp());
-		case 2: return data.isAnalyzed() ? date2String(data.getAnalyzedDate()) : "nein";
+		case 2: return "nicht verfügbar";
 		}
 		return element.toString();
 	}

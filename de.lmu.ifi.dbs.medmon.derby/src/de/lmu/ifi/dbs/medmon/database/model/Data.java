@@ -18,7 +18,7 @@ public class Data implements Serializable {
 	@EmbeddedId
 	private DataPK id;
 
-	private Timestamp imported;
+	private Timestamp timestamp;
 	
 	@Column(nullable=false)
 	private int x;
@@ -45,7 +45,7 @@ public class Data implements Serializable {
 
 	public Data(int x, int y, int z, Timestamp imported) {
 		super();
-		this.imported = imported;
+		this.timestamp = imported;
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -59,12 +59,12 @@ public class Data implements Serializable {
 		this.id = id;
 	}
 	
-	public Timestamp getImported() {
-		return this.imported;
+	public Timestamp getTimestamp() {
+		return this.timestamp;
 	}
 
-	public void setImported(Timestamp imported) {
-		this.imported = imported;
+	public void setTimestamp(Timestamp timestamp) {
+		this.timestamp = timestamp;
 	}
 	
 	public int getX() {

@@ -27,13 +27,11 @@ public class PatientPage extends WizardPage {
 	private Composite container;
 
 	private Button rCurrent; //Radio Current Patient
-	private Button rSelect; //Radio Select Patient
-	private Button select; //Select special Patient
+	private Button rSelect;  //Radio Select Patient
+	private Button select;   //Select special Patient
 	private Label lPatient;
 	
 	private PatientPageController controller;
-
-	
 	
 	public PatientPage() {
 		super("Patient auswaehlen");
@@ -79,7 +77,10 @@ public class PatientPage extends WizardPage {
 	private void done() {
 		flip = true;
 		setPageComplete(true);
-		setMessage(patient.toString());
+		if(patient != null)
+			setMessage(patient.toString());
+		else
+			setMessage("Kein Patient ausgewaehlt");
 	}
 	
 	public Patient getPatient() {
