@@ -133,7 +133,7 @@ public class PatientDetailsPage implements IDetailsPage {
 		Composite bClient = toolkit.createComposite(bSection);
 		bClient.setLayout(new FillLayout());
 		ImageHyperlink sensorLink = toolkit.createImageHyperlink(bClient, SWT.NONE);
-		sensorLink.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.DIRECTORY_48));
+		sensorLink.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_DIRECTORY_48));
 		sensorLink.setText("Sensordaten auswaehlen");
 		
 		sensorLink.addHyperlinkListener(new HyperlinkAdapter() {

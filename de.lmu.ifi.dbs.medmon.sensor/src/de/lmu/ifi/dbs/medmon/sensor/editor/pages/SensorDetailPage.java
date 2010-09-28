@@ -113,7 +113,7 @@ public class SensorDetailPage implements IDetailsPage {
 		bClient.setLayout(new FillLayout());
 		
 		ImageHyperlink sensorLink = toolkit.createImageHyperlink(bClient, SWT.NONE);
-		sensorLink.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.DIRECTORY_48));
+		sensorLink.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_DIRECTORY_48));
 		sensorLink.setText("Datenanalyse");
 		
 		sensorLink.addHyperlinkListener(new HyperlinkAdapter() {

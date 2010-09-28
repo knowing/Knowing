@@ -19,7 +19,13 @@ import org.eclipse.ui.forms.widgets.Section;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
+import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
+import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
+import de.lmu.ifi.dbs.medmon.sensor.controller.ManagementController;
 import de.lmu.ifi.dbs.medmon.sensor.viewer.SensorTableViewer;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.forms.widgets.Hyperlink;
 
 public class SensorEditorBlock extends MasterDetailsBlock {
 	public SensorEditorBlock() {
@@ -38,9 +44,7 @@ public class SensorEditorBlock extends MasterDetailsBlock {
 
 		Composite sClient = toolkit.createComposite(sSection, SWT.WRAP);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginWidth = 2;
-		layout.marginHeight = 2;
+		layout.numColumns = 4;
 		sClient.setLayout(layout);
 		sSection.setClient(sClient);
 		
@@ -54,21 +58,44 @@ public class SensorEditorBlock extends MasterDetailsBlock {
 				managedForm.fireSelectionChanged(spart, event.getSelection());
 			}
 		});
-		Set<Data> set = SampleDataFactory.getSensorData();
-		viewer.setInput(set.toArray(new Data[set.size()]));
+		viewer.setInput(SampleDataFactory.getSensorDataArray());
+		
+		ManagementController controller = new ManagementController(viewer);
+		
+		ImageHyperlink importLink = toolkit.createImageHyperlink(sClient, SWT.NONE);
+		toolkit.paintBordersFor(importLink);
+		importLink.setText("Import");
+		importLink.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_ARROW_DOWN_16));
+		importLink.setHref(ManagementController.IMPORT);
+		importLink.addHyperlinkListener(controller);
+		
+		ImageHyperlink exportLink = toolkit.createImageHyperlink(sClient, SWT.NONE);
+		toolkit.paintBordersFor(exportLink);
+		exportLink.setText("Export");
+		exportLink.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_ARROW_UP_16));
+		exportLink.setHref(ManagementController.EXPORT);
+		exportLink.addHyperlinkListener(controller);
+		
+		ImageHyperlink deleteLink = toolkit.createImageHyperlink(sClient, SWT.NONE);
+		toolkit.paintBordersFor(deleteLink);
+		deleteLink.setText("Löschen");
+		deleteLink.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_REMOVE_16));
+		deleteLink.setHref(ManagementController.DELETE);
+		deleteLink.addHyperlinkListener(controller);
+		
 		
 	}
 	
 	private TableViewer createTableViewer(Composite parent, FormToolkit toolkit) {
 		Table table = toolkit.createTable(parent, SWT.MULTI | SWT.FULL_SELECTION);
 		GridData data = new GridData(GridData.FILL_BOTH);
+		data.horizontalSpan = 4;
 		data.heightHint = 20;
-		data.widthHint = 100;
+		data.widthHint = 130;
 		table.setLayoutData(data);
 		toolkit.paintBordersFor(parent);
 		
-		TableViewer viewer = new SensorTableViewer(table);
-		return viewer;		
+		return new SensorTableViewer(table);		
 	}
 
 	@Override

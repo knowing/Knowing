@@ -35,12 +35,22 @@ public interface IMedmonConstants {
 	//TODO Add all Images
 	
 	//Images 16x16
+	public static final String IMG_ARROW_DOWN_16 = "icons/16/gtk-go-down.png";
+	public static final String IMG_ARROW_UP_16 = "icons/16/gtk-go-up.png";
+	public static final String IMG_REMOVE_16 = "icons/16/gtk-remove.png";
+	public static final String IMG_VIEW_DETAIL_16 = "icons/16/view_detailed.png";
+	public static final String IMG_VIEW_TREE_16 = "icons/16/view_tree.png";
 	//public static final String CHART_16 = "icons"; 
 	
+	//Images 24x24
+	public static final String IMG_ARROW_DOWN_24 = "icons/24/gtk-go-down.png";
+	public static final String IMG_ARROW_UP_24 = "icons/24/gtk-go-up.png";
+	public static final String IMG_REMOVE_24 = "icons/24/gtk-remove.png";
+	
 	//Images 48x48
-	public static final String DIRECTORY_48 = "icons/48/gtk-directory.png";
-	public static final String CHART_48 = "icons/48/gtk-chart.png";
+	public static final String IMG_DIRECTORY_48 = "icons/48/gtk-directory.png";
+	public static final String IMG_CHART_48 = "icons/48/gtk-chart.png";
 	
 	//Images BIG
-	public static final String ARROW_DOWN_BIG = "icons/gtk-go-down.png";
+	public static final String IMG_ARROW_DOWN_BIG = "icons/gtk-go-down.png";
 }

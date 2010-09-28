@@ -75,7 +75,15 @@ public class SDRConverter {
 
 	}
 	
-	public static ISensorDataContainer convertSDRtoData(File input, int begin, int end ) throws IOException {
+	/**
+	 * 
+	 * @param file
+	 * @param begin (minutes?) 1 <= begin <= end
+	 * @param end  (minutes?)
+	 * @return
+	 * @throws IOException
+	 */
+	public static ISensorDataContainer convertSDRtoData(String file, int begin, int end ) throws IOException {
 		//Initialize position handling
 		begin	= (begin -1) * MINUTEINBLOCKS;
 		end		= end * MINUTEINBLOCKS;
@@ -86,7 +94,7 @@ public class SDRConverter {
 		Timestamp timestamp = new Timestamp(0);
 		
 		//Initialize data handling
-		RandomAccessFile in = new RandomAccessFile(input, "r");
+		RandomAccessFile in = new RandomAccessFile(file, "r");
 		List<Data> datalist = new LinkedList<Data>();
 		
 		//Convert each block
@@ -134,30 +142,6 @@ public class SDRConverter {
 			year = 2000 + 127 + Math.abs(yearIncomlpete);
 
 		return year;
-	}
-
-	public static void main(String[] args) {
-
-		try {
-			String inputFilename = args[0];
-			int begin = Integer.parseInt(args[1]);
-			int end = Integer.parseInt(args[2]);
-			String path = System.getProperty("user.dir");
-			String pathseperator = System.getProperty("file.separator");
-			String inputPath = path + pathseperator + inputFilename;
-			File inputFile = new File(inputPath);
-
-			String outputFilename = inputFilename + ".txt";
-			String outputPath = path + pathseperator + outputFilename;
-			File outputFile = new File(outputPath);
-
-			SDRConverter main = new SDRConverter();
-			main.convertSDRtoCSV(inputFile, outputFile, begin, end);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		System.out.println("Conversion done");
-
 	}
 
 }

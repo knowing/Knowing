@@ -17,7 +17,6 @@ public class SensorContentProvider implements  ITreeContentProvider {
 	@Override
 	public Object[] getElements(Object inputElement) {
 		if(inputElement instanceof Data[]){
-			System.out.println("SensorData: " + inputElement);
 			return (Data[])inputElement;
 		} else if(inputElement instanceof ISensorDataContainer){
 			ISensorDataContainer node = (ISensorDataContainer)inputElement;

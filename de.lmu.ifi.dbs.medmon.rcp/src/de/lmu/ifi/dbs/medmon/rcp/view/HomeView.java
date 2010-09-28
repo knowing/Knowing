@@ -52,7 +52,7 @@ public class HomeView extends ViewPart {
 
 		ImageHyperlink sensor = toolkit.createImageHyperlink(form.getBody(),SWT.NONE);
 		sensor.setText("Daten importieren");
-		sensor.setImage(Activator.getImageDescriptor(IMedmonConstants.ARROW_DOWN_BIG).createImage());
+		sensor.setImage(Activator.getImageDescriptor(IMedmonConstants.IMG_ARROW_DOWN_BIG).createImage());
 		sensor.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
@@ -84,7 +84,6 @@ public class HomeView extends ViewPart {
 				} catch (WorkbenchException e1) {
 					e1.printStackTrace();
 				}
-				;
 			}
 		});
 
