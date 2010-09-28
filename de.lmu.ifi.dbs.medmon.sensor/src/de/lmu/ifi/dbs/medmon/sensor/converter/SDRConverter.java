@@ -9,12 +9,20 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.PlatformUI;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
+import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
 import de.lmu.ifi.dbs.medmon.sensor.data.DaySensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.data.ISensorDataContainer;
 
@@ -78,12 +86,13 @@ public class SDRConverter {
 	/**
 	 * 
 	 * @param file
-	 * @param begin (minutes?) 1 <= begin <= end
-	 * @param end  (minutes?)
+	 * @param minuteBegin (minutes?) 1 <= begin <= end
+	 * @param minuteEnd  (minutes?)
 	 * @return
 	 * @throws IOException
 	 */
-	public static ISensorDataContainer convertSDRtoData(String file, int begin, int end ) throws IOException {
+	public static ISensorDataContainer convertSDRtoData(String file, int begin, int end ) throws IOException {					
+		
 		//Initialize position handling
 		begin	= (begin -1) * MINUTEINBLOCKS;
 		end		= end * MINUTEINBLOCKS;
@@ -127,6 +136,7 @@ public class SDRConverter {
 		
 		return new DaySensorDataContainer(datalist.toArray(new Data[datalist.size()]));
 	}
+
 	
 	/**
 	 * Calculate the complete year from the incomplete data of file

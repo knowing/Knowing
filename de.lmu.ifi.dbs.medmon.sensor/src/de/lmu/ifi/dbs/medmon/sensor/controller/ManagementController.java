@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ColumnViewer;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;

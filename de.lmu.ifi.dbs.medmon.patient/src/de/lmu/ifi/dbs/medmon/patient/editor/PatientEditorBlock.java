@@ -22,6 +22,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
 import de.lmu.ifi.dbs.medmon.patient.Activator;
+import de.lmu.ifi.dbs.medmon.patient.controller.ManagementController;
 import de.lmu.ifi.dbs.medmon.patient.provider.PatientContentProvider;
 import de.lmu.ifi.dbs.medmon.patient.provider.PatientLabelProvider;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
@@ -67,11 +68,18 @@ public class PatientEditorBlock extends MasterDetailsBlock {
 		toolkit.paintBordersFor(pClient);
 				
 		
+		ManagementController controller = new ManagementController(viewer);
 		Button add = toolkit.createButton(pClient, "Neu", SWT.PUSH);
+		add.setData(ManagementController.BUTTON_ADD);
+		add.addListener(SWT.Selection, controller);
 		
 		Button save = toolkit.createButton(pClient, "Speichern", SWT.PUSH);
+		save.setData(ManagementController.BUTTON_SAVE);
+		save.addListener(SWT.Selection, controller);
 		
 		Button delete = toolkit.createButton(pClient, "Austragen", SWT.PUSH);
+		delete.setData(ManagementController.BUTTON_DEL);
+		delete.addListener(SWT.Selection, controller);
 		
 		pSection.setClient(pClient);		
 
