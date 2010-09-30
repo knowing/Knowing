@@ -11,7 +11,7 @@ import de.lmu.ifi.dbs.medmon.database.install.Database;
 public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "de.lmu.ifi.dbs.medmon.database2"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "de.lmu.ifi.dbs.medmon.database"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;
@@ -30,7 +30,7 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		database = new Database();
+		//database = new Database();
 	}
 
 	/*

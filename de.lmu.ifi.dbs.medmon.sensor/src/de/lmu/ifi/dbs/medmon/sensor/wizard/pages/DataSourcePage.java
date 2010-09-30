@@ -1,9 +1,11 @@
 package de.lmu.ifi.dbs.medmon.sensor.wizard.pages;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.WizardPage;
@@ -21,6 +23,8 @@ import org.eclipse.ui.PlatformUI;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
+import de.lmu.ifi.dbs.medmon.sensor.converter.SDRConverter;
+import de.lmu.ifi.dbs.medmon.sensor.data.ISensorDataContainer;
 
 public class DataSourcePage extends WizardPage {
 
@@ -31,10 +35,10 @@ public class DataSourcePage extends WizardPage {
 	private Button rFile, rUSB, rDatabase;
 	private Button bFile, usb, testConnection;
 	private Text file, url, user, pw;
-	
+
 	private ImportPageController controller;
-	
-	private Data[] sensorData;
+
+	private ISensorDataContainer sensorData;
 
 	public DataSourcePage() {
 		super("Datenquelle");
@@ -58,10 +62,10 @@ public class DataSourcePage extends WizardPage {
 
 		rFile = new Button(container, SWT.RADIO);
 		rFile.addListener(SWT.Selection, controller);
-		
+
 		Composite cFile = new Composite(container, SWT.NONE);
 		cFile.setLayout(new GridLayout(2, false));
-		
+
 		file = new Text(cFile, SWT.BORDER);
 		file.setLayoutData(new GridData(220, SWT.DEFAULT));
 		bFile = new Button(cFile, SWT.PUSH);
@@ -108,57 +112,26 @@ public class DataSourcePage extends WizardPage {
 		setControl(container);
 		setPageComplete(false);
 	}
-	
+
 	private void done() {
 		flip = true;
 		setPageComplete(true);
 	}
-	
 
-	public Data[] getSensorData() {
+	public ISensorDataContainer getSensorData() {
 		return sensorData;
 	}
 
 	public void importData() {
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(PlatformUI
-				.getWorkbench().getActiveWorkbenchWindow().getShell());
+		//Use Sample begin and end
 		try {
-			dialog.run(true, true, new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) {
-					monitor.beginTask("Importing Data", 100);
-					for (int i = 0; i < 10; i++) {
-						if (monitor.isCanceled())
-							return;
-						monitor.subTask("Dataset " + i);
-						sleep(333);
-						monitor.worked(i);
-					}
-					Set<Data> set = SampleDataFactory.getSensorData();
-					sensorData = set.toArray(new Data[set.size()]);
-					monitor.done();
-				}
-			});
-		} catch (InvocationTargetException e) {
+			sensorData = SDRConverter.convertSDRtoData(file.getText(), 1, 20);
+		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+			MessageDialog.openError(getShell(), "Fehler beim Import", e.getMessage());
 		}
+	}
 
-	}
-	
-	/**
-	 * Just for testing the job scheduler
-	 * @param waitTime
-	 */
-	private void sleep(Integer waitTime) {
-		try {
-			Thread.sleep(waitTime);
-		} catch (Throwable t) {
-			System.out.println("Wait time interrupted");
-		}
-	}
-	
 	private class ImportPageController implements Listener {
 
 		@Override
@@ -175,22 +148,27 @@ public class DataSourcePage extends WizardPage {
 				
 				usb.setEnabled(rUSB.getSelection());
 				
-				if(e.widget == bFile) {
-					FileDialog dialog = new FileDialog(container.getShell());
-					String path = dialog.open();
-					if(path != null && !path.isEmpty()) {
-						file.setText(path);
-						done();
-					}
+				//Real logic
+				if(e.widget == bFile)
+					importFile();
+				else if(e.widget == usb)
+					;
 					
-				} else if(e.widget == usb) {
-					
-				}
+				
 			}		
+		}
+
+		/**
+		 * Opens a dialog to select sdr/csv File and sets
+		 * the path in the file variable.
+		 */
+		private void importFile() {
+			String path = SDRConverter.importSDRFileDialog(getShell());
+			if (path != null && !path.isEmpty()) {
+				file.setText(path);
+				done();
+			}
 		}
 		
 	}
-
-
-
 }

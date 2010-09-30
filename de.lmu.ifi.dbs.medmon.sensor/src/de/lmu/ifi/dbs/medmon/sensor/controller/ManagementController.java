@@ -9,6 +9,8 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 
 import de.lmu.ifi.dbs.medmon.sensor.converter.SDRConverter;
+import de.lmu.ifi.dbs.medmon.sensor.data.ISensorDataContainer;
+import de.lmu.ifi.dbs.medmon.sensor.data.RootSensorDataContainer;
 
 public class ManagementController extends HyperlinkAdapter {
 	
@@ -35,17 +37,9 @@ public class ManagementController extends HyperlinkAdapter {
 		}
 	}
 	
-	private void importData() {
-		FileDialog dialog = new FileDialog(viewer.getControl().getShell());
-		dialog.setFilterExtensions(new String[] { "*.sdr", "*.csv" });
-		dialog.setFilterNames(new String[] { "SensorFile(*.sdr)", "CSV Table(*.csv)"});
-		String selected = dialog.open();
-		try {
-			viewer.setInput(SDRConverter.convertSDRtoData(selected, 1, 20));
-		} catch (IOException e) {
-			e.printStackTrace();
-			MessageDialog.openError(dialog.getParent(), "Fehler beim Daten lesen", e.getMessage());
-		}
+	public void importData() {
+		ISensorDataContainer data = SDRConverter.importDialog(viewer.getControl().getShell());
+		viewer.setInput(data);
 	}
-
+	
 }

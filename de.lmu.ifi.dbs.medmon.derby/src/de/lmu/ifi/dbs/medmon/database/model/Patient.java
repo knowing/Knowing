@@ -130,4 +130,9 @@ public class Patient implements Serializable {
 		this.data = data;
 	}
 	
+	@Override
+	public String toString() {
+		return firstname + " " + lastname;
+	}
+	
 }
