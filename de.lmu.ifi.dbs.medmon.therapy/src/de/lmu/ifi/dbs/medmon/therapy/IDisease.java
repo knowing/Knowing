@@ -7,6 +7,8 @@ package de.lmu.ifi.dbs.medmon.therapy;
  * @version 1.0
  */
 public interface IDisease {
+	
+	public static final String DISEASE_ID = "de.lmu.ifi.dbs.medmon.disease";
 
 	public String getName();
 	

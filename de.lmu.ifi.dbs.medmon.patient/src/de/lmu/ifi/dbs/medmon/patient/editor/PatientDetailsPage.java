@@ -215,7 +215,7 @@ public class PatientDetailsPage implements IDetailsPage {
 	 * gesetzt werden kann!!
 	 */
 	private void setDefaultAlgorithm() {
-		ISensorDataAlgorithm[] algorithms = AlgorithmContentProvider.getAlgorithms();
+		ISensorDataAlgorithm[] algorithms = AlgorithmContentProvider.evaluateAlgorithms();
 		if(algorithms != null && algorithms[0] != null)
 			Activator.getPatientService().setSelection(algorithms[0], IPatientService.ALGORITHM);
 	}

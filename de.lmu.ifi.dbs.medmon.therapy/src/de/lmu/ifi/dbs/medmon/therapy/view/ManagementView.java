@@ -1,5 +1,7 @@
-package de.lmu.ifi.dbs.medmon.algorithm.views;
+package de.lmu.ifi.dbs.medmon.therapy.view;
 
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -7,14 +9,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.part.ViewPart;
 
-import de.lmu.ifi.dbs.medmon.algorithm.editor.AlgorithmEditorBlock;
+import de.lmu.ifi.dbs.medmon.therapy.pages.DiseaseMasterBlock;
 
 public class ManagementView extends ViewPart {
 
-	public static final String ID = "de.lmu.ifi.dbs.medmon.patient.Management";
+	public static final String ID = "de.lmu.ifi.dbs.medmon.therapy.view.DiseaseManagement"; //$NON-NLS-1$
 	
 	private ManagedForm managedForm;
-	
+
 	public ManagementView() {
 	}
 
@@ -25,10 +27,14 @@ public class ManagementView extends ViewPart {
 		managedForm.getToolkit().adapt(parent);
 
 		initialize(managedForm);
+		createActions();
+		initializeMenu();
+		initializeToolBar();
+		
 	}
 	
 	public void initialize(ManagedForm managedForm) {
-		AlgorithmEditorBlock block = new AlgorithmEditorBlock();
+		DiseaseMasterBlock block = new DiseaseMasterBlock();
 		block.createContent(managedForm);
 	}
 
@@ -53,5 +59,26 @@ public class ManagementView extends ViewPart {
 		managedForm.dispose();
 		super.dispose();
 	}
+	/**
+	 * Create the actions.
+	 */
+	private void createActions() {
+		// Create the actions
+	}
+
+	/**
+	 * Initialize the toolbar.
+	 */
+	private void initializeToolBar() {
+		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
+	}
+
+	/**
+	 * Initialize the menu.
+	 */
+	private void initializeMenu() {
+		IMenuManager manager = getViewSite().getActionBars().getMenuManager();
+	}
+
 
 }

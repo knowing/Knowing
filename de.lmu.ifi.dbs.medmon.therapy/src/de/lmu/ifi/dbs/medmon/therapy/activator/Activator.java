@@ -2,6 +2,9 @@ package de.lmu.ifi.dbs.medmon.therapy.activator;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.util.tracker.ServiceTracker;
+
+import de.lmu.ifi.dbs.medmon.therapy.IDisease;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -13,6 +16,9 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
+	
+	//Tracks disease service
+	private static ServiceTracker diseaseTracker;
 	
 	/**
 	 * The constructor
@@ -27,6 +33,7 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		diseaseTracker = new ServiceTracker(context, IDisease.class.getName(), null);
 	}
 
 	/*
@@ -45,6 +52,10 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public static Activator getDefault() {
 		return plugin;
+	}
+	
+	public static IDisease[] getIDiseaseServices() {
+		return (IDisease[]) diseaseTracker.getServices();
 	}
 
 }
