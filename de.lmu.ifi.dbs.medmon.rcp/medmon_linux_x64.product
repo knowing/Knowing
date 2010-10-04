@@ -26,7 +26,6 @@
       <plugin id="com.ibm.icu"/>
       <plugin id="de.lmu.ifi.dbs.medmon.algorithm"/>
       <plugin id="de.lmu.ifi.dbs.medmon.algorithm.extension"/>
-      <plugin id="de.lmu.ifi.dbs.medmon.database"/>
       <plugin id="de.lmu.ifi.dbs.medmon.derby"/>
       <plugin id="de.lmu.ifi.dbs.medmon.jfreechart.libs"/>
       <plugin id="de.lmu.ifi.dbs.medmon.patient"/>
@@ -34,6 +33,8 @@
       <plugin id="de.lmu.ifi.dbs.medmon.rcp"/>
       <plugin id="de.lmu.ifi.dbs.medmon.sensor"/>
       <plugin id="de.lmu.ifi.dbs.medmon.visualizer"/>
+      <plugin id="javax.persistence"/>
+      <plugin id="org.apache.derby.core"/>
       <plugin id="org.eclipse.core.commands"/>
       <plugin id="org.eclipse.core.contenttype"/>
       <plugin id="org.eclipse.core.databinding"/>
@@ -55,6 +56,11 @@
       <plugin id="org.eclipse.jface.databinding"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.services"/>
+      <plugin id="org.eclipse.persistence.antlr"/>
+      <plugin id="org.eclipse.persistence.asm"/>
+      <plugin id="org.eclipse.persistence.core"/>
+      <plugin id="org.eclipse.persistence.jpa"/>
+      <plugin id="org.eclipse.persistence.jpa.osgi" fragment="true"/>
       <plugin id="org.eclipse.swt"/>
       <plugin id="org.eclipse.swt.gtk.linux.x86_64" fragment="true"/>
       <plugin id="org.eclipse.ui"/>
@@ -62,5 +68,9 @@
       <plugin id="org.eclipse.ui.workbench"/>
    </plugins>
 
+   <configurations>
+      <plugin id="javax.persistence" autoStart="true" startLevel="1" />
+      <plugin id="org.eclipse.persistence.jpa" autoStart="true" startLevel="2" />
+   </configurations>
 
 </product>

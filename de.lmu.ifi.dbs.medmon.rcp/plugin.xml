@@ -29,7 +29,7 @@
             name="Medmon">
          <property
                name="windowImages"
-               value="icons/16/gtk-info.png,icons/48/gtk-info.png">
+               value="icons/alt_window_16.gif,icons/alt_window_32.gif">
          </property>
          <property
                name="appName"
