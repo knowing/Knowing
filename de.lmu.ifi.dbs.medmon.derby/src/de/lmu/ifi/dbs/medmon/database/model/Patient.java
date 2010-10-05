@@ -12,12 +12,17 @@ import java.util.Set;
  */
 @Entity
 @Table(name="PATIENT")
+@NamedQueries({
+    @NamedQuery(name = "Patient.findAll", query = "SELECT p FROM Patient p"),
+    @NamedQuery(name = "Patient.findById", query = "SELECT p FROM Patient p WHERE p.id = :id"),
+    @NamedQuery(name = "Patient.findByFirstname", query = "SELECT p FROM Patient p WHERE p.firstname = :firstname"),
+    @NamedQuery(name = "Patient.findByLastname", query = "SELECT p FROM Patient p WHERE p.lastname = :lastname")})
 public class Patient implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.TABLE)
-	@Column(unique=true, nullable=false)
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(nullable=false)
 	private int id;
 
     @Temporal( TemporalType.DATE)
@@ -48,15 +53,12 @@ public class Patient implements Serializable {
     public Patient() {
     }
     
-    
 
 	public Patient(String firstname, String lastname) {
 		super();
 		this.firstname = firstname;
 		this.lastname = lastname;
 	}
-
-
 
 	public int getId() {
 		return this.id;

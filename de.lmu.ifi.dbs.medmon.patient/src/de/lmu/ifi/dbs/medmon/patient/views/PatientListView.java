@@ -57,7 +57,7 @@ public class PatientListView extends ViewPart {
 				| SWT.V_SCROLL);
 		viewer.setContentProvider(new PatientContentProvider());
 		viewer.setLabelProvider(new PatientLabelProvider());
-		viewer.setInput(SampleDataFactory.getData());
+		viewer.setInput(getSite());
 
 		// Create the help context id for the viewer's control
 		getSite().setSelectionProvider(viewer);

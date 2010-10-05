@@ -100,7 +100,7 @@ public class PatientEditorBlock extends MasterDetailsBlock {
 		});
 		newViewer.setContentProvider(new PatientContentProvider());
 		newViewer.setLabelProvider(new PatientLabelProvider());
-		newViewer.setInput(SampleDataFactory.getData());
+		newViewer.setInput(this);
 		
 		return newViewer;
 	}

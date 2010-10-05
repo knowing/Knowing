@@ -1,13 +1,16 @@
 package de.lmu.ifi.dbs.medmon.database.sample;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import org.apache.derby.catalog.GetProcedureColumns;
+
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.database.model.Data;
+import de.lmu.ifi.dbs.medmon.database.util.JPAUtil;
 
 public class SampleDataFactory {
 
@@ -64,5 +67,18 @@ public class SampleDataFactory {
 		GregorianCalendar date = new GregorianCalendar(year, month, day);
 		
 		return new Timestamp(date.getTimeInMillis());
+	}
+	
+	public static void addPatientsToDB() {
+		EntityManager em = JPAUtil.currentEntityManager();
+		Patient[] patients = new Patient[4];
+		patients[0] = new Patient("Klara", "Fall");
+		patients[1] = new Patient("Kurt", "Sichtig");
+		patients[2] = new Patient("Olga", "Migram");
+		patients[3] = new Patient("Hans", "Dampf");
+		em.getTransaction().begin();
+		for(Patient each : patients) 
+			em.persist(each);
+		em.getTransaction().commit();
 	}
 }
