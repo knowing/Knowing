@@ -6,7 +6,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import de.lmu.ifi.dbs.medmon.sensor.dataImport.wizard.ImportWizard;
+import de.lmu.ifi.dbs.medmon.sensor.wizard.ImportExternalWizard;
 
 public class CallImportWizard extends AbstractHandler {
 	
@@ -14,7 +14,7 @@ public class CallImportWizard extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		ImportWizard wizard = new ImportWizard();
+		ImportExternalWizard wizard = new ImportExternalWizard();
 		WizardDialog dialog = new WizardDialog(HandlerUtil.getActiveShell(event), wizard);
 		dialog.open();
 

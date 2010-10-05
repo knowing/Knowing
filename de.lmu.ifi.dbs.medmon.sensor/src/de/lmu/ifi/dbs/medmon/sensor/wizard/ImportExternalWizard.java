@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.medmon.sensor.dataImport.wizard;
+package de.lmu.ifi.dbs.medmon.sensor.wizard;
 
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
@@ -16,14 +16,14 @@ import de.lmu.ifi.dbs.medmon.sensor.wizard.pages.DataSourcePage;
  * @author muki
  * @version 0.3
  */
-public class ImportWizard extends Wizard {
+public class ImportExternalWizard extends Wizard {
 
 	private PatientPage patientPage;
 	private DataSourcePage sourcePage;
 	//private ImportPage3Data dataPage;
 	private AnalyzePage analyzePage;
 	
-	public ImportWizard() {
+	public ImportExternalWizard() {
 		super();
 		setNeedsProgressMonitor(true);
 	}
