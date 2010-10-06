@@ -47,19 +47,27 @@ public class DaySensorDataContainer extends AbstractSensorDataContainer {
 		calendar = start;
 	}
 	
+	@Deprecated
 	public Date getDate() {
 		return date;
 	}
 	
-	
+	@Deprecated
 	public Calendar getCalendar() {
 		return calendar;
+	}
+	
+	/**
+	 * The day for this container
+	 * @return Calendar.DAY_OF_YEAR
+	 */
+	public int getDay() {
+		return calendar.get(Calendar.DAY_OF_YEAR);
 	}
 
 	@Override
 	public String getName() {
 		SimpleDateFormat df = new SimpleDateFormat("dd.mm.yyy");
-		System.out.println("DateFormat: " + df + " formats " + calendar);
 		return df.format(calendar.getTime());
 	}
 

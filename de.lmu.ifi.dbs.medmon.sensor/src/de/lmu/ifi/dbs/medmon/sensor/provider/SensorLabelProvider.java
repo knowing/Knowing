@@ -50,7 +50,7 @@ public class SensorLabelProvider extends LabelProvider implements
 	public String getColumnText(Object element, int columnIndex) {
 		Data data = (Data)element;
 		switch (columnIndex) {
-		case 0: return date2String(data.getImported().getTime());
+		case 0: return date2String(data.getId().getRecord().getTime());
 		case 1: return date2String(data.getId().getRecord().getTime());
 		case 2: return "nicht verfügbar";
 		}
@@ -61,7 +61,8 @@ public class SensorLabelProvider extends LabelProvider implements
 		SimpleDateFormat df = new SimpleDateFormat("yyyy.MM.dd");
 		if(date == null)
 			return "";
-		return df.format(date);
+		//return df.format(date);
+		return date.toString();
 	}
 
 }

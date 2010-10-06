@@ -49,6 +49,8 @@ public class ImportWizard extends Wizard {
 	public IWizardPage getNextPage(IWizardPage page) {
 		if(page.getPreviousPage() == sourcePage)
 			sourcePage.importData();
+		if(page == dataPage)
+			dataPage.setViewerInput(sourcePage.getData());
 		return super.getNextPage(page);
 	}
 	

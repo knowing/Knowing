@@ -60,7 +60,7 @@ public class SDRConverter {
 			int end) throws IOException {
 
 		// Initialize position handling
-		begin = (begin - 1) * MINUTEINBLOCKS;
+		begin = begin * MINUTEINBLOCKS;
 		end = end * MINUTEINBLOCKS;
 		byte[] daten = new byte[BLOCKSIZE];
 
@@ -105,46 +105,8 @@ public class SDRConverter {
 			}
 		}
 		return AbstractSensorDataContainer.parse(datalist.toArray(new Data[datalist.size()]), 0, 0);
-		//return new DaySensorDataContainer(datalist.toArray(new Data[datalist.size()]));
 	}
 
-	public void convertSDRtoCSV(File input, File output, int begin, int end) {
-		begin = (begin - 1) * MINUTEINBLOCKS;
-		end = end * MINUTEINBLOCKS;
-
-		byte[] daten = new byte[BLOCKSIZE];
-
-		GregorianCalendar date = new GregorianCalendar();
-		Timestamp dateInDB = new Timestamp(0);
-
-		try {
-			FileWriter out = new FileWriter(output);
-			RandomAccessFile in = new RandomAccessFile(input, "r");
-			String newline = System.getProperty("line.separator");
-			for (int i = begin; i <= end; i++) {
-				int position = i * BLOCKSIZE;
-				in.seek(position);
-				in.read(daten, 0, BLOCKSIZE);
-				int year = calcYear(daten[506]);
-				date.set(year, daten[507] - 1, daten[508], daten[509],
-						daten[510], daten[511]);
-				long time = date.getTimeInMillis() - 7000;
-
-				for (int j = 0; j < 504; j = j + 3) {
-					dateInDB.setTime(time);
-					// Recorded X Y Z
-					String toWrite = dateInDB + "," + daten[j] + ","
-							+ daten[j + 1] + "," + daten[j + 2] + newline;
-					out.write(toWrite);
-					time = time + 44;
-				}
-			}
-			out.close();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-	}
 	
 	public static String importSDRFileDialog(Shell parent) {
 		FileDialog dialog = new FileDialog(parent);

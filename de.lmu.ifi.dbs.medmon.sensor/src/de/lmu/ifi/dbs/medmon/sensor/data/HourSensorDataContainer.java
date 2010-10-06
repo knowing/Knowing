@@ -10,7 +10,7 @@ import de.lmu.ifi.dbs.medmon.database.model.Data;
 
 public class HourSensorDataContainer extends AbstractSensorDataContainer {
 
-	private final Calendar hour = new GregorianCalendar();
+	private Calendar hour = new GregorianCalendar();
 
 	public HourSensorDataContainer(ISensorDataContainer parent, Data[] data) {
 		super(parent, ISensorDataContainer.HOUR, data);
@@ -33,13 +33,13 @@ public class HourSensorDataContainer extends AbstractSensorDataContainer {
 		// AbstractSensorDataContainer.parse(..)
 		Assert.isTrue(start.get(Calendar.HOUR_OF_DAY) == end.get(Calendar.HOUR_OF_DAY));
 		
-		//
-		hour.set(Calendar.HOUR_OF_DAY, start.get(Calendar.HOUR_OF_DAY));
+		//Avoid Call-By-Reference effects
+		hour = (Calendar) start.clone();
 	}
 
 	@Override
 	public String getName() {
-		SimpleDateFormat df = new SimpleDateFormat("hh");
+		SimpleDateFormat df = new SimpleDateFormat("kk:mm");
 		return df.format(hour.getTime());
 	}
 

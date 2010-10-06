@@ -128,8 +128,7 @@ public abstract class AbstractSensorDataContainer implements
 		RootSensorDataContainer root = new RootSensorDataContainer();
 		List<ISensorDataContainer> days = parseDay(root, data);
 		for (ISensorDataContainer each : days) {
-			List<ISensorDataContainer> hours = parseHour(each,
-					each.getSensorData());
+			List<ISensorDataContainer> hours = parseHour(each,each.getSensorData());
 		}
 		return root;
 	}
@@ -150,55 +149,27 @@ public abstract class AbstractSensorDataContainer implements
 		}
 	}
 
-	public static List<ISensorDataContainer> parseHour(
-			ISensorDataContainer parent, Data[] data) {
+	public static List<ISensorDataContainer> parseDay(ISensorDataContainer parent, Data[] data) {
 		Assert.isNotNull(data);
 		if (data[0] == null)
 			return Collections.emptyList();
-		System.out.println("----------Parse Hour-------------");
-		LinkedList<ISensorDataContainer> returns = new LinkedList<ISensorDataContainer>();
-
-		int start = 0;
-		int offset = 0;
-
-		while (start < data.length) {
-			Calendar startTime = data[start].getId().getRecord();
-			Calendar endTime	= data[offset].getId().getRecord();
-			while (offset < data.length	&&
-					data[start].getId().getRecord().get(Calendar.HOUR_OF_DAY) == 
-					data[offset].getId().getRecord().get(Calendar.HOUR_OF_DAY)) {
-				endTime	= data[offset].getId().getRecord();
-				offset++;
-			}
-			// Calculating array length
-			int length = offset - start - 1;
-			Data[] containerArray = new Data[length];
-			System.arraycopy(data, start, containerArray, 0, length);
-			// Add the newling formed array
-			returns.add(new HourSensorDataContainer(parent, containerArray));
-
-			System.out.println("Array from: [" + start + "] to [" + offset+ "]" + " length=" + length);
-			start = offset;
-		}
-
-		return returns;
-	}
-
-	public static List<ISensorDataContainer> parseDay(
-			ISensorDataContainer parent, Data[] data) {
-		Assert.isNotNull(data);
-		if (data[0] == null)
-			return Collections.emptyList();
-
-		System.out.println("------------Parse Day---------------");
-		LinkedList<ISensorDataContainer> returns = new LinkedList<ISensorDataContainer>();
 		
+		System.out.println("------------Parse Day---------------");	
+		System.out.println("DataArray: " + data);
 		int start = 0;
-		int offset = 0;
-
+		int offset = 0;	
+		Calendar startTime = data[start].getId().getRecord();
+		Calendar endTime	= data[offset].getId().getRecord();
+		System.out.println("StartTime: " + startTime.getTime());
+		
+		//First and last Data is same day
+		if(startTime.get(Calendar.DAY_OF_YEAR) == data[data.length - 1].getId().getRecord().get(Calendar.DAY_OF_YEAR)) {
+			ISensorDataContainer singleton = new DaySensorDataContainer(parent, data);
+			return Collections.singletonList(singleton);
+		}
+					
+		LinkedList<ISensorDataContainer> returns = new LinkedList<ISensorDataContainer>();
 		while (start < data.length) {
-			Calendar startTime = data[start].getId().getRecord();
-			Calendar endTime	= data[offset].getId().getRecord();
 			while (offset < data.length	&&
 					data[start].getId().getRecord().get(Calendar.DAY_OF_YEAR) == 
 					data[offset].getId().getRecord().get(Calendar.DAY_OF_YEAR)) {
@@ -211,6 +182,41 @@ public abstract class AbstractSensorDataContainer implements
 			System.arraycopy(data, start, containerArray, 0, length);
 			// Add the newling formed array
 			returns.add(new DaySensorDataContainer(parent, containerArray));
+
+			System.out.println("Array from: [" + start + "] to [" + offset+ "]" + " length=" + length);
+			start = offset;
+		}
+
+		return returns;
+	}
+	
+	public static List<ISensorDataContainer> parseHour(ISensorDataContainer parent, Data[] data) {
+		Assert.isNotNull(data);
+		if (data[0] == null)
+			return Collections.emptyList();
+		
+		System.out.println("----------Parse Hour-------------");
+		System.out.println("DataArray: " + data);
+		int start = 0;
+		int offset = 0;	
+		Calendar startTime = data[start].getId().getRecord();
+		Calendar endTime	= data[offset].getId().getRecord();
+		System.out.println("StartTime: " + startTime.getTime());
+		
+		LinkedList<ISensorDataContainer> returns = new LinkedList<ISensorDataContainer>();
+		while (start < data.length) {
+			while (offset < data.length	&&
+					data[start].getId().getRecord().get(Calendar.HOUR_OF_DAY) == 
+					data[offset].getId().getRecord().get(Calendar.HOUR_OF_DAY)) {
+				endTime	= data[offset].getId().getRecord();
+				offset++;
+			}
+			// Calculating array length
+			int length = offset - start - 1;
+			Data[] containerArray = new Data[length];
+			System.arraycopy(data, start, containerArray, 0, length);
+			// Add the newling formed array
+			returns.add(new HourSensorDataContainer(parent, containerArray));
 
 			System.out.println("Array from: [" + start + "] to [" + offset+ "]" + " length=" + length);
 			start = offset;

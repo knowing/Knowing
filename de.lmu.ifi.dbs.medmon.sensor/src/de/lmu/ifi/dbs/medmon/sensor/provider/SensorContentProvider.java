@@ -13,7 +13,17 @@ import de.lmu.ifi.dbs.medmon.sensor.data.ISensorDataContainer;
  */
 public class SensorContentProvider implements  ITreeContentProvider {
 
+	private boolean detailed;
 	
+	public SensorContentProvider(boolean detailed) {
+		this.detailed = detailed;
+	}
+
+	public SensorContentProvider() {
+		this(false);
+	}
+	
+		
 	@Override
 	public Object[] getElements(Object inputElement) {
 		if(inputElement instanceof Data[]){
@@ -22,7 +32,8 @@ public class SensorContentProvider implements  ITreeContentProvider {
 			ISensorDataContainer node = (ISensorDataContainer)inputElement;
 			if(node.hasChildren())
 				return node.getChildren();
-			return node.getSensorData();
+			if(detailed)
+				return node.getSensorData();
 		}	
 		return new Object[0];
 	}
@@ -33,7 +44,8 @@ public class SensorContentProvider implements  ITreeContentProvider {
 			ISensorDataContainer node = (ISensorDataContainer)parentElement;
 			if(node.hasChildren())
 				return node.getChildren();
-			return node.getSensorData();
+			if(detailed)
+				return node.getSensorData();
 		}
 		return new Object[0];
 	}
@@ -50,7 +62,9 @@ public class SensorContentProvider implements  ITreeContentProvider {
 		if(element instanceof ISensorDataContainer) {
 			ISensorDataContainer node = (ISensorDataContainer)element;
 			//Provides a detail view to see every SensorData Element
-			return node.hasChildren() || (node.getSensorData() != null);
+			if(detailed)
+				return node.hasChildren() || (node.getSensorData() != null);
+			return node.hasChildren();
 		}	
 		return false;
 	}

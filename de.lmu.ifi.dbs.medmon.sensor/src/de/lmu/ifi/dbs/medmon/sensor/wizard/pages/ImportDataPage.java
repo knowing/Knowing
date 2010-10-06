@@ -24,6 +24,8 @@ import org.eclipse.swt.layout.GridData;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.util.JPAUtil;
+import de.lmu.ifi.dbs.medmon.sensor.provider.SensorContentProvider;
+import de.lmu.ifi.dbs.medmon.sensor.provider.SensorLabelProvider;
 
 public class ImportDataPage extends WizardPage {
 
@@ -35,6 +37,8 @@ public class ImportDataPage extends WizardPage {
 	private Button bFirstRecord, bLastRecord;
 	private Button bValidate;
 	private Button removeAfter, analyseAfter;
+
+	private TreeViewer treeViewer;
 
 
 	public ImportDataPage() {
@@ -84,7 +88,9 @@ public class ImportDataPage extends WizardPage {
 		bLastRecord.setText("Bis letzte Aufzeichnung");
 		bLastRecord.addListener(SWT.Selection, controller);
 
-		TreeViewer treeViewer = new TreeViewer(container, SWT.BORDER);
+		treeViewer = new TreeViewer(container, SWT.BORDER);
+		treeViewer.setContentProvider(new SensorContentProvider(true));
+		treeViewer.setLabelProvider(new SensorLabelProvider());
 		Tree tree = treeViewer.getTree();
 		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 5, 1));
 
@@ -105,6 +111,10 @@ public class ImportDataPage extends WizardPage {
 
 		// setPageComplete(false);
 
+	}
+	
+	public void setViewerInput(Object input) {
+		treeViewer.setInput(input);
 	}
 
 	public Date getStart() {
