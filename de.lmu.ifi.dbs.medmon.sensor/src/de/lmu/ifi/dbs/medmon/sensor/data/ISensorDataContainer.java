@@ -16,10 +16,13 @@ import de.lmu.ifi.dbs.medmon.database.model.Data;
  */
 public interface ISensorDataContainer {
 	
+	//Level constants. Should be compared via % 10
 	public static final int ROOT 	= 0;
-	public static final int DAY	 	= 1;
-	public static final int WEEK 	= 2;
-	public static final int MONTH 	= 3;
+	public static final int HOUR	= 2;
+	public static final int DAY	 	= 3;
+	public static final int WEEK 	= 4;
+	public static final int MONTH 	= 5;
+	
 	
 	//Standard tree methods
 	public ISensorDataContainer getParent();

@@ -1,12 +1,15 @@
 package de.lmu.ifi.dbs.medmon.sensor.wizard.pages;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
@@ -77,17 +80,39 @@ public class SourcePage extends WizardPage {
 	public void importData() {
 		// Use Sample begin and end
 		try {
-			data = SDRConverter.convertSDRtoData(tSDRFile.getText(), 1, 20);
-		} catch (IOException e) {
+			getContainer().run(false, false, new IRunnableWithProgress() {
+				
+				@Override
+				public void run(IProgressMonitor monitor) throws InvocationTargetException,
+						InterruptedException {
+					monitor.beginTask("Daten laden", 20);
+					try {
+						data = SDRConverter.convertSDRtoData(tSDRFile.getText(), 1, 500);
+					} catch (IOException e) {
+						e.printStackTrace();
+						MessageDialog.openError(getShell(), "Fehler beim Import",e.getMessage());
+					}
+				}
+			});
+			
+		} catch (InvocationTargetException e) {
 			e.printStackTrace();
-			MessageDialog.openError(getShell(), "Fehler beim Import",
-					e.getMessage());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 
 	private void done() {
 		flip = true;
 		setPageComplete(true);
+	}
+	
+	public ISensorDataContainer getData() {
+		return data;
+	}
+
+	public Patient getPatient() {
+		return patient;
 	}
 
 	private class PageController implements Listener {
@@ -127,7 +152,7 @@ public class SourcePage extends WizardPage {
 			em.getTransaction().begin();
 			Query allPatients = em.createNamedQuery("Patient.findAll");
 			List<Patient> patients = allPatients.getResultList();
-			
+			em.getTransaction().commit();
 			return patients.toArray(new Patient[patients.size()]);
 		}
 	}

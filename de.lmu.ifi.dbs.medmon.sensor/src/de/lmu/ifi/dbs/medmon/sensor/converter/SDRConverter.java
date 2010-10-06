@@ -25,7 +25,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
+import de.lmu.ifi.dbs.medmon.database.model.DataPK;
 import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
+import de.lmu.ifi.dbs.medmon.sensor.data.AbstractSensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.data.DaySensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.data.ISensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.data.RootSensorDataContainer;
@@ -64,7 +66,7 @@ public class SDRConverter {
 
 		// Initialize time handling
 		GregorianCalendar date = new GregorianCalendar();
-		Timestamp timestamp = new Timestamp(0);
+		GregorianCalendar timestamp = new GregorianCalendar();
 
 		// Initialize data handling
 		RandomAccessFile in = new RandomAccessFile(file, "r");
@@ -89,16 +91,21 @@ public class SDRConverter {
 			long time = date.getTimeInMillis() - TIME_CORRECTION_BEFORE;
 
 			for (int j = 0; j < CONTENT_BLOCK; j += 3) {
-				timestamp.setTime(time);
+				timestamp.setTimeInMillis(time);
 				int x = daten[j];
 				int y = daten[j + 1];
 				int z = daten[j + 2];
-				datalist.add(new Data(x, y, z, timestamp));
+				
+				//Avoiding Call-by-Reference effect
+				GregorianCalendar ts = (GregorianCalendar) timestamp.clone();
+				DataPK id = new DataPK(0, ts);
+	
+				datalist.add(new Data(id, x, y, z));
 				time += TIME_CORRECTION_AFTER;
 			}
 		}
-
-		return new DaySensorDataContainer(datalist.toArray(new Data[datalist.size()]));
+		return AbstractSensorDataContainer.parse(datalist.toArray(new Data[datalist.size()]), 0, 0);
+		//return new DaySensorDataContainer(datalist.toArray(new Data[datalist.size()]));
 	}
 
 	public void convertSDRtoCSV(File input, File output, int begin, int end) {

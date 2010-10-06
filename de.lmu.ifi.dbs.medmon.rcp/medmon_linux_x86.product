@@ -54,6 +54,11 @@
       <plugin id="org.eclipse.help"/>
       <plugin id="org.eclipse.jface"/>
       <plugin id="org.eclipse.jface.databinding"/>
+      <plugin id="org.eclipse.nebula.cwt"/>
+      <plugin id="org.eclipse.nebula.widgets.calendarcombo"/>
+      <plugin id="org.eclipse.nebula.widgets.cdatetime"/>
+      <plugin id="org.eclipse.nebula.widgets.datechooser"/>
+      <plugin id="org.eclipse.nebula.widgets.formattedtext"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.services"/>
       <plugin id="org.eclipse.persistence.antlr"/>
@@ -68,5 +73,9 @@
       <plugin id="org.eclipse.ui.workbench"/>
    </plugins>
 
+   <configurations>
+      <plugin id="javax.persistence" autoStart="true" startLevel="1" />
+      <plugin id="org.eclipse.persistence.jpa" autoStart="true" startLevel="2" />
+   </configurations>
 
 </product>

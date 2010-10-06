@@ -57,8 +57,8 @@ public class SensorDetailPage implements IDetailsPage {
 		if(!selection.isEmpty() && selection instanceof IStructuredSelection) {
 			if(bindingContext != null) bindingContext.dispose();
 			data = (Data)((IStructuredSelection)selection).getFirstElement();
-			tImport.setText(date2String(data.getTimestamp()));
-			tRecord.setText(date2String(data.getTimestamp()));
+			tImport.setText(date2String(data.getImported().getTime()));
+			tRecord.setText(date2String(data.getId().getRecord().getTime()));
 			bindingContext = initDataBindings();
 		}
 

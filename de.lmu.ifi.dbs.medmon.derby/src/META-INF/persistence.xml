@@ -26,10 +26,10 @@
 			<property name="eclipselink.ddl-generation.output-mode"	value="database" />
 			
 			<!-- Logging -->
-			<property name="eclipselink.logging.level" value="FINE" />
 			<property name="eclipselink.logging.timestamp" value="false" />
 			<property name="eclipselink.logging.session" value="false" />
 			<property name="eclipselink.logging.thread" value="false" />
+			<property name="eclipselink.logging.level" value="FINE"/>
 
 		</properties>
 	</persistence-unit>

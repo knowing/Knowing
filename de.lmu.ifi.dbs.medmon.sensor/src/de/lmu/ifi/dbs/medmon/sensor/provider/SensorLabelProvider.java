@@ -50,8 +50,8 @@ public class SensorLabelProvider extends LabelProvider implements
 	public String getColumnText(Object element, int columnIndex) {
 		Data data = (Data)element;
 		switch (columnIndex) {
-		case 0: return date2String(data.getTimestamp());
-		case 1: return date2String(data.getTimestamp());
+		case 0: return date2String(data.getImported().getTime());
+		case 1: return date2String(data.getId().getRecord().getTime());
 		case 2: return "nicht verfügbar";
 		}
 		return element.toString();

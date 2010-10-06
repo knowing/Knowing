@@ -2,8 +2,8 @@ package de.lmu.ifi.dbs.medmon.database.model;
 
 import java.io.Serializable;
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.util.Date;
+
+import java.util.Calendar;
 
 
 /**
@@ -12,13 +12,17 @@ import java.util.Date;
  */
 @Entity
 @Table(name="DATA")
+@NamedQueries({
+    @NamedQuery(name = "Data.findAll", query = "SELECT d FROM Data d ORDER BY d.id.record" )})
 public class Data implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@EmbeddedId
 	private DataPK id;
 
-	private Timestamp timestamp;
+	@Column(name="imported", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Calendar imported;
 	
 	@Column(nullable=false)
 	private int x;
@@ -41,11 +45,9 @@ public class Data implements Serializable {
 
     public Data() {  }
   
-    
-
-	public Data(int x, int y, int z, Timestamp imported) {
+	public Data(DataPK id, int x, int y, int z) {
 		super();
-		this.timestamp = imported;
+		this.id = id;
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -59,12 +61,12 @@ public class Data implements Serializable {
 		this.id = id;
 	}
 	
-	public Timestamp getTimestamp() {
-		return this.timestamp;
+	public Calendar getImported() {
+		return imported;
 	}
 
-	public void setTimestamp(Timestamp timestamp) {
-		this.timestamp = timestamp;
+	public void setImported(Calendar timestamp) {
+		this.imported = timestamp;
 	}
 	
 	public int getX() {
@@ -106,6 +108,44 @@ public class Data implements Serializable {
 	public void setPatient(Patient patient) {
 		this.patient = patient;
 	}
-
 	
+	
+
+	@Override
+	public String toString() {
+		return "Data [id=" + id + ", imported=" + imported + ", x=" + x
+				+ ", y=" + y + ", z=" + z + ", comment=" + comment
+				+ ", patient=" + patient + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Data)) {
+			return false;
+		}
+		Data other = (Data) obj;
+		if (id == null) {
+			if (other.id != null) {
+				return false;
+			}
+		} else if (!id.equals(other.id)) {
+			return false;
+		}
+		return true;
+	}
+
 }

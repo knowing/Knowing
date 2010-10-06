@@ -24,11 +24,12 @@ public class Database {
 		//Place DB in user.home
 		String home = System.getProperty("user.home");
 		String sep = System.getProperty("file.separator");
-		String url = "jdbc:derby:" + home + sep + ".medmon" + sep + "db;create=true";
+		String dir = home + sep + ".medmon" + sep + "db";
+		String url = "jdbc:derby:" + dir + ";create=true";
 		properties.put(PersistenceUnitProperties.JDBC_URL, url);
 		
 		//Create DB directory
-		new File(url).mkdirs();
+		//new File(dir).mkdirs();
 	}
 
 
