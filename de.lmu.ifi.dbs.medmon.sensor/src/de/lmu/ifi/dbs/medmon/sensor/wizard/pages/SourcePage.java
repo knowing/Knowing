@@ -28,6 +28,11 @@ import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.database.util.JPAUtil;
 import de.lmu.ifi.dbs.medmon.sensor.converter.SDRConverter;
 import de.lmu.ifi.dbs.medmon.sensor.data.ISensorDataContainer;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.core.databinding.beans.PojoObservables;
+import org.eclipse.swt.widgets.Label;
 
 public class SourcePage extends WizardPage {
 
@@ -38,6 +43,7 @@ public class SourcePage extends WizardPage {
 	private Patient patient;
 	
 	private boolean flip;
+	private Button btnVorschau;
 
 	/**
 	 * Create the wizard.
@@ -60,24 +66,36 @@ public class SourcePage extends WizardPage {
 		container.setLayout(new GridLayout(2, false));
 
 		PageController controller = new PageController();
-		tPatient = new Text(container, SWT.BORDER);
-		tPatient.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,1, 1));
+		tPatient = new Text(container, SWT.BORDER | SWT.READ_ONLY);
+		GridData gd_tPatient = new GridData(SWT.LEFT, SWT.CENTER, false, false,1, 1);
+		gd_tPatient.widthHint = 170;
+		tPatient.setLayoutData(gd_tPatient);
 
 		bPatient = new Button(container, SWT.NONE);
 		bPatient.setText("Patient auswaehlen");
 		bPatient.addListener(SWT.Selection, controller);
 
 		tSDRFile = new Text(container, SWT.BORDER);
-		tSDRFile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
-				1, 1));
+		GridData gd_tSDRFile = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_tSDRFile.widthHint = 170;
+		tSDRFile.setLayoutData(gd_tSDRFile);
 
 		bSDRFile = new Button(container, SWT.NONE);
 		bSDRFile.setText("Sensordatei");
+		
+		btnVorschau = new Button(container, SWT.CHECK);
+		btnVorschau.setSelection(true);
+		btnVorschau.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
+		btnVorschau.setText("Vorschau (benoetigt mehr Zeit)");
+		new Label(container, SWT.NONE);
 		bSDRFile.addListener(SWT.Selection, controller);
 
 	}
 
 	public void importData() {
+		//Data already imported
+		if(data != null)
+			return;
 		// Use Sample begin and end
 		try {
 			getContainer().run(false, false, new IRunnableWithProgress() {
@@ -143,6 +161,7 @@ public class SourcePage extends WizardPage {
 			if (dialog.open() == Window.OK) {
 				// Assuming that there's only one Patient Selection
 				patient = (Patient) dialog.getResult()[0];
+				tPatient.setText(patient.toString());
 				done();
 			}
 		}

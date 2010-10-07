@@ -26,6 +26,9 @@ import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.util.JPAUtil;
 import de.lmu.ifi.dbs.medmon.sensor.provider.SensorContentProvider;
 import de.lmu.ifi.dbs.medmon.sensor.provider.SensorLabelProvider;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 
 public class ImportDataPage extends WizardPage {
 
@@ -60,15 +63,18 @@ public class ImportDataPage extends WizardPage {
 		lFrom.setText("Von");
 
 		startDateChooser = new DateChooserCombo(container, SWT.NONE);
+		startDateChooser.setEnabled(false);
 		startDateChooser.setValue(new Date());
 
 		Label sep1 = new Label(container, SWT.NONE);
 		sep1.setText(":");
 
 		startTimeChooser = new CDateTime(container, CDT.TIME_SHORT);
+		startTimeChooser.setEnabled(false);
 		startTimeChooser.setSelection(new Date());
 
 		bFirstRecord = new Button(container, SWT.CHECK);
+		bFirstRecord.setSelection(true);
 		bFirstRecord.setText("Ab erster Aufzeichnung");
 		bFirstRecord.addListener(SWT.Selection, controller);
 
@@ -76,15 +82,18 @@ public class ImportDataPage extends WizardPage {
 		lTill.setText("Bis");
 
 		endDateChooser = new DateChooserCombo(container, SWT.NONE);
+		endDateChooser.setEnabled(false);
 		endDateChooser.setValue(new Date());
 
 		Label sep2 = new Label(container, SWT.NONE);
 		sep2.setText(":");
 
 		endTimeChooser = new CDateTime(container, CDT.TIME_SHORT);
+		endTimeChooser.setEnabled(false);
 		endTimeChooser.setSelection(new Date());
 
 		bLastRecord = new Button(container, SWT.CHECK);
+		bLastRecord.setSelection(true);
 		bLastRecord.setText("Bis letzte Aufzeichnung");
 		bLastRecord.addListener(SWT.Selection, controller);
 
@@ -95,16 +104,19 @@ public class ImportDataPage extends WizardPage {
 		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 5, 1));
 
 		bValidate = new Button(container, SWT.PUSH);
+		bValidate.setEnabled(false);
 		bValidate.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 5, 1));
 		bValidate.setText("Daten ueberpruefen");
 		bValidate.addListener(SWT.Selection, controller);
 
 		removeAfter = new Button(container, SWT.CHECK);
+		removeAfter.setEnabled(false);
 		removeAfter.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,	false, 5, 1));
 		removeAfter.setText("Nach dem Importieren Daten loeschen");
 		removeAfter.addListener(SWT.Selection, controller);
 
 		analyseAfter = new Button(container, SWT.CHECK);
+		analyseAfter.setEnabled(false);
 		analyseAfter.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,false, 5, 1));
 		analyseAfter.setText("Danach analysieren?");
 		analyseAfter.addListener(SWT.Selection, controller);
@@ -134,14 +146,22 @@ public class ImportDataPage extends WizardPage {
 		returns.setMinutes(time.getMinutes());
 		return returns;
 	}
+	
 
 	private class PageController implements Listener {
 
 		@Override
 		public void handleEvent(Event event) {
 			if (event.type == SWT.Selection) {
-				if(event.widget == bValidate)
+				if(event.widget == bValidate) {
 					validate();
+				} else if(event.widget == bFirstRecord) {
+					startDateChooser.setEnabled(!bFirstRecord.getSelection());
+					startTimeChooser.setEnabled(!bFirstRecord.getSelection());
+				} else if(event.widget == bLastRecord) {
+					endDateChooser.setEnabled(!bLastRecord.getSelection());
+					endTimeChooser.setEnabled(!bLastRecord.getSelection());
+				}
 			}
 		}
 
@@ -171,4 +191,5 @@ public class ImportDataPage extends WizardPage {
 			System.out.println("--------------Finding identical finished----------------");
 		}
 	}
+
 }
