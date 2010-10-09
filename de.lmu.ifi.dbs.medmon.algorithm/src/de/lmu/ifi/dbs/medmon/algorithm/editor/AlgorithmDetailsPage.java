@@ -101,7 +101,7 @@ public class AlgorithmDetailsPage implements IDetailsPage {
 		bClient.setLayout(new FillLayout());
 		
 		ImageHyperlink visualizeLink = toolkit.createImageHyperlink(bClient, SWT.NONE);
-		visualizeLink.setText("Analyisieren und Anzeigen");
+		visualizeLink.setText("Analysieren und Anzeigen");
 		visualizeLink.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_CHART_48));
 		visualizeLink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override

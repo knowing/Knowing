@@ -15,5 +15,11 @@
             name="Krankheiten">
       </view>
    </extension>
+   <extension
+         point="de.lmu.ifi.dbs.medmon.disease">
+      <disease
+            class="de.lmu.ifi.dbs.medmon.therapy.diseases.SampleDiseases">
+      </disease>
+   </extension>
 
 </plugin>

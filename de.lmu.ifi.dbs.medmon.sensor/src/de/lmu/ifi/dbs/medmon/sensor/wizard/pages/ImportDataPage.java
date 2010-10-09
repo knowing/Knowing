@@ -24,8 +24,8 @@ import org.eclipse.swt.layout.GridData;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.util.JPAUtil;
-import de.lmu.ifi.dbs.medmon.sensor.provider.SensorContentProvider;
-import de.lmu.ifi.dbs.medmon.sensor.provider.SensorLabelProvider;
+import de.lmu.ifi.dbs.medmon.sensor.provider.DataContentProvider;
+import de.lmu.ifi.dbs.medmon.sensor.provider.DataLabelProvider;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -98,8 +98,8 @@ public class ImportDataPage extends WizardPage {
 		bLastRecord.addListener(SWT.Selection, controller);
 
 		treeViewer = new TreeViewer(container, SWT.BORDER);
-		treeViewer.setContentProvider(new SensorContentProvider(true));
-		treeViewer.setLabelProvider(new SensorLabelProvider());
+		treeViewer.setContentProvider(new DataContentProvider(true));
+		treeViewer.setLabelProvider(new DataLabelProvider());
 		Tree tree = treeViewer.getTree();
 		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 5, 1));
 

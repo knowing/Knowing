@@ -5,6 +5,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
 
+import de.lmu.ifi.dbs.medmon.algorithm.extension.ISensorDataAlgorithm;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 
 /**
@@ -19,6 +20,7 @@ public class Activator extends AbstractUIPlugin {
 	private static Activator plugin;
 	
 	private static ServiceTracker patientTracker;
+	private static ServiceTracker algorithmTracker;
 	
 	/**
 	 * The constructor
@@ -33,8 +35,12 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		
 		patientTracker = new ServiceTracker(context, IPatientService.class.getName(), null);
 		patientTracker.open();
+		
+		algorithmTracker = new ServiceTracker(context, ISensorDataAlgorithm.class.getName(), null);
+		algorithmTracker.open();
 	}
 
 	/*
@@ -45,6 +51,7 @@ public class Activator extends AbstractUIPlugin {
 		plugin = null;
 		super.stop(context);
 		patientTracker.close();
+		algorithmTracker.close();
 	}
 
 	/**
@@ -69,5 +76,9 @@ public class Activator extends AbstractUIPlugin {
 	
 	public static IPatientService getPatientService() {
 		return (IPatientService) patientTracker.getService();
+	}
+	
+	public static ISensorDataAlgorithm[] getAlgorithmServices() {
+		return (ISensorDataAlgorithm[]) algorithmTracker.getServices();
 	}
 }

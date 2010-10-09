@@ -50,6 +50,7 @@ public interface IMedmonConstants {
 	//Images 48x48
 	public static final String IMG_DIRECTORY_48 = "icons/48/gtk-directory.png";
 	public static final String IMG_CHART_48 = "icons/48/gtk-chart.png";
+	public static final String IMG_SEARCH_48 = "icons/48/gtk-find.png";
 	
 	//Images BIG
 	public static final String IMG_ARROW_DOWN_BIG = "icons/gtk-go-down.png";

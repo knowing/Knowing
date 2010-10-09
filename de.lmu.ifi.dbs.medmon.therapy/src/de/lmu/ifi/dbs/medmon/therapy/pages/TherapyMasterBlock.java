@@ -6,30 +6,30 @@ import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.MasterDetailsBlock;
 import org.eclipse.ui.forms.SectionPart;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Table;
+
+import de.lmu.ifi.dbs.medmon.therapy.IDisease;
+import de.lmu.ifi.dbs.medmon.therapy.ITherapy;
+import de.lmu.ifi.dbs.medmon.therapy.provider.TherapyContentProvider;
+import de.lmu.ifi.dbs.medmon.therapy.provider.TherapyDetailsPageProvider;
+import de.lmu.ifi.dbs.medmon.therapy.provider.TherapyLabelProvider;
+
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.ui.forms.widgets.ImageHyperlink;
 
-import de.lmu.ifi.dbs.medmon.therapy.provider.DiseaseContentProvider;
-import de.lmu.ifi.dbs.medmon.therapy.provider.DiseaseDetailsPageProvider;
-import de.lmu.ifi.dbs.medmon.therapy.provider.DiseaseLabelProvider;
-
-public class DiseaseMasterBlock extends MasterDetailsBlock {
+public class TherapyMasterBlock extends MasterDetailsBlock {
 
 	private FormToolkit toolkit;
+	
+	private ListViewer listViewer;
 
 	/**
 	 * Create the master details block.
 	 */
-	public DiseaseMasterBlock() {
+	public TherapyMasterBlock() {
 		// Create the master details block
 	}
 
@@ -42,30 +42,34 @@ public class DiseaseMasterBlock extends MasterDetailsBlock {
 	protected void createMasterPart(final IManagedForm managedForm, Composite parent) {
 		toolkit = managedForm.getToolkit();
 		//		
-		Section section = toolkit.createSection(parent,
-				ExpandableComposite.EXPANDED | ExpandableComposite.TITLE_BAR);
-		section.setText("Krankheiten / Diagnosen");
-		//
+		Section section = toolkit.createSection(parent,	Section.NO_TITLE);
+		section.setText("Therapien");
+		//	
 		Composite composite = toolkit.createComposite(section, SWT.NONE);
 		toolkit.paintBordersFor(composite);
 		section.setClient(composite);
-		composite.setLayout(new GridLayout(4, false));
+		composite.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
-		TableViewer tableViewer = new TableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
-		tableViewer.setContentProvider(new DiseaseContentProvider());
-		tableViewer.setLabelProvider(new DiseaseLabelProvider());
-		tableViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1));
-		toolkit.paintBordersFor(tableViewer.getTable());
+		listViewer = new ListViewer(composite, SWT.BORDER | SWT.V_SCROLL);
+		listViewer.setContentProvider(new TherapyContentProvider());
+		listViewer.setLabelProvider(new TherapyLabelProvider());
 		
 		final SectionPart part = new SectionPart(section);
 		managedForm.addPart(part);
-		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {		
+		listViewer.addSelectionChangedListener(new ISelectionChangedListener() {	
 			@Override
-			public void selectionChanged(SelectionChangedEvent event) {	
+			public void selectionChanged(SelectionChangedEvent event) {
 				managedForm.fireSelectionChanged(part, event.getSelection());
 			}
 		});
-		tableViewer.setInput(this);
+		
+		sashForm.setOrientation(SWT.VERTICAL);
+		
+	}
+	
+	public void setInput(IDisease disease) {
+		listViewer.setInput(disease);
+		
 	}
 
 	/**
@@ -74,7 +78,7 @@ public class DiseaseMasterBlock extends MasterDetailsBlock {
 	 */
 	@Override
 	protected void registerPages(DetailsPart part) {
-		part.setPageProvider(new DiseaseDetailsPageProvider());
+		part.setPageProvider(new TherapyDetailsPageProvider());
 	}
 
 	/**
@@ -85,5 +89,4 @@ public class DiseaseMasterBlock extends MasterDetailsBlock {
 	protected void createToolBarActions(IManagedForm managedForm) {
 		// Create the toolbar actions
 	}
-
 }

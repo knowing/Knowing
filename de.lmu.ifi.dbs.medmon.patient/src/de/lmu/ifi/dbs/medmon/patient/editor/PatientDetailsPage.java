@@ -33,6 +33,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 
 import de.lmu.ifi.dbs.medmon.algorithm.extension.ISensorDataAlgorithm;
 import de.lmu.ifi.dbs.medmon.algorithm.provider.AlgorithmContentProvider;
+import de.lmu.ifi.dbs.medmon.algorithm.util.AlgorithmUtil;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.patient.Activator;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
@@ -215,7 +216,7 @@ public class PatientDetailsPage implements IDetailsPage {
 	 * gesetzt werden kann!!
 	 */
 	private void setDefaultAlgorithm() {
-		ISensorDataAlgorithm[] algorithms = AlgorithmContentProvider.evaluateAlgorithms();
+		ISensorDataAlgorithm[] algorithms = AlgorithmUtil.evaluateAlgorithms();
 		if(algorithms != null && algorithms[0] != null)
 			Activator.getPatientService().setSelection(algorithms[0], IPatientService.ALGORITHM);
 	}

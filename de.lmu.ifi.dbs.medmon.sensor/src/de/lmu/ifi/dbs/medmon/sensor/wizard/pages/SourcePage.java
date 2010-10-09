@@ -23,27 +23,27 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
-import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.database.util.JPAUtil;
 import de.lmu.ifi.dbs.medmon.sensor.converter.SDRConverter;
 import de.lmu.ifi.dbs.medmon.sensor.data.ISensorDataContainer;
-import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.core.databinding.beans.PojoObservables;
+import de.lmu.ifi.dbs.medmon.sensor.viewer.SensorTableViewer;
+
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Label;
 
 public class SourcePage extends WizardPage {
 
 	private Text tPatient, tSDRFile;
-	private Button bPatient, bSDRFile;
 
 	private ISensorDataContainer data;
 	private Patient patient;
-	
+
 	private boolean flip;
-	private Button btnVorschau;
+	private Button btnVorschau, bPatient, bSDRFile;
+	private Table table;
+	private TableViewer tableViewer;
 
 	/**
 	 * Create the wizard.
@@ -67,52 +67,62 @@ public class SourcePage extends WizardPage {
 
 		PageController controller = new PageController();
 		tPatient = new Text(container, SWT.BORDER | SWT.READ_ONLY);
-		GridData gd_tPatient = new GridData(SWT.LEFT, SWT.CENTER, false, false,1, 1);
-		gd_tPatient.widthHint = 170;
-		tPatient.setLayoutData(gd_tPatient);
+		GridData data = new GridData(SWT.LEFT, SWT.CENTER, false, false,	1, 1);
+		data.widthHint = 170;
+		tPatient.setLayoutData(data);
 
 		bPatient = new Button(container, SWT.NONE);
 		bPatient.setText("Patient auswaehlen");
 		bPatient.addListener(SWT.Selection, controller);
 
-		tSDRFile = new Text(container, SWT.BORDER);
-		GridData gd_tSDRFile = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_tSDRFile.widthHint = 170;
-		tSDRFile.setLayoutData(gd_tSDRFile);
+		tableViewer = new SensorTableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
+		tableViewer.setInput(this); //TODO search for sensors
+		table = tableViewer.getTable();
+		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 
+		tSDRFile = new Text(container, SWT.BORDER);
+		data = new GridData(SWT.LEFT, SWT.CENTER, false, false,	1, 1);
+		data.widthHint = 170;
+		tSDRFile.setLayoutData(data);
+		
 		bSDRFile = new Button(container, SWT.NONE);
 		bSDRFile.setText("Sensordatei");
-		
-		btnVorschau = new Button(container, SWT.CHECK);
-		btnVorschau.setSelection(true);
-		btnVorschau.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
-		btnVorschau.setText("Vorschau (benoetigt mehr Zeit)");
-		new Label(container, SWT.NONE);
 		bSDRFile.addListener(SWT.Selection, controller);
 
+		btnVorschau = new Button(container, SWT.CHECK);
+		btnVorschau.setSelection(true);
+		btnVorschau.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,	false, 2, 1));
+		btnVorschau.setText("Vorschau (benoetigt mehr Zeit)");
+
+		setPageComplete(false);
+	}
+	
+	@Override
+	public boolean canFlipToNextPage() {
+		return flip;
 	}
 
 	public void importData() {
-		//Data already imported
-		if(data != null)
+		// Data already imported
+		if (data != null)
 			return;
 		// Use Sample begin and end
 		try {
 			getContainer().run(false, false, new IRunnableWithProgress() {
-				
+
 				@Override
-				public void run(IProgressMonitor monitor) throws InvocationTargetException,
-						InterruptedException {
+				public void run(IProgressMonitor monitor)
+						throws InvocationTargetException, InterruptedException {
 					monitor.beginTask("Daten laden", 20);
 					try {
 						data = SDRConverter.convertSDRtoData(tSDRFile.getText(), 0, 1);
 					} catch (IOException e) {
 						e.printStackTrace();
-						MessageDialog.openError(getShell(), "Fehler beim Import",e.getMessage());
+						MessageDialog.openError(getShell(),	"Fehler beim Import", e.getMessage());
 					}
 				}
 			});
-			
+
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -121,10 +131,10 @@ public class SourcePage extends WizardPage {
 	}
 
 	private void done() {
-		flip = true;
-		setPageComplete(true);
+		flip = !tSDRFile.getText().isEmpty() && (patient != null);
+		getContainer().updateButtons();
 	}
-	
+
 	public ISensorDataContainer getData() {
 		return data;
 	}
@@ -154,7 +164,7 @@ public class SourcePage extends WizardPage {
 		}
 
 		private void selectPatient() {
-			ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), new LabelProvider());
+			ElementListSelectionDialog dialog = new ElementListSelectionDialog(	getShell(), new LabelProvider());
 			dialog.setBlockOnOpen(true);
 			dialog.setTitle("Patient auswaehlen");
 			dialog.setElements(loadPatients());
@@ -165,7 +175,7 @@ public class SourcePage extends WizardPage {
 				done();
 			}
 		}
-		
+
 		private Patient[] loadPatients() {
 			EntityManager em = JPAUtil.currentEntityManager();
 			em.getTransaction().begin();

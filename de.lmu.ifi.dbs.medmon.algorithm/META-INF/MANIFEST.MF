@@ -23,4 +23,5 @@ Import-Package: de.lmu.ifi.dbs.medmon.algorithm.extension,
  de.lmu.ifi.dbs.medmon.rcp.platform,
  de.lmu.ifi.dbs.medmon.rcp.platform.util
 Export-Package: de.lmu.ifi.dbs.medmon.algorithm.provider,
+ de.lmu.ifi.dbs.medmon.algorithm.util,
  de.lmu.ifi.dbs.medmon.algorithm.wizards.pages

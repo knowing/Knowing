@@ -49,12 +49,11 @@
                showTitle="true">
          </view>
          <view
-               id="de.lmu.ifi.dbs.medmon.algorithm.Management"
+               id="de.lmu.ifi.dbs.medmon.therapy.view.DiseaseManagement"
                minimized="false"
                relationship="stack"
                relative="de.lmu.ifi.dbs.medmon.patient.Management"
-               showTitle="true"
-               visible="true">
+               showTitle="true">
          </view>
       </perspectiveExtension>
    </extension>

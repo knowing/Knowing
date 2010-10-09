@@ -5,14 +5,11 @@ import java.util.Date;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
@@ -24,8 +21,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.Section;
 
-import de.lmu.ifi.dbs.medmon.algorithm.provider.AlgorithmContentProvider;
-import de.lmu.ifi.dbs.medmon.algorithm.provider.AlgorithmLabelProvider;
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.CommandUtil;
@@ -57,8 +52,9 @@ public class SensorDetailPage implements IDetailsPage {
 		if(!selection.isEmpty() && selection instanceof IStructuredSelection) {
 			if(bindingContext != null) bindingContext.dispose();
 			data = (Data)((IStructuredSelection)selection).getFirstElement();
-			tImport.setText(date2String(data.getImported().getTime()));
-			tRecord.setText(date2String(data.getId().getRecord().getTime()));
+			//TODO set ImportText
+			//tImport.setText(date2String(data.getImported().getTime()));
+			//tRecord.setText(date2String(data.getId().getRecord().getTime()));
 			bindingContext = initDataBindings();
 		}
 

@@ -9,11 +9,11 @@ public class SensorEditorPage extends FormPage {
 
 	public static final String ID = "de.lmu.ifi.dbs.medmon.sensor.editor.pages.SensorEditorPage";
 	
-	private SensorEditorBlock block;
+	private SensorMasterBlock block;
 	
 	public SensorEditorPage(FormEditor editor) {
 		super(editor, ID, "Sensorverwaltung");
-		block = new SensorEditorBlock();
+		block = new SensorMasterBlock();
 	}
 	
 	@Override

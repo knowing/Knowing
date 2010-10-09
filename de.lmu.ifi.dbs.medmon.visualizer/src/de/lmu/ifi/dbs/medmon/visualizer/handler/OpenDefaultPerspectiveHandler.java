@@ -23,11 +23,12 @@ public class OpenDefaultPerspectiveHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+		//TODO Check the selections a provide solution to solve problem, e.g. Dialog for user
 		IPatientService service = Activator.getPatientService();
 		ISensorDataAlgorithm algorithm = (ISensorDataAlgorithm) service.getSelection(IPatientService.ALGORITHM);
 		
 		//Analyze data -> implement job to provide progressbar
-		Data[] sensorData = (Data[]) service.getSelection(IPatientService.SENSOR_DATA);
+		Data[] sensorData = (Data[]) service.getSelection(IPatientService.SENSOR_DATA);	
 		IAnalyzedData data = algorithm.analyze(sensorData);
 		//Set the new analyzed data
 		service.setSelection(data, IPatientService.ANALYZED_DATA);
@@ -47,8 +48,7 @@ public class OpenDefaultPerspectiveHandler extends AbstractHandler {
 		try {
 			handlerService.executeCommand(ID, null);
 		} catch (Exception ex) {
-			ex.printStackTrace();
-			throw new RuntimeException(ID + " error");
+			throw new RuntimeException(ID + " error", ex);
 		}
 
 	}

@@ -11,8 +11,12 @@ import de.lmu.ifi.dbs.medmon.sensor.provider.SensorLabelProvider;
 
 public class SensorTableViewer extends TableViewer {
 
-	public static final String[] columns = new String[] { "Datum", "Importiert", "Analysiert" };
-	public static final int[] width = new int[] {120,120, 50};
+	public static final int COL_NAME 	= 0;
+	public static final int COL_VERSION = 1;
+	public static final int COL_TYPE 	= 2;
+	
+	private static final String[] columns = new String[] { "Name", "Version", "Typ" };
+	private static final int[] width = new int[] {120,70, 100};
 	
 	public SensorTableViewer(Composite parent, int style) {
 		super(parent, style);

@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.part.ViewPart;
 
-import de.lmu.ifi.dbs.medmon.sensor.editor.pages.SensorEditorBlock;
+import de.lmu.ifi.dbs.medmon.sensor.editor.pages.SensorMasterBlock;
 
 public class ManagementView extends ViewPart {
 
@@ -28,7 +28,7 @@ public class ManagementView extends ViewPart {
 	}
 	
 	public void initialize(ManagedForm managedForm) {
-		SensorEditorBlock block = new SensorEditorBlock();
+		SensorMasterBlock block = new SensorMasterBlock();
 		block.createContent(managedForm);
 	}
 

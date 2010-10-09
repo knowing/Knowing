@@ -12,8 +12,8 @@ import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
 import de.lmu.ifi.dbs.medmon.sensor.data.DaySensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.data.ISensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.data.RootSensorDataContainer;
-import de.lmu.ifi.dbs.medmon.sensor.provider.SensorContentProvider;
-import de.lmu.ifi.dbs.medmon.sensor.provider.SensorLabelProvider;
+import de.lmu.ifi.dbs.medmon.sensor.provider.DataContentProvider;
+import de.lmu.ifi.dbs.medmon.sensor.provider.DataLabelProvider;
 
 public class DataTreeView extends ViewPart {
 
@@ -27,8 +27,8 @@ public class DataTreeView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		viewer.setContentProvider(new SensorContentProvider());
-		viewer.setLabelProvider(new SensorLabelProvider());
+		viewer.setContentProvider(new DataContentProvider());
+		viewer.setLabelProvider(new DataLabelProvider());
 		viewer.setInput(sampleData());
 
 	}
