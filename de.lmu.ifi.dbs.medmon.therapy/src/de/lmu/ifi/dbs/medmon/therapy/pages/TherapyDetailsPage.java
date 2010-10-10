@@ -22,9 +22,11 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.handlers.IHandlerService;
 
+import de.lmu.ifi.dbs.medmon.algorithm.extension.ISensorDataAlgorithm;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 import de.lmu.ifi.dbs.medmon.therapy.ITherapy;
+import de.lmu.ifi.dbs.medmon.therapy.activator.Activator;
 
 public class TherapyDetailsPage implements IDetailsPage {
 
@@ -126,6 +128,7 @@ public class TherapyDetailsPage implements IDetailsPage {
 			ITherapy therapy = (ITherapy) structuredSelection.getFirstElement();
 			tName.setText(therapy.getName());
 			tDescription.setText(therapy.getDescription());
+			Activator.getPatientService().setSelection(therapy.getAnalysers(), ISensorDataAlgorithm.class.getName());
 		}
 		update();
 	}

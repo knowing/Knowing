@@ -115,7 +115,7 @@ public class SensorDetailPage implements IDetailsPage {
 		sensorLink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent event) {
-				CommandUtil.openView(IMedmonConstants.ALGORITHM_MANAGEMENT);
+				CommandUtil.openView(IMedmonConstants.THERAPY_MANAGEMENT_VIEW);
 			}
 		});
 		

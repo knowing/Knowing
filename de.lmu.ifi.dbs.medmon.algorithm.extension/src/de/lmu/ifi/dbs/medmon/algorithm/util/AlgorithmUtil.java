@@ -8,7 +8,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 
-import de.lmu.ifi.dbs.medmon.algorithm.Activator;
+import de.lmu.ifi.dbs.medmon.algorithm.activator.Activator;
 import de.lmu.ifi.dbs.medmon.algorithm.extension.ISensorDataAlgorithm;
 
 public class AlgorithmUtil {
@@ -18,26 +18,7 @@ public class AlgorithmUtil {
 		ISensorDataAlgorithm[] services = evaluateAlgorithmServices();
 		return merge(extensions, services);
 	}
-	
-	private static ISensorDataAlgorithm[] merge(ISensorDataAlgorithm[] a, ISensorDataAlgorithm[] b) {
-		ISensorDataAlgorithm[] returns;
-		if(a != null && b != null) {
-			//Real merge 
-			returns = new ISensorDataAlgorithm[a.length + b.length];
-			int index = 0;
-			for(int i=0; i < a.length; i++)
-				returns[index++] = a[i];
-			for(int i=0; i < b.length; i++)
-				returns[index++] = b[i];
-		} else if(a != null) {
-			return a;
-		} else if(b != null) {
-			return b;
-		}
 		
-		return new ISensorDataAlgorithm[0];
-	}
-	
 	/**
 	 * Provides all registered ISensorDataAlgorithm Extensions.
 	 * 
@@ -68,11 +49,40 @@ public class AlgorithmUtil {
 		} catch (CoreException ex) {
 			System.out.println(ex.getMessage());
 		}
+		
 		return algorithms.toArray(new ISensorDataAlgorithm[algorithms.size()]);
 	}
 	
 	public static ISensorDataAlgorithm[] evaluateAlgorithmServices() {
 		return Activator.getAlgorithmServices();
+	}
+	
+	private static ISensorDataAlgorithm[] merge(ISensorDataAlgorithm[] a, ISensorDataAlgorithm[] b) {
+		ISensorDataAlgorithm[] returns;
+		if(a != null && b != null) {
+			//Real merge 
+			returns = new ISensorDataAlgorithm[a.length + b.length];
+			int index = 0;
+			for(int i=0; i < a.length; i++)
+				returns[index++] = a[i];
+			for(int i=0; i < b.length; i++)
+				returns[index++] = b[i];
+		} else if(a != null) {
+			return a;
+		} else if(b != null) {
+			return b;
+		}
+		
+		return new ISensorDataAlgorithm[0];
+	}
+	
+	public static ISensorDataAlgorithm findAlgorithm(String name) {
+		ISensorDataAlgorithm[] algorithms = evaluateAlgorithms();
+		for(ISensorDataAlgorithm algorithm : algorithms) {
+			if(algorithm.getName().equals(name))
+				return algorithm;
+		}
+		return null;
 	}
 
 }

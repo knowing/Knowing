@@ -10,5 +10,7 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.lmu.ifi.dbs.medmon.algorithm.extension,
+ de.lmu.ifi.dbs.medmon.algorithm.util,
+ de.lmu.ifi.dbs.medmon.patient.service,
  de.lmu.ifi.dbs.medmon.rcp.platform,
  de.lmu.ifi.dbs.medmon.rcp.platform.util

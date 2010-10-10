@@ -40,15 +40,7 @@ public class DataTreeView extends ViewPart {
 	
 	
 	private ISensorDataContainer sampleData() {
-		GregorianCalendar cal = new GregorianCalendar();
-		DaySensorDataContainer c1 = new DaySensorDataContainer(SampleDataFactory.getSensorDataArray(new Timestamp(cal.getTimeInMillis())));
-		cal.add(GregorianCalendar.DAY_OF_YEAR, 1);
-		DaySensorDataContainer c2 = new DaySensorDataContainer(SampleDataFactory.getSensorDataArray(new Timestamp(cal.getTimeInMillis())));
-		cal.add(GregorianCalendar.DAY_OF_YEAR, 1);
-		DaySensorDataContainer c3 = new DaySensorDataContainer(SampleDataFactory.getSensorDataArray(new Timestamp(cal.getTimeInMillis())));
-		cal.add(GregorianCalendar.DAY_OF_YEAR, 1);
-		DaySensorDataContainer c4 = new DaySensorDataContainer(SampleDataFactory.getSensorDataArray(new Timestamp(cal.getTimeInMillis())));	
-		return new RootSensorDataContainer(new ISensorDataContainer[] { c1, c2, c3,c4});
+		return new RootSensorDataContainer();
 	}
 
 }

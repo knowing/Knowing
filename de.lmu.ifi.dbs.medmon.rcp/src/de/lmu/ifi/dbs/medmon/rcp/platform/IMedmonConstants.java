@@ -13,11 +13,12 @@ public interface IMedmonConstants {
 	
 	//Views
 	public static final String ALGORITHM_VIEW = "de.lmu.ifi.dbs.medmon.algorithm.views.AlgorithmView";
-	public static final String ALGORITHM_MANAGEMENT = "de.lmu.ifi.dbs.medmon.algorithm.Management";
+	public static final String ALGORITHM_MANAGEMENT_VIEW = "de.lmu.ifi.dbs.medmon.algorithm.Management";
 	public static final String PATIENT_LIST_VIEW = "de.lmu.ifi.dbs.medmon.patient.views.PatientListView";
 	public static final String SENSOR_DATA_VIEW = "de.lmu.ifi.dbs.medmon.sensor.SensorDataView";
 	public static final String SENSOR_DATA_TREE_VIEW = "de.lmu.ifi.dbs.medmon.sensor.DataTreeView";
 	public static final String SENSOR_MANAGEMENT_VIEW = "de.lmu.ifi.dbs.medmon.sensor.Management";
+	public static final String THERAPY_MANAGEMENT_VIEW = "de.lmu.ifi.dbs.medmon.therapy.view.DiseaseManagement";
 	
 	
 	//Editors
@@ -38,6 +39,8 @@ public interface IMedmonConstants {
 	public static final String IMG_ARROW_DOWN_16 = "icons/16/gtk-go-down.png";
 	public static final String IMG_ARROW_UP_16 = "icons/16/gtk-go-up.png";
 	public static final String IMG_REMOVE_16 = "icons/16/gtk-remove.png";
+	public static final String IMG_REFRESH_16 = "icons/16/gtk-refresh.png";
+	public static final String IMG_OPEN_16 = "icons/16/gtk-open.png";
 	public static final String IMG_VIEW_DETAIL_16 = "icons/16/view_detailed.png";
 	public static final String IMG_VIEW_TREE_16 = "icons/16/view_tree.png";
 	//public static final String CHART_16 = "icons"; 
@@ -46,6 +49,8 @@ public interface IMedmonConstants {
 	public static final String IMG_ARROW_DOWN_24 = "icons/24/gtk-go-down.png";
 	public static final String IMG_ARROW_UP_24 = "icons/24/gtk-go-up.png";
 	public static final String IMG_REMOVE_24 = "icons/24/gtk-remove.png";
+	public static final String IMG_REFRESH_24 = "icons/24/gtk-refresh.png";
+	public static final String IMG_OPEN_24 = "icons/24/gtk-open.png";
 	
 	//Images 48x48
 	public static final String IMG_DIRECTORY_48 = "icons/48/gtk-directory.png";

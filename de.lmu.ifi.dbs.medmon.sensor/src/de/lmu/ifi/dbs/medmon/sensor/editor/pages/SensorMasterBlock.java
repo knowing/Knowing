@@ -6,7 +6,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.forms.DetailsPart;
@@ -18,7 +17,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
-import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 import de.lmu.ifi.dbs.medmon.sensor.controller.ManagementController;
@@ -30,6 +28,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.ColumnLayout;
+import org.eclipse.ui.forms.widgets.ColumnLayoutData;
 
 public class SensorMasterBlock extends MasterDetailsBlock {
 	public SensorMasterBlock() {
@@ -39,46 +38,58 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 	protected void createMasterPart(final IManagedForm managedForm, Composite parent) {
 		FormToolkit toolkit = managedForm.getToolkit();
 		ScrolledForm form = toolkit.createScrolledForm(parent);
-
-		/* Sensor Section */
 		ColumnLayout columnLayout = new ColumnLayout();
-		columnLayout.maxNumColumns = 2;
+		columnLayout.maxNumColumns = 1;
 		form.getBody().setLayout(columnLayout);
+		
+		/* SensorSection */
 		Section sSection = toolkit.createSection(form.getBody(), Section.DESCRIPTION | Section.TITLE_BAR
 				| Section.TWISTIE | Section.EXPANDED);
+		sSection.setLayoutData(new ColumnLayoutData(200, 250));
 		sSection.setText("Sensor");
 		sSection.marginWidth = 10;
 		sSection.marginHeight = 5;
 
-		Composite sClient = toolkit.createComposite(sSection, SWT.WRAP);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		sClient.setLayout(layout);
-		sSection.setClient(sClient);
+		Composite sensorClient = toolkit.createComposite(sSection, SWT.WRAP);
+		sensorClient.setLayout(new GridLayout(3, false));
+		sSection.setClient(sensorClient);
 
-		TableViewer sensorViewer = createTableViewer(sClient, toolkit);
-		sensorViewer.setInput(SampleDataFactory.getSensorDataArray());
+		Table table = toolkit.createTable(sensorClient, SWT.MULTI | SWT.FULL_SELECTION);
+		table.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 3, 1));
+		TableViewer sensorViewer = new SensorTableViewer(table);
+		sensorViewer.setInput(this);
+			
+		ImageHyperlink openSensorLink = toolkit.createImageHyperlink(sensorClient, SWT.NONE);
+		openSensorLink.setText("Sensor oeffnen");
+		openSensorLink.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN,	IMedmonConstants.IMG_OPEN_16));
+		
+		ImageHyperlink refreshLink = toolkit.createImageHyperlink(sensorClient, SWT.NONE);
+		refreshLink.setText("Aktualisieren");
+		refreshLink.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN,IMedmonConstants.IMG_REFRESH_16));
+		new Label(sensorClient, SWT.NONE);
+		toolkit.paintBordersFor(sensorClient);
 
-		ManagementController controller = new ManagementController(sensorViewer);
-
+		/* DataSection */
 		Section dataSection = toolkit.createSection(form.getBody(), Section.DESCRIPTION | Section.TITLE_BAR
 				| Section.TWISTIE | Section.EXPANDED);
+		//TODO Will not resize
+		dataSection.setLayoutData(new ColumnLayoutData(200, 300));
 		dataSection.setText("Daten");
 		dataSection.marginWidth = 10;
 		dataSection.marginHeight = 5;
 
 		Composite dataClient = toolkit.createComposite(dataSection, SWT.WRAP);
-		GridLayout data_layout = new GridLayout();
-		data_layout.numColumns = 3;
-		layout.numColumns = 3;
-		dataClient.setLayout(data_layout);
+		
 		dataSection.setClient(dataClient);
+		dataClient.setLayout(new GridLayout(3, false));
 
 		TreeViewer dataViewer = new TreeViewer(dataClient, SWT.BORDER | SWT.MULTI);
 		dataViewer.setContentProvider(new DataContentProvider());
 		dataViewer.setLabelProvider(new DataLabelProvider());
 		Tree tree = dataViewer.getTree();
-		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.horizontalSpan = 3;
+		tree.setLayoutData(data);
 		toolkit.paintBordersFor(tree);
 
 		final SectionPart spart = new SectionPart(dataSection);
@@ -89,8 +100,9 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 				managedForm.fireSelectionChanged(spart, event.getSelection());
 			}
 		});
-		dataViewer.setInput(SampleDataFactory.getSensorDataArray());
 
+		ManagementController controller = new ManagementController(dataViewer);
+				
 		ImageHyperlink importLink = toolkit.createImageHyperlink(dataClient, SWT.NONE);
 		toolkit.paintBordersFor(importLink);
 		importLink.setText("Import");
@@ -112,19 +124,6 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 		deleteLink.setHref(ManagementController.DELETE);
 		deleteLink.addHyperlinkListener(controller);
 
-	}
-
-	private TableViewer createTableViewer(Composite parent, FormToolkit toolkit) {
-		Table table = toolkit.createTable(parent, SWT.MULTI | SWT.FULL_SELECTION);
-		GridData data = new GridData(GridData.FILL_BOTH);
-		data.grabExcessVerticalSpace = false;
-		data.horizontalSpan = 3;
-		data.heightHint = 150;
-		data.widthHint = 130;
-		table.setLayoutData(data);
-		toolkit.paintBordersFor(parent);
-
-		return new SensorTableViewer(table);
 	}
 
 	@Override

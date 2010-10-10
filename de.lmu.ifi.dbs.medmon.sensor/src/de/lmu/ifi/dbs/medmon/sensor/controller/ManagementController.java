@@ -1,16 +1,12 @@
 package de.lmu.ifi.dbs.medmon.sensor.controller;
 
-import java.io.IOException;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ColumnViewer;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 
 import de.lmu.ifi.dbs.medmon.sensor.converter.SDRConverter;
 import de.lmu.ifi.dbs.medmon.sensor.data.ISensorDataContainer;
-import de.lmu.ifi.dbs.medmon.sensor.data.RootSensorDataContainer;
 
 public class ManagementController extends HyperlinkAdapter {
 	
