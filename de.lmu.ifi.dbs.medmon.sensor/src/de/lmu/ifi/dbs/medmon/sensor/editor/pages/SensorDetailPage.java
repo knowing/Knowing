@@ -1,175 +1,126 @@
 package de.lmu.ifi.dbs.medmon.sensor.editor.pages;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.ColumnLayout;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.Section;
-
-import de.lmu.ifi.dbs.medmon.database.model.Data;
-import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
-import de.lmu.ifi.dbs.medmon.rcp.platform.util.CommandUtil;
-import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
-
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.ui.forms.widgets.ColumnLayoutData;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.layout.GridData;
+
+import de.lmu.ifi.dbs.medmon.sensor.Activator;
 
 public class SensorDetailPage implements IDetailsPage {
-	
-	private DataBindingContext bindingContext;
-	
-	public SensorDetailPage() {
-	}
 
 	private IManagedForm managedForm;
-	private Data data;
-	private Text tImport;
-	private Text tRecord;
+	private Text text;
+	private Text text_1;
 
-	@Override
-	public void initialize(IManagedForm managedForm) {
-		this.managedForm = managedForm;
+	/**
+	 * Create the details page.
+	 */
+	public SensorDetailPage() {
+		// Create the details page
 	}
 
-	@Override
-	public void selectionChanged(IFormPart part, ISelection selection) {
-		if(!selection.isEmpty() && selection instanceof IStructuredSelection) {
-			if(bindingContext != null) bindingContext.dispose();
-			data = (Data)((IStructuredSelection)selection).getFirstElement();
-			//TODO set ImportText
-			//tImport.setText(date2String(data.getImported().getTime()));
-			//tRecord.setText(date2String(data.getId().getRecord().getTime()));
-			bindingContext = initDataBindings();
-		}
-
+	/**
+	 * Initialize the details page.
+	 * @param form
+	 */
+	public void initialize(IManagedForm form) {
+		managedForm = form;
 	}
 
-	@Override
+	/**
+	 * Create contents of the details page.
+	 * @param parent
+	 */
 	public void createContents(Composite parent) {
-		FormToolkit toolkit = managedForm.getToolkit();	
-		ColumnLayout layout_parent = new ColumnLayout();
-		layout_parent.maxNumColumns = 2;
-		parent.setLayout(layout_parent);
+		FormToolkit toolkit = managedForm.getToolkit();
+		parent.setLayout(new FillLayout());
+		//		
+		Section sctnSensor = toolkit.createSection(parent,
+				ExpandableComposite.EXPANDED | ExpandableComposite.TITLE_BAR);
+		sctnSensor.setText("Sensor");
+		//
+		Composite composite = toolkit.createComposite(sctnSensor, SWT.NONE);
+		toolkit.paintBordersFor(composite);
+		sctnSensor.setClient(composite);
+		composite.setLayout(new GridLayout(2, false));
 		
-		/* Comments */
-		Section cSection = toolkit.createSection(parent, Section.DESCRIPTION
-				| Section.TITLE_BAR | Section.EXPANDED | Section.TWISTIE);
-		ColumnLayoutData cld_cSection = new ColumnLayoutData();
-		cld_cSection.widthHint = 300;
-		cSection.setLayoutData(cld_cSection);
-		cSection.setText("Allgemein");
-
-		Composite cClient = toolkit.createComposite(cSection, SWT.WRAP);
-		GridLayout cLayout = new GridLayout(2, false);
-		cLayout.marginWidth = 5;
-		cLayout.marginHeight = 5;
-		cLayout.horizontalSpacing = 10;
-		cLayout.verticalSpacing = 10;
-		cClient.setLayout(cLayout);
-	
-		Label label = toolkit.createLabel(cClient, "Importiert");
-		label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		Label lSensor = new Label(composite, SWT.NONE);
+		lSensor.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		toolkit.adapt(lSensor, true, true);
+		lSensor.setText("Sensor");
 		
-		tImport = toolkit.createText(cClient, "", SWT.READ_ONLY);
-		tImport.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
-		toolkit.adapt(tImport, true, true);
-		toolkit.createLabel(cClient, "Aufgezeichnet");
-		tRecord = toolkit.createText(cClient, "", SWT.READ_ONLY);	
+		text = new Text(composite, SWT.BORDER | SWT.READ_ONLY);
+		GridData gd_text = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+		gd_text.widthHint = 150;
+		text.setLayoutData(gd_text);
+		toolkit.adapt(text, true, true);
 		
-		Text comments = toolkit.createText(cClient, "Kommentare", SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
-		GridData data = new GridData(GridData.FILL_BOTH);
-		data.heightHint = 100;
-		data.horizontalSpan = 2;
-		//TODO Listener um automatisch groesser zu machen
-		comments.setLayoutData(data);
+		Label lTyp = new Label(composite, SWT.NONE);
+		lTyp.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		toolkit.adapt(lTyp, true, true);
+		lTyp.setText("Typ");
 		
-		cSection.setClient(cClient);
+		text_1 = new Text(composite, SWT.BORDER | SWT.READ_ONLY);
+		GridData gd_text_1 = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+		gd_text_1.widthHint = 150;
+		text_1.setLayoutData(gd_text_1);
+		toolkit.adapt(text_1, true, true);
 		
-		/* Analyse */
+		Label label = new Label(composite, SWT.NONE);
 		
-		Section bSection = toolkit.createSection(parent, Section.NO_TITLE);	
-		Composite bClient = toolkit.createComposite(bSection);
-		bClient.setLayout(new FillLayout());
+		label.setImage(Activator.getImageDescriptor("res/vitruvian.jpeg").createImage());
+		label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 2, 1));
+		toolkit.adapt(label, true, true);
 		
-		ImageHyperlink sensorLink = toolkit.createImageHyperlink(bClient, SWT.NONE);
-		sensorLink.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_DIRECTORY_48));
-		sensorLink.setText("Datenanalyse");
-		
-		sensorLink.addHyperlinkListener(new HyperlinkAdapter() {
-			@Override
-			public void linkActivated(HyperlinkEvent event) {
-				CommandUtil.openView(IMedmonConstants.THERAPY_MANAGEMENT_VIEW);
-			}
-		});
-		
-		toolkit.paintBordersFor(bClient);
-		bSection.setClient(bClient);
-		
-
 	}
 
-	protected DataBindingContext initDataBindings() {
-		DataBindingContext bindingContext = new DataBindingContext();
-		//
-
-		//
-		return bindingContext;
-	}
-	
-	@Override
 	public void dispose() {
-
+		// Dispose
 	}
 
-	@Override
-	public boolean isDirty() {
-		return false;
+	public void setFocus() {
+		// Set focus
 	}
 
-	@Override
-	public void commit(boolean onSave) {
+	private void update() {
+		// Update
 	}
 
-	@Override
 	public boolean setFormInput(Object input) {
 		return false;
 	}
 
-	@Override
-	public void setFocus() {
+	public void selectionChanged(IFormPart part, ISelection selection) {
+		IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+		update();
 	}
 
-	@Override
+	public void commit(boolean onSave) {
+		// Commit
+	}
+
+	public boolean isDirty() {
+		return false;
+	}
+
 	public boolean isStale() {
 		return false;
 	}
 
-	@Override
 	public void refresh() {
+		update();
+	}
 
-	}
-	
-	private String date2String(Date date) {
-		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyy");
-		if(date == null)
-			return "";
-		return df.format(date);
-	}
 }

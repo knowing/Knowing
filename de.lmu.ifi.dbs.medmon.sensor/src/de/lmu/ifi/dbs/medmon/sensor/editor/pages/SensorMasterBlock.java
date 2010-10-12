@@ -22,6 +22,7 @@ import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 import de.lmu.ifi.dbs.medmon.sensor.controller.ManagementController;
 import de.lmu.ifi.dbs.medmon.sensor.provider.DataContentProvider;
 import de.lmu.ifi.dbs.medmon.sensor.provider.DataLabelProvider;
+import de.lmu.ifi.dbs.medmon.sensor.provider.SensorDetailPageProvider;
 import de.lmu.ifi.dbs.medmon.sensor.viewer.SensorTableViewer;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.swt.widgets.Tree;
@@ -43,20 +44,30 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 		form.getBody().setLayout(columnLayout);
 		
 		/* SensorSection */
-		Section sSection = toolkit.createSection(form.getBody(), Section.DESCRIPTION | Section.TITLE_BAR
+		Section sensorSection = toolkit.createSection(form.getBody(), Section.DESCRIPTION | Section.TITLE_BAR
 				| Section.TWISTIE | Section.EXPANDED);
-		sSection.setLayoutData(new ColumnLayoutData(200, 250));
-		sSection.setText("Sensor");
-		sSection.marginWidth = 10;
-		sSection.marginHeight = 5;
+		sensorSection.setLayoutData(new ColumnLayoutData(200, 250));
+		sensorSection.setText("Sensor");
+		sensorSection.marginWidth = 10;
+		sensorSection.marginHeight = 5;
 
-		Composite sensorClient = toolkit.createComposite(sSection, SWT.WRAP);
+		Composite sensorClient = toolkit.createComposite(sensorSection, SWT.WRAP);
 		sensorClient.setLayout(new GridLayout(3, false));
-		sSection.setClient(sensorClient);
+		sensorSection.setClient(sensorClient);
 
 		Table table = toolkit.createTable(sensorClient, SWT.MULTI | SWT.FULL_SELECTION);
 		table.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 3, 1));
 		TableViewer sensorViewer = new SensorTableViewer(table);
+		final SectionPart sensorPart = new SectionPart(sensorSection);
+		managedForm.addPart(sensorPart);
+		
+		sensorViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				managedForm.fireSelectionChanged(sensorPart, event.getSelection());				
+			}
+		});
 		sensorViewer.setInput(this);
 			
 		ImageHyperlink openSensorLink = toolkit.createImageHyperlink(sensorClient, SWT.NONE);
@@ -128,7 +139,7 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 
 	@Override
 	protected void registerPages(DetailsPart detailsPart) {
-		detailsPart.registerPage(Data.class, new SensorDetailPage());
+		detailsPart.setPageProvider(new SensorDetailPageProvider());		
 	}
 
 	@Override
