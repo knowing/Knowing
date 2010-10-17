@@ -22,6 +22,7 @@ public interface ISensorDataContainer {
 	public static final int DAY	 	= 3;
 	public static final int WEEK 	= 4;
 	public static final int MONTH 	= 5;
+	public static final int BLOCK 	= 11;
 	
 	
 	//Standard tree methods

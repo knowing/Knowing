@@ -5,30 +5,19 @@
 
 package de.lmu.ifi.dbs.medmon.sensor.converter;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.Timestamp;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.model.DataPK;
-import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
 import de.lmu.ifi.dbs.medmon.sensor.data.AbstractSensorDataContainer;
-import de.lmu.ifi.dbs.medmon.sensor.data.DaySensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.data.ISensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.data.RootSensorDataContainer;
 
@@ -39,7 +28,7 @@ import de.lmu.ifi.dbs.medmon.sensor.data.RootSensorDataContainer;
  */
 public class SDRConverter {
 
-	private final static int BLOCKSIZE = 512;
+	public final static int BLOCKSIZE = 512;
 	private final static int CONTENT_BLOCK = 504;
 	private final static int MINUTEINBLOCKS = 9;
 

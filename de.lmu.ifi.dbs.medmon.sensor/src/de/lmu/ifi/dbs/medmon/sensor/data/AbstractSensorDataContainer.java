@@ -1,5 +1,6 @@
 package de.lmu.ifi.dbs.medmon.sensor.data;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -9,9 +10,8 @@ import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 
-import com.ibm.icu.impl.Grego;
-
 import de.lmu.ifi.dbs.medmon.database.model.Data;
+import de.lmu.ifi.dbs.medmon.sensor.converter.SDRConverter;
 
 /**
  * Provides basic functionality for ISensorDataContainer to work as a tree node.
@@ -33,6 +33,9 @@ public abstract class AbstractSensorDataContainer implements
 
 	// Verifiy the tree level of this container
 	private int type;
+	
+	//File
+	protected String file;
 
 	public AbstractSensorDataContainer(ISensorDataContainer parent, int type,
 			Data[] data) {
@@ -46,6 +49,18 @@ public abstract class AbstractSensorDataContainer implements
 	}
 
 	public AbstractSensorDataContainer(ISensorDataContainer parent, int type) {
+		this(parent, type, null);
+	}
+	
+	public AbstractSensorDataContainer(int type, Data[] data) {
+		this(null, type, data);
+	}
+	
+	public AbstractSensorDataContainer(int type) {
+		this(null, type, null);
+	}
+	
+	public AbstractSensorDataContainer(ISensorDataContainer parent, String file, int type) {
 		this(parent, type, null);
 	}
 
@@ -132,7 +147,7 @@ public abstract class AbstractSensorDataContainer implements
 		}
 		return root;
 	}
-
+	
 	public static ISensorDataContainer createContainer(int type,
 			ISensorDataContainer parent, Data[] data) {
 		switch (type) {
@@ -190,6 +205,8 @@ public abstract class AbstractSensorDataContainer implements
 		return returns;
 	}
 	
+	
+	
 	public static List<ISensorDataContainer> parseHour(ISensorDataContainer parent, Data[] data) {
 		Assert.isNotNull(data);
 		if (data[0] == null)
@@ -223,6 +240,23 @@ public abstract class AbstractSensorDataContainer implements
 		}
 
 		return returns;
+	}
+	
+	/**
+	 * Lazy Loading
+	 * 
+	 * @param parent
+	 * @param file
+	 * @return
+	 */
+	public static ISensorDataContainer parseBlock(ISensorDataContainer parent, String file) {
+		File sdrFile = new File(file);
+		long blocks = sdrFile.length() / SDRConverter.BLOCKSIZE;
+		RootSensorDataContainer root = new RootSensorDataContainer();
+		for(int i=0; i < blocks; i++) {
+			root.addChild(new BlockSensorDataContainer(file, i)); //!
+		}
+		return root;
 	}
 
 	// Standard Methods
