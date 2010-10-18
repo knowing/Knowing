@@ -2,6 +2,7 @@ package de.lmu.ifi.dbs.medmon.sensor.wizard.pages;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -26,7 +27,10 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.database.util.JPAUtil;
 import de.lmu.ifi.dbs.medmon.sensor.converter.SDRConverter;
+import de.lmu.ifi.dbs.medmon.sensor.data.Block;
 import de.lmu.ifi.dbs.medmon.sensor.data.ISensorDataContainer;
+import de.lmu.ifi.dbs.medmon.sensor.data.RootSensorDataContainer;
+import de.lmu.ifi.dbs.medmon.sensor.data.TimeSensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.viewer.SensorTableViewer;
 
 import org.eclipse.swt.widgets.Table;
@@ -115,7 +119,13 @@ public class SourcePage extends WizardPage {
 						throws InvocationTargetException, InterruptedException {
 					monitor.beginTask("Daten laden", 20);
 					try {
-						data = SDRConverter.convertSDRtoData(tSDRFile.getText(), 0, 50);
+						//data = SDRConverter.convertSDRtoContainer(tSDRFile.getText(), 0, 1200);
+						Block[] blocks = SDRConverter.convertSDRtoBlock(tSDRFile.getText(), Calendar.DAY_OF_YEAR);
+						data = new RootSensorDataContainer();
+						for(Block block : blocks) 
+							data.addChild(new TimeSensorDataContainer(ISensorDataContainer.DAY, block));
+						
+							
 					} catch (IOException e) {
 						e.printStackTrace();
 						MessageDialog.openError(getShell(),	"Fehler beim Import", e.getMessage());

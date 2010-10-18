@@ -98,7 +98,7 @@ public class ImportDataPage extends WizardPage {
 		bLastRecord.addListener(SWT.Selection, controller);
 
 		treeViewer = new TreeViewer(container, SWT.BORDER);
-		treeViewer.setContentProvider(new DataContentProvider(true));
+		treeViewer.setContentProvider(new DataContentProvider());
 		treeViewer.setLabelProvider(new DataLabelProvider());
 		Tree tree = treeViewer.getTree();
 		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 5, 1));

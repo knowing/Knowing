@@ -1,6 +1,7 @@
 package de.lmu.ifi.dbs.medmon.sensor.data;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -33,9 +34,9 @@ public abstract class AbstractSensorDataContainer implements ISensorDataContaine
 
 	// Verifiy the tree level of this container
 	private int type;
-	
-	//File
-	protected String file;
+		
+	//DataBlock
+	protected Block block;
 
 	public AbstractSensorDataContainer(ISensorDataContainer parent, int type, Data[] data) {
 		this.parent = parent;
@@ -46,23 +47,23 @@ public abstract class AbstractSensorDataContainer implements ISensorDataContaine
 		if (parent != null)
 			parent.addChild(this);
 	}
+		
+	public AbstractSensorDataContainer(ISensorDataContainer parent, int type, Block block) {
+		this.parent = parent;
+		this.type = type;
+		this.block = block;
+		children = new ArrayList<ISensorDataContainer>();
 
-	public AbstractSensorDataContainer(ISensorDataContainer parent, int type) {
-		this(parent, type, null);
+		if (parent != null)
+			parent.addChild(this);
+		
 	}
-	
+		
 	public AbstractSensorDataContainer(int type, Data[] data) {
 		this(null, type, data);
 	}
 	
-	public AbstractSensorDataContainer(int type) {
-		this(null, type, null);
-	}
 	
-	public AbstractSensorDataContainer(ISensorDataContainer parent, String file, int type) {
-		this(parent, type, null);
-	}
-
 	@Override
 	public ISensorDataContainer getParent() {
 		return parent;
@@ -105,9 +106,10 @@ public abstract class AbstractSensorDataContainer implements ISensorDataContaine
 
 	/**
 	 * Returns the SensorData[] if set or evaluate the data of its children
+	 * @throws IOException 
 	 */
 	@Override
-	public Data[] getSensorData() {
+	public Data[] getSensorData() throws IOException {
 		return (data == null) ? evaluateData() : data;
 	}
 
@@ -115,8 +117,11 @@ public abstract class AbstractSensorDataContainer implements ISensorDataContaine
 	 * Evaluating SensorData going recursive through the tree.
 	 * 
 	 * @return SensorData[] containing all elements
+	 * @throws IOException 
 	 */
-	private Data[] evaluateData() {
+	protected Data[] evaluateData() throws IOException {
+		if(block != null)
+			return importData(block);
 		LinkedList<Data> ret = new LinkedList<Data>();
 		for (ISensorDataContainer container : children) {
 			for (Data data : container.getSensorData()) {
@@ -125,7 +130,11 @@ public abstract class AbstractSensorDataContainer implements ISensorDataContaine
 		}
 		return ret.toArray(new Data[ret.size()]);
 	}
-
+	
+	protected Data[] importData(Block block) throws IOException {
+		return SDRConverter.convertSDRtoData(block.getFile(), block.getBegin(), block.getEnd());
+	}
+	
 	// TODO Implement Listener Support
 
 	// Library Methods
@@ -136,8 +145,9 @@ public abstract class AbstractSensorDataContainer implements ISensorDataContaine
 	 *            [] - the data which is parsed
 	 * @param int rootType - ISensorDataContainer constant. Isn't used yet
 	 * @param int leafType - ISensorDataContainer constant. Isn't used yet
+	 * @throws IOException 
 	 */
-	public static ISensorDataContainer parse(Data[] data, int rootType, int leafType) {
+	public static ISensorDataContainer parse(Data[] data, int rootType, int leafType) throws IOException {
 		RootSensorDataContainer root = new RootSensorDataContainer();
 		List<ISensorDataContainer> days = parseDay(root, data);
 		for (ISensorDataContainer each : days) {
@@ -162,17 +172,8 @@ public abstract class AbstractSensorDataContainer implements ISensorDataContaine
 	}
 
 	public static List<ISensorDataContainer> parseDay(ISensorDataContainer parent, Data[] data) {
-		// First and last Data is same day
-		// if (startTime.get(Calendar.DAY_OF_YEAR) == data[data.length -
-		// 1].getId().getRecord().get(Calendar.DAY_OF_YEAR)) {
-		// ISensorDataContainer singleton = new DaySensorDataContainer(parent,
-		// data);
-		// return Collections.singletonList(singleton);
-		// }
-
 		return parseTime(parent, data, ISensorDataContainer.DAY);
 	}
-
 	
 	
 	public static List<ISensorDataContainer> parseHour(ISensorDataContainer parent, Data[] data) {
@@ -183,8 +184,61 @@ public abstract class AbstractSensorDataContainer implements ISensorDataContaine
 	 * 
 	 * @param parent
 	 * @param data
-	 * @param calendar
-	 *            - supported: ISensorContainer.HOUR, ISensorContainer.WEEK
+	 * @param calendar - supported: ISensorContainer.HOUR, ISensorContainer.WEEK
+	 * @return
+	 *//*
+	public static List<ISensorDataContainer> parseTime(ISensorDataContainer parent, Data[] data, int type) {
+		Assert.isNotNull(data);
+		if (data[0] == null)
+			return Collections.emptyList();
+
+		System.out.println("----------Parse " + type + "-------------");
+		System.out.println("++ DataArray: " + data);
+		
+		int calendar = Calendar.DAY_OF_YEAR;
+		switch (type) {
+		case ISensorDataContainer.HOUR:		calendar = Calendar.HOUR_OF_DAY; break;
+		case ISensorDataContainer.DAY:		calendar = Calendar.DAY_OF_YEAR; break;
+		}
+		
+		int start = 0;
+		int offset = 0;
+		Calendar startTime = new GregorianCalendar();
+		startTime.setTime(data[start].getId().getRecord());
+		Calendar endTime = new GregorianCalendar();
+		endTime.setTime(data[offset].getId().getRecord());
+		System.out.println("StartTime: " + startTime.getTime());
+
+		LinkedList<ISensorDataContainer> returns = new LinkedList<ISensorDataContainer>();
+		while (start < data.length) {
+			while (offset < data.length) {
+				endTime.setTime(data[offset++].getId().getRecord());
+				if (startTime.get(calendar) != endTime.get(calendar)) {
+					startTime.setTime(data[offset].getId().getRecord());
+					break;
+				}
+			}
+			// Calculating array length
+			int length = offset - start - 1;
+			System.out.println("length = offset - start - 1 ");
+			System.out.println("length = " + offset + " - " + start + " - 1 ");
+			Data[] containerArray = new Data[length];
+			System.arraycopy(data, start, containerArray, 0, length);
+			// Add the newling formed array
+			returns.add(createContainer(type, parent, containerArray));
+
+			System.out.println("Array from: [" + start + "] to [" + offset + "]" + " length=" + length);
+			start = offset + 1;
+		}
+
+		return returns;
+	}*/
+	
+	/**
+	 * 
+	 * @param parent
+	 * @param data
+	 * @param calendar - supported: ISensorContainer.HOUR, ISensorContainer.WEEK
 	 * @return
 	 */
 	public static List<ISensorDataContainer> parseTime(ISensorDataContainer parent, Data[] data, int type) {
@@ -194,11 +248,13 @@ public abstract class AbstractSensorDataContainer implements ISensorDataContaine
 
 		System.out.println("----------Parse " + type + "-------------");
 		System.out.println("++ DataArray: " + data);
+		
 		int calendar = Calendar.DAY_OF_YEAR;
 		switch (type) {
 		case ISensorDataContainer.HOUR:		calendar = Calendar.HOUR_OF_DAY; break;
 		case ISensorDataContainer.DAY:		calendar = Calendar.DAY_OF_YEAR; break;
 		}
+		
 		int start = 0;
 		int offset = 0;
 		Calendar startTime = new GregorianCalendar();

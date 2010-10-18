@@ -125,7 +125,7 @@ public class DataSourcePage extends WizardPage {
 	public void importData() {
 		//Use Sample begin and end
 		try {
-			sensorData = SDRConverter.convertSDRtoData(file.getText(), 0, 20);
+			sensorData = SDRConverter.convertSDRtoContainer(file.getText(), 0, 20);
 		} catch (IOException e) {
 			e.printStackTrace();
 			MessageDialog.openError(getShell(), "Fehler beim Import", e.getMessage());

@@ -3,7 +3,7 @@ package de.lmu.ifi.dbs.medmon.sensor.data;
 public class RootSensorDataContainer extends AbstractSensorDataContainer {
 
 	public RootSensorDataContainer() {
-		super(null, ROOT);
+		super(ROOT, null);
 	}
 	
 	public RootSensorDataContainer(ISensorDataContainer[] children) {
@@ -11,7 +11,7 @@ public class RootSensorDataContainer extends AbstractSensorDataContainer {
 		for(ISensorDataContainer child : children) 
 			addChild(child);
 	}
-
+	
 	@Override
 	public String getName() {
 		return "root";

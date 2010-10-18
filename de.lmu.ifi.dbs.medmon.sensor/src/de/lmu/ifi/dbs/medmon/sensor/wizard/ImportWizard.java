@@ -1,5 +1,6 @@
 package de.lmu.ifi.dbs.medmon.sensor.wizard;
 
+import java.io.IOException;
 import java.util.Date;
 
 import javax.persistence.EntityManager;
@@ -56,7 +57,12 @@ public class ImportWizard extends Wizard {
 	
 	private void persistData() {
 		Patient patient = sourcePage.getPatient();
-		Data[] data = sourcePage.getData().getSensorData();
+		Data[] data = new Data[0];
+		try {
+			data = sourcePage.getData().getSensorData();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		EntityManager em = JPAUtil.currentEntityManager();
 
 		em.getTransaction().begin();

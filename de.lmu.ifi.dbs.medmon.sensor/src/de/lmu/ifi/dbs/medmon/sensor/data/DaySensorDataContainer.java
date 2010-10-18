@@ -69,7 +69,7 @@ public class DaySensorDataContainer extends AbstractSensorDataContainer {
 
 	@Override
 	public String getName() {
-		SimpleDateFormat df = new SimpleDateFormat("dd.mm.yyy");
+		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
 		return df.format(calendar.getTime());
 	}
 

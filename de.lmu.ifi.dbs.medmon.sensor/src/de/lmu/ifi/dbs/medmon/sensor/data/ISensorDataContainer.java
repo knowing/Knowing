@@ -1,5 +1,7 @@
 package de.lmu.ifi.dbs.medmon.sensor.data;
 
+import java.io.IOException;
+
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 
 /**
@@ -46,8 +48,9 @@ public interface ISensorDataContainer {
 	 * that this could be null and the children contain the Data. 
 	 * 
 	 * @return SensorData[] below this node
+	 * @throws IOException 
 	 */
-	public Data[] getSensorData();
+	public Data[] getSensorData() throws IOException;
 	
 	/**
 	 * Used to display the Node correctly.
@@ -55,5 +58,5 @@ public interface ISensorDataContainer {
 	 * @return Node name
 	 */
 	public String getName();
-
+	
 }
