@@ -115,7 +115,7 @@ public class SourcePage extends WizardPage {
 						throws InvocationTargetException, InterruptedException {
 					monitor.beginTask("Daten laden", 20);
 					try {
-						data = SDRConverter.convertSDRtoData(tSDRFile.getText(), 0, 1);
+						data = SDRConverter.convertSDRtoData(tSDRFile.getText(), 0, 50);
 					} catch (IOException e) {
 						e.printStackTrace();
 						MessageDialog.openError(getShell(),	"Fehler beim Import", e.getMessage());

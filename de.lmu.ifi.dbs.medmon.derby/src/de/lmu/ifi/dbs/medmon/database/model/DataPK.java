@@ -2,6 +2,7 @@ package de.lmu.ifi.dbs.medmon.database.model;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Date;
 
 import javax.persistence.*;
 
@@ -19,11 +20,11 @@ public class DataPK implements Serializable {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable = false)
-	private Calendar record;
+	private Date record;
 
 	public DataPK() {}
 	
-	public DataPK(int patientId, Calendar record) {
+	public DataPK(int patientId, Date record) {
 		this.patientId = patientId;
 		this.record = record;
 	}
@@ -37,11 +38,11 @@ public class DataPK implements Serializable {
 		this.patientId = patientId;
 	}
 
-	public Calendar getRecord() {
+	public Date getRecord() {
 		return record;
 	}
 
-	public void setRecord(Calendar record) {
+	public void setRecord(Date record) {
 		this.record = record;
 	}
 

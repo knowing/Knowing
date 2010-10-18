@@ -37,8 +37,10 @@ public class DaySensorDataContainer extends AbstractSensorDataContainer {
 	 */
 	private void init(Data[] data) {
 		Assert.isNotNull(data);
-		Calendar start = data[0].getId().getRecord();
-		Calendar end	= data[data.length -1].getId().getRecord();
+		Calendar start = new GregorianCalendar();
+		start.setTime(data[0].getId().getRecord());
+		Calendar end	= new GregorianCalendar();
+		end.setTime(data[data.length -1].getId().getRecord());
 		
 		//Simple Check: first and last array entry should have the same date
 		//Assumption that the array is sorted

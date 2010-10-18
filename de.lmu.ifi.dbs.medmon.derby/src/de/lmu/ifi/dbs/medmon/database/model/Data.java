@@ -4,6 +4,7 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 import java.util.Calendar;
+import java.util.Date;
 
 
 /**
@@ -22,7 +23,7 @@ public class Data implements Serializable {
 
 	@Column(name="imported", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Calendar imported;
+	private Date imported;
 	
 	@Column(nullable=false)
 	private int x;
@@ -61,12 +62,12 @@ public class Data implements Serializable {
 		this.id = id;
 	}
 	
-	public Calendar getImported() {
+	public Date getImported() {
 		return imported;
 	}
 
-	public void setImported(Calendar timestamp) {
-		this.imported = timestamp;
+	public void setImported(Date imported) {
+		this.imported = imported;
 	}
 	
 	public int getX() {

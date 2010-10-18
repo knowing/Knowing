@@ -50,8 +50,8 @@ public class DataLabelProvider extends LabelProvider implements
 	public String getColumnText(Object element, int columnIndex) {
 		Data data = (Data)element;
 		switch (columnIndex) {
-		case 0: return date2String(data.getId().getRecord().getTime());
-		case 1: return date2String(data.getId().getRecord().getTime());
+		case 0: return date2String(data.getId().getRecord());
+		case 1: return date2String(data.getId().getRecord());
 		case 2: return "nicht verfügbar";
 		}
 		return element.toString();

@@ -2,6 +2,7 @@ package de.lmu.ifi.dbs.medmon.database.sample;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
@@ -58,7 +59,7 @@ public class SampleDataFactory {
 		return set.toArray(new Data[set.size()]);
 	}
 
-	public static Calendar randomDate() {
+	public static Date randomDate() {
 		Double d = Math.random();
 		if (d == 0.0)
 			d = 1.0;
@@ -67,7 +68,8 @@ public class SampleDataFactory {
 		int month = (int) (((d * 100) % 11) + 1);
 		int day = (int) (((d * 100) % 28) + 1);
 
-		return new GregorianCalendar(year, month, day);
+		//return new GregorianCalendar(year, month, day);
+		return new Date(year, month, day);
 	}
 
 	public static void addPatientsToDB() {

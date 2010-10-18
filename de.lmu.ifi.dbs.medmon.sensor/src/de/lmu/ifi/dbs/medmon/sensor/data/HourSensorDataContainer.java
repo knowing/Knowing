@@ -22,13 +22,15 @@ public class HourSensorDataContainer extends AbstractSensorDataContainer {
 	}
 
 	private void init(Data[] data) {
-		if (data == null)
-			return;
+		Assert.isNotNull(data);
 		//Only valid entities
 		Assert.isNotNull(data[0]);
 		Assert.isNotNull(data[data.length - 1]);
-		Calendar start = data[0].getId().getRecord();
-		Calendar end = data[data.length - 1].getId().getRecord();
+		
+		Calendar start = new GregorianCalendar();
+		start.setTime(data[0].getId().getRecord());
+		Calendar end	= new GregorianCalendar();
+		end.setTime(data[data.length -1].getId().getRecord());
 		// Assumption the array was parsed by
 		// AbstractSensorDataContainer.parse(..)
 		Assert.isTrue(start.get(Calendar.HOUR_OF_DAY) == end.get(Calendar.HOUR_OF_DAY));
