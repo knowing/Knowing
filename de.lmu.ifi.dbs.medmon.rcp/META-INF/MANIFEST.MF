@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Rcp
+Bundle-SymbolicName: de.lmu.ifi.dbs.medmon.rcp; singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.lmu.ifi.dbs.medmon.rcp.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.forms;bundle-version="3.5.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: de.lmu.ifi.dbs.medmon.rcp.platform,
+ de.lmu.ifi.dbs.medmon.rcp.platform.util

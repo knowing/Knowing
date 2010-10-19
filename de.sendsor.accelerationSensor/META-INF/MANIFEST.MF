@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: AccelerationSensor
+Bundle-SymbolicName: de.sendsor.accelerationSensor;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.sendsor.accelerationSensor.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ de.lmu.ifi.dbs.medmon.sensor.core;bundle-version="1.0.0",
+ de.lmu.ifi.dbs.medmon.jfreechart.libs;bundle-version="1.0.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.lmu.ifi.dbs.medmon.database.model
+Export-Package: de.sendsor.accelerationSensor.converter,
+ de.sendsor.accelerationSensor.sensor

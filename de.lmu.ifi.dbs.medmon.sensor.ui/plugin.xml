@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="Sensor Preferences"
+            class="de.lmu.ifi.dbs.medmon.sensor.ui.preferences.SensorPreferences"
+            id="de.lmu.ifi.dbs.medmon.sensor.preferences.SensorPreferences">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="de.lmu.ifi.dbs.medmon.sensor.ui.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="de.lmu.ifi.dbs.medmon.sensor.category"
+            name="Sensorverwaltung">
+      </category>
+      <view
+            category="de.lmu.ifi.dbs.medmon.sensor.category"
+            class="de.lmu.ifi.dbs.medmon.sensor.ui.view.SensorDataView"
+            id="de.lmu.ifi.dbs.medmon.sensor.SensorDataView"
+            name="SensorData"
+            restorable="true">
+      </view>
+      <view
+            category="de.lmu.ifi.dbs.medmon.sensor.category"
+            class="de.lmu.ifi.dbs.medmon.sensor.ui.view.DataTreeView"
+            id="de.lmu.ifi.dbs.medmon.sensor.DataTreeView"
+            name="SensorDataTreeView"
+            restorable="true">
+      </view>
+      <view
+            category="de.lmu.ifi.dbs.medmon.sensor.category"
+            class="de.lmu.ifi.dbs.medmon.sensor.ui.view.ManagementView"
+            id="de.lmu.ifi.dbs.medmon.sensor.Management"
+            name="Sensorverwaltung"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.lmu.ifi.dbs.medmon.sensor.ui.handler.CallImportWizard"
+            id="de.lmu.ifi.dbs.medmon.sensor.CallImportWizard"
+            name="Call ImportWizard">
+      </command>
+   </extension>
+
+</plugin>
