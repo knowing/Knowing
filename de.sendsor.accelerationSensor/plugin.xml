@@ -7,5 +7,12 @@
             class="de.sendsor.accelerationSensor.algorithm.SimpleAnalyzer">
       </algorithm>
    </extension>
+   <extension
+         point="de.lmu.ifi.dbs.medmon.sensor">
+      <sensor
+            class="de.sendsor.accelerationSensor.sensor.Sensor3D"
+            version="1.0">
+      </sensor>
+   </extension>
 
 </plugin>

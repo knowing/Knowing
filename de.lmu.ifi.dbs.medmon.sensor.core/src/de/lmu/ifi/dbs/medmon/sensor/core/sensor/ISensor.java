@@ -1,10 +1,12 @@
 package de.lmu.ifi.dbs.medmon.sensor.core.sensor;
 
+import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
+
 /**
  * Representing a generic sensor
  * 
  * @author Nepomuk Seiler
- * @version 0.5
+ * @version 0.6
  */
 public interface ISensor<E> {
 
@@ -18,5 +20,7 @@ public interface ISensor<E> {
 	public int getType();
 	
 	public E[] getData();
+	
+	public IConverter<E> getConverter();
 	
 }

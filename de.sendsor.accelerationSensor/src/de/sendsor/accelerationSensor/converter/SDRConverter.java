@@ -19,14 +19,14 @@ import org.eclipse.swt.widgets.Shell;
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.model.DataPK;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.*;
-
+import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
 
 /**
  * Class for converting SDR Files to CSV File
  * 
  * @author Alexander Stautner
  */
-public class SDRConverter {
+public class SDRConverter implements IConverter<Data>{
 
 	public final static int BLOCKSIZE = 512;
 	public final static int CONTENT_BLOCK = 504;
@@ -35,6 +35,23 @@ public class SDRConverter {
 	private final static long TIME_CORRECTION_BEFORE = 7000; //Should be 7392 ( = 504 / 3 * 44 )
 	private final static long TIME_CORRECTION_AFTER = 44;
 
+	@Override
+	public Block[] convertToBlock(String file, int calendarConstant)
+			throws IOException {
+		return convertSDRtoBlock(file, calendarConstant);
+	}
+	
+	@Override
+	public ISensorDataContainer convertToContainer(String file, int begin,
+			int end) throws IOException {
+		return convertSDRtoContainer(file, begin, end);
+	}
+	
+	@Override
+	public Data convertToData(Block block) throws IOException {
+		return convertToData(block);
+	}
+	
 	/**
 	 * 
 	 * @param file

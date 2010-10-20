@@ -27,7 +27,7 @@
       <plugin id="de.lmu.ifi.dbs.medmon.sensor.ui"/>
       <plugin id="de.lmu.ifi.dbs.medmon.therapy.core"/>
       <plugin id="de.lmu.ifi.dbs.medmon.therapy.ui"/>
-      <plugin id="de.lmu.ifi.dbs.medmon.visualizer"/>
+      <plugin id="de.lmu.ifi.dbs.medmon.visualizer.ui"/>
       <plugin id="de.sendsor.accelerationSensor"/>
       <plugin id="javax.persistence"/>
       <plugin id="org.apache.derby.core"/>
