@@ -11,6 +11,7 @@ import javax.persistence.Query;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
@@ -32,6 +33,7 @@ import de.lmu.ifi.dbs.medmon.sensor.core.container.Block;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.RootSensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.TimeSensorDataContainer;
+import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
 import de.lmu.ifi.dbs.medmon.sensor.ui.viewer.SensorTableViewer;
 import de.sendsor.accelerationSensor.converter.SDRConverter;
 
@@ -44,8 +46,7 @@ public class SourcePage extends WizardPage {
 
 	private boolean flip;
 	private Button btnVorschau, bPatient, bSDRFile;
-	private Table table;
-	private TableViewer tableViewer;
+	private TableViewer sensorViewer;
 
 	/**
 	 * Create the wizard.
@@ -77,9 +78,9 @@ public class SourcePage extends WizardPage {
 		bPatient.setText("Patient auswaehlen");
 		bPatient.addListener(SWT.Selection, controller);
 
-		tableViewer = new SensorTableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
-		tableViewer.setInput(this); //TODO search for sensors
-		table = tableViewer.getTable();
+		sensorViewer = new SensorTableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
+		sensorViewer.setInput(this); //TODO search for sensors
+		Table table = sensorViewer.getTable();
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 
 		tSDRFile = new Text(container, SWT.BORDER);
@@ -149,6 +150,13 @@ public class SourcePage extends WizardPage {
 
 	public Patient getPatient() {
 		return patient;
+	}
+	
+	public ISensor getSensor() {
+		IStructuredSelection selection = (IStructuredSelection) sensorViewer.getSelection();
+		if(selection.isEmpty())
+			return null;
+		return (ISensor) selection.getFirstElement();
 	}
 
 	private class PageController implements Listener {

@@ -21,7 +21,7 @@ public class ImportWizard extends Wizard {
 	private ImportDataPage dataPage;
 	
 	public ImportWizard() {
-		setWindowTitle("New Wizard");
+		setWindowTitle("Datenimport");
 	}
 
 	@Override

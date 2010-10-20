@@ -10,6 +10,7 @@ import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
  */
 public interface ISensor<E> {
 
+	public static final String SENSOR_ID = "de.lmu.ifi.dbs.medmon.sensor";
 	public static final int MASTER = 1;
 	public static final int SLAVE = 2;
 	

@@ -166,6 +166,7 @@ public class SDRConverter implements IConverter<Data>{
 				time += TIME_CORRECTION_AFTER;
 			}
 		}
+		in.close();
 		return datalist.toArray(new Data[datalist.size()]);		
 	}
 	
@@ -227,6 +228,7 @@ public class SDRConverter implements IConverter<Data>{
 		}
 		//long time = startDate.getTimeInMillis() - TIME_CORRECTION_BEFORE;
 		//endDate.setTimeInMillis(time);
+		in.close();
 		return blocklist.toArray(new Block[blocklist.size()]);		
 	}
 	
