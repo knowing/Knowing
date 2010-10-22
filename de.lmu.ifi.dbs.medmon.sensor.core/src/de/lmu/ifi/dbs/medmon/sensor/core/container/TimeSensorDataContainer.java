@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class TimeSensorDataContainer extends AbstractSensorDataContainer {
+public class TimeSensorDataContainer<E> extends AbstractSensorDataContainer<E> {
 
-	protected String formatPattern = "hh:mm";
+	protected String formatPattern = "dd.MM.yyyy - HH:mm";
 	
-	public TimeSensorDataContainer(ISensorDataContainer parent, int type, Block block) {
+	public TimeSensorDataContainer(ISensorDataContainer<E> parent, int type, Block block) {
 		super(parent, type, block);
 		initFormatPattern();
 	}
@@ -16,11 +16,12 @@ public class TimeSensorDataContainer extends AbstractSensorDataContainer {
 	public TimeSensorDataContainer( int type, Block block) {
 		this(null, type, block);
 	}
-	
+		
 	private void initFormatPattern() {
 		switch(getType()) {
-		case ISensorDataContainer.HOUR: formatPattern = "hh:mm"; break;
+		case ISensorDataContainer.HOUR: formatPattern = "HH:mm"; break;
 		case ISensorDataContainer.DAY: formatPattern = "dd.MM.yyyy"; break;
+		case ISensorDataContainer.WEEK: formatPattern = "dd.MM.yyyy"; break;
 		}
 	}
 
@@ -56,7 +57,7 @@ public class TimeSensorDataContainer extends AbstractSensorDataContainer {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TimeSensorDataContainer other = (TimeSensorDataContainer) obj;
+		TimeSensorDataContainer<E> other = (TimeSensorDataContainer<E>) obj;
 		if (block == null) {
 			if (other.block != null)
 				return false;

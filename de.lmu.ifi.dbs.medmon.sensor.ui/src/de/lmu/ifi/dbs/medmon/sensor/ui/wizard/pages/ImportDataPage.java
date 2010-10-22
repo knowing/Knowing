@@ -19,11 +19,13 @@ import org.eclipse.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.nebula.widgets.cdatetime.CDT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.layout.GridData;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.util.JPAUtil;
+import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.ui.provider.DataContentProvider;
 import de.lmu.ifi.dbs.medmon.sensor.ui.provider.DataLabelProvider;
 
@@ -98,7 +100,7 @@ public class ImportDataPage extends WizardPage {
 		bLastRecord.setText("Bis letzte Aufzeichnung");
 		bLastRecord.addListener(SWT.Selection, controller);
 
-		treeViewer = new TreeViewer(container, SWT.BORDER);
+		treeViewer = new TreeViewer(container, SWT.BORDER | SWT.MULTI);
 		treeViewer.setContentProvider(new DataContentProvider());
 		treeViewer.setLabelProvider(new DataLabelProvider());
 		Tree tree = treeViewer.getTree();
@@ -122,12 +124,24 @@ public class ImportDataPage extends WizardPage {
 		analyseAfter.setText("Danach analysieren?");
 		analyseAfter.addListener(SWT.Selection, controller);
 
-		// setPageComplete(false);
+		 setPageComplete(true);
 
 	}
 	
 	public void setViewerInput(Object input) {
 		treeViewer.setInput(input);
+	}
+	
+	public ISensorDataContainer[] getSelection() {
+		ITreeSelection selection = (ITreeSelection) treeViewer.getSelection();
+		if(selection.isEmpty())
+			return null;
+		List list = selection.toList();
+		ISensorDataContainer[] returns = new ISensorDataContainer[list.size()];
+		for(int i=0; i < list.size(); i++) {
+			returns[i] = (ISensorDataContainer) list.get(i);
+		}
+		return returns;
 	}
 
 	public Date getStart() {

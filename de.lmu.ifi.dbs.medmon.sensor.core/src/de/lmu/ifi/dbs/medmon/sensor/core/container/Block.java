@@ -1,35 +1,52 @@
 package de.lmu.ifi.dbs.medmon.sensor.core.container;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
-import de.lmu.ifi.dbs.medmon.database.model.Data;
-import de.lmu.ifi.dbs.medmon.sensor.core.converter.SDRConverter;
+import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
 
+/**
+ * Placeholder for a Block in a SensorFile
+ * 
+ * @author Nepomuk Seiler
+ * @version 1.1
+ */
 public class Block {
 
 	private final String file;
 	private final int begin;
 	private final int end;
 
+	private int calendarConstant = -1;
+	
 	private Date firstTimestamp;
 	private Date lastTimestamp;
 	
 
+	
+	
+	public Block(String file, int begin, int end, int calendarConstant, Date firstTimestamp, Date lastTimestamp) {
+		this.file = file;
+		this.begin = begin;
+		this.end = end;
+		this.calendarConstant = calendarConstant;
+		this.firstTimestamp = firstTimestamp;
+		this.lastTimestamp = lastTimestamp;
+	}
+
 	public Block(String file, int begin, int end, Date firstTimestamp, Date lastTimestamp) {
-		super();
 		this.file = file;
 		this.begin = begin;
 		this.end = end;
 		this.firstTimestamp = firstTimestamp;
-		this.lastTimestamp = lastTimestamp;
+		this.lastTimestamp = lastTimestamp;		
 	}
 	
-	public Block(String file, int begin, int end) {
+	public Block(String file, int begin, int end, int calendarConstant) {
 		this(file, begin, end, null,null);
 	}
-
-
 
 	public String getFile() {
 		return file;
@@ -43,30 +60,40 @@ public class Block {
 		return end;
 	}
 	
-	public Data[] importData() throws IOException {
-		return SDRConverter.convertSDRtoData(file, begin, end);
+	public Object[] importData(IConverter converter) throws IOException {
+		return converter.parseBlockToData(this);
 	}
 	
-	public Date getFirstTimestamp() throws IOException {
-		if(firstTimestamp == null) {
-			Data[] data = SDRConverter.convertSDRtoData(file, begin, begin+1);
-			firstTimestamp = data[0].getImported();
-		}
-			
+	public Date getFirstTimestamp() throws IOException {			
 		return firstTimestamp;
 	}
 	
 	public Date getLastTimestamp() throws IOException {
-		if(lastTimestamp == null) {
-			Data[] data = SDRConverter.convertSDRtoData(file, end-1, end);
-			lastTimestamp = data[0].getImported();
-		}
-		
 		return lastTimestamp;
 	}
 	
 	public int size() {
-		return (end - begin) * SDRConverter.CONTENT_BLOCK;
+		//return (end - begin) * SDRConverter.CONTENT_BLOCK;
+		return (end - begin) * 504;
+	}
+	
+	public int getCalendarConstant() {
+		//Lazy initialize calendarConstant
+		if(calendarConstant == -1 && firstTimestamp != null && lastTimestamp != null) {
+			Calendar first = new GregorianCalendar();
+			Calendar last  = new GregorianCalendar();
+			first.setTime(firstTimestamp);
+			last.setTime(lastTimestamp);
+			
+			//Checking the Calendar Constant: General -> Detail
+			if(first.get(Calendar.WEEK_OF_YEAR) == last.get(Calendar.WEEK_OF_YEAR)) //Same Week
+				calendarConstant = Calendar.WEEK_OF_YEAR;
+			if(first.get(Calendar.DAY_OF_YEAR) == last.get(Calendar.DAY_OF_YEAR))	//Same Day
+				calendarConstant = Calendar.DAY_OF_YEAR;
+			if(first.get(Calendar.HOUR_OF_DAY) == last.get(Calendar.HOUR_OF_DAY))	//Same Hour
+				calendarConstant = Calendar.HOUR_OF_DAY;
+		}
+		return calendarConstant;
 	}
 
 	@Override
@@ -104,7 +131,7 @@ public class Block {
 			return false;
 		return true;
 	}
-	
+
 	
 	
 }

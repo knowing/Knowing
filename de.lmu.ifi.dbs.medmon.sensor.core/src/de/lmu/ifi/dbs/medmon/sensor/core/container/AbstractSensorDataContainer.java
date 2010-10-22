@@ -1,6 +1,5 @@
 package de.lmu.ifi.dbs.medmon.sensor.core.container;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +12,7 @@ import java.util.List;
 import org.eclipse.core.runtime.Assert;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
-import de.lmu.ifi.dbs.medmon.sensor.core.converter.SDRConverter;
+import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
 
 /**
  * Provides basic functionality for ISensorDataContainer to work as a tree node.
@@ -21,56 +20,55 @@ import de.lmu.ifi.dbs.medmon.sensor.core.converter.SDRConverter;
  * @author Nepomuk Seiler
  * 
  */
-public abstract class AbstractSensorDataContainer implements ISensorDataContainer {
+public abstract class AbstractSensorDataContainer<E> implements ISensorDataContainer {
 
 	// null for root
-	private ISensorDataContainer parent;
+	private ISensorDataContainer<E> parent;
 
 	// never null; empty for leaf
-	private final List<ISensorDataContainer> children;
+	private final List<ISensorDataContainer<E>> children;
 
 	//
-	private Data[] data;
+	private E[] data;
 
 	// Verifiy the tree level of this container
 	private int type;
-		
-	//DataBlock
+
+	// DataBlock
 	protected Block block;
 
-	public AbstractSensorDataContainer(ISensorDataContainer parent, int type, Data[] data) {
+	public AbstractSensorDataContainer(ISensorDataContainer parent, int type, E[] data) {
 		this.parent = parent;
 		this.type = type;
 		this.data = data;
-		children = new ArrayList<ISensorDataContainer>();
+		children = new ArrayList<ISensorDataContainer<E>>();
 
 		if (parent != null)
 			parent.addChild(this);
 	}
-		
-	public AbstractSensorDataContainer(ISensorDataContainer parent, int type, Block block) {
+
+	public AbstractSensorDataContainer(ISensorDataContainer<E> parent, int type, Block block) {
 		this.parent = parent;
 		this.type = type;
 		this.block = block;
-		children = new ArrayList<ISensorDataContainer>();
+		children = new ArrayList<ISensorDataContainer<E>>();
 
 		if (parent != null)
 			parent.addChild(this);
-		
+
 	}
-		
-	public AbstractSensorDataContainer(int type, Data[] data) {
+
+	public AbstractSensorDataContainer(int type, E[] data) {
 		this(null, type, data);
 	}
-	
-	
+
 	@Override
-	public ISensorDataContainer getParent() {
+	public ISensorDataContainer<E> getParent() {
 		return parent;
 	}
 
 	@Override
-	public ISensorDataContainer[] getChildren() {
+	public ISensorDataContainer<E>[] getChildren() {
 		return children.toArray(new ISensorDataContainer[children.size()]);
 	}
 
@@ -104,202 +102,46 @@ public abstract class AbstractSensorDataContainer implements ISensorDataContaine
 		return type;
 	}
 
+	@Override
+	public Block getBlock() {
+		return block;
+	}
+
 	/**
 	 * Returns the SensorData[] if set or evaluate the data of its children
-	 * @throws IOException 
+	 * 
+	 * @throws IOException
 	 */
 	@Override
-	public Data[] getSensorData() throws IOException {
-		return (data == null) ? evaluateData() : data;
+	public E[] getSensorData(IConverter converter) throws IOException {
+		return (data == null) ? evaluateData(converter) : data;
 	}
 
 	/**
 	 * Evaluating SensorData going recursive through the tree.
 	 * 
 	 * @return SensorData[] containing all elements
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	protected Data[] evaluateData() throws IOException {
-		if(block != null)
-			return importData(block);
-		LinkedList<Data> ret = new LinkedList<Data>();
-		for (ISensorDataContainer container : children) {
-			for (Data data : container.getSensorData()) {
+	protected E[] evaluateData(IConverter converter) throws IOException {
+		if (block != null)
+			return importData(block, converter);
+
+		LinkedList<E> ret = new LinkedList<E>();
+		for (ISensorDataContainer<E> container : children) {
+			for (E data : container.getSensorData(converter)) {
 				ret.add(data);
 			}
 		}
-		return ret.toArray(new Data[ret.size()]);
+		E[] returns = (E[]) new Object[ret.size()];
+		return ret.toArray(returns);
 	}
-	
-	protected Data[] importData(Block block) throws IOException {
-		return SDRConverter.convertSDRtoData(block.getFile(), block.getBegin(), block.getEnd());
+
+	protected E[] importData(Block block, IConverter<E> converter) throws IOException {
+		return converter.parseBlockToData(block);
 	}
-	
+
 	// TODO Implement Listener Support
-
-	// Library Methods
-	/**
-	 * Parses {@link Data} into {@link ISensorDataContainer}
-	 * 
-	 * @param Data
-	 *            [] - the data which is parsed
-	 * @param int rootType - ISensorDataContainer constant. Isn't used yet
-	 * @param int leafType - ISensorDataContainer constant. Isn't used yet
-	 * @throws IOException 
-	 */
-	public static ISensorDataContainer parse(Data[] data, int rootType, int leafType) throws IOException {
-		RootSensorDataContainer root = new RootSensorDataContainer();
-		List<ISensorDataContainer> days = parseDay(root, data);
-		for (ISensorDataContainer each : days) {
-			List<ISensorDataContainer> hours = parseHour(each, each.getSensorData());
-		}
-		return root;
-	}
-	
-	public static ISensorDataContainer createContainer(int type, ISensorDataContainer parent, Data[] data) {
-		switch (type) {
-		case ISensorDataContainer.WEEK:
-			return null;
-		case ISensorDataContainer.MONTH:
-			return null;
-		default:
-			return new RootSensorDataContainer();
-		}
-	}
-
-	public static List<ISensorDataContainer> parseDay(ISensorDataContainer parent, Data[] data) {
-		return parseTime(parent, data, ISensorDataContainer.DAY);
-	}
-	
-	
-	public static List<ISensorDataContainer> parseHour(ISensorDataContainer parent, Data[] data) {
-		return parseTime(parent, data, ISensorDataContainer.HOUR);
-	}
-
-	/**
-	 * 
-	 * @param parent
-	 * @param data
-	 * @param calendar - supported: ISensorContainer.HOUR, ISensorContainer.WEEK
-	 * @return
-	 *//*
-	public static List<ISensorDataContainer> parseTime(ISensorDataContainer parent, Data[] data, int type) {
-		Assert.isNotNull(data);
-		if (data[0] == null)
-			return Collections.emptyList();
-
-		System.out.println("----------Parse " + type + "-------------");
-		System.out.println("++ DataArray: " + data);
-		
-		int calendar = Calendar.DAY_OF_YEAR;
-		switch (type) {
-		case ISensorDataContainer.HOUR:		calendar = Calendar.HOUR_OF_DAY; break;
-		case ISensorDataContainer.DAY:		calendar = Calendar.DAY_OF_YEAR; break;
-		}
-		
-		int start = 0;
-		int offset = 0;
-		Calendar startTime = new GregorianCalendar();
-		startTime.setTime(data[start].getId().getRecord());
-		Calendar endTime = new GregorianCalendar();
-		endTime.setTime(data[offset].getId().getRecord());
-		System.out.println("StartTime: " + startTime.getTime());
-
-		LinkedList<ISensorDataContainer> returns = new LinkedList<ISensorDataContainer>();
-		while (start < data.length) {
-			while (offset < data.length) {
-				endTime.setTime(data[offset++].getId().getRecord());
-				if (startTime.get(calendar) != endTime.get(calendar)) {
-					startTime.setTime(data[offset].getId().getRecord());
-					break;
-				}
-			}
-			// Calculating array length
-			int length = offset - start - 1;
-			System.out.println("length = offset - start - 1 ");
-			System.out.println("length = " + offset + " - " + start + " - 1 ");
-			Data[] containerArray = new Data[length];
-			System.arraycopy(data, start, containerArray, 0, length);
-			// Add the newling formed array
-			returns.add(createContainer(type, parent, containerArray));
-
-			System.out.println("Array from: [" + start + "] to [" + offset + "]" + " length=" + length);
-			start = offset + 1;
-		}
-
-		return returns;
-	}*/
-	
-	/**
-	 * 
-	 * @param parent
-	 * @param data
-	 * @param calendar - supported: ISensorContainer.HOUR, ISensorContainer.WEEK
-	 * @return
-	 */
-	public static List<ISensorDataContainer> parseTime(ISensorDataContainer parent, Data[] data, int type) {
-		Assert.isNotNull(data);
-		if (data[0] == null)
-			return Collections.emptyList();
-
-		System.out.println("----------Parse " + type + "-------------");
-		System.out.println("++ DataArray: " + data);
-		
-		int calendar = Calendar.DAY_OF_YEAR;
-		switch (type) {
-		case ISensorDataContainer.HOUR:		calendar = Calendar.HOUR_OF_DAY; break;
-		case ISensorDataContainer.DAY:		calendar = Calendar.DAY_OF_YEAR; break;
-		}
-		
-		int start = 0;
-		int offset = 0;
-		Calendar startTime = new GregorianCalendar();
-		startTime.setTime(data[start].getId().getRecord());
-		Calendar endTime = new GregorianCalendar();
-		endTime.setTime(data[offset].getId().getRecord());
-		System.out.println("StartTime: " + startTime.getTime());
-
-		LinkedList<ISensorDataContainer> returns = new LinkedList<ISensorDataContainer>();
-		while (start < data.length) {
-			while (offset < data.length) {
-				endTime.setTime(data[offset++].getId().getRecord());
-				if (startTime.get(calendar) != endTime.get(calendar)) {
-					startTime.setTime(data[offset].getId().getRecord());
-					break;
-				}
-			}
-			// Calculating array length
-			int length = offset - start - 1;
-			System.out.println("length = offset - start - 1 ");
-			System.out.println("length = " + offset + " - " + start + " - 1 ");
-			Data[] containerArray = new Data[length];
-			System.arraycopy(data, start, containerArray, 0, length);
-			// Add the newling formed array
-			returns.add(createContainer(type, parent, containerArray));
-
-			System.out.println("Array from: [" + start + "] to [" + offset + "]" + " length=" + length);
-			start = offset + 1;
-		}
-
-		return returns;
-	}
-	
-	/**
-	 * Lazy Loading
-	 * 
-	 * @param parent
-	 * @param file
-	 * @return
-	 */
-	public static ISensorDataContainer parseBlock(ISensorDataContainer parent, String file) {
-		File sdrFile = new File(file);
-		long blocks = sdrFile.length() / SDRConverter.BLOCKSIZE;
-		RootSensorDataContainer root = new RootSensorDataContainer();
-		for(int i=0; i < blocks; i++) {
-			root.addChild(new BlockSensorDataContainer(file, i)); //!
-		}
-		return root;
-	}
 
 	// Standard Methods
 
@@ -326,7 +168,7 @@ public abstract class AbstractSensorDataContainer implements ISensorDataContaine
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		AbstractSensorDataContainer other = (AbstractSensorDataContainer) obj;
+		AbstractSensorDataContainer<E> other = (AbstractSensorDataContainer<E>) obj;
 		if (!Arrays.equals(data, other.data))
 			return false;
 		if (parent == null) {

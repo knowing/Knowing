@@ -21,16 +21,14 @@ Require-Bundle: org.eclipse.ui,
  de.lmu.ifi.dbs.medmon.sensor.core;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package:  de.lmu.ifi.dbs.medmon.algorithm.ui.provider,
+Import-Package: de.lmu.ifi.dbs.medmon.algorithm.ui.provider,
  de.lmu.ifi.dbs.medmon.algorithm.ui.wizards.pages,
  de.lmu.ifi.dbs.medmon.database.model,
  de.lmu.ifi.dbs.medmon.database.sample,
  de.lmu.ifi.dbs.medmon.database.util,
  de.lmu.ifi.dbs.medmon.patient.service,
  de.lmu.ifi.dbs.medmon.rcp.platform,
- de.lmu.ifi.dbs.medmon.rcp.platform.util,
- de.sendsor.accelerationSensor.converter,
- de.sendsor.accelerationSensor.sensor
+ de.lmu.ifi.dbs.medmon.rcp.platform.util
 Export-Package: de.lmu.ifi.dbs.medmon.sensor.ui.pages,
  de.lmu.ifi.dbs.medmon.sensor.ui.provider,
  de.lmu.ifi.dbs.medmon.sensor.ui.viewer,

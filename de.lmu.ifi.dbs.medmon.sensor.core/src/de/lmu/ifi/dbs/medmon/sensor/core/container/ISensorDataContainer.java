@@ -3,6 +3,7 @@ package de.lmu.ifi.dbs.medmon.sensor.core.container;
 import java.io.IOException;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
+import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
 
 /**
  * Interface to create a simple tree out of SensorData.
@@ -14,9 +15,9 @@ import de.lmu.ifi.dbs.medmon.database.model.Data;
  * 
  * 
  * @author Nepomuk Seiler
- * @version 1.0
+ * @version 1.1
  */
-public interface ISensorDataContainer {
+public interface ISensorDataContainer<E> {
 	
 	//Level constants. Should be compared via % 10
 	public static final int ROOT 	= 0;
@@ -28,13 +29,13 @@ public interface ISensorDataContainer {
 	
 	
 	//Standard tree methods
-	public ISensorDataContainer getParent();
+	public ISensorDataContainer<E> getParent();
 	
-	public ISensorDataContainer[] getChildren();
+	public ISensorDataContainer<E>[] getChildren();
 	
-	public boolean addChild(ISensorDataContainer child);
+	public boolean addChild(ISensorDataContainer<E> child);
 	
-	public boolean removeChild(ISensorDataContainer child);
+	public boolean removeChild(ISensorDataContainer<E> child);
 	
 	public boolean hasChildren();
 	
@@ -50,7 +51,13 @@ public interface ISensorDataContainer {
 	 * @return SensorData[] below this node
 	 * @throws IOException 
 	 */
-	public Data[] getSensorData() throws IOException;
+	public E[] getSensorData(IConverter<E> converter) throws IOException;
+	
+	/**
+	 * 
+	 * @return the Block placeholder
+	 */
+	public Block getBlock();
 	
 	/**
 	 * Used to display the Node correctly.

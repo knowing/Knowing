@@ -5,7 +5,6 @@ import org.eclipse.jface.viewers.Viewer;
 
 import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
 import de.lmu.ifi.dbs.medmon.sensor.core.util.FrameworkUtil;
-import de.sendsor.accelerationSensor.sensor.Sensor3D;
 
 
 /**

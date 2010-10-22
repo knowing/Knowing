@@ -21,7 +21,9 @@ public class Data implements Serializable {
 	@EmbeddedId
 	private DataPK id;
 
-	@Column(name="imported", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+	//@Column(name="imported", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable=false)
+	@Basic(optional = false)
+	@Column(name = "imported", insertable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date imported;
 	

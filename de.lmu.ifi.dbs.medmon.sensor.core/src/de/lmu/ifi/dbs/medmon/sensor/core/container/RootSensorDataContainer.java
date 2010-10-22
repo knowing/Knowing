@@ -1,14 +1,14 @@
 package de.lmu.ifi.dbs.medmon.sensor.core.container;
 
-public class RootSensorDataContainer extends AbstractSensorDataContainer {
+public class RootSensorDataContainer<E> extends AbstractSensorDataContainer<E> {
 
 	public RootSensorDataContainer() {
 		super(ROOT, null);
 	}
 	
-	public RootSensorDataContainer(ISensorDataContainer[] children) {
+	public RootSensorDataContainer(ISensorDataContainer<E>[] children) {
 		this();
-		for(ISensorDataContainer child : children) 
+		for(ISensorDataContainer<E> child : children) 
 			addChild(child);
 	}
 	

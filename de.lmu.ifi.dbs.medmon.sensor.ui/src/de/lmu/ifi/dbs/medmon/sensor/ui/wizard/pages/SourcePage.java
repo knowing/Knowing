@@ -32,10 +32,9 @@ import de.lmu.ifi.dbs.medmon.database.util.JPAUtil;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.Block;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.RootSensorDataContainer;
-import de.lmu.ifi.dbs.medmon.sensor.core.container.TimeSensorDataContainer;
+import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
 import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
 import de.lmu.ifi.dbs.medmon.sensor.ui.viewer.SensorTableViewer;
-import de.sendsor.accelerationSensor.converter.SDRConverter;
 
 public class SourcePage extends WizardPage {
 
@@ -54,7 +53,7 @@ public class SourcePage extends WizardPage {
 	public SourcePage() {
 		super("Data");
 		setTitle("Daten");
-		setDescription("Wizard Page description");
+		setDescription("Daten auswaehlen");
 	}
 
 	/**
@@ -119,11 +118,10 @@ public class SourcePage extends WizardPage {
 					monitor.beginTask("Daten laden", 20);
 					try {
 						//data = SDRConverter.convertSDRtoContainer(tSDRFile.getText(), 0, 1200);
-						Block[] blocks = SDRConverter.convertSDRtoBlock(tSDRFile.getText(), Calendar.DAY_OF_YEAR);
+						IConverter converter = getSensor().getConverter();
+						Block[] blocks =converter.convertToBlock(tSDRFile.getText(), Calendar.HOUR_OF_DAY);
 						data = new RootSensorDataContainer();
-						for(Block block : blocks) 
-							data.addChild(new TimeSensorDataContainer(ISensorDataContainer.DAY, block));
-						
+						converter.parseBlockToContainer(data, blocks);						
 							
 					} catch (IOException e) {
 						e.printStackTrace();
@@ -141,7 +139,7 @@ public class SourcePage extends WizardPage {
 
 	private void done() {
 		flip = !tSDRFile.getText().isEmpty() && (patient != null);
-		getContainer().updateButtons();
+		setPageComplete(flip);
 	}
 
 	public ISensorDataContainer getData() {
@@ -172,7 +170,8 @@ public class SourcePage extends WizardPage {
 		}
 
 		private void importFile() {
-			String path = SDRConverter.importSDRFileDialog(getShell());
+			IConverter converter = getSensor().getConverter();
+			String path = converter.openChooseInputDialog(getShell());
 			if (path != null && !path.isEmpty()) {
 				tSDRFile.setText(path);
 				done();
