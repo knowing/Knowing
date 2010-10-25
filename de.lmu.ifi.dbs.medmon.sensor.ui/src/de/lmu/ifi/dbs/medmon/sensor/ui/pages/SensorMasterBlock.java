@@ -16,7 +16,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
-import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 import de.lmu.ifi.dbs.medmon.sensor.controller.ManagementController;
@@ -33,6 +32,9 @@ import org.eclipse.ui.forms.widgets.ColumnLayout;
 import org.eclipse.ui.forms.widgets.ColumnLayoutData;
 
 public class SensorMasterBlock extends MasterDetailsBlock {
+	
+	public static ManagementController controller;
+	
 	public SensorMasterBlock() {
 	}
 
@@ -113,29 +115,7 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 			}
 		});
 
-		ManagementController controller = new ManagementController(dataViewer);
-				
-		ImageHyperlink importLink = toolkit.createImageHyperlink(dataClient, SWT.NONE);
-		toolkit.paintBordersFor(importLink);
-		importLink.setText("Import");
-		importLink.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN,	IMedmonConstants.IMG_ARROW_DOWN_16));
-		importLink.setHref(ManagementController.IMPORT);
-		importLink.addHyperlinkListener(controller);
-
-		ImageHyperlink exportLink = toolkit.createImageHyperlink(dataClient, SWT.NONE);
-		toolkit.paintBordersFor(exportLink);
-		exportLink.setText("Export");
-		exportLink.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN,	IMedmonConstants.IMG_ARROW_UP_16));
-		exportLink.setHref(ManagementController.EXPORT);
-		exportLink.addHyperlinkListener(controller);
-
-		ImageHyperlink deleteLink = toolkit.createImageHyperlink(dataClient, SWT.NONE);
-		toolkit.paintBordersFor(deleteLink);
-		deleteLink.setText("Loeschen");
-		deleteLink.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_REMOVE_16));
-		deleteLink.setHref(ManagementController.DELETE);
-		deleteLink.addHyperlinkListener(controller);
-
+		controller = new ManagementController(dataViewer, sensorViewer);
 	}
 
 	@Override

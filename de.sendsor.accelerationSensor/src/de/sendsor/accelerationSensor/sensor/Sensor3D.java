@@ -33,5 +33,10 @@ public class Sensor3D implements ISensor<Data> {
 	public IConverter<Data> getConverter() {
 		return converter;
 	}
+
+	@Override
+	public String getDescription() {
+		return "3D Bewegungssensor zum Aufzeichnen von Bewegungsdaten.";
+	}
 	
 }

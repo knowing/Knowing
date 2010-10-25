@@ -23,15 +23,27 @@ public class ImportWizard extends Wizard {
 	private SourcePage sourcePage;
 	private ImportDataPage dataPage;
 
+	private ISensor<?> sensor;
+	private Patient patient;
+
 	public ImportWizard() {
 		setWindowTitle("Datenimport");
 	}
 
+	public ImportWizard(ISensor<?> sensor, Patient patient) {
+		this();
+		this.sensor = sensor;
+		this.patient = patient;
+	}
+
 	@Override
 	public void addPages() {
-		sourcePage = new SourcePage();
+		if (patient == null && sensor == null) {
+			sourcePage = new SourcePage();
+			addPage(sourcePage);
+		}
+
 		dataPage = new ImportDataPage();
-		addPage(sourcePage);
 		addPage(dataPage);
 	}
 
@@ -57,7 +69,8 @@ public class ImportWizard extends Wizard {
 	}
 
 	private void persistData() {
-		Patient patient = sourcePage.getPatient();
+		if (patient == null)
+			patient = sourcePage.getPatient();
 		ISensorDataContainer[] container = dataPage.getSelection();
 		for (ISensorDataContainer c : container) {
 			System.out.println("Check ContainerType: " + c + " Type: " + c.getType() + " Hour: "
@@ -75,7 +88,8 @@ public class ImportWizard extends Wizard {
 		em.getTransaction().begin();
 		try {
 			System.out.println("Beginning Transaction for Container " + container);
-			ISensor sensor = sourcePage.getSensor();
+			if (sensor == null)
+				sensor = sourcePage.getSensor();
 			IConverter converter = sensor.getConverter();
 			Object[] sensorData;
 			sensorData = container.getSensorData(converter);

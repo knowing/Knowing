@@ -25,13 +25,10 @@ import org.eclipse.swt.layout.GridData;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.util.JPAUtil;
+import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.ui.provider.DataContentProvider;
 import de.lmu.ifi.dbs.medmon.sensor.ui.provider.DataLabelProvider;
-
-import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 
 public class ImportDataPage extends WizardPage {
 
@@ -42,13 +39,13 @@ public class ImportDataPage extends WizardPage {
 
 	private Button bFirstRecord, bLastRecord;
 	private Button bValidate;
-	private Button removeAfter, analyseAfter;
 
 	private TreeViewer treeViewer;
 
 
 	public ImportDataPage() {
 		super("Daten auswaehlen");
+		setImageDescriptor(ResourceManager.getPluginImageDescriptor("de.lmu.ifi.dbs.medmon.rcp", "icons/48/gtk-removable.png"));
 		setMessage("Die zu analysierenden Daten auswaehlen");
 		setTitle("Sensordaten");
 		setPageComplete(true);
@@ -112,17 +109,6 @@ public class ImportDataPage extends WizardPage {
 		bValidate.setText("Daten ueberpruefen");
 		bValidate.addListener(SWT.Selection, controller);
 
-		removeAfter = new Button(container, SWT.CHECK);
-		removeAfter.setEnabled(false);
-		removeAfter.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,	false, 5, 1));
-		removeAfter.setText("Nach dem Importieren Daten loeschen");
-		removeAfter.addListener(SWT.Selection, controller);
-
-		analyseAfter = new Button(container, SWT.CHECK);
-		analyseAfter.setEnabled(false);
-		analyseAfter.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,false, 5, 1));
-		analyseAfter.setText("Danach analysieren?");
-		analyseAfter.addListener(SWT.Selection, controller);
 
 		 setPageComplete(true);
 

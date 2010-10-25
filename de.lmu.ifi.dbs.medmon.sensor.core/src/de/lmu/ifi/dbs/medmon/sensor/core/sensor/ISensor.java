@@ -6,7 +6,7 @@ import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
  * Representing a generic sensor
  * 
  * @author Nepomuk Seiler
- * @version 0.6
+ * @version 0.7
  */
 public interface ISensor<E> {
 
@@ -17,6 +17,8 @@ public interface ISensor<E> {
 	public String getVersion();
 	
 	public String getName();
+	
+	public String getDescription();
 	
 	public int getType();
 	

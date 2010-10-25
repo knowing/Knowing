@@ -9,6 +9,15 @@ import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
 
 /**
  * 
+ * Use<br>
+ * 	<p><code>
+ *  ISensor<?> sensor = ...;
+ *  IConverter converter = sensor.getConverter(); <br>
+ *	Block[] blocks =converter.convertToBlock(tSDRFile.getText(), Calendar.HOUR_OF_DAY); <br>
+ *	RootSensorDataContainer root = new RootSensorDataContainer(); <br>
+ *  converter.parseBlockToContainer(root, blocks);	 <br>
+ *  </code><p>	
+ * 
  * @author Nepomuk Seiler
  *
  * @param <E> - data entity
@@ -20,6 +29,13 @@ public interface IConverter<E> {
 	
 	public E[] parseBlockToData(Block block) throws IOException;
 	
+	/**
+	 * 
+	 * @param file
+	 * @param calendarConstant: Calendar.HOUR_OF_DAY, Calendar.DAY_OF_YEAR
+	 * @return Block[] containting the blocks parsed with the given calendarConstant
+	 * @throws IOException
+	 */
 	public Block[] convertToBlock(String file, int calendarConstant) throws IOException;
 	
 	/**
