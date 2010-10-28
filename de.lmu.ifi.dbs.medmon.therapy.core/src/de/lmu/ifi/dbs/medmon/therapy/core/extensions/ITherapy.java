@@ -1,6 +1,7 @@
 package de.lmu.ifi.dbs.medmon.therapy.core.extensions;
 
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.ISensorDataAlgorithm;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
+
 
 /**
  * The Interface wraps therapy information for a certain disease
@@ -13,7 +14,7 @@ public interface ITherapy {
 		
 	public IDisease getDisease();
 	
-	public ISensorDataAlgorithm getAnalysers();
+	public IAlgorithm getAnalysers();
 	
 	public String getName();
 	

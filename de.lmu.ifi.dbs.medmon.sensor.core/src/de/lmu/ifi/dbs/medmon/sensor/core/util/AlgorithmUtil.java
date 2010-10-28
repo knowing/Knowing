@@ -9,13 +9,14 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 
 import de.lmu.ifi.dbs.medmon.sensor.core.Activator;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.ISensorDataAlgorithm;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.IDataProcessor;
 
 public class AlgorithmUtil {
 	
-	public static ISensorDataAlgorithm[] evaluateAlgorithms() {
-		ISensorDataAlgorithm[] extensions = evaluateAlgorithmsExtensions();
-		ISensorDataAlgorithm[] services = evaluateAlgorithmServices();
+	public static IAlgorithm[] evaluateAlgorithms() {
+		IAlgorithm[] extensions = evaluateAlgorithmsExtensions();
+		IAlgorithm[] services = evaluateAlgorithmServices();
 		return merge(extensions, services);
 	}
 		
@@ -24,14 +25,14 @@ public class AlgorithmUtil {
 	 * 
 	 * @return ISensorDataAlgorihtm[] containing all registered Extensions
 	 */
-	public static ISensorDataAlgorithm[] evaluateAlgorithmsExtensions() {
+	public static IAlgorithm[] evaluateAlgorithmsExtensions() {
 		IConfigurationElement[] config = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor(ISensorDataAlgorithm.ALGORITHM_ID);
-		final LinkedList<ISensorDataAlgorithm> algorithms = new LinkedList<ISensorDataAlgorithm>();
+				.getConfigurationElementsFor(IDataProcessor.PROCESSOR_ID);
+		final LinkedList<IAlgorithm> algorithms = new LinkedList<IAlgorithm>();
 		try {
 			for (IConfigurationElement e : config) {
 				final Object o = e.createExecutableExtension("class");
-				if (o instanceof ISensorDataAlgorithm) {
+				if (o instanceof IAlgorithm) {
 					ISafeRunnable runnable = new ISafeRunnable() {
 						@Override
 						public void handleException(Throwable exception) {
@@ -40,7 +41,7 @@ public class AlgorithmUtil {
 
 						@Override
 						public void run() throws Exception {
-							algorithms.add((ISensorDataAlgorithm) o);
+							algorithms.add((IAlgorithm) o);
 						}
 					};
 					SafeRunner.run(runnable);
@@ -50,18 +51,18 @@ public class AlgorithmUtil {
 			System.out.println(ex.getMessage());
 		}
 		
-		return algorithms.toArray(new ISensorDataAlgorithm[algorithms.size()]);
+		return algorithms.toArray(new IAlgorithm[algorithms.size()]);
 	}
 	
-	public static ISensorDataAlgorithm[] evaluateAlgorithmServices() {
+	public static IAlgorithm[] evaluateAlgorithmServices() {
 		return Activator.getAlgorithmServices();
 	}
 	
-	private static ISensorDataAlgorithm[] merge(ISensorDataAlgorithm[] a, ISensorDataAlgorithm[] b) {
-		ISensorDataAlgorithm[] returns;
+	private static IAlgorithm[] merge(IAlgorithm[] a, IAlgorithm[] b) {
+		IAlgorithm[] returns;
 		if(a != null && b != null) {
 			//Real merge 
-			returns = new ISensorDataAlgorithm[a.length + b.length];
+			returns = new IAlgorithm[a.length + b.length];
 			int index = 0;
 			for(int i=0; i < a.length; i++)
 				returns[index++] = a[i];
@@ -73,12 +74,12 @@ public class AlgorithmUtil {
 			return b;
 		}
 		
-		return new ISensorDataAlgorithm[0];
+		return new IAlgorithm[0];
 	}
 	
-	public static ISensorDataAlgorithm findAlgorithm(String name) {
-		ISensorDataAlgorithm[] algorithms = evaluateAlgorithms();
-		for(ISensorDataAlgorithm algorithm : algorithms) {
+	public static IAlgorithm findAlgorithm(String name) {
+		IAlgorithm[] algorithms = evaluateAlgorithms();
+		for(IAlgorithm algorithm : algorithms) {
 			if(algorithm.getName().equals(name))
 				return algorithm;
 		}

@@ -4,8 +4,8 @@ import org.eclipse.jface.viewers.ISelection;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.IAnalyzedData;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.ISensorDataAlgorithm;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAnalyzedData;
 
 
 /**
@@ -20,7 +20,7 @@ public interface IPatientService {
 	
 	public static final String PATIENT = Patient.class.getName();
 	public static final String SENSOR_DATA = Data.class.getName();
-	public static final String ALGORITHM = ISensorDataAlgorithm.class.getName();
+	public static final String ALGORITHM = IAlgorithm.class.getName();
 	public static final String ANALYZED_DATA = IAnalyzedData.class.getName();
 	
 	/**

@@ -19,23 +19,23 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 import de.lmu.ifi.dbs.medmon.algorithm.ui.widgets.CustomScale;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.IAlgorithmParameter;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.ISensorDataAlgorithm;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.NumericParameter;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.StringParameter;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.IProcessorParameter;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.NumericParameter;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.StringParameter;
 
 public class AlgorithmConfigurationPart extends SectionPart {
 
 	
 	private FormToolkit toolkit;
 	private DataBindingContext bindingContext;
-	private Map<String, IAlgorithmParameter> parameters;
+	private Map<String, IProcessorParameter> parameters;
 
 	public AlgorithmConfigurationPart(Section section) {
 		this(section, null);
 	}
 	
-	public AlgorithmConfigurationPart(Section section,	Map<String, IAlgorithmParameter> parameters) {
+	public AlgorithmConfigurationPart(Section section,	Map<String, IProcessorParameter> parameters) {
 		super(section);
 		this.parameters = parameters;	
 		toolkit = new FormToolkit(section.getDisplay());
@@ -67,26 +67,26 @@ public class AlgorithmConfigurationPart extends SectionPart {
 
 	private void createParameterContent(Composite parent) {
 		for(String key : parameters.keySet()) {
-			IAlgorithmParameter parameter = parameters.get(key);
+			IProcessorParameter parameter = parameters.get(key);
 			if(parameter instanceof NumericParameter)
 				createNumericParameterContent(parent, (NumericParameter) parameter);
 			else if(parameter instanceof StringParameter)
 				createStringParameterContent(parent, (StringParameter) parameter);
-			else if(parameter instanceof IAlgorithmParameter)
+			else if(parameter instanceof IProcessorParameter)
 				createUnkownParameterContent(parent, parameter);
 		}
 	}
 	
 	@Override
 	public boolean setFormInput(Object input) {
-		if(input instanceof ISensorDataAlgorithm) {
-			update(((ISensorDataAlgorithm)input).getParameters());
+		if(input instanceof IAlgorithm) {
+			update(((IAlgorithm)input).getParameters());
 			return true;
 		}		
 		return super.setFormInput(input);
 	}
 	
-	public void update(Map<String, IAlgorithmParameter> parameters) {
+	public void update(Map<String, IProcessorParameter> parameters) {
 		this.parameters = parameters;
 		//Clean up
 		bindingContext.dispose();
@@ -130,7 +130,7 @@ public class AlgorithmConfigurationPart extends SectionPart {
 		return combo;
 	}
 	
-	public Composite createUnkownParameterContent(Composite parent, IAlgorithmParameter parameter) {
+	public Composite createUnkownParameterContent(Composite parent, IProcessorParameter parameter) {
 		
 		return null;
 	}

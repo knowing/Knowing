@@ -6,7 +6,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.ISensorDataAlgorithm;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
 
 /**
  * Simple LabelProvider for ListViewer and TableViewer.
@@ -31,8 +31,8 @@ public class AlgorithmLabelProvider extends LabelProvider implements
 
 	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
-		if(element instanceof ISensorDataAlgorithm) {
-			ISensorDataAlgorithm alg = (ISensorDataAlgorithm)element;
+		if(element instanceof IAlgorithm) {
+			IAlgorithm alg = (IAlgorithm)element;
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
 		}			
 		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK);
@@ -40,8 +40,8 @@ public class AlgorithmLabelProvider extends LabelProvider implements
 
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
-		if(element instanceof ISensorDataAlgorithm) {
-			ISensorDataAlgorithm alg = (ISensorDataAlgorithm)element;
+		if(element instanceof IAlgorithm) {
+			IAlgorithm alg = (IAlgorithm)element;
 			switch (columnIndex) {
 			case 0: return alg.getName();
 			case 1: return alg.getDescription();

@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.medmon.sensor.core.algorithm;
+package de.lmu.ifi.dbs.medmon.sensor.core.processing;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
  * @author Nepomuk Seiler
  * @version 1.1
  */
-public class NumericParameter implements IAlgorithmParameter<Integer> {
+public class NumericParameter implements IProcessorParameter<Integer> {
 
 	private final String name;
 

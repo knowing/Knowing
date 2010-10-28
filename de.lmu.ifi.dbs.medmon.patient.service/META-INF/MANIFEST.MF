@@ -6,5 +6,5 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.ui;bundle-version="3.6.0"
 Import-Package: de.lmu.ifi.dbs.medmon.database.model,
- de.lmu.ifi.dbs.medmon.sensor.core.algorithm
+ de.lmu.ifi.dbs.medmon.sensor.core.processing
 Export-Package: de.lmu.ifi.dbs.medmon.patient.service

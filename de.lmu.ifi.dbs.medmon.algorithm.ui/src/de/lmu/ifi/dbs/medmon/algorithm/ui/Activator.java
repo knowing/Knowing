@@ -6,7 +6,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
 
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.ISensorDataAlgorithm;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -39,7 +39,7 @@ public class Activator extends AbstractUIPlugin {
 		patientTracker = new ServiceTracker(context, IPatientService.class.getName(), null);
 		patientTracker.open();
 		
-		algorithmTracker = new ServiceTracker(context, ISensorDataAlgorithm.class.getName(), null);
+		algorithmTracker = new ServiceTracker(context, IAlgorithm.class.getName(), null);
 		algorithmTracker.open();
 	}
 
@@ -78,7 +78,7 @@ public class Activator extends AbstractUIPlugin {
 		return (IPatientService) patientTracker.getService();
 	}
 	
-	public static ISensorDataAlgorithm[] getAlgorithmServices() {
-		return (ISensorDataAlgorithm[]) algorithmTracker.getServices();
+	public static IAlgorithm[] getAlgorithmServices() {
+		return (IAlgorithm[]) algorithmTracker.getServices();
 	}
 }

@@ -17,7 +17,7 @@ import org.jfree.data.category.DefaultIntervalCategoryDataset;
 import org.jfree.data.category.IntervalCategoryDataset;
 import org.jfree.experimental.chart.swt.ChartComposite;
 
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.IAnalyzedData;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAnalyzedData;
 
 public class SimpleAnalyzerData implements IAnalyzedData {
 

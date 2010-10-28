@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.medmon.sensor.core.algorithm;
+package de.lmu.ifi.dbs.medmon.sensor.core.processing;
 
 /**
  * Generic Interface for {@link ISensorDataAlgorithm} properties
@@ -6,7 +6,7 @@ package de.lmu.ifi.dbs.medmon.sensor.core.algorithm;
  * @author Nepomuk Seiler
  * @version 1.2
  */
-public interface IAlgorithmParameter<E> {
+public interface IProcessorParameter<E> {
 
 	/**
 	 * To create a label describing the parameter

@@ -2,17 +2,17 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="de.lmu.ifi.dbs.medmon.algorithm">
-      <algorithm
-            class="de.sendsor.accelerationSensor.algorithm.SimpleAnalyzer">
-      </algorithm>
-   </extension>
-   <extension
          point="de.lmu.ifi.dbs.medmon.sensor">
       <sensor
             class="de.sendsor.accelerationSensor.sensor.Sensor3D"
             version="1.0">
       </sensor>
+   </extension>
+   <extension
+         point="de.lmu.ifi.dbs.medmon.sensor.processing.processor">
+      <algorithm
+            class="de.sendsor.accelerationSensor.algorithm.SimpleAnalyzer">
+      </algorithm>
    </extension>
 
 </plugin>

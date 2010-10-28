@@ -4,7 +4,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.IAnalyzedData;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAnalyzedData;
 import de.lmu.ifi.dbs.medmon.visualizer.ui.Activator;
 
 /**

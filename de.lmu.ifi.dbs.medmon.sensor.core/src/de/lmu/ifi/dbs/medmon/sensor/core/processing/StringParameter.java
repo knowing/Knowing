@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.medmon.sensor.core.algorithm;
+package de.lmu.ifi.dbs.medmon.sensor.core.processing;
 
 /**
  * Represents different String values a user can choose.
@@ -6,7 +6,7 @@ package de.lmu.ifi.dbs.medmon.sensor.core.algorithm;
  * @author Nepomuk Seiler
  * @version 1.0
  */
-public class StringParameter implements IAlgorithmParameter<String> {
+public class StringParameter implements IProcessorParameter<String> {
 
 	private final String name;
 

@@ -9,11 +9,11 @@ import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import de.lmu.ifi.dbs.medmon.algorithm.ui.editor.AlgorithmEditorBlock;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.ISensorDataAlgorithm;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
 
 public class AnalyzePage extends WizardPage {
 
-	private ISensorDataAlgorithm algorithm;
+	private IAlgorithm algorithm;
 
 	private ManagedForm m_managedForm;
 
@@ -72,7 +72,7 @@ public class AnalyzePage extends WizardPage {
 		return m_managedForm;
 	}
 
-	public ISensorDataAlgorithm getAlgorithm() {
+	public IAlgorithm getAlgorithm() {
 		return algorithm;
 	}
 

@@ -1,24 +1,18 @@
 package de.sendsor.accelerationSensor.algorithm;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import de.lmu.ifi.dbs.medmon.database.model.Data;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.IAlgorithmParameter;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.IAnalyzedData;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.ISensorDataAlgorithm;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.NumericParameter;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.StringParameter;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.AbstractAlgorithm;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAnalyzedData;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.NumericParameter;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.StringParameter;
 
-public class SimpleAnalyzer implements ISensorDataAlgorithm {
+public class SimpleAnalyzer<E extends Data> extends AbstractAlgorithm<E> {
 
 	public static final String PIE_CHART = "Pie-Chart";
 	public static final String BAR_CHART = "Bar-Chart";
 	
-	private final HashMap<String, IAlgorithmParameter> parameters;
 	
 	public SimpleAnalyzer() {
-		parameters = new HashMap<String, IAlgorithmParameter>();
 		init();
 	}
 	
@@ -30,25 +24,11 @@ public class SimpleAnalyzer implements ISensorDataAlgorithm {
 	}
 
 	@Override
-	public IAnalyzedData analyze(Data[] data) {
+	public IAnalyzedData process(Object data) {
 		//TODO InputData missing
 		return new SimpleAnalyzerData();
 	}
 	
-	@Override
-	public Map<String, IAlgorithmParameter> getParameters() {
-		return parameters;
-	}
-	
-	@Override
-	public IAlgorithmParameter getParameter(String key) {
-		return parameters.get(key);
-	}
-
-	@Override
-	public IAlgorithmParameter setParameter(String key, IAlgorithmParameter parameter) {
-		return parameters.put(key, parameter);
-	}
 	
 	@Override
 	public String getName() {
@@ -64,5 +44,11 @@ public class SimpleAnalyzer implements ISensorDataAlgorithm {
 	public String getVersion() {
 		return "0.2";
 	}
+	
+	@Override
+	public Class<?> getDataClass() {
+		return Data.class.getClass();
+	}
+
 
 }

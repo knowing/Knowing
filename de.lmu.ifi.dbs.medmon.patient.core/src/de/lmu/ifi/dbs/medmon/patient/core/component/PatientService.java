@@ -10,8 +10,8 @@ import org.osgi.service.component.ComponentContext;
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.IAnalyzedData;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.ISensorDataAlgorithm;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAnalyzedData;
 
 /**
  * PatientService declarative Service.
@@ -49,8 +49,8 @@ public class PatientService implements IPatientService {
 			selections.clear();			//Reset Selections if new patient is being set
 			selections.put(PATIENT, (Patient)first);
 		}
-		else if (first instanceof ISensorDataAlgorithm)
-			selections.put(ALGORITHM, (ISensorDataAlgorithm)first);
+		else if (first instanceof IAlgorithm)
+			selections.put(ALGORITHM, (IAlgorithm)first);
 		else if(first instanceof IAnalyzedData)
 			selections.put(ANALYZED_DATA, (IAnalyzedData)first);
 		else if(first instanceof Data)

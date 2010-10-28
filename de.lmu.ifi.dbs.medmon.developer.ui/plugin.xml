@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <menu
+               label="Programm">
+            <menu
+                  label="New">
+               <command
+                     commandId="org.eclipse.ui.window.newEditor"
+                     label="Data Processing List"
+                     style="push">
+               </command>
+            </menu>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorListEditor"
+            default="false"
+            id="de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorListEditor"
+            name="ProcessorListEditor">
+      </editor>
+   </extension>
+
+</plugin>

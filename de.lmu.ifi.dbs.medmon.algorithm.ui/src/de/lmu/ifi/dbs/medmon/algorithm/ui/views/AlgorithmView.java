@@ -13,8 +13,8 @@ import org.eclipse.ui.part.ViewPart;
 import de.lmu.ifi.dbs.medmon.algorithm.ui.Activator;
 import de.lmu.ifi.dbs.medmon.algorithm.ui.viewer.AlgorithmConfigurationPart;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.IAlgorithmParameter;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.ISensorDataAlgorithm;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.IProcessorParameter;
 
 /**
  * This sample class demonstrates how to plug-in a new workbench view. The view
@@ -55,8 +55,8 @@ public class AlgorithmView extends ViewPart {
 		managedForm.addPart(part);
 	}
 
-	private Map<String, IAlgorithmParameter> getParameters() {
-		ISensorDataAlgorithm algorithm = (ISensorDataAlgorithm) Activator
+	private Map<String, IProcessorParameter> getParameters() {
+		IAlgorithm algorithm = (IAlgorithm) Activator
 				.getPatientService().getSelection(IPatientService.ALGORITHM);
 		if(algorithm != null)
 			return algorithm.getParameters();
@@ -79,8 +79,8 @@ public class AlgorithmView extends ViewPart {
 		managedForm.getForm().setFocus();
 	}
 
-	private ISensorDataAlgorithm getAlgorithm() {
-		return (ISensorDataAlgorithm) Activator.getPatientService()
+	private IAlgorithm getAlgorithm() {
+		return (IAlgorithm) Activator.getPatientService()
 				.getSelection(IPatientService.ALGORITHM);
 	}
 }

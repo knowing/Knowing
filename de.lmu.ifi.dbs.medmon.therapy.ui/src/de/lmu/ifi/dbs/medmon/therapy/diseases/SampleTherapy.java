@@ -1,15 +1,15 @@
 package de.lmu.ifi.dbs.medmon.therapy.diseases;
 
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.ISensorDataAlgorithm;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
 import de.lmu.ifi.dbs.medmon.therapy.core.extensions.IDisease;
 import de.lmu.ifi.dbs.medmon.therapy.core.extensions.ITherapy;
 
 public class SampleTherapy implements ITherapy {
 
 	private final IDisease disease;
-	private final ISensorDataAlgorithm algorithm;
+	private final IAlgorithm algorithm;
 
-	public SampleTherapy(IDisease disease, ISensorDataAlgorithm algorithm) {
+	public SampleTherapy(IDisease disease, IAlgorithm algorithm) {
 		this.disease = disease;
 		this.algorithm = algorithm;
 	}
@@ -20,7 +20,7 @@ public class SampleTherapy implements ITherapy {
 	}
 
 	@Override
-	public ISensorDataAlgorithm getAnalysers() {
+	public IAlgorithm getAnalysers() {
 		return algorithm;
 	}
 

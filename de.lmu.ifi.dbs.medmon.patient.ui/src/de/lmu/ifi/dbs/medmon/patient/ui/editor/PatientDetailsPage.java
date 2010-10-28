@@ -35,7 +35,7 @@ import de.lmu.ifi.dbs.medmon.patient.ui.Activator;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.CommandUtil;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.ISensorDataAlgorithm;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
 import de.lmu.ifi.dbs.medmon.sensor.core.util.AlgorithmUtil;
 import de.lmu.ifi.dbs.medmon.sensor.ui.viewer.SensorTableViewer;
 import de.lmu.ifi.dbs.medmon.visualizer.ui.handler.OpenDefaultPerspectiveHandler;
@@ -200,7 +200,7 @@ public class PatientDetailsPage implements IDetailsPage {
 	 * gesetzt werden kann!!
 	 */
 	private void setDefaultAlgorithm() {
-		ISensorDataAlgorithm[] algorithms = AlgorithmUtil.evaluateAlgorithms();
+		IAlgorithm[] algorithms = AlgorithmUtil.evaluateAlgorithms();
 		if(algorithms != null && algorithms[0] != null)
 			Activator.getPatientService().setSelection(algorithms[0], IPatientService.ALGORITHM);
 	}

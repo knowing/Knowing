@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.medmon.sensor.core.algorithm;
+package de.lmu.ifi.dbs.medmon.sensor.core.processing;
 
 import org.eclipse.swt.widgets.Composite;
 

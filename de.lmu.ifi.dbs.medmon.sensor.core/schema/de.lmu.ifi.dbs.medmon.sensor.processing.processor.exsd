@@ -3,10 +3,10 @@
 <schema targetNamespace="de.lmu.ifi.dbs.medmon.sensor.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="de.lmu.ifi.dbs.medmon.sensor.core" id="de.lmu.ifi.dbs.medmon.algorithm" name="Algorithm Extension"/>
+         <meta.schema plugin="de.lmu.ifi.dbs.medmon.sensor.core" id="de.lmu.ifi.dbs.medmon.sensor.processing.processor" name="Data Processor"/>
       </appinfo>
       <documentation>
-         Extension provides another Algorithm to analyse the imported SensorData
+         [Enter description of this extension point.]
       </documentation>
    </annotation>
 
@@ -17,7 +17,7 @@
          </appinfo>
       </annotation>
       <complexType>
-         <choice minOccurs="1" maxOccurs="unbounded">
+         <choice minOccurs="0" maxOccurs="unbounded">
             <element ref="algorithm"/>
          </choice>
          <attribute name="point" type="string" use="required">
@@ -55,15 +55,38 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":de.lmu.ifi.dbs.medmon.algorithm.provider.ISensorDataAlgorithm"/>
+                  <meta.attribute kind="java" basedOn=":de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm"/>
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="description" type="string">
+      </complexType>
+   </element>
+
+   <element name="filter">
+      <complexType>
+         <attribute name="new_attribute" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":de.lmu.ifi.dbs.medmon.sensor.core.processing.IFilter"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="processor">
+      <complexType>
+         <attribute name="new_attribute" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":de.lmu.ifi.dbs.medmon.sensor.core.processing.IDataProcessor"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>

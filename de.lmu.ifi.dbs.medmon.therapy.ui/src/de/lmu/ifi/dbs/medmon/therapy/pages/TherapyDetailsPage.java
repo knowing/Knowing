@@ -24,7 +24,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.ISensorDataAlgorithm;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
 import de.lmu.ifi.dbs.medmon.therapy.Activator;
 import de.lmu.ifi.dbs.medmon.therapy.core.extensions.ITherapy;
 
@@ -128,7 +128,7 @@ public class TherapyDetailsPage implements IDetailsPage {
 			ITherapy therapy = (ITherapy) structuredSelection.getFirstElement();
 			tName.setText(therapy.getName());
 			tDescription.setText(therapy.getDescription());
-			Activator.getPatientService().setSelection(therapy.getAnalysers(), ISensorDataAlgorithm.class.getName());
+			Activator.getPatientService().setSelection(therapy.getAnalysers(), IAlgorithm.class.getName());
 		}
 		update();
 	}

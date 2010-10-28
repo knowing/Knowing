@@ -24,7 +24,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import de.lmu.ifi.dbs.medmon.algorithm.ui.viewer.AlgorithmConfigurationPart;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
-import de.lmu.ifi.dbs.medmon.sensor.core.algorithm.ISensorDataAlgorithm;
+import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
 
 public class AlgorithmDetailsPage implements IDetailsPage {
 	public AlgorithmDetailsPage() {
@@ -43,7 +43,7 @@ public class AlgorithmDetailsPage implements IDetailsPage {
 	public void selectionChanged(IFormPart part, ISelection selection) {	
 		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
 			IStructuredSelection sel = (IStructuredSelection) selection;
-			ISensorDataAlgorithm algorithm = (ISensorDataAlgorithm) sel.getFirstElement();
+			IAlgorithm algorithm = (IAlgorithm) sel.getFirstElement();
 			algorithmPart.setFormInput(algorithm);
 			name.setText(algorithm.getName());
 			version.setText(algorithm.getVersion());
