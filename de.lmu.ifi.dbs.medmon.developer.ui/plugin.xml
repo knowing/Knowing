@@ -7,26 +7,67 @@
             allPopups="false"
             locationURI="menu:org.eclipse.ui.main.menu">
          <menu
-               label="Programm">
-            <menu
-                  label="New">
-               <command
-                     commandId="org.eclipse.ui.window.newEditor"
-                     label="Data Processing List"
-                     style="push">
-               </command>
-            </menu>
+               label="Data Procesing">
+            <command
+                  commandId="de.lmu.ifi.dbs.medmon.developer.ui.NewDataProcessingUnit"
+                  label="New Data Processing List"
+                  style="push">
+            </command>
          </menu>
       </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorListEditor"
+            class="de.lmu.ifi.dbs.medmon.developer.ui.pages.ProcessorUnitConfigurationPage"
             default="false"
             id="de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorListEditor"
             name="ProcessorListEditor">
       </editor>
+      <editor
+            class="de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorListFormEditor"
+            default="false"
+            id="de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorListFormEditor"
+            name="ProcessorListFormEditor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="de.lmu.ifi.dbs.medmon.developer.ui.view.DataView"
+            id="de.lmu.ifi.dbs.medmon.developer.ui.dataView"
+            name="DataView"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="de.lmu.ifi.dbs.medmon.developer.ui.perspective.PerspectiveFactory"
+            id="de.lmu.ifi.dbs.medmon.developer.perspective"
+            name="Developer Perspective">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="de.lmu.ifi.dbs.medmon.developer.perspective">
+         <view
+               id="de.lmu.ifi.dbs.medmon.developer.ui.dataView"
+               minimized="false"
+               relationship="bottom"
+               relative="org.eclipse.ui.editorss"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.lmu.ifi.dbs.medmon.developer.ui.NewDataProcessingUnitComman"
+            id="de.lmu.ifi.dbs.medmon.developer.ui.NewDataProcessingUnit"
+            name="New Data Processing Unit">
+      </command>
    </extension>
 
 </plugin>

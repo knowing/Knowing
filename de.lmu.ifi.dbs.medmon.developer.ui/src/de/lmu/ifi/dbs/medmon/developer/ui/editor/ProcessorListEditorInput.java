@@ -26,7 +26,7 @@ public class ProcessorListEditorInput implements IEditorInput {
 
 	@Override
 	public boolean exists() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class ProcessorListEditorInput implements IEditorInput {
 
 	@Override
 	public String getToolTipText() {
-		return null;
+		return "";
 	}
 	
 	@Override

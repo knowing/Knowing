@@ -40,7 +40,7 @@ public class ConfigurationMasterBlock extends MasterDetailsBlock {
 				
 		//
 		Section dataProcessorsSection = toolkit.createSection(parent, Section.EXPANDED | Section.TITLE_BAR);
-		dataProcessorsSection.setText("Data Processing Unit");
+		dataProcessorsSection.setText("DPU Configuration");
 		
 		Composite dataProcessorsClient = toolkit.createComposite(dataProcessorsSection, SWT.NONE);
 		toolkit.paintBordersFor(dataProcessorsClient);
