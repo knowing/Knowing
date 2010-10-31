@@ -11,3 +11,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.lmu.ifi.dbs.medmon.rcp.platform,
  de.lmu.ifi.dbs.medmon.rcp.platform.util
+Import-Package: org.osgi.service.log

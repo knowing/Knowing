@@ -14,5 +14,11 @@
             class="de.sendsor.accelerationSensor.algorithm.SimpleAnalyzer">
       </algorithm>
    </extension>
+   <extension
+         point="de.lmu.ifi.dbs.medmon.disease">
+      <disease
+            class="de.sendsor.accelerationSensor.therapy.DefaultDisease">
+      </disease>
+   </extension>
 
 </plugin>

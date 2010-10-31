@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="de.lmu.ifi.dbs.medmon.therapy" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="de.lmu.ifi.dbs.medmon.therapy.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="de.lmu.ifi.dbs.medmon.therapy" id="de.lmu.ifi.dbs.medmon.disease" name="Disease Extentsion"/>
+         <meta.schema plugin="de.lmu.ifi.dbs.medmon.therapy.core" id="de.lmu.ifi.dbs.medmon.disease" name="Disease Extension"/>
       </appinfo>
       <documentation>
          [Enter description of this extension point.]
@@ -48,20 +48,14 @@
    </element>
 
    <element name="disease">
-      <annotation>
-         <documentation>
-            By extending this Extension Point a new disease with certain therapies is added
-in order to analyse the sensordata.
-         </documentation>
-      </annotation>
       <complexType>
-         <attribute name="class" type="string">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":de.lmu.ifi.dbs.medmon.therapy.IDisease"/>
+                  <meta.attribute kind="java" basedOn=":de.lmu.ifi.dbs.medmon.therapy.core.extensions.IDisease"/>
                </appinfo>
             </annotation>
          </attribute>

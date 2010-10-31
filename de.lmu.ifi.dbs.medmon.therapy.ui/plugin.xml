@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="de.lmu.ifi.dbs.medmon.disease" name="Disease Extentsion" schema="schema/de.lmu.ifi.dbs.medmon.disease.exsd"/>
    <extension
          point="org.eclipse.ui.views">
       <category
@@ -14,12 +13,6 @@
             id="de.lmu.ifi.dbs.medmon.therapy.view.DiseaseManagement"
             name="Krankheiten">
       </view>
-   </extension>
-   <extension
-         point="de.lmu.ifi.dbs.medmon.disease">
-      <disease
-            class="de.lmu.ifi.dbs.medmon.therapy.diseases.SampleDiseases">
-      </disease>
    </extension>
 
 </plugin>

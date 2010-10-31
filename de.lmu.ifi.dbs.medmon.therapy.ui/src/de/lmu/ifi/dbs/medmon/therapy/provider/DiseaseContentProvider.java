@@ -5,7 +5,6 @@ import org.eclipse.jface.viewers.Viewer;
 
 import de.lmu.ifi.dbs.medmon.sensor.core.util.FrameworkUtil;
 import de.lmu.ifi.dbs.medmon.therapy.core.extensions.IDisease;
-import de.lmu.ifi.dbs.medmon.therapy.core.util.DiseaseUtil;
 
 public class DiseaseContentProvider implements IStructuredContentProvider {
 
