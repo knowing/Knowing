@@ -2,6 +2,8 @@ package de.lmu.ifi.dbs.medmon.sensor.core.processing;
 
 import java.util.Map;
 
+import de.lmu.ifi.dbs.medmon.sensor.core.parameter.IProcessorParameter;
+
 
 public interface IDataProcessor {
 	

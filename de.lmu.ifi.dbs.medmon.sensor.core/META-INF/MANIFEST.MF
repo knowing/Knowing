@@ -11,6 +11,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.lmu.ifi.dbs.medmon.database.model
 Export-Package: de.lmu.ifi.dbs.medmon.sensor.core.container,
  de.lmu.ifi.dbs.medmon.sensor.core.converter,
+ de.lmu.ifi.dbs.medmon.sensor.core.parameter,
  de.lmu.ifi.dbs.medmon.sensor.core.processing,
  de.lmu.ifi.dbs.medmon.sensor.core.sensor,
  de.lmu.ifi.dbs.medmon.sensor.core.util

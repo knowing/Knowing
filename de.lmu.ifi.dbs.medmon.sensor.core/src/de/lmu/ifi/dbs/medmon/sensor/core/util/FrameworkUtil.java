@@ -33,6 +33,7 @@ public class FrameworkUtil {
 	 * @return ISensorDataAlgorihtm[] containing all registered Extensions
 	 */
 	public static <E> E[] evaluateExtensions(String extensionID) {
+		logger.info("Evaluate Extensions");
 		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(extensionID);
 		final LinkedList<E> extensions = new LinkedList<E>();
 		try {

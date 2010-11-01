@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.medmon.sensor.core.processing;
+package de.lmu.ifi.dbs.medmon.sensor.core.parameter;
 
 import java.util.ArrayList;
 import java.util.List;

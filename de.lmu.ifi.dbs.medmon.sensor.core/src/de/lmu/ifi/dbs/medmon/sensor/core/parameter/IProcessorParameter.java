@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.medmon.sensor.core.processing;
+package de.lmu.ifi.dbs.medmon.sensor.core.parameter;
 
 /**
  * Generic Interface for {@link ISensorDataAlgorithm} properties

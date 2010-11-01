@@ -13,8 +13,8 @@ import org.eclipse.ui.part.ViewPart;
 import de.lmu.ifi.dbs.medmon.algorithm.ui.Activator;
 import de.lmu.ifi.dbs.medmon.algorithm.ui.viewer.AlgorithmConfigurationPart;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
+import de.lmu.ifi.dbs.medmon.sensor.core.parameter.IProcessorParameter;
 import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.IProcessorParameter;
 
 /**
  * This sample class demonstrates how to plug-in a new workbench view. The view

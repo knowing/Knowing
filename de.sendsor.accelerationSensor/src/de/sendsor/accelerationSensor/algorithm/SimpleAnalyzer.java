@@ -1,10 +1,16 @@
 package de.sendsor.accelerationSensor.algorithm;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+import org.jfree.data.time.Day;
+import org.jfree.data.time.Hour;
+
 import de.lmu.ifi.dbs.medmon.database.model.Data;
+import de.lmu.ifi.dbs.medmon.sensor.core.parameter.NumericParameter;
+import de.lmu.ifi.dbs.medmon.sensor.core.parameter.StringParameter;
 import de.lmu.ifi.dbs.medmon.sensor.core.processing.AbstractAlgorithm;
 import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAnalyzedData;
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.NumericParameter;
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.StringParameter;
 
 public class SimpleAnalyzer<E extends Data> extends AbstractAlgorithm<E> {
 
@@ -25,8 +31,21 @@ public class SimpleAnalyzer<E extends Data> extends AbstractAlgorithm<E> {
 
 	@Override
 	public IAnalyzedData process(Object data) {
-		//TODO InputData missing
-		return new SimpleAnalyzerData();
+		SimpleAnalyzerData analyzedData = SimpleAnalyzerData.getInstance();
+		Hour[] hours = getHours();
+		
+		for(int i=0; i < hours.length; i += 3)
+			analyzedData.addPeriod(hours[i], hours[i+1], Category.WALK);
+		
+		for(int i=0; i < hours.length; i += 7)
+			analyzedData.addPeriod(hours[i], hours[i+2], Category.LIE);
+		
+		
+		for(int i=0; i < hours.length; i += 2)
+			analyzedData.addPeriod(hours[i], hours[i], Category.SIT);
+		
+	
+		return analyzedData;
 	}
 	
 	
@@ -49,6 +68,17 @@ public class SimpleAnalyzer<E extends Data> extends AbstractAlgorithm<E> {
 	public Class<?> getDataClass() {
 		return Data.class.getClass();
 	}
-
+	
+	private static Hour[] getHours() {
+		Hour[] returns = new Hour[48];
+		Calendar cal = new GregorianCalendar();
+		
+		for(int i=0; i < returns.length; i++) {
+			cal.add(Calendar.HOUR_OF_DAY, 1);
+			returns[i] = new Hour(cal.getTime());
+		}
+			
+		return returns;
+	}
 
 }

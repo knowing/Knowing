@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.medmon.rcp.platform.util;
+package de.lmu.ifi.dbs.medmon.rcp.platform.logging;
 
 import java.util.logging.Handler;
 import java.util.logging.Level;

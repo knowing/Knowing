@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.medmon.sensor.core.processing;
+package de.lmu.ifi.dbs.medmon.sensor.core.parameter;
 
 /**
  * Represents different String values a user can choose.

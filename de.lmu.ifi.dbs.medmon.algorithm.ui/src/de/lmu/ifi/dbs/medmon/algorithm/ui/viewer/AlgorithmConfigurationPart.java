@@ -19,10 +19,10 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 import de.lmu.ifi.dbs.medmon.algorithm.ui.widgets.CustomScale;
+import de.lmu.ifi.dbs.medmon.sensor.core.parameter.IProcessorParameter;
+import de.lmu.ifi.dbs.medmon.sensor.core.parameter.NumericParameter;
+import de.lmu.ifi.dbs.medmon.sensor.core.parameter.StringParameter;
 import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.IProcessorParameter;
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.NumericParameter;
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.StringParameter;
 
 public class AlgorithmConfigurationPart extends SectionPart {
 
