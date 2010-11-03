@@ -16,9 +16,11 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
+import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 import de.lmu.ifi.dbs.medmon.sensor.controller.ManagementController;
+import de.lmu.ifi.dbs.medmon.sensor.ui.Activator;
 import de.lmu.ifi.dbs.medmon.sensor.ui.provider.DataContentProvider;
 import de.lmu.ifi.dbs.medmon.sensor.ui.provider.DataLabelProvider;
 import de.lmu.ifi.dbs.medmon.sensor.ui.provider.SensorDetailPageProvider;
@@ -68,7 +70,9 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 			
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				managedForm.fireSelectionChanged(sensorPart, event.getSelection());				
+				managedForm.fireSelectionChanged(sensorPart, event.getSelection());
+				IPatientService service = Activator.getPatientService();
+				service.setSelection(event.getSelection());
 			}
 		});
 		sensorViewer.setInput(this);
@@ -100,11 +104,11 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 		TreeViewer dataViewer = new TreeViewer(dataClient, SWT.BORDER | SWT.MULTI);
 		dataViewer.setContentProvider(new DataContentProvider());
 		dataViewer.setLabelProvider(new DataLabelProvider());
-		Tree tree = dataViewer.getTree();
-		GridData data = new GridData(GridData.FILL_BOTH);
-		data.horizontalSpan = 3;
-		tree.setLayoutData(data);
-		toolkit.paintBordersFor(tree);
+		Tree dataTree = dataViewer.getTree();
+		GridData gd_dataTree = new GridData(GridData.FILL_BOTH);
+		gd_dataTree.horizontalSpan = 3;
+		dataTree.setLayoutData(gd_dataTree);
+		toolkit.paintBordersFor(dataTree);
 
 		final SectionPart spart = new SectionPart(dataSection);
 		managedForm.addPart(spart);
@@ -112,6 +116,8 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 		dataViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				managedForm.fireSelectionChanged(spart, event.getSelection());
+				IPatientService service = Activator.getPatientService();
+				service.setSelection(event.getSelection());
 			}
 		});
 

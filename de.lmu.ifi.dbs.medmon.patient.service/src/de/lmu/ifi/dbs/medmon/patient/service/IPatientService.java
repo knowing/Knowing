@@ -13,13 +13,15 @@ import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAnalyzedData;
  * the current selected Patient.
  * 
  * @author muki
- * @version 0.2
+ * @version 0.2b
  */
 public interface IPatientService {
 	
 	
 	public static final String PATIENT = Patient.class.getName();
+	public static final String SENSOR = "SENSOR";
 	public static final String SENSOR_DATA = Data.class.getName();
+	public static final String SENSOR_CONTAINER = "SENSOR_CONTAINER";
 	public static final String ALGORITHM = IAlgorithm.class.getName();
 	public static final String ANALYZED_DATA = IAnalyzedData.class.getName();
 	

@@ -16,8 +16,10 @@
 
    <plugins>
       <plugin id="com.ibm.icu"/>
+      <plugin id="de.lmu.ifi.dbs.elki.libs"/>
       <plugin id="de.lmu.ifi.dbs.medmon.algorithm.ui"/>
       <plugin id="de.lmu.ifi.dbs.medmon.derby"/>
+      <plugin id="de.lmu.ifi.dbs.medmon.developer.ui"/>
       <plugin id="de.lmu.ifi.dbs.medmon.jfreechart.libs"/>
       <plugin id="de.lmu.ifi.dbs.medmon.patient.core"/>
       <plugin id="de.lmu.ifi.dbs.medmon.patient.service"/>

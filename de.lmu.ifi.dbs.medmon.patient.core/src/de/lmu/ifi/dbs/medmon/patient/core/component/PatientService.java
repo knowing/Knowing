@@ -10,13 +10,16 @@ import org.osgi.service.component.ComponentContext;
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
+import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
 import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAnalyzedData;
+import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
 
 /**
  * PatientService declarative Service.
- * @author muki
- * @version 1.0
+ * 
+ * @author Nepomuk Seiler
+ * @version 1.0a
  */
 public class PatientService implements IPatientService {
 		
@@ -55,6 +58,10 @@ public class PatientService implements IPatientService {
 			selections.put(ANALYZED_DATA, (IAnalyzedData)first);
 		else if(first instanceof Data)
 			selections.put(SENSOR_DATA, convert(selection.toArray()));
+		else if(first instanceof ISensorDataContainer) 
+			selections.put(SENSOR_CONTAINER, (ISensorDataContainer)first);
+		else if(first instanceof ISensor) 
+			selections.put(SENSOR, (ISensor)first);
 		else
 			return false;
 		return true;

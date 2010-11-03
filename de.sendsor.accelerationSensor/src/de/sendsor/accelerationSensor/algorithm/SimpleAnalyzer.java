@@ -3,7 +3,6 @@ package de.sendsor.accelerationSensor.algorithm;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import org.jfree.data.time.Day;
 import org.jfree.data.time.Hour;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
@@ -12,11 +11,12 @@ import de.lmu.ifi.dbs.medmon.sensor.core.parameter.StringParameter;
 import de.lmu.ifi.dbs.medmon.sensor.core.processing.AbstractAlgorithm;
 import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAnalyzedData;
 
-public class SimpleAnalyzer<E extends Data> extends AbstractAlgorithm<E> {
+public class SimpleAnalyzer extends AbstractAlgorithm<Data> {
 
 	public static final String PIE_CHART = "Pie-Chart";
 	public static final String BAR_CHART = "Bar-Chart";
 	
+	public static final String NAME = "Simple Analyzer";
 	
 	public SimpleAnalyzer() {
 		init();
@@ -51,7 +51,7 @@ public class SimpleAnalyzer<E extends Data> extends AbstractAlgorithm<E> {
 	
 	@Override
 	public String getName() {
-		return "Simple Analyzer";
+		return NAME;
 	}
 
 	@Override

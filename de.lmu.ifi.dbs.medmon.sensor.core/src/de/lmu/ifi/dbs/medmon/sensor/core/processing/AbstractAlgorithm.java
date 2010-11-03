@@ -29,4 +29,8 @@ public abstract class AbstractAlgorithm<E> implements IAlgorithm<E> {
 		return processor.getClass() == getDataClass();
 	}
 	
+	@Override
+	public String getID() {
+		return getDataClass().getName() + "." + getName() + "." + getVersion();
+	}
 }
