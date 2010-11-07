@@ -31,6 +31,7 @@ public class SimpleAnalyzer extends AbstractAlgorithm<Data> {
 
 	@Override
 	public IAnalyzedData process(Object data) {
+		//SampleData Generation
 		SimpleAnalyzerData analyzedData = SimpleAnalyzerData.getInstance();
 		Hour[] hours = getHours();
 		
@@ -44,8 +45,12 @@ public class SimpleAnalyzer extends AbstractAlgorithm<Data> {
 		for(int i=0; i < hours.length; i += 2)
 			analyzedData.addPeriod(hours[i], hours[i], Category.SIT);
 		
-	
 		return analyzedData;
+	}
+	
+	@Override
+	public IAnalyzedData process(Object data, IAnalyzedData analyzedData) {
+		return null;
 	}
 	
 	

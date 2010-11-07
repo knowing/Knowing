@@ -87,6 +87,12 @@ public class PieAnalyzer extends AbstractAlgorithm<Data> {
 		test(clusters, test);
 		return new PieAnalyzerData();
 	}
+	
+	@Override
+	public IAnalyzedData process(Object data, IAnalyzedData analyzedData) {
+		//TODO Implement Process-Chaining
+		return null;
+	}
 
 	private List<LabeledDoubleFeature> raw2Features(List<LabeledDoubleFeature> raw) {
 		final int window = 40;
@@ -161,8 +167,7 @@ public class PieAnalyzer extends AbstractAlgorithm<Data> {
 
 		// do clustering
 		List<MyCluster> myClusters = new ArrayList<MyCluster>();
-		Clustering<MeanModel<DoubleVector>> result = (Clustering<MeanModel<DoubleVector>>) kmeans
-				.run(db);
+		Clustering<MeanModel<DoubleVector>> result = (Clustering<MeanModel<DoubleVector>>) kmeans.run(db);
 		List<Cluster<MeanModel<DoubleVector>>> clusters = result
 				.getAllClusters();
 		for (Cluster<MeanModel<DoubleVector>> cluster : clusters) {
@@ -186,8 +191,7 @@ public class PieAnalyzer extends AbstractAlgorithm<Data> {
 		return myClusters;
 	}
 
-	private MyCluster buildCluster(double[] centroid,
-			List<LabeledDoubleFeature> clusterVectors) {
+	private MyCluster buildCluster(double[] centroid, List<LabeledDoubleFeature> clusterVectors) {
 		// count labels in this cluster
 		HashMap<String, Double> labels = new HashMap<String, Double>();
 		for (LabeledDoubleFeature v : clusterVectors) {
@@ -224,14 +228,12 @@ public class PieAnalyzer extends AbstractAlgorithm<Data> {
 			// distance to clusters
 			List<SimpleEntry<Double, MyCluster>> clusterDist = new ArrayList<SimpleEntry<Double, MyCluster>>();
 			for (MyCluster c : clusters) {
-				clusterDist.add(new SimpleEntry<Double, MyCluster>(dist.dist(
-						c.getCentroid(), fv.getValues()), c));
+				clusterDist.add(new SimpleEntry<Double, MyCluster>(dist.dist(c.getCentroid(), fv.getValues()), c));
 			}
 			Collections.sort(clusterDist, new KeyComp());
 
 			// max Dist
-			final double maxDist = clusterDist.get(clusterDist.size() - 1)
-					.getKey();
+			final double maxDist = clusterDist.get(clusterDist.size() - 1).getKey();
 			HashMap<String, List<Double>> probabilityMap = new HashMap<String, List<Double>>();
 			for (int i = 0; i < clusterDist.size(); i++) {
 				SimpleEntry<Double, MyCluster> e = clusterDist.get(i);
@@ -324,14 +326,6 @@ public class PieAnalyzer extends AbstractAlgorithm<Data> {
 	@Override
 	public Class<?> getDataClass() {
 		return Data.class;
-	}
-
-	private class KeyComp implements Comparator<SimpleEntry<Double, ?>> {
-
-		@Override
-		public int compare(SimpleEntry<Double, ?> o1, SimpleEntry<Double, ?> o2) {
-			return o1.getKey().compareTo(o2.getKey());
-		}
 	}
 
 }

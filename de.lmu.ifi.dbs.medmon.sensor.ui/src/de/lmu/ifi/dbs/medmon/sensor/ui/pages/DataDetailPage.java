@@ -31,6 +31,7 @@ import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.ui.forms.widgets.ColumnLayoutData;
+import org.eclipse.swt.widgets.Button;
 
 public class DataDetailPage implements IDetailsPage {
 	
@@ -77,10 +78,11 @@ public class DataDetailPage implements IDetailsPage {
 		/* Comments */
 		Section cSection = toolkit.createSection(parent, Section.DESCRIPTION
 				| Section.TITLE_BAR | Section.EXPANDED | Section.TWISTIE);
-		ColumnLayoutData cld_cSection = new ColumnLayoutData();
-		cld_cSection.widthHint = 300;
-		cSection.setLayoutData(cld_cSection);
+		ColumnLayoutData layoutData = new ColumnLayoutData();
+		layoutData.widthHint = 300;
+		cSection.setLayoutData(layoutData);
 		cSection.setText("Allgemein");
+
 
 		Composite cClient = toolkit.createComposite(cSection, SWT.WRAP);
 		GridLayout cLayout = new GridLayout(2, false);
@@ -108,6 +110,11 @@ public class DataDetailPage implements IDetailsPage {
 		comments.setLayoutData(data);
 		
 		cSection.setClient(cClient);
+		new Label(cClient, SWT.NONE);
+		
+		Button bSave = toolkit.createButton(cClient, "speichern", SWT.NONE);
+		bSave.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		bSave.setAlignment(SWT.RIGHT);
 		
 		/* Analyse */
 		

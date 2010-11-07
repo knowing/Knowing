@@ -9,6 +9,11 @@ public interface IDataProcessor {
 	
 	public static final String PROCESSOR_ID = "de.lmu.ifi.dbs.medmon.sensor.processing.processor";
 
+	/**
+	 * 
+	 * @param data
+	 * @return
+	 */
 	public Object process(Object data);
 	
 	public boolean isCompatible(IDataProcessor processor);

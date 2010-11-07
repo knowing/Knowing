@@ -4,24 +4,25 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.widgets.ColumnLayout;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.layout.GridData;
 
+import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 import de.lmu.ifi.dbs.medmon.sensor.controller.ManagementController;
 import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
-import de.lmu.ifi.dbs.medmon.sensor.ui.Activator;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.ui.forms.widgets.ImageHyperlink;
 
 public class SensorDetailPage implements IDetailsPage {
 
@@ -29,6 +30,7 @@ public class SensorDetailPage implements IDetailsPage {
 	private Text tName, tTyp, tDescription;
 
 	private ISensor sensor;
+	private Text text;
 
 	/**
 	 * Create the details page.
@@ -50,38 +52,53 @@ public class SensorDetailPage implements IDetailsPage {
 	 * @param parent
 	 */
 	public void createContents(Composite parent) {
-		FormToolkit toolkit = managedForm.getToolkit();
-		parent.setLayout(new FillLayout());
+		FormToolkit toolkit = managedForm.getToolkit();	
+		ColumnLayout layout_parent = new ColumnLayout();
+		layout_parent.maxNumColumns = 2;
+		parent.setLayout(layout_parent);
 		//		
-		Section sctnSensor = toolkit.createSection(parent,
+		Section sensorSection = toolkit.createSection(parent,
 				ExpandableComposite.EXPANDED | ExpandableComposite.TITLE_BAR);
-		sctnSensor.setText("Sensor");
+		sensorSection.setText("Sensor");
+
 		//
-		Composite composite = toolkit.createComposite(sctnSensor, SWT.NONE);
-		toolkit.paintBordersFor(composite);
-		sctnSensor.setClient(composite);
-		composite.setLayout(new GridLayout(4, false));
+		Composite sensorComposite = toolkit.createComposite(sensorSection, SWT.NONE);
+		//toolkit.paintBordersFor(sensorComposite);
+		sensorSection.setClient(sensorComposite);
+		sensorComposite.setLayout(new GridLayout(4, false));
 		
-		Label lName = new Label(composite, SWT.NONE);
+		Label lName = new Label(sensorComposite, SWT.NONE);
 		lName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		toolkit.adapt(lName, true, true);
-		lName.setText("Name");
+		lName.setText("Name:");
 		
-		tName = toolkit.createText(composite,"", SWT.READ_ONLY);
+		tName = toolkit.createText(sensorComposite,"", SWT.READ_ONLY);
 		GridData data = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
 		data.widthHint = 150;
 		tName.setLayoutData(data);
 		
-		Label lTyp = new Label(composite, SWT.NONE);
-		toolkit.adapt(lTyp, true, true);
-		lTyp.setText("Typ");
+		toolkit.createLabel(sensorComposite, "Typ:");
+
 		
-		tTyp = toolkit.createText(composite,"", SWT.READ_ONLY);
-		GridData gd_text_1 = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
-		gd_text_1.widthHint = 150;
-		tTyp.setLayoutData(gd_text_1);
+		tTyp = toolkit.createText(sensorComposite,"", SWT.READ_ONLY);
+		data = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+		data.widthHint = 150;
+		tTyp.setLayoutData(data);
 		
-		Group gDescription = new Group(composite, SWT.NONE);
+		Label lData = toolkit.createLabel(sensorComposite, "Daten:", SWT.NONE);
+		lData.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		
+		text = toolkit.createText(sensorComposite, "New Text", SWT.READ_ONLY);
+		text.setText("00:03:46");
+		text.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		
+		Label lStatus = toolkit.createLabel(sensorComposite, "Status:", SWT.NONE);
+		
+		Label lStatusImage = toolkit.createLabel(sensorComposite, "", SWT.NONE);
+		lStatusImage.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_APPLY_24));
+		lStatusImage.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
+		
+		Group gDescription = new Group(sensorComposite, SWT.NONE);
 		gDescription.setText("Beschreibung");
 		data = new GridData(SWT.FILL, SWT.FILL, true, false, 4, 1);
 		data.heightHint = 100;
@@ -93,61 +110,73 @@ public class SensorDetailPage implements IDetailsPage {
 		tDescription = new Text(gDescription, SWT.READ_ONLY | SWT.V_SCROLL | SWT.MULTI);
 		tDescription.setEditable(false);
 		toolkit.adapt(tDescription, true, true);
-
 		
-		Label label = new Label(composite, SWT.NONE);
+		Composite buttonComposite = toolkit.createComposite(sensorComposite, SWT.NONE);
+		buttonComposite.setLayout(new FillLayout(SWT.HORIZONTAL));
+		data = new GridData(SWT.RIGHT, SWT.CENTER, true, false, 4, 1);
+		data.verticalIndent = 15;
+		buttonComposite.setLayoutData(data);
+		toolkit.paintBordersFor(buttonComposite);
 		
-		label.setImage(Activator.getImageDescriptor("res/vitruvian.jpeg").createImage());
-		label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 2, 1));
-		toolkit.adapt(label, true, true);
-		new Label(composite, SWT.NONE);
-		new Label(composite, SWT.NONE);
+		Button bPreview = toolkit.createButton(buttonComposite, "Vorschau", SWT.NONE);
+		bPreview.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_IMAGE_16));
+		bPreview.addListener(SWT.Selection, SensorMasterBlock.controller);
+		bPreview.setData(ManagementController.IMPORT);
 		
-		ImageHyperlink importLink = toolkit.createImageHyperlink(composite, SWT.NONE);
-		toolkit.paintBordersFor(importLink);
-		importLink.setImage(ResourceManager.getPluginImage("de.lmu.ifi.dbs.medmon.rcp", "icons/24/gtk-go-down.png"));
-		importLink.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
-		importLink.setText("Sensordaten importieren");
-		importLink.setHref(ManagementController.IMPORT);
-		importLink.addHyperlinkListener(SensorMasterBlock.controller);
+		Button bImportAll = toolkit.createButton(buttonComposite, "Alles importieren", SWT.NONE);
+		bImportAll.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_ARROW_DOWN_16));
+		bImportAll.setEnabled(false);
+				
+		Button bFormatSensor = toolkit.createButton(buttonComposite, "Formatieren", SWT.NONE);
+		bFormatSensor.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_REMOVE_16));
+		bFormatSensor.setEnabled(false);
+		
 	}
-
-	public void dispose() {
-		// Dispose
-	}
-
-	public void setFocus() {
-		// Set focus
-	}
-
+	
 	private void update() {
 		tName.setText(sensor.getName());
 		tTyp.setText(sensor.getVersion());
 		tDescription.setText(sensor.getDescription());
 	}
 
+	@Override
+	public void dispose() {
+		// Dispose
+	}
+
+	@Override
+	public void setFocus() {
+		// Set focus
+	}
+
+	@Override
 	public boolean setFormInput(Object input) {
 		return false;
 	}
 
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 		sensor = (ISensor)structuredSelection.getFirstElement();
 		update();
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		// Commit
 	}
 
+	@Override
 	public boolean isDirty() {
 		return false;
 	}
 
+	@Override
 	public boolean isStale() {
 		return false;
 	}
 
+	@Override
 	public void refresh() {
 		update();
 	}

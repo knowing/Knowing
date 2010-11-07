@@ -1,27 +1,22 @@
 package de.lmu.ifi.dbs.medmon.sensor.controller;
 
 import java.io.IOException;
+import java.util.Calendar;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 
-import com.ibm.icu.util.Calendar;
-
-import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.Block;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.RootSensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
 import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
-import de.lmu.ifi.dbs.medmon.sensor.ui.Activator;
-import de.lmu.ifi.dbs.medmon.sensor.ui.wizard.ImportWizard;
 
-public class ManagementController extends HyperlinkAdapter {
+public class ManagementController extends HyperlinkAdapter implements Listener {
 
 	public static final Integer IMPORT = 0;
 	public static final Integer EXPORT = 1;
@@ -37,13 +32,22 @@ public class ManagementController extends HyperlinkAdapter {
 
 	@Override
 	public void linkActivated(HyperlinkEvent e) {
-		if (e.getHref() == IMPORT) {
+		if (e.getHref() == IMPORT)
 			importData();
-		} else if (e.getHref() == EXPORT) {
+		else if (e.getHref() == EXPORT)
 			System.out.println("Export Data");
-		} else if (e.getHref() == DELETE) {
+		else if (e.getHref() == DELETE)
 			System.out.println("Delete Data");
-		}
+		
+	}
+	
+	@Override
+	public void handleEvent(Event event) {
+		if(!(event.type == SWT.Selection))
+			return;
+		
+		if(event.widget.getData() == IMPORT)
+			importData();
 	}
 
 	public void importData() {
@@ -59,9 +63,7 @@ public class ManagementController extends HyperlinkAdapter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		// MessageDialog.openInformation(dataViewer.getControl().getShell(),
-		// "Warnung", "Diese Funktion ist noch nicht moeglich");
+	
 	}
 
 
