@@ -66,6 +66,7 @@ public class Activator implements BundleActivator {
 		
 		ClusterUnit clusterUnit = new ClusterUnit();
 		clusterUnit.setName("Unit");
+		clusterUnit.setClusterlist(clusterlist);
 		
 		Marshaller m = null;
 		try {

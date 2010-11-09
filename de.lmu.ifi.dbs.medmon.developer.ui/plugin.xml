@@ -13,6 +13,11 @@
                   label="New Data Processing List"
                   style="push">
             </command>
+            <command
+                  commandId="org.eclipse.ui.newWizard"
+                  label="New Wizard"
+                  style="push">
+            </command>
          </menu>
       </menuContribution>
    </extension>
@@ -68,6 +73,19 @@
             id="de.lmu.ifi.dbs.medmon.developer.ui.NewDataProcessingUnit"
             name="New Data Processing Unit">
       </command>
+      <command
+            defaultHandler="de.lmu.ifi.dbs.medmon.developer.ui.handler.ClusterWizardHandler"
+            id="de.lmu.ifi.dbs.medmon.developer.ui.ClusterWizardCommand"
+            name="Clustering Wizard">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            class="de.lmu.ifi.dbs.medmon.developer.ui.wizard.ClusterWizard"
+            id="de.lmu.ifi.dbs.medmon.developer.ui.ClusteringWizard"
+            name="New Cluster">
+      </wizard>
    </extension>
 
 </plugin>
