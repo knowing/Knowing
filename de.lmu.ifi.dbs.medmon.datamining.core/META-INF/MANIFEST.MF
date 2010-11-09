@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Core
+Bundle-SymbolicName: de.lmu.ifi.dbs.medmon.datamining.core
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.lmu.ifi.dbs.medmon.datamining.core.Activator
+Require-Bundle: org.eclipse.core.runtime
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
