@@ -25,13 +25,9 @@ public class Utils {
 			return returns;		
 		
 		for (List<String> each : list) {
-			if(each.isEmpty() || each.size() < 4)	continue;
-			double[] values = new double[] { 
-					Double.valueOf(each.get(1)),	// X
-					Double.valueOf(each.get(2)),	// Y
-					Double.valueOf(each.get(3))		// Z
-			};
-			LabeledDoubleFeature feature = new LabeledDoubleFeature(values, label);
+			//kill date value
+			each.remove(0);
+			LabeledDoubleFeature feature = new LabeledDoubleFeature(each, label);
 			returns.add(feature);
 		}
 		return returns;

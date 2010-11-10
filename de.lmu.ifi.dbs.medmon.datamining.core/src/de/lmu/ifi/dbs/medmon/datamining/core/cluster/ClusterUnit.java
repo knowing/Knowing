@@ -1,5 +1,6 @@
 package de.lmu.ifi.dbs.medmon.datamining.core.cluster;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -10,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(namespace = "de.lmu.ifi.dbs.medmon.datamining.core.processing")
 public class ClusterUnit {
 
-	private List<DoubleCluster> clusterlist;
+	private List<DoubleCluster> clusterlist = new LinkedList<DoubleCluster>();
 
 	private String name;
 

@@ -71,9 +71,9 @@ public class TrainCluster {
 			}
 
 			DoubleCluster newCluster = buildCluster(centroid, clusterVectors);
-			//if (newCluster.getNumChildren() > MIN_INSTANCES_PER_CLUSTER) {
+			if (newCluster.getNumChildren() > MIN_INSTANCES_PER_CLUSTER) {
 				doubleClusters.add(newCluster);
-			//}
+			}
 		}
 
 		log.info("Found " + doubleClusters.size() + " clusters with > "

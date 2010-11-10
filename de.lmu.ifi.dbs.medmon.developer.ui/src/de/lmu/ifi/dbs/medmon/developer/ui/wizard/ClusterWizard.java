@@ -42,7 +42,7 @@ public class ClusterWizard extends Wizard implements IWorkbenchWizard {
 		ClusterFile[] clusterFiles = page.getClusterFiles();
 		for (ClusterFile clusterFile : clusterFiles) {
 			try {
-				CSVFileReader csv = new CSVFileReader(clusterFile.getFile(), ';');
+				CSVFileReader csv = new CSVFileReader(clusterFile.getFile(), ',');
 				List<List<String>> csvlist = new LinkedList<List<String>>();
 				List<String> fields = csv.readFields();
 				while(fields != null && !fields.isEmpty()) {
@@ -52,11 +52,9 @@ public class ClusterWizard extends Wizard implements IWorkbenchWizard {
 				}
 				List<DoubleCluster> cluster = clusterer.cluster(csvlist, clusterFile.getLabel());
 				for (DoubleCluster doubleCluster : cluster) {
-					System.out.println("Cluster: " + cluster);
-					cluster.add(doubleCluster);
+					clusterUnit.addCluster(doubleCluster);
 				}
-				
-				
+				csv.close();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
