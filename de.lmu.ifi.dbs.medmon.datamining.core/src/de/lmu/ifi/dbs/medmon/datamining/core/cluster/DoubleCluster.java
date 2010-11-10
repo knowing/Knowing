@@ -1,6 +1,7 @@
 package de.lmu.ifi.dbs.medmon.datamining.core.cluster;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -15,12 +16,20 @@ public class DoubleCluster {
 
 	private List<Double> centroid;
 	private String label;
+	private int numChildren;
 	
+
 	public DoubleCluster() {}
 	
 	public DoubleCluster(String label, double[] centroid) {
+		this(label, centroid, 0);
+	}
+	
+
+	public DoubleCluster(String label,double[] centroid, int numChildren) {
 		this.label = label;
-		this.centroid = new ArrayList<Double>();
+		this.numChildren = numChildren;
+		this.centroid = new LinkedList<Double>();
 		for (double d : centroid) 
 			this.centroid.add(d);
 	}
@@ -51,8 +60,9 @@ public class DoubleCluster {
 			returns[index++] = d;
 		return returns;
 	}
-
 	
-
+	public int getNumChildren() {
+		return numChildren;
+	}
 	
 }

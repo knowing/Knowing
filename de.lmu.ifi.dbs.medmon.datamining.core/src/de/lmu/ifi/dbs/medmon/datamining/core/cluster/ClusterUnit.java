@@ -33,4 +33,7 @@ public class ClusterUnit {
 		this.clusterlist = clusterlist;
 	}
 
+	public void addCluster(DoubleCluster cluster) {
+		clusterlist.add(cluster);
+	}
 }

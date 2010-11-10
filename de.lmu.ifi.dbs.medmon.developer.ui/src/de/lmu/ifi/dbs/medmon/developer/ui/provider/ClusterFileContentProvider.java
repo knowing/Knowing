@@ -24,7 +24,7 @@ public class ClusterFileContentProvider implements IStructuredContentProvider {
 		return new Object[0];
 	}
 
-	private ClusterFile[] listInput(List<?> list) {
+	public static ClusterFile[] listInput(List<?> list) {
 		if(list.isEmpty())
 			return new ClusterFile[0];
 		if(!(list.get(0) instanceof ClusterFile))

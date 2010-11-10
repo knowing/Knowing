@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 //This statement means that class "DataProcessingUnit.java" is the root-element 
 @XmlRootElement(namespace = "de.lmu.ifi.dbs.medmon.datamining.core.processing")
-public class DataProcessingUnit {
+public class DataProcessingUnit{
 	
 	private List<DataProcessor> processors;
 	

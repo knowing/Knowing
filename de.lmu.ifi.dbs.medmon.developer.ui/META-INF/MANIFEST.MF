@@ -7,12 +7,15 @@ Bundle-Activator: de.lmu.ifi.dbs.medmon.developer.ui.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.forms;bundle-version="3.5.2",
- de.lmu.ifi.dbs.medmon.sensor.core;bundle-version="1.0.0",
  org.eclipse.core.databinding,
  org.eclipse.core.databinding.beans,
  org.eclipse.core.databinding.observable,
  org.eclipse.core.databinding.property,
  org.eclipse.jface.databinding,
- com.ibm.icu
+ com.ibm.icu,
+ de.lmu.ifi.dbs.medmon.sensor.core;bundle-version="1.0.0",
+ de.lmu.ifi.dbs.medmon.datamining.core;bundle-version="1.0.0",
+ de.lmu.ifi.dbs.elki.libs;bundle-version="1.0.0",
+ de.lmu.ifi.dbs.medmon.rcp;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

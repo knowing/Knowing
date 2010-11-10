@@ -36,7 +36,7 @@ public class Activator implements BundleActivator {
 		Activator.context = bundleContext;
 		createConfigDir();
 		//createTestXML();
-		createClusterXML();
+		//createClusterXML();
 	}
 
 	/*

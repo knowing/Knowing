@@ -71,5 +71,13 @@ public class FrameworkUtil {
 		return null;
 	}
 	
+	public static IDataProcessor findDataProcessor(String id) {
+		IDataProcessor[] processors = evaluateDataProcessors();
+		for (IDataProcessor iDataProcessor : processors) {
+			if(iDataProcessor.getID().equals(id))
+				return iDataProcessor;
+		}
+		return null;
+	}
 	
 }

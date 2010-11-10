@@ -5,7 +5,11 @@ Bundle-SymbolicName: de.lmu.ifi.dbs.medmon.datamining.core
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.lmu.ifi.dbs.medmon.datamining.core.Activator
 Require-Bundle: org.eclipse.core.runtime,
- de.lmu.ifi.dbs.medmon.sensor.core;bundle-version="1.0.0",
- de.lmu.ifi.dbs.medmon.rcp;bundle-version="1.0.0"
+ de.lmu.ifi.dbs.medmon.rcp;bundle-version="1.0.0",
+ de.lmu.ifi.dbs.elki.libs;bundle-version="1.0.0",
+ de.lmu.ifi.dbs.medmon.sensor.core;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: de.lmu.ifi.dbs.medmon.datamining.core.cluster,
+ de.lmu.ifi.dbs.medmon.datamining.core.clustering,
+ de.lmu.ifi.dbs.medmon.datamining.core.csv
