@@ -3,8 +3,6 @@ package de.lmu.ifi.dbs.medmon.developer.ui.wizard.pages;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.wizard.WizardPage;
@@ -20,7 +18,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
-import de.lmu.ifi.dbs.medmon.developer.ui.provider.ClusterFile;
+import de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterFile;
 import de.lmu.ifi.dbs.medmon.developer.ui.provider.ClusterFileContentProvider;
 import de.lmu.ifi.dbs.medmon.developer.ui.provider.ClusterFileEditingSupport;
 import de.lmu.ifi.dbs.medmon.developer.ui.provider.ClusterFileLabelProvider;
@@ -129,12 +127,15 @@ public class ClusterWizardPage extends WizardPage {
 				FileDialog dialog = new FileDialog(table.getShell(), SWT.MULTI);
 				dialog.setFilterExtensions(new String[] {"*.csv"});
 				dialog.setFilterNames(new String[] {"CSV File"});
-				String path = dialog.open();
+				String path = dialog.open(); //Of the last selected file
+				System.out.println("The originalPath: " + path);
 				String[] files = dialog.getFileNames();
-				path = path.substring(0, path.length() - files[0].length());
-				
-				for (String file : files) 
+				path = path.substring(0, path.length() - files[files.length-1].length());
+				System.out.println("The Path: " + path);
+				for (String file : files) {
 					clusterfiles.add(new ClusterFile(guessLabel(file),path + file));
+				}
+					
 				clusterFileViewer.setInput(clusterfiles);
 				
 

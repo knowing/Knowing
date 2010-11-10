@@ -5,6 +5,8 @@ import java.util.List;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterFile;
+
 public class ClusterFileContentProvider implements IStructuredContentProvider {
 
 	@Override

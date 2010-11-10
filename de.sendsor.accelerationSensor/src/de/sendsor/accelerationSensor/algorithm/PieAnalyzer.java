@@ -66,25 +66,10 @@ public class PieAnalyzer extends AbstractAlgorithm<Data> {
 		log.info("features: " + features.size());
 		// writeToCSV(features, new File("./sendsor.csv"));
 
-		// split into train/test
-		List<LabeledDoubleFeature> train = new ArrayList<LabeledDoubleFeature>();
-		List<LabeledDoubleFeature> test = new ArrayList<LabeledDoubleFeature>();
-		splitTrainTest(features, train, test);
-		features = null;
 
-		// cluster training data
-		List<MyCluster> clusters = null;
-		try {
-			clusters = cluster(train);
-			for (MyCluster c : clusters) { // print clusters
-				log.info(c.toString());
-			}
-		} catch (UnableToComplyException e) {
-			e.printStackTrace();
-		}
 
 		// test
-		test(clusters, test);
+		//test(clusters, features);
 		return new PieAnalyzerData();
 	}
 	
@@ -131,87 +116,7 @@ public class PieAnalyzer extends AbstractAlgorithm<Data> {
 		return compact;
 	}
 
-	private void splitTrainTest(List<LabeledDoubleFeature> features,
-			List<LabeledDoubleFeature> train, List<LabeledDoubleFeature> test) {
-		final int frac = 10; // fraction of test data
-		log.info("split into train " + (100 - frac) + "% / test " + frac + "%");
-		Random r = new Random(RANDOM_INIT);
-		for (int i = 0; i < features.size(); i++) {
-			if (r.nextInt(100) < frac) {
-				test.add(features.get(i));
-			} else {
-				train.add(features.get(i));
-			}
-		}
-	}
 
-	private List<MyCluster> cluster(List<LabeledDoubleFeature> train)
-			throws UnableToComplyException {
-		log.info("KMeans clustering");
-
-		// fill db and map doublevectors to my vectors
-		HashMap<DoubleVector, LabeledDoubleFeature> vecMap = new HashMap<DoubleVector, LabeledDoubleFeature>();
-		Database<DatabaseObject> db = new SequentialDatabase<DatabaseObject>();
-		final DatabaseObjectMetadata assoc = new DatabaseObjectMetadata();
-		for (LabeledDoubleFeature v : train) {
-			DoubleVector elkivec = new DoubleVector(v.getValues());
-			vecMap.put(elkivec, v);
-			db.insert(new Pair<DatabaseObject, DatabaseObjectMetadata>(elkivec,
-					assoc));
-		}
-
-		// init KMeans
-
-		log.info("k=" + KMEANS_K + "; maxiterations=" + KMEANS_MAX_ITERATION);
-		KMeans kmeans = new KMeans(EuclideanDistanceFunction.STATIC, KMEANS_K,	KMEANS_MAX_ITERATION);
-
-		// do clustering
-		List<MyCluster> myClusters = new ArrayList<MyCluster>();
-		Clustering<MeanModel<DoubleVector>> result = (Clustering<MeanModel<DoubleVector>>) kmeans.run(db);
-		List<Cluster<MeanModel<DoubleVector>>> clusters = result
-				.getAllClusters();
-		for (Cluster<MeanModel<DoubleVector>> cluster : clusters) {
-			MeanModel<DoubleVector> mm = cluster.getModel();
-			double[] centroid = mm.getMean().getValues();
-			List<LabeledDoubleFeature> clusterVectors = new ArrayList<LabeledDoubleFeature>();
-			DoubleVector elkivector;
-			for (DBID id : cluster.getIDs()) {
-				elkivector = (DoubleVector) db.get(id);
-				clusterVectors.add(vecMap.get(elkivector));
-			}
-
-			MyCluster newCluster = buildCluster(centroid, clusterVectors);
-			if (newCluster.getNumChildren() > MIN_INSTANCES_PER_CLUSTER) {
-				myClusters.add(newCluster);
-			}
-		}
-
-		log.info("Found " + myClusters.size() + " clusters with > "
-				+ MIN_INSTANCES_PER_CLUSTER + " members");
-		return myClusters;
-	}
-
-	private MyCluster buildCluster(double[] centroid, List<LabeledDoubleFeature> clusterVectors) {
-		// count labels in this cluster
-		HashMap<String, Double> labels = new HashMap<String, Double>();
-		for (LabeledDoubleFeature v : clusterVectors) {
-			String label = v.getLabel();
-			if (!labels.containsKey(label)) {
-				labels.put(label, 1d);
-			} else {
-				Double count = labels.get(label);
-				labels.put(label, count + 1);
-			}
-		}
-
-		// label probability between 0-1
-		final int clusterCount = clusterVectors.size();
-		for (String key : labels.keySet()) {
-			labels.put(key, labels.get(key) / clusterCount);
-		}
-
-		return new MyCluster(centroid, labels, clusterCount);
-	}
 
 	private void test(List<MyCluster> clusters, List<LabeledDoubleFeature> test) {
 		final EuclideanSquared dist = new EuclideanSquared();
@@ -320,7 +225,7 @@ public class PieAnalyzer extends AbstractAlgorithm<Data> {
 
 	@Override
 	public String getVersion() {
-		return "0.1 ALPHA";
+		return "0.3 ALPHA";
 	}
 
 	@Override

@@ -1,10 +1,14 @@
 package de.lmu.ifi.dbs.medmon.datamining.core.clustering;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
+
+import org.eclipse.core.runtime.Assert;
 
 import de.lmu.ifi.dbs.elki.algorithm.clustering.KMeans;
 import de.lmu.ifi.dbs.elki.data.Clustering;
@@ -21,7 +25,7 @@ import de.lmu.ifi.dbs.elki.utilities.exceptions.UnableToComplyException;
 import de.lmu.ifi.dbs.elki.utilities.pairs.Pair;
 import de.lmu.ifi.dbs.medmon.datamining.core.cluster.DoubleCluster;
 import de.lmu.ifi.dbs.medmon.datamining.core.util.LabeledDoubleFeature;
-import de.lmu.ifi.dbs.medmon.datamining.core.util.Utils;
+import de.lmu.ifi.dbs.medmon.datamining.core.util.ClusterUtils;
 import de.lmu.ifi.dbs.utilities.Arrays2;
 import de.lmu.ifi.dbs.utilities.Math2;
 
@@ -34,9 +38,18 @@ public class TrainCluster {
 	static final int KERNEL_SIZE = 7;
 	static final int MIN_INSTANCES_PER_CLUSTER = 5;
 
-	public List<DoubleCluster> cluster(List<List<String>> list, String label) throws UnableToComplyException {
-		List<LabeledDoubleFeature> rawVectors = Utils.readRawFeaturesFromData(list, label);
-		List<LabeledDoubleFeature> converted = raw2Features(rawVectors);
+	public List<DoubleCluster> cluster(File[] files, String[] lables) throws UnableToComplyException, IOException {
+		Assert.isTrue(files.length == lables.length);
+		
+		List<LabeledDoubleFeature> features = new ArrayList<LabeledDoubleFeature>();
+		for (int i = 0; i < lables.length; i++) {
+			String label = lables[i];
+			File file = files[i];
+			List<LabeledDoubleFeature> rawVectors = ClusterUtils.readRawFeaturesFromData(file, label);
+			List<LabeledDoubleFeature> converted = raw2Features(rawVectors);
+			features.addAll(converted);
+		}
+		log.info("features: " + features.size());
 
 		log.info("KMeans clustering");
 
@@ -44,7 +57,7 @@ public class TrainCluster {
 		HashMap<DoubleVector, LabeledDoubleFeature> vecMap = new HashMap<DoubleVector, LabeledDoubleFeature>();
 		Database<DatabaseObject> db = new SequentialDatabase<DatabaseObject>();
 		final DatabaseObjectMetadata assoc = new DatabaseObjectMetadata();
-		for (LabeledDoubleFeature v : converted) {
+		for (LabeledDoubleFeature v : features) {
 			DoubleVector elkivec = new DoubleVector(v.getValues());
 			vecMap.put(elkivec, v);
 			db.insert(new Pair<DatabaseObject, DatabaseObjectMetadata>(elkivec,	assoc));

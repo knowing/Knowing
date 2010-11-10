@@ -4,6 +4,8 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
+import de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterFile;
+
 public class ClusterFileLabelProvider extends LabelProvider implements ITableLabelProvider{
 	
 	@Override

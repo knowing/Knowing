@@ -9,7 +9,8 @@ Require-Bundle: org.eclipse.ui,
  de.lmu.ifi.dbs.medmon.sensor.core;bundle-version="1.0.0",
  de.lmu.ifi.dbs.medmon.jfreechart.libs;bundle-version="1.0.0",
  de.lmu.ifi.dbs.medmon.therapy.core;bundle-version="1.0.0",
- de.lmu.ifi.dbs.elki.libs;bundle-version="1.0.0"
+ de.lmu.ifi.dbs.elki.libs;bundle-version="1.0.0",
+ de.lmu.ifi.dbs.medmon.datamining.core;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.lmu.ifi.dbs.medmon.database.model

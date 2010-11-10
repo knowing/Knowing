@@ -1,9 +1,7 @@
 package de.lmu.ifi.dbs.medmon.developer.ui.wizard;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -16,11 +14,10 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 
 import de.lmu.ifi.dbs.elki.utilities.exceptions.UnableToComplyException;
+import de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterFile;
 import de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.cluster.DoubleCluster;
 import de.lmu.ifi.dbs.medmon.datamining.core.clustering.TrainCluster;
-import de.lmu.ifi.dbs.medmon.datamining.core.csv.CSVFileReader;
-import de.lmu.ifi.dbs.medmon.developer.ui.provider.ClusterFile;
 import de.lmu.ifi.dbs.medmon.developer.ui.wizard.pages.ClusterWizardPage;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 
@@ -40,44 +37,37 @@ public class ClusterWizard extends Wizard implements IWorkbenchWizard {
 		ClusterUnit clusterUnit = new ClusterUnit();
 		clusterUnit.setName(page.getClusterUnit());
 		ClusterFile[] clusterFiles = page.getClusterFiles();
+		File[] files = new File[clusterFiles.length];
+		String[] lables = new String[clusterFiles.length];
+		int index = 0;
 		for (ClusterFile clusterFile : clusterFiles) {
-			try {
-				CSVFileReader csv = new CSVFileReader(clusterFile.getFile(), ',');
-				List<List<String>> csvlist = new LinkedList<List<String>>();
-				List<String> fields = csv.readFields();
-				while(fields != null && !fields.isEmpty()) {
-					System.out.println(fields);
-					csvlist.add(fields);
-					fields = csv.readFields();
-				}
-				List<DoubleCluster> cluster = clusterer.cluster(csvlist, clusterFile.getLabel());
-				for (DoubleCluster doubleCluster : cluster) {
-					clusterUnit.addCluster(doubleCluster);
-				}
-				csv.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (UnableToComplyException e) {
-				e.printStackTrace();
-			}
+			files[index] = new File(clusterFile.getFile());
+			lables[index++] = clusterFile.getLabel();
 		}
-		
-		
+
+		try {
+			List<DoubleCluster> cluster = clusterer.cluster(files, lables);
+			for (DoubleCluster doubleCluster : cluster) {
+				clusterUnit.addCluster(doubleCluster);
+			}
+		} catch (UnableToComplyException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
 		try {
 			JAXBContext context = JAXBContext.newInstance(ClusterUnit.class);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			m.marshal(clusterUnit, System.out);
-			
-			File clusterUnitXML = new File(IMedmonConstants.DIR_DPU + 
-											IMedmonConstants.DIR_SEPERATOR + 
-											clusterUnit.getName() + ".xml");
+
+			File clusterUnitXML = new File(IMedmonConstants.DIR_DPU + IMedmonConstants.DIR_SEPERATOR
+					+ clusterUnit.getName() + ".xml");
 			m.marshal(clusterUnit, clusterUnitXML);
 		} catch (JAXBException e) {
 			e.printStackTrace();
-		} 
+		}
 		return true;
 	}
 

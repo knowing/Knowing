@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.medmon.developer.ui.provider;
+package de.lmu.ifi.dbs.medmon.datamining.core.cluster;
 
 public class ClusterFile {
 

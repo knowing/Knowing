@@ -6,6 +6,8 @@ import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 
+import de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterFile;
+
 public class ClusterFileEditingSupport extends EditingSupport {
 
 	private CellEditor editor;
