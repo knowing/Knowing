@@ -1,5 +1,6 @@
 package de.lmu.ifi.dbs.medmon.developer.ui.wizard.pages;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -130,7 +131,7 @@ public class ClusterWizardPage extends WizardPage {
 				String path = dialog.open(); //Of the last selected file
 				System.out.println("The originalPath: " + path);
 				String[] files = dialog.getFileNames();
-				path = path.substring(0, path.length() - files[files.length-1].length());
+				path = getPath(path);
 				System.out.println("The Path: " + path);
 				for (String file : files) {
 					clusterfiles.add(new ClusterFile(guessLabel(file),path + file));
@@ -142,6 +143,16 @@ public class ClusterWizardPage extends WizardPage {
 			} else if(e.widget == remove) {
 				System.out.println("Remove");
 			}
+		}
+		
+		private String getPath(String filepath) {
+			int index = filepath.indexOf(File.separator);
+			int last = index;
+			while(index != -1) {
+				last = index;
+				index = filepath.indexOf(File.separator, ++index);
+			}
+			return filepath.substring(0, last+1);
 		}
 		
 		private String guessLabel(String file) {
