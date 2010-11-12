@@ -13,7 +13,9 @@ import org.eclipse.core.runtime.Assert;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterUnit;
+import de.lmu.ifi.dbs.medmon.datamining.core.cluster.DoubleCluster;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.ClusterParameter;
+import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.NumericParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.StringParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.AbstractAlgorithm;
@@ -22,6 +24,7 @@ import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.utilities.Arrays2;
 import de.lmu.ifi.dbs.utilities.Collections2;
 import de.lmu.ifi.dbs.utilities.Math2;
+import de.lmu.ifi.dbs.utilities.PriorityQueue;
 import de.lmu.ifi.dbs.utilities.distances.EuclideanSquared;
 import de.sendsor.accelerationSensor.util.LabeledDoubleFeature;
 import de.sendsor.accelerationSensor.util.Utils;
@@ -61,17 +64,27 @@ public class PieAnalyzer extends AbstractAlgorithm<Data> {
 		log.info("features: " + features.size());
 		// writeToCSV(features, new File("./sendsor.csv"));
 
-
-
+		
 		// test
-		//test(clusters, features);
-		return new PieAnalyzerData();
+		List<DoubleCluster> cluster = getCluster();
+		return test(cluster, features);
 	}
 	
 	@Override
 	public IAnalyzedData process(Object data, IAnalyzedData analyzedData) {
 		//TODO Implement Process-Chaining
 		return null;
+	}
+	
+	private List<DoubleCluster> getCluster() {
+		for (IProcessorParameter<?> parameter : parameters.values()) {
+			if(parameter instanceof ClusterParameter) {
+				ClusterParameter p = (ClusterParameter)parameter;
+				ClusterUnit value = p.getValue();
+				return value.getClusterlist();
+			}
+		}
+		return Collections.EMPTY_LIST;
 	}
 
 	private List<LabeledDoubleFeature> raw2Features(List<LabeledDoubleFeature> raw) {
@@ -104,8 +117,7 @@ public class PieAnalyzer extends AbstractAlgorithm<Data> {
 
 			// concatenate and build new vector
 			double[] newValues = Arrays2.append(mean, variance);
-			compact.add(new LabeledDoubleFeature(newValues, raw.get(0)
-					.getLabel()));
+			compact.add(new LabeledDoubleFeature(newValues, raw.get(0).getLabel()));
 		}
 
 		return compact;
@@ -113,61 +125,43 @@ public class PieAnalyzer extends AbstractAlgorithm<Data> {
 
 
 
-	private void test(List<MyCluster> clusters, List<LabeledDoubleFeature> test) {
+	private IAnalyzedData test(List<DoubleCluster> clusters, List<LabeledDoubleFeature> test) {
 		final EuclideanSquared dist = new EuclideanSquared();
 		List<String> labels = new ArrayList<String>();
-		for (LabeledDoubleFeature c : test) {
+		for (DoubleCluster c : clusters) {
 			if (!labels.contains(c.getLabel())) {
+				System.out.println("Label added: " + c.getLabel());
 				labels.add(c.getLabel());
-			}
+			} 
 		}
+		
+        // classify
+        int[] confusionMatrix = new int[labels.size()];
+        for (LabeledDoubleFeature fv : test) {
+            PriorityQueue<String> pq = new PriorityQueue<String>(true);
+            for (DoubleCluster c : clusters) {
+                double d = dist.dist(c.getCentroidArray(), fv.getValues());
+                pq.add(d, c.getLabel());
+            }
 
-		// classify
-		int[][] confusionMatrix = new int[labels.size()][labels.size()];
-		for (LabeledDoubleFeature fv : test) {
-			// distance to clusters
-			List<SimpleEntry<Double, MyCluster>> clusterDist = new ArrayList<SimpleEntry<Double, MyCluster>>();
-			for (MyCluster c : clusters) {
-				clusterDist.add(new SimpleEntry<Double, MyCluster>(dist.dist(c.getCentroid(), fv.getValues()), c));
-			}
-			Collections.sort(clusterDist, new KeyComp());
-
-			// max Dist
-			final double maxDist = clusterDist.get(clusterDist.size() - 1).getKey();
-			HashMap<String, List<Double>> probabilityMap = new HashMap<String, List<Double>>();
-			for (int i = 0; i < clusterDist.size(); i++) {
-				SimpleEntry<Double, MyCluster> e = clusterDist.get(i);
-				double weight = 1 - (e.getKey() / maxDist);
-				MyCluster cluster = e.getValue();
-				// add weighted labels to probability map
-				addToMap(probabilityMap, cluster.getLabels(), weight);
-			}
-
-			HashMap<String, Double> finalMap = getFinalWeights(probabilityMap,
-					clusters.size());
-			String classifiedAs = getLabelWithHighestPropability(finalMap);
-
-			final int classifiedAsIndex = labels.indexOf(classifiedAs);
-			final int trueIndex = labels.indexOf(fv.getLabel());
-			confusionMatrix[trueIndex][classifiedAsIndex] += 1;
+            final int classifiedAsIndex = labels.indexOf(pq.getFirst());
+            confusionMatrix[classifiedAsIndex] += 1;
+        }
+        PieAnalyzerData analyzedData = new PieAnalyzerData();
+        StringBuffer sb = new StringBuffer();
+        double sum = Arrays2.sum(confusionMatrix);
+        for (int i = 0; i < confusionMatrix.length; i++) {
+			sb.append(labels.get(i));
+			sb.append(": ");
+			sb.append(confusionMatrix[i]);
+			sb.append("; ");
+			sb.append("Percent: ");
+			sb.append((confusionMatrix[i] / sum)*100); 
+			sb.append("\n");
+			analyzedData.setValue(labels.get(i), ((confusionMatrix[i] / sum)*100)); //<- PIE CHART
 		}
-
-		// print result
-		double avgHitRate = 0;
-		String s = "";
-		for (int i = 0; i < confusionMatrix.length; i++) {
-			double trueHits = confusionMatrix[i][i] * 1d
-					/ Arrays2.sum(confusionMatrix[i]);
-			avgHitRate += trueHits / confusionMatrix.length;
-
-			s += labels.get(i) + ";";
-			s += Arrays2.join(confusionMatrix[i], ";");
-			s += String.format(";%f", trueHits);
-			s += "\n";
-		}
-		s += ";" + Collections2.joinToString(labels, ";");
-		s += String.format(";%f", avgHitRate);
-		log.info("-----------\n" + s);
+        log.info("-----------\n" + sb.toString());
+        return analyzedData;
 	}
 
 	private HashMap<String, Double> getFinalWeights(

@@ -210,7 +210,9 @@ public class SDRConverter implements IConverter<Data> {
 				datalist.add(new Data(id, x, y, z));
 				time += TIME_CORRECTION_AFTER;
 			}
+		
 		}
+		System.out.println("Converted Data[]: " + datalist.size());
 		in.close();
 		return datalist.toArray(new Data[datalist.size()]);
 	}

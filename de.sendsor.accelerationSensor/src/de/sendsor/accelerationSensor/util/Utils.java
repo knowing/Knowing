@@ -31,10 +31,12 @@ public class Utils {
 		return returns;
 	}
 	
+	//TODO WRONG!
 	private static String getLabel(int index) {
 		Category[] categories = Category.values();
 		int newIndex = index % categories.length;
-		return categories[newIndex].name();
+		//return categories[newIndex].name();
+		return "sitzen";
 	}
 
 }

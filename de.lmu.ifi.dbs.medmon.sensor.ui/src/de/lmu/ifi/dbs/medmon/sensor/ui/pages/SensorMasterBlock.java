@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -123,8 +124,9 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 
 		Composite sensorComposite = toolkit.createComposite(tabFolder, SWT.NONE);
 		sensorComposite.setLayout(new GridLayout(1, false));
-				
-		TreeViewer dataViewer = new TreeViewer(sensorComposite, SWT.BORDER | SWT.MULTI);
+		
+		//TODO Implement MULTI Selection
+		TreeViewer dataViewer = new TreeViewer(sensorComposite, SWT.BORDER | SWT.SINGLE);
 		dataViewer.setContentProvider(new DataContentProvider());
 		dataViewer.setLabelProvider(new DataLabelProvider());
 		dataViewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
