@@ -69,7 +69,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="de.lmu.ifi.dbs.medmon.developer.ui.NewDataProcessingUnitComman"
+            defaultHandler="de.lmu.ifi.dbs.medmon.developer.ui.handler.NewDataProcessingUnitCommand"
             id="de.lmu.ifi.dbs.medmon.developer.ui.NewDataProcessingUnit"
             name="New Data Processing Unit">
       </command>

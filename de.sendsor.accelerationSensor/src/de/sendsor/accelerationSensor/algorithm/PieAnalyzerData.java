@@ -2,7 +2,7 @@ package de.sendsor.accelerationSensor.algorithm;
 
 import org.eclipse.swt.widgets.Composite;
 
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAnalyzedData;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
 
 public class PieAnalyzerData implements IAnalyzedData {
 

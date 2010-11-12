@@ -14,7 +14,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.databinding.property,
  org.eclipse.jface.databinding,
  com.ibm.icu,
- de.lmu.ifi.dbs.medmon.sensor.core;bundle-version="1.0.0"
+ de.lmu.ifi.dbs.medmon.sensor.core;bundle-version="1.0.0",
+ de.lmu.ifi.dbs.medmon.datamining.core;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.lmu.ifi.dbs.medmon.database.model,

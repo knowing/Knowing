@@ -5,8 +5,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
 
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
 
 /**
  * The activator class controls the plug-in life cycle

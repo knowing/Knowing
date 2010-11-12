@@ -3,7 +3,7 @@ package de.lmu.ifi.dbs.medmon.algorithm.ui.provider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import de.lmu.ifi.dbs.medmon.sensor.core.util.AlgorithmUtil;
+import de.lmu.ifi.dbs.medmon.datamining.core.util.AlgorithmUtil;
 
 /**
  * Needs no specified input element. Provides all registered 

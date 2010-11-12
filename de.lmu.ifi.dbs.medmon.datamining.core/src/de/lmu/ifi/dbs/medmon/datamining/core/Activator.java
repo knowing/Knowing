@@ -22,6 +22,8 @@ import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 
 public class Activator implements BundleActivator {
 
+	public static final String PLUGIN_ID = "de.lmu.ifi.dbs.medmon.datamining.core";
+	
 	private static BundleContext context;
 
 	static BundleContext getContext() {
@@ -48,9 +50,14 @@ public class Activator implements BundleActivator {
 	}
 	
 	private void createConfigDir() {
-		File dir = new File(IMedmonConstants.DIR_DPU);
-		if(!dir.exists())
-			dir.mkdirs();
+		File dpuDir = new File(IMedmonConstants.DIR_DPU);
+		if(!dpuDir.exists())
+			dpuDir.mkdirs();
+		
+		File cuDir = new File(IMedmonConstants.DIR_CU);
+		if(!cuDir.exists())
+			cuDir.mkdirs();
+		
 	}
 	
 	public void createClusterXML() {

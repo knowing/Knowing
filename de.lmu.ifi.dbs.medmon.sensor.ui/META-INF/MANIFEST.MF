@@ -26,6 +26,7 @@ Import-Package: de.lmu.ifi.dbs.medmon.algorithm.ui.provider,
  de.lmu.ifi.dbs.medmon.database.model,
  de.lmu.ifi.dbs.medmon.database.sample,
  de.lmu.ifi.dbs.medmon.database.util,
+ de.lmu.ifi.dbs.medmon.datamining.core.util,
  de.lmu.ifi.dbs.medmon.patient.service,
  de.lmu.ifi.dbs.medmon.rcp.platform,
  de.lmu.ifi.dbs.medmon.rcp.platform.util

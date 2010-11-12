@@ -1,33 +1,24 @@
 package de.sendsor.accelerationSensor.algorithm;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.Assert;
 
-import de.lmu.ifi.dbs.elki.algorithm.clustering.KMeans;
-import de.lmu.ifi.dbs.elki.data.Clustering;
-import de.lmu.ifi.dbs.elki.data.DatabaseObject;
-import de.lmu.ifi.dbs.elki.data.DoubleVector;
-import de.lmu.ifi.dbs.elki.data.cluster.Cluster;
-import de.lmu.ifi.dbs.elki.data.model.MeanModel;
-import de.lmu.ifi.dbs.elki.database.Database;
-import de.lmu.ifi.dbs.elki.database.DatabaseObjectMetadata;
-import de.lmu.ifi.dbs.elki.database.SequentialDatabase;
-import de.lmu.ifi.dbs.elki.database.ids.DBID;
-import de.lmu.ifi.dbs.elki.distance.distancefunction.EuclideanDistanceFunction;
-import de.lmu.ifi.dbs.elki.utilities.exceptions.UnableToComplyException;
-import de.lmu.ifi.dbs.elki.utilities.pairs.Pair;
 import de.lmu.ifi.dbs.medmon.database.model.Data;
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.AbstractAlgorithm;
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAnalyzedData;
+import de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterUnit;
+import de.lmu.ifi.dbs.medmon.datamining.core.parameter.ClusterParameter;
+import de.lmu.ifi.dbs.medmon.datamining.core.parameter.NumericParameter;
+import de.lmu.ifi.dbs.medmon.datamining.core.parameter.StringParameter;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.AbstractAlgorithm;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
+import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.utilities.Arrays2;
 import de.lmu.ifi.dbs.utilities.Collections2;
 import de.lmu.ifi.dbs.utilities.Math2;
@@ -39,18 +30,22 @@ import de.sendsor.accelerationSensor.util.Utils;
  * Analyze the data via a simple clustering algorithm.
  * 
  * @author Nepomuk Seiler
- * @version 0.0
+ * @version 0.2
  */
 public class PieAnalyzer extends AbstractAlgorithm<Data> {
 
-	public static final int RANDOM_INIT = 5;
 	static final Logger log = Logger.getLogger(PieAnalyzer.class.getName());
-	static final int KMEANS_K = 1000;
-	static final int KMEANS_MAX_ITERATION = 20;
-	static final int KERNEL_SIZE = 7;
-	static final int MIN_INSTANCES_PER_CLUSTER = 5;
-	
+
 	public static final String NAME = "Kuchendiagramm";
+	
+	public PieAnalyzer() {
+		init();
+	}
+	
+	private void init() {
+		ClusterParameter parameter = new ClusterParameter(IMedmonConstants.DIR_CU);
+		parameters.put(parameter.getName(), parameter);
+	}
 
 	@Override
 	public IAnalyzedData process(Object data) {

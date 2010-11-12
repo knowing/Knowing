@@ -30,13 +30,13 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.Section;
 
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
+import de.lmu.ifi.dbs.medmon.datamining.core.util.AlgorithmUtil;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.patient.ui.Activator;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.CommandUtil;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
-import de.lmu.ifi.dbs.medmon.sensor.core.util.AlgorithmUtil;
 import de.lmu.ifi.dbs.medmon.sensor.ui.viewer.SensorTableViewer;
 import de.lmu.ifi.dbs.medmon.visualizer.ui.handler.OpenDefaultPerspectiveHandler;
 

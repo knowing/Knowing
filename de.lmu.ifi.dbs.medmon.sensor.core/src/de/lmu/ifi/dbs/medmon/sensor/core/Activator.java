@@ -2,9 +2,6 @@ package de.lmu.ifi.dbs.medmon.sensor.core;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import org.osgi.util.tracker.ServiceTracker;
-
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -16,10 +13,7 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
-	
-	//Service Tracker
-	private static ServiceTracker algorithmTracker; 
-	
+		
 	/**
 	 * The constructor
 	 */
@@ -33,8 +27,6 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		algorithmTracker = new ServiceTracker(context, IAlgorithm.class.getName(), null);
-		algorithmTracker.open();
 	}
 
 	/*
@@ -43,7 +35,6 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
-		algorithmTracker.close();
 		super.stop(context);
 	}
 
@@ -56,8 +47,4 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 	
-	public static IAlgorithm[] getAlgorithmServices() {
-		return (IAlgorithm[]) algorithmTracker.getServices();
-	}
-
 }

@@ -6,10 +6,10 @@ import java.util.GregorianCalendar;
 import org.jfree.data.time.Hour;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
-import de.lmu.ifi.dbs.medmon.sensor.core.parameter.NumericParameter;
-import de.lmu.ifi.dbs.medmon.sensor.core.parameter.StringParameter;
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.AbstractAlgorithm;
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAnalyzedData;
+import de.lmu.ifi.dbs.medmon.datamining.core.parameter.NumericParameter;
+import de.lmu.ifi.dbs.medmon.datamining.core.parameter.StringParameter;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.AbstractAlgorithm;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
 
 public class SimpleAnalyzer extends AbstractAlgorithm<Data> {
 

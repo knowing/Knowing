@@ -4,23 +4,23 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.DataProcessingList;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 
 public class ProcessorListEditorInput implements IEditorInput {
 
-	private DataProcessingList list;
+	private DataProcessingUnit dpu;
 	
-	public ProcessorListEditorInput(DataProcessingList list) {
-		this.list = list;
+	public ProcessorListEditorInput(DataProcessingUnit dpu) {
+		this.dpu = dpu;
 	}
 	
-	public DataProcessingList getList() {
-		return list;
+	public DataProcessingUnit getDpu() {
+		return dpu;
 	}
 	
 	@Override
 	public String getName() {
-		return list.getName();
+		return dpu.getName();
 	}
 
 

@@ -3,8 +3,7 @@ package de.lmu.ifi.dbs.medmon.datamining.core.processing;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.IDataProcessor;
-import de.lmu.ifi.dbs.medmon.sensor.core.util.FrameworkUtil;
+import de.lmu.ifi.dbs.medmon.datamining.core.util.FrameworkUtil;
 
 @XmlRootElement(name = "dataProcessor")
 @XmlType(propOrder = { "name", "id", "providedby" })

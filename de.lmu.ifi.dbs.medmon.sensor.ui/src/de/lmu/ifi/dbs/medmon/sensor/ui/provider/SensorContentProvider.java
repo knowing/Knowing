@@ -3,8 +3,8 @@ package de.lmu.ifi.dbs.medmon.sensor.ui.provider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import de.lmu.ifi.dbs.medmon.datamining.core.util.FrameworkUtil;
 import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
-import de.lmu.ifi.dbs.medmon.sensor.core.util.FrameworkUtil;
 
 
 /**

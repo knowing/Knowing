@@ -1,8 +1,6 @@
 package de.sendsor.accelerationSensor.algorithm;
 
 import java.awt.Color;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -14,15 +12,13 @@ import org.jfree.chart.axis.SymbolAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
-import org.jfree.data.time.Day;
-import org.jfree.data.time.Hour;
 import org.jfree.data.time.RegularTimePeriod;
 import org.jfree.data.xy.IntervalXYDataset;
 import org.jfree.data.xy.XYIntervalSeries;
 import org.jfree.data.xy.XYIntervalSeriesCollection;
 import org.jfree.experimental.chart.swt.ChartComposite;
 
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAnalyzedData;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
 
 public class SimpleAnalyzerData implements IAnalyzedData {
 

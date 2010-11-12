@@ -9,8 +9,7 @@ import java.util.logging.Logger;
 import de.lmu.ifi.dbs.medmon.datamining.core.csv.CSVFileReader;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.IDataProcessor;
-import de.lmu.ifi.dbs.medmon.sensor.core.util.FrameworkUtil;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
 import de.lmu.ifi.dbs.utilities.Arrays2;
 import de.lmu.ifi.dbs.utilities.Math2;
 

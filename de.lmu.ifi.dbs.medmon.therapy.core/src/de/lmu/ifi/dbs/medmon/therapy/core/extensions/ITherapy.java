@@ -1,6 +1,7 @@
 package de.lmu.ifi.dbs.medmon.therapy.core.extensions;
 
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
+
 
 
 /**

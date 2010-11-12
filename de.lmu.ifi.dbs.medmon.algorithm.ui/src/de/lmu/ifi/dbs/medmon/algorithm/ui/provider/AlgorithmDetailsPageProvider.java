@@ -4,7 +4,7 @@ import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IDetailsPageProvider;
 
 import de.lmu.ifi.dbs.medmon.algorithm.ui.editor.AlgorithmDetailsPage;
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
 
 /**
  * Provides DetailPages for every class implementing the interface

@@ -12,11 +12,11 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAnalyzedData;
 import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
 import de.lmu.ifi.dbs.medmon.visualizer.ui.Activator;
 

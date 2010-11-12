@@ -9,7 +9,7 @@ import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import de.lmu.ifi.dbs.medmon.algorithm.ui.editor.AlgorithmEditorBlock;
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
 
 public class AnalyzePage extends WizardPage {
 

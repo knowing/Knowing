@@ -6,7 +6,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
 
 /**
  * Simple LabelProvider for ListViewer and TableViewer.

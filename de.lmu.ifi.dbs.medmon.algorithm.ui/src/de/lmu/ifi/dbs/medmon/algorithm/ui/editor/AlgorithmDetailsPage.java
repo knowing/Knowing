@@ -22,9 +22,9 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.handlers.IHandlerService;
 
 import de.lmu.ifi.dbs.medmon.algorithm.ui.viewer.AlgorithmConfigurationPart;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
-import de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm;
 
 public class AlgorithmDetailsPage implements IDetailsPage {
 	public AlgorithmDetailsPage() {

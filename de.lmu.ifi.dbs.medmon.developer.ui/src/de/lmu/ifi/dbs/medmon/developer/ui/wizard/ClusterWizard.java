@@ -62,10 +62,13 @@ public class ClusterWizard extends Wizard implements IWorkbenchWizard {
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			m.marshal(clusterUnit, System.out);
 
-			File clusterUnitXML = new File(IMedmonConstants.DIR_DPU + IMedmonConstants.DIR_SEPERATOR
-					+ clusterUnit.getName() + ".xml");
+			File clusterUnitXML = new File(IMedmonConstants.DIR_CU + File.separator	+ clusterUnit.getName() + ".xml");
+			clusterUnitXML.createNewFile();
 			m.marshal(clusterUnit, clusterUnitXML);
 		} catch (JAXBException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return true;

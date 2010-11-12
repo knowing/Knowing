@@ -13,7 +13,7 @@ public class DataProcessingUnit{
 	
 	private List<DataProcessor> processors;
 	
-	private String name;
+	private String name = "default";
 	
 	@XmlAttribute
 	public String getName() {

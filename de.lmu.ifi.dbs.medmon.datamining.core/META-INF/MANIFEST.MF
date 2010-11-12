@@ -12,4 +12,8 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.lmu.ifi.dbs.medmon.datamining.core.cluster,
  de.lmu.ifi.dbs.medmon.datamining.core.clustering,
- de.lmu.ifi.dbs.medmon.datamining.core.csv
+ de.lmu.ifi.dbs.medmon.datamining.core.csv,
+ de.lmu.ifi.dbs.medmon.datamining.core.parameter,
+ de.lmu.ifi.dbs.medmon.datamining.core.processing,
+ de.lmu.ifi.dbs.medmon.datamining.core.util
+Import-Package: org.eclipse.swt.widgets
