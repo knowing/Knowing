@@ -18,10 +18,11 @@
       <plugin id="com.ibm.icu"/>
       <plugin id="de.lmu.ifi.dbs.elki.libs"/>
       <plugin id="de.lmu.ifi.dbs.medmon.algorithm.ui"/>
+      <plugin id="de.lmu.ifi.dbs.medmon.datamining.core"/>
       <plugin id="de.lmu.ifi.dbs.medmon.derby"/>
       <plugin id="de.lmu.ifi.dbs.medmon.developer.ui"/>
       <plugin id="de.lmu.ifi.dbs.medmon.jfreechart.libs"/>
-      <plugin id="de.lmu.ifi.dbs.medmon.patient.core"/>
+      <plugin id="de.lmu.ifi.dbs.medmon.jobs"/>
       <plugin id="de.lmu.ifi.dbs.medmon.patient.service"/>
       <plugin id="de.lmu.ifi.dbs.medmon.patient.ui"/>
       <plugin id="de.lmu.ifi.dbs.medmon.rcp"/>
@@ -78,7 +79,7 @@
    </plugins>
 
    <configurations>
-      <plugin id="de.lmu.ifi.dbs.medmon.patient.core" autoStart="true" startLevel="0" />
+      <plugin id="de.lmu.ifi.dbs.medmon.patient.service" autoStart="true" startLevel="3" />
       <plugin id="javax.persistence" autoStart="true" startLevel="1" />
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
