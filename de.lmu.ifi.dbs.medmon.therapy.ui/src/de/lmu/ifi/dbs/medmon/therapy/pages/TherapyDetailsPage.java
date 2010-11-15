@@ -71,17 +71,20 @@ public class TherapyDetailsPage implements IDetailsPage {
 		toolkit.adapt(lName, true, true);
 		lName.setText("Name");
 		
-		tName = new Text(composite, SWT.BORDER);
+		tName = new Text(composite, SWT.NONE);
 		tName.setEditable(false);
 		tName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		toolkit.adapt(tName, true, true);
 		
 		Group gDescription = new Group(composite, SWT.NONE);
 		gDescription.setText("Beschreibung");
-		gDescription.setLayout(new FillLayout(SWT.HORIZONTAL));
+		FillLayout gd_layout = new FillLayout(SWT.HORIZONTAL);
+		gd_layout.marginWidth = 15;
+		gd_layout.marginHeight = 15;
+		gDescription.setLayout(gd_layout);
 		gDescription.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 		toolkit.adapt(gDescription);
-		toolkit.paintBordersFor(gDescription);
+		//toolkit.paintBordersFor(gDescription);
 		
 		tDescription = new Text(gDescription, SWT.READ_ONLY | SWT.V_SCROLL | SWT.MULTI);
 		tDescription.setEditable(false);

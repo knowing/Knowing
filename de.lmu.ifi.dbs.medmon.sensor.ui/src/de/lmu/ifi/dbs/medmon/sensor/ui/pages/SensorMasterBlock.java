@@ -126,7 +126,7 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 		sensorComposite.setLayout(new GridLayout(1, false));
 		
 		//TODO Implement MULTI Selection
-		TreeViewer dataViewer = new TreeViewer(sensorComposite, SWT.BORDER | SWT.SINGLE);
+		TreeViewer dataViewer = new TreeViewer(sensorComposite, SWT.NONE);
 		dataViewer.setContentProvider(new DataContentProvider());
 		dataViewer.setLabelProvider(new DataLabelProvider());
 		dataViewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -146,7 +146,6 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 		bImport.setLayoutData(new GridData(GridData.END, GridData.CENTER, false, false));
 		bImport.setEnabled(false);
 		
-		toolkit.paintBordersFor(sensorComposite);
 		sensorTabItem.setControl(sensorComposite);
 		
 		controller = new ManagementController(dataViewer, sensorViewer);
@@ -157,10 +156,9 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 		Composite dbComposite = toolkit.createComposite(tabFolder, SWT.NONE);
 		dbComposite.setLayout(new GridLayout(2, false));
 		
-		TreeViewer treeViewer = new TreeViewer(dbComposite, SWT.BORDER);
+		TreeViewer treeViewer = new TreeViewer(dbComposite, SWT.NONE);
 		Tree tree = treeViewer.getTree();
 		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
-		toolkit.paintBordersFor(tree);
 		
 		Button bLoad = toolkit.createButton(dbComposite, "Laden", SWT.NONE);
 		bLoad.setImage(ResourceManager.getPluginImageDescriptor(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_ARROW_UP_16).createImage());
@@ -171,7 +169,6 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 		bRefresh.setLayoutData(new GridData(GridData.END, GridData.CENTER, false, false));
 
 		databaseTabItem.setControl(dbComposite);
-		toolkit.paintBordersFor(dbComposite);
 		
 		tabFolder.setSelection(sensorTabItem);
 		managedForm.addPart(spart);

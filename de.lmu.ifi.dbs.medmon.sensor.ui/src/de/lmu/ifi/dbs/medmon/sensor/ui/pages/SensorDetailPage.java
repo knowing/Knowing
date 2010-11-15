@@ -104,7 +104,6 @@ public class SensorDetailPage implements IDetailsPage {
 		data.heightHint = 100;
 		gDescription.setLayoutData(data);
 		toolkit.adapt(gDescription);
-		toolkit.paintBordersFor(gDescription);
 		gDescription.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
 		tDescription = new Text(gDescription, SWT.READ_ONLY | SWT.V_SCROLL | SWT.MULTI);

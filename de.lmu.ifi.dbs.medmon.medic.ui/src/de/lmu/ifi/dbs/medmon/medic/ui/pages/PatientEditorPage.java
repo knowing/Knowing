@@ -14,7 +14,7 @@ public class PatientEditorPage extends FormPage {
 
 	public PatientEditorPage(FormEditor editor) {
 		super(editor, id, "Patientenverwaltung");
-		block = new PatientEditorBlock();
+		block = new PatientEditorBlock(getEditorSite().getActionBars().getStatusLineManager());
 	}
 	
 	@Override

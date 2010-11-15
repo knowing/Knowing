@@ -38,6 +38,7 @@ import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.CommandUtil;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
+import org.eclipse.swt.widgets.Label;
 
 public class PatientDetailsPage implements IDetailsPage {
 
@@ -96,6 +97,14 @@ public class PatientDetailsPage implements IDetailsPage {
 		gLayout.marginWidth = 5;
 		gLayout.marginHeight = 5;
 		gClient.setLayout(gLayout);
+		
+		Label lID = new Label(gClient, SWT.NONE);
+		toolkit.adapt(lID, true, true);
+		lID.setText("ID");
+		
+		Label label = new Label(gClient, SWT.NONE);
+		toolkit.adapt(label, true, true);
+		label.setText("10821549");
 
 		toolkit.createLabel(gClient, "Name");
 		firstname = toolkit.createText(gClient, "", SWT.BORDER);
@@ -110,6 +119,22 @@ public class PatientDetailsPage implements IDetailsPage {
 		lastname.addListener(SWT.Modify, controller);
 
 		gSection.setClient(gClient);
+		
+		Label label_1 = new Label(gClient, SWT.NONE);
+		GridData gd_label_1 = new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1);
+		gd_label_1.heightHint = 20;
+		label_1.setLayoutData(gd_label_1);
+		toolkit.adapt(label_1, true, true);
+		
+		Label lblGeboren = new Label(gClient, SWT.NONE);
+		toolkit.adapt(lblGeboren, true, true);
+		lblGeboren.setText("Geboren");
+		new Label(gClient, SWT.NONE);
+		
+		Label lblGeschlecht = new Label(gClient, SWT.NONE);
+		toolkit.adapt(lblGeschlecht, true, true);
+		lblGeschlecht.setText("Geschlecht");
+		new Label(gClient, SWT.NONE);
 
 		/* Buttons Section */
 		Section bSection = toolkit.createSection(parent, Section.NO_TITLE);
@@ -130,7 +155,8 @@ public class PatientDetailsPage implements IDetailsPage {
 		bSection.setClient(bClient);
 
 		//hookActions();
-	}
+	}	
+	
 
 	protected DataBindingContext initDataBindings() {
 		DataBindingContext bindingContext = new DataBindingContext();

@@ -1,6 +1,7 @@
 package de.lmu.ifi.dbs.medmon.medic.ui.pages;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
@@ -10,6 +11,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.MasterDetailsBlock;
@@ -31,9 +33,13 @@ public class PatientEditorBlock extends MasterDetailsBlock {
 	private TableViewer viewer;
 	
 	private final IPatientService patientService;
+
+	private final IStatusLineManager statusLineManager;
+
 	
 
-	public PatientEditorBlock() {
+	public PatientEditorBlock(IStatusLineManager statusLineManager) {
+		this.statusLineManager = statusLineManager;
 		patientService = Activator.getPatientService();
 	}
 
@@ -93,6 +99,7 @@ public class PatientEditorBlock extends MasterDetailsBlock {
 			public void selectionChanged(SelectionChangedEvent event) {
 				managedForm.fireSelectionChanged(spart, event.getSelection());
 				patientService.setSelection(event.getSelection()); //Set patient 
+				statusLineManager.setMessage(event.getSelection().toString());
 			}
 		});
 		newViewer.setContentProvider(new PatientContentProvider());

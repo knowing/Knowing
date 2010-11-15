@@ -28,7 +28,7 @@ public class ManagementView extends ViewPart {
 	}
 
 	public void initialize(ManagedForm managedForm) {
-		PatientEditorBlock block = new PatientEditorBlock();
+		PatientEditorBlock block = new PatientEditorBlock(getViewSite().getActionBars().getStatusLineManager());
 		block.createContent(managedForm);
 	}
 
