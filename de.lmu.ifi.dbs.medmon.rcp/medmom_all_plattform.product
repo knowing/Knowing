@@ -23,14 +23,13 @@
       <plugin id="de.lmu.ifi.dbs.medmon.developer.ui"/>
       <plugin id="de.lmu.ifi.dbs.medmon.jfreechart.libs"/>
       <plugin id="de.lmu.ifi.dbs.medmon.jobs"/>
+      <plugin id="de.lmu.ifi.dbs.medmon.medic.ui"/>
       <plugin id="de.lmu.ifi.dbs.medmon.patient.service"/>
-      <plugin id="de.lmu.ifi.dbs.medmon.patient.ui"/>
       <plugin id="de.lmu.ifi.dbs.medmon.rcp"/>
       <plugin id="de.lmu.ifi.dbs.medmon.sensor.core"/>
       <plugin id="de.lmu.ifi.dbs.medmon.sensor.ui"/>
       <plugin id="de.lmu.ifi.dbs.medmon.therapy.core"/>
       <plugin id="de.lmu.ifi.dbs.medmon.therapy.ui"/>
-      <plugin id="de.lmu.ifi.dbs.medmon.visualizer.ui"/>
       <plugin id="de.sendsor.accelerationSensor"/>
       <plugin id="javax.persistence"/>
       <plugin id="org.apache.derby.core"/>

@@ -1,11 +1,8 @@
 package de.lmu.ifi.dbs.medmon.patient.service;
 
-import org.eclipse.jface.viewers.ISelection;
+import java.beans.PropertyChangeListener;
 
-import de.lmu.ifi.dbs.medmon.database.model.Data;
-import de.lmu.ifi.dbs.medmon.database.model.Patient;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
+import org.eclipse.jface.viewers.ISelection;
 
 
 /**
@@ -18,12 +15,12 @@ import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
 public interface IPatientService {
 	
 	
-	public static final String PATIENT = Patient.class.getName();
-	public static final String SENSOR = "SENSOR";
-	public static final String SENSOR_DATA = Data.class.getName();
-	public static final String SENSOR_CONTAINER = "SENSOR_CONTAINER";
-	public static final String ALGORITHM = IAlgorithm.class.getName();
-	public static final String ANALYZED_DATA = IAnalyzedData.class.getName();
+	public static final String PATIENT = "de.lmu.ifi.dbs.medmon.database.model.patient";
+	public static final String SENSOR = "de.lmu.ifi.dbs.medmon.sensor.core.sensor.isensor";
+	public static final String SENSOR_DATA = "de.lmu.ifi.dbs.medmon.database.model.data";
+	public static final String SENSOR_CONTAINER = "de.lmu.ifi.dbs.medmon.sensor.core.container";
+	public static final String ALGORITHM = "de.lmu.ifi.dbs.medmon.datamining.processing.algorithm";
+	public static final String ANALYZED_DATA = "de.lmu.ifi.dbs.medmon.datamining.processing.ianalyzed";
 	
 	/**
 	 * Checks if the selection is supported and add it.
@@ -43,5 +40,9 @@ public interface IPatientService {
 	 * @return the Object if selected
 	 */
 	public Object getSelection(String clazz);
+	
+	public void addPropertyChangeListener(String property, PropertyChangeListener listener);
+	
+	public void removePropertyChangeListener(PropertyChangeListener listener);
 
 }

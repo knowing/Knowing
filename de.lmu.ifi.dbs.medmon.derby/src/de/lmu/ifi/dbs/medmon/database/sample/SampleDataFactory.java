@@ -1,18 +1,15 @@
 package de.lmu.ifi.dbs.medmon.database.sample;
 
 import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
-import org.apache.derby.catalog.GetProcedureColumns;
 
+import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.model.DataPK;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
-import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.util.JPAUtil;
 
 public class SampleDataFactory {

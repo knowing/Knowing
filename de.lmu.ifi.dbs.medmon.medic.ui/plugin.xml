@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+ <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="de.lmu.ifi.dbs.medmon.medic.actionSet"
+            label="Patientenverwaltung Action Set"
+            visible="false">
+         <menu
+               id="Patientenverwaltung"
+               label="Patientenverwaltung ">
+            <separator
+                  name="PatientenverwaltungGroup">
+            </separator>
+         </menu>
+         <action
+               definitionId="de.lmu.ifi.dbs.medmon.medic.import"
+               icon="icons/16/gtk-go-down.png"
+               id="de.lmu.ifi.dbs.medmon.medic.importAction"
+               label="Import Patient"
+               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
+               style="push"
+               toolbarPath="PatientenverwaltungGroup">
+         </action>
+         <action
+               definitionId="de.lmu.ifi.dbs.medmon.medic.export"
+               icon="icons/16/gtk-go-up.png"
+               id="de.lmu.ifi.dbs.medmon.medic.exportAction"
+               label="Export Patient"
+               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
+               style="push"
+               toolbarPath="PatientenverwaltungGroup">
+         </action>
+         <action
+               definitionId="de.lmu.ifi.dbs.medmon.medic.delete"
+               icon="icons/16/gtk-remove.png"
+               id="de.lmu.ifi.dbs.medmon.medic.deleteAction"
+               label="Patient entfernen"
+               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
+               style="push"
+               toolbarPath="PatientenverwaltungGroup">
+         </action>
+         <action
+               definitionId="de.lmu.ifi.dbs.medmon.medic.OpenPatientEditor"
+               icon="icons/16/gtk-edit.png"
+               id="de.lmu.ifi.dbs.medmon.medic.editAction"
+               label="Patient bearbeiten"
+               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
+               style="push"
+               toolbarPath="PatientenverwaltungGroup">
+         </action>
+         <action
+               definitionId="de.lmu.ifi.dbs.medmon.medic.create"
+               icon="icons/16/gtk-add.png"
+               id="de.lmu.ifi.dbs.medmon.medic.createAction"
+               label="Patient erstellen"
+               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
+               style="push"
+               toolbarPath="PatientenverwaltungGroup">
+         </action>
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Monitor Category"
+            id="de.lmu.ifi.dbs.medmon.medic">
+      </category>
+      
+      <category
+            name="Patientmanagement"
+            id="de.lmu.ifi.dbs.medmon.PatientView">
+      </category>
+      <view
+            name="Patients List View"
+            icon="icons/sample.gif"
+            category="de.lmu.ifi.dbs.medmon.PatientView"
+            class="de.lmu.ifi.dbs.medmon.medic.ui.views.PatientListView"
+            id="de.lmu.ifi.dbs.medmon.medic.views.PatientListView">
+      </view>
+      <view
+            category="de.lmu.ifi.dbs.medmon.PatientView"
+            class="de.lmu.ifi.dbs.medmon.medic.ui.views.ManagementView"
+            icon="icons/sample.gif"
+            id="de.lmu.ifi.dbs.medmon.medic.Management"
+            name="Patientenverwaltung"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="true"
+            category="de.lmu.ifi.dbs.medmon.medic"
+            class="de.lmu.ifi.dbs.medmon.medic.ui.views.MonitorView"
+            icon="icons/sample.gif"
+            id="de.lmu.ifi.dbs.medmon.medic.ui.views.MonitorView"
+            name="Monitor View">
+      </view>
+      <view
+            class="de.lmu.ifi.dbs.medmon.medic.ui.views.CommentView"
+            id="de.lmu.ifi.dbs.medmon.medic.ui.views.CommentView"
+            name="Comment View">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="de.lmu.ifi.dbs.medmon.medic.ui.perspective.DefaultPerspectiveFactory"
+            id="de.lmu.ifi.dbs.medmon.medic.ui.default"
+            name="Visualize">
+      </perspective>
+       <perspective
+            class="de.lmu.ifi.dbs.medmon.medic.ui.perspective.PatientPerspectiveFactory"
+            icon="IMG_OBJS_INFO_TSK"
+            id="de.lmu.ifi.dbs.medmon.medic.PatientManagement"
+            name="Patienten">
+      </perspective>
+      <perspective
+            class="de.lmu.ifi.dbs.medmon.medic.ui.perspective.ManagementPerspective"
+            id="de.lmu.ifi.dbs.medmon.medic.ManagementPerspective"
+            name="Verwaltung">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="de.lmu.ifi.dbs.medmon.medic.ui.default">
+         <view
+               id="de.lmu.ifi.dbs.medmon.medic.ui.views.MonitorView"
+               minimized="false"
+               ratio="0.5f"
+               relationship="bottom"
+               relative="org.eclipse.ui.editorss"
+               visible="true">
+         </view>
+         <view
+               id="de.lmu.ifi.dbs.medmon.sensor.DataTreeView"
+               minimized="false"
+               ratio="0.5f"
+               relationship="left"
+               relative="org.eclipse.ui.editorss"
+               visible="true">
+         </view>
+         <view
+               id="de.lmu.ifi.dbs.medmon.algorithm.views.AlgorithmView"
+               minimized="false"
+               ratio="0.5f"
+               relationship="right"
+               relative="org.eclipse.ui.editorss"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+      
+      <perspectiveExtension
+            targetID="de.lmu.ifi.dbs.medmon.medic.PatientManagement">
+         <actionSet
+               id="de.lmu.ifi.dbs.medmon.medic.actionSet">
+         </actionSet>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="de.lmu.ifi.dbs.medmon.medic.ManagementPerspective">
+         <view
+               id="de.lmu.ifi.dbs.medmon.medic.Management"
+               minimized="false"
+               relationship="top"
+               relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               visible="true">
+         </view>
+         <view
+               id="de.lmu.ifi.dbs.medmon.sensor.Management"
+               minimized="false"
+               relationship="stack"
+               relative="de.lmu.ifi.dbs.medmon.medic.Management"
+               showTitle="true">
+         </view>
+         <view
+               id="de.lmu.ifi.dbs.medmon.therapy.view.DiseaseManagement"
+               minimized="false"
+               relationship="stack"
+               relative="de.lmu.ifi.dbs.medmon.medic.Management"
+               showTitle="true">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   
+    <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="de.lmu.ifi.dbs.medmon.medic.ui.editor.PatientEditor"
+            default="false"
+            id="de.lmu.ifi.dbs.medmon.medic.PatientEditor"
+            name="Patient Editor">
+      </editor>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.OpenDefaultPerspectiveHandler"
+            id="de.lmu.ifi.dbs.medmon.medic.OpenDefaultPerspective"
+            name="Open default visualizer perspective">
+      </command>
+      
+       <command
+            defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.OpenPatientEditorHandler"
+            id="de.lmu.ifi.dbs.medmon.medic.OpenPatientEditor"
+            name="Patienteditor oeffnen">
+      </command>
+      <command
+            defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.NewPatientHandler"
+            id="de.lmu.ifi.dbs.medmon.medic.create"
+            name="Patient anlegen">
+      </command>
+      <command
+            defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.DeletePatientHandler"
+            id="de.lmu.ifi.dbs.medmon.medic.delete"
+            name="Patient entfernen">
+      </command>
+      <command
+            defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.ImportPatientHandler"
+            id="de.lmu.ifi.dbs.medmon.medic.import"
+            name="Patient importieren">
+      </command>
+      <command
+            defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.ExportPatientHandler"
+            id="de.lmu.ifi.dbs.medmon.medic.export"
+            name="Patient exportieren">
+      </command>
+   </extension>
+
+</plugin>

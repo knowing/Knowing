@@ -1,6 +1,10 @@
 package de.lmu.ifi.dbs.medmon.patient.service.component;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
+
+import javax.xml.bind.PropertyException;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -19,12 +23,14 @@ import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
  * PatientService declarative Service.
  * 
  * @author Nepomuk Seiler
- * @version 1.0a
+ * @version 1.1
  */
 public class PatientService implements IPatientService {
 		
 	private ComponentContext context;
 	private HashMap<String, Object> selections;
+	
+	private PropertyChangeSupport support = new PropertyChangeSupport(this);
 	
 	@Override
 	public boolean setSelection(ISelection selection) {
@@ -51,19 +57,25 @@ public class PatientService implements IPatientService {
 		if(first instanceof Patient) {
 			selections.clear();			//Reset Selections if new patient is being set
 			selections.put(PATIENT, (Patient)first);
-		}
-		else if (first instanceof IAlgorithm)
+		} else if (first instanceof IAlgorithm) {
+			support.firePropertyChange(ALGORITHM, selections.get(ALGORITHM), first);
 			selections.put(ALGORITHM, (IAlgorithm)first);
-		else if(first instanceof IAnalyzedData)
+		} else if(first instanceof IAnalyzedData) {
+			support.firePropertyChange(ANALYZED_DATA, selections.get(ANALYZED_DATA), first);
 			selections.put(ANALYZED_DATA, (IAnalyzedData)first);
-		else if(first instanceof Data)
+		} else if(first instanceof Data) {
+			support.firePropertyChange(SENSOR_DATA, selections.get(SENSOR_DATA), first);
 			selections.put(SENSOR_DATA, convert(selection.toArray()));
-		else if(first instanceof ISensorDataContainer) 
+		} else if(first instanceof ISensorDataContainer) {
+			support.firePropertyChange(SENSOR_CONTAINER, selections.get(SENSOR_CONTAINER), first);
 			selections.put(SENSOR_CONTAINER, (ISensorDataContainer)first);
-		else if(first instanceof ISensor) 
+		} else if(first instanceof ISensor) {
+			support.firePropertyChange(SENSOR, selections.get(SENSOR), first);
 			selections.put(SENSOR, (ISensor)first);
-		else
+		} else {
 			return false;
+		}
+			
 		return true;
 	}
 	
@@ -77,6 +89,24 @@ public class PatientService implements IPatientService {
 	@Override
 	public Object getSelection(String clazz) {
 		return selections.get(clazz);
+	}
+	
+	@Override
+	public void addPropertyChangeListener(String property,PropertyChangeListener listener) {
+		if(property.equals(ALGORITHM) ||
+				property.equals(ANALYZED_DATA) ||
+				property.equals(PATIENT) ||
+				property.equals(SENSOR) ||
+				property.equals(SENSOR_CONTAINER) ||
+				property.equals(SENSOR_DATA))
+		support.addPropertyChangeListener(property, listener);
+		else
+			throw new IllegalArgumentException("Value " + property + " is invalid. Choose from IPatientService");
+	}
+	
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		support.removePropertyChangeListener(listener);
 	}
 	
     protected void activate(ComponentContext context){

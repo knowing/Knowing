@@ -1,5 +1,7 @@
 package de.lmu.ifi.dbs.medmon.algorithm.ui.views;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
@@ -31,7 +33,7 @@ import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
  * <p>
  */
 
-public class AlgorithmView extends ViewPart {
+public class AlgorithmView extends ViewPart implements PropertyChangeListener{
 
 	/**
 	 * The ID of the view as specified by the extension.
@@ -39,6 +41,12 @@ public class AlgorithmView extends ViewPart {
 	public static final String ID = "de.lmu.ifi.dbs.medmon.algorithm.views.AlgorithmView";
 
 	private ManagedForm managedForm;
+
+	private AlgorithmConfigurationPart part;
+	
+	public AlgorithmView() {
+		Activator.getPatientService().addPropertyChangeListener(IPatientService.ALGORITHM, this);
+	}
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -51,13 +59,12 @@ public class AlgorithmView extends ViewPart {
 	
 	public void initialize(ManagedForm managedForm) {
 		Section section = new Section(managedForm.getForm().getBody(), Section.NO_TITLE);
-		AlgorithmConfigurationPart part = new AlgorithmConfigurationPart(section, getParameters());
+		part = new AlgorithmConfigurationPart(section, getParameters());
 		managedForm.addPart(part);
 	}
 
 	private Map<String, IProcessorParameter> getParameters() {
-		IAlgorithm algorithm = (IAlgorithm) Activator
-				.getPatientService().getSelection(IPatientService.ALGORITHM);
+		IAlgorithm algorithm = (IAlgorithm) Activator.getPatientService().getSelection(IPatientService.ALGORITHM);
 		if(algorithm != null)
 			return algorithm.getParameters();
 		return null;
@@ -78,9 +85,9 @@ public class AlgorithmView extends ViewPart {
 	public void setFocus() {
 		managedForm.getForm().setFocus();
 	}
-
-	private IAlgorithm getAlgorithm() {
-		return (IAlgorithm) Activator.getPatientService()
-				.getSelection(IPatientService.ALGORITHM);
+	
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		part.setFormInput(event.getNewValue());
 	}
 }

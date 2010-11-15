@@ -96,12 +96,12 @@
                label="Ansicht">
             <command
                   commandId="org.eclipse.ui.perspectives.showPerspective"
-                  label="Ansicht"
+                  label="Perspektiven"
                   style="push">
             </command>
             <command
                   commandId="org.eclipse.ui.views.showView"
-                  label="Fenster oeffnen"
+                  label="View oeffnen"
                   style="push">
             </command>
          </menu>
