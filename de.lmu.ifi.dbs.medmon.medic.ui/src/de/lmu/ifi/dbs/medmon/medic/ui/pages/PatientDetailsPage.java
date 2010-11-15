@@ -58,6 +58,8 @@ public class PatientDetailsPage implements IDetailsPage {
 
 	private boolean dirty; // Represents dirty state
 
+	private Label labelId;
+
 	public PatientDetailsPage() {
 	}
 
@@ -102,9 +104,7 @@ public class PatientDetailsPage implements IDetailsPage {
 		toolkit.adapt(lID, true, true);
 		lID.setText("ID");
 		
-		Label label = new Label(gClient, SWT.NONE);
-		toolkit.adapt(label, true, true);
-		label.setText("10821549");
+		labelId = toolkit.createLabel(gClient, "");
 
 		toolkit.createLabel(gClient, "Name");
 		firstname = toolkit.createText(gClient, "", SWT.BORDER);
@@ -120,11 +120,11 @@ public class PatientDetailsPage implements IDetailsPage {
 
 		gSection.setClient(gClient);
 		
-		Label label_1 = new Label(gClient, SWT.NONE);
-		GridData gd_label_1 = new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1);
-		gd_label_1.heightHint = 20;
-		label_1.setLayoutData(gd_label_1);
-		toolkit.adapt(label_1, true, true);
+		Label lSeprator = toolkit.createLabel(gClient, "");
+		GridData gd_label = new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1);
+		gd_label.heightHint = 20;
+		lSeprator.setLayoutData(gd_label);
+
 		
 		Label lblGeboren = new Label(gClient, SWT.NONE);
 		toolkit.adapt(lblGeboren, true, true);
@@ -168,6 +168,10 @@ public class PatientDetailsPage implements IDetailsPage {
 		IObservableValue lastnameObserveTextObserveWidget = SWTObservables.observeText(lastname, SWT.Modify);
 		IObservableValue patientLastnameObserveValue = PojoObservables.observeValue(patient, "lastname");
 		bindingContext.bindValue(lastnameObserveTextObserveWidget,patientLastnameObserveValue, null, null);
+		//
+		IObservableValue labelObserveTextObserveWidget = SWTObservables.observeText(labelId);
+		IObservableValue patientIdObserveValue = PojoObservables.observeValue(patient, "id");
+		bindingContext.bindValue(labelObserveTextObserveWidget, patientIdObserveValue, null, null);
 		//
 		return bindingContext;
 	}

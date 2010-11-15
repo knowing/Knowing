@@ -8,6 +8,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -35,10 +37,14 @@ import de.lmu.ifi.dbs.medmon.sensor.ui.provider.DataContentProvider;
 import de.lmu.ifi.dbs.medmon.sensor.ui.provider.DataLabelProvider;
 import de.lmu.ifi.dbs.medmon.sensor.ui.provider.SensorDetailPageProvider;
 import de.lmu.ifi.dbs.medmon.sensor.ui.viewer.SensorTableViewer;
+import de.lmu.ifi.dbs.medmon.sensor.ui.wizard.DataSelectionWizard;
+
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 
 public class SensorMasterBlock extends MasterDetailsBlock {
 
@@ -161,6 +167,14 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 		
 		Button bLoad = toolkit.createButton(dbComposite, "Laden", SWT.NONE);
+		bLoad.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IWizard wizard = new DataSelectionWizard();
+				WizardDialog dialog = new WizardDialog(e.widget.getDisplay().getActiveShell(), wizard);
+				dialog.open();
+			}
+		});
 		bLoad.setImage(ResourceManager.getPluginImageDescriptor(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_ARROW_UP_16).createImage());
 		bLoad.setLayoutData(new GridData(GridData.END, GridData.CENTER, true, false));
 		
