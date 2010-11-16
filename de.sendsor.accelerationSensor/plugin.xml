@@ -19,6 +19,9 @@
    </extension>
    <extension
          point="de.lmu.ifi.dbs.medmon.disease">
+   </extension>
+   <extension
+         point="de.lmu.ifi.dbs.medmon.disease">
       <disease
             class="de.sendsor.accelerationSensor.therapy.DefaultDisease">
       </disease>

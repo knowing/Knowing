@@ -23,11 +23,12 @@ public interface IMedmonConstants {
 	//Views
 	public static final String ALGORITHM_VIEW = "de.lmu.ifi.dbs.medmon.algorithm.views.AlgorithmView";
 	public static final String ALGORITHM_MANAGEMENT_VIEW = "de.lmu.ifi.dbs.medmon.algorithm.Management";
-	public static final String PATIENT_LIST_VIEW = "de.lmu.ifi.dbs.medmon.medic.views.PatientListView";
-	public static final String SENSOR_DATA_VIEW = "de.lmu.ifi.dbs.medmon.sensor.SensorDataView";
-	public static final String SENSOR_DATA_TREE_VIEW = "de.lmu.ifi.dbs.medmon.sensor.DataTreeView";
-	public static final String SENSOR_MANAGEMENT_VIEW = "de.lmu.ifi.dbs.medmon.sensor.Management";
-	public static final String THERAPY_MANAGEMENT_VIEW = "de.lmu.ifi.dbs.medmon.therapy.view.DiseaseManagement";
+	public static final String PATIENT_LIST_VIEW = "de.lmu.ifi.dbs.medmon.medic.ui.PatientListView";
+	public static final String THERAPY_MANAGEMENT_VIEW = "de.lmu.ifi.dbs.medmon.medic.ui.TherapyManagement";
+	public static final String SENSOR_DATA_VIEW = "de.lmu.ifi.dbs.medmon.medic.ui.DataView";
+	public static final String SENSOR_DATA_TREE_VIEW = "de.lmu.ifi.dbs.medmon.medic.ui.DataTreeView";
+	public static final String SENSOR_MANAGEMENT_VIEW = "de.lmu.ifi.dbs.medmon.medic.ui.DataManagement";
+
 	
 	
 	//Editors

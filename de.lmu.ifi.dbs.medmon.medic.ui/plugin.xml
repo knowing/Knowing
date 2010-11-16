@@ -64,25 +64,28 @@
    </extension>
    <extension
          point="org.eclipse.ui.views">
-      <category
-            name="Monitor Category"
-            id="de.lmu.ifi.dbs.medmon.medic">
-      </category>
       
       <category
-            name="Patientmanagement"
-            id="de.lmu.ifi.dbs.medmon.PatientView">
+            name="Aerzte"
+            id="de.lmu.ifi.dbs.medmon.medic.ui.category">
       </category>
+      
+      <view
+            category="de.lmu.ifi.dbs.medmon.medic.ui.category"
+            class="de.lmu.ifi.dbs.medmon.medic.ui.views.TherapyManagementView"
+            id="de.lmu.ifi.dbs.medmon.medic.ui.TherapyManagement"
+            name="Krankheiten">
+      </view>
       <view
             name="Patients List View"
             icon="icons/sample.gif"
-            category="de.lmu.ifi.dbs.medmon.PatientView"
+            category="de.lmu.ifi.dbs.medmon.medic.ui.category"
             class="de.lmu.ifi.dbs.medmon.medic.ui.views.PatientListView"
-            id="de.lmu.ifi.dbs.medmon.medic.views.PatientListView">
+            id="de.lmu.ifi.dbs.medmon.medic.ui.PatientListView">
       </view>
       <view
-            category="de.lmu.ifi.dbs.medmon.PatientView"
-            class="de.lmu.ifi.dbs.medmon.medic.ui.views.ManagementView"
+            category="de.lmu.ifi.dbs.medmon.medic.ui.category"
+            class="de.lmu.ifi.dbs.medmon.medic.ui.views.PatientManagementView"
             icon="icons/sample.gif"
             id="de.lmu.ifi.dbs.medmon.medic.Management"
             name="Patientenverwaltung"
@@ -90,16 +93,38 @@
       </view>
       <view
             allowMultiple="true"
-            category="de.lmu.ifi.dbs.medmon.medic"
+            category="de.lmu.ifi.dbs.medmon.medic.ui.category"
             class="de.lmu.ifi.dbs.medmon.medic.ui.views.MonitorView"
             icon="icons/sample.gif"
-            id="de.lmu.ifi.dbs.medmon.medic.ui.views.MonitorView"
+            id="de.lmu.ifi.dbs.medmon.medic.ui.view.MonitorView"
             name="Monitor View">
       </view>
       <view
+            category="de.lmu.ifi.dbs.medmon.medic.ui.category"
             class="de.lmu.ifi.dbs.medmon.medic.ui.views.CommentView"
             id="de.lmu.ifi.dbs.medmon.medic.ui.views.CommentView"
             name="Comment View">
+      </view>
+      <view
+            category="de.lmu.ifi.dbs.medmon.medic.ui.category"
+            class="de.lmu.ifi.dbs.medmon.medic.ui.views.DataView"
+            id="de.lmu.ifi.dbs.medmon.medic.ui.DataView"
+            name="Sensordaten"
+            restorable="true">
+      </view>
+      <view
+            category="de.lmu.ifi.dbs.medmon.medic.ui.category"
+            class="de.lmu.ifi.dbs.medmon.medic.ui.views.DataTreeView"
+            id="de.lmu.ifi.dbs.medmon.medic.ui.DataTreeView"
+            name="Baumansicht"
+            restorable="true">
+      </view>
+      <view
+            category="de.lmu.ifi.dbs.medmon.medic.ui.category"
+            class="de.lmu.ifi.dbs.medmon.medic.ui.views.DataManagementView"
+            id="de.lmu.ifi.dbs.medmon.medic.ui.DataManagement"
+            name="Datenverwaltung"
+            restorable="true">
       </view>
    </extension>
    <extension
@@ -126,7 +151,7 @@
       <perspectiveExtension
             targetID="de.lmu.ifi.dbs.medmon.medic.ui.default">
          <view
-               id="de.lmu.ifi.dbs.medmon.medic.ui.views.MonitorView"
+               id="de.lmu.ifi.dbs.medmon.medic.ui.view.MonitorView"
                minimized="false"
                ratio="0.5f"
                relationship="bottom"
@@ -134,7 +159,7 @@
                visible="true">
          </view>
          <view
-               id="de.lmu.ifi.dbs.medmon.sensor.DataTreeView"
+               id="de.lmu.ifi.dbs.medmon.medic.ui.DataTreeView"
                minimized="false"
                ratio="0.5f"
                relationship="left"
@@ -226,6 +251,11 @@
             defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.ExportPatientHandler"
             id="de.lmu.ifi.dbs.medmon.medic.export"
             name="Patient exportieren">
+      </command>
+      <command
+            defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.CallImportWizard"
+            id="de.lmu.ifi.dbs.medmon.sensor.CallImportWizard"
+            name="Call ImportWizard">
       </command>
    </extension>
 

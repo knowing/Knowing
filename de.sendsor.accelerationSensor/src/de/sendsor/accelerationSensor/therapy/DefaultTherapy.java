@@ -2,8 +2,8 @@ package de.sendsor.accelerationSensor.therapy;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
-import de.lmu.ifi.dbs.medmon.therapy.core.extensions.IDisease;
-import de.lmu.ifi.dbs.medmon.therapy.core.extensions.ITherapy;
+import de.lmu.ifi.dbs.medmon.medic.core.extensions.IDisease;
+import de.lmu.ifi.dbs.medmon.medic.core.extensions.ITherapy;
 
 public class DefaultTherapy implements ITherapy{
 

@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Listener;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.database.util.JPAUtil;
 
-public class ManagementController implements Listener {
+public class PatientManagementController implements Listener {
 
 	public static final Integer BUTTON_ADD = 0;
 	public static final Integer BUTTON_SAVE = 1;
@@ -21,7 +21,7 @@ public class ManagementController implements Listener {
 
 	private final TableViewer viewer;
 
-	public ManagementController(TableViewer viewer) {
+	public PatientManagementController(TableViewer viewer) {
 		this.viewer = viewer;
 	}
 

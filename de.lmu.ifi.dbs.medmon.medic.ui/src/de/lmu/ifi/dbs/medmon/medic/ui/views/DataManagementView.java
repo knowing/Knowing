@@ -7,15 +7,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.part.ViewPart;
 
-import de.lmu.ifi.dbs.medmon.medic.ui.pages.PatientEditorBlock;
+import de.lmu.ifi.dbs.medmon.medic.ui.pages.SensorMasterBlock;
 
-public class ManagementView extends ViewPart {
+public class DataManagementView extends ViewPart {
 
-	public static final String ID = "de.lmu.ifi.dbs.medmon.medic.Management";
+	public static final String ID = "de.lmu.ifi.dbs.medmon.patient.Management";
 	
 	private ManagedForm managedForm;
-
-	public ManagementView() {
+	
+	public DataManagementView() {
 	}
 
 	@Override
@@ -26,9 +26,9 @@ public class ManagementView extends ViewPart {
 
 		initialize(managedForm);
 	}
-
+	
 	public void initialize(ManagedForm managedForm) {
-		PatientEditorBlock block = new PatientEditorBlock(getViewSite().getActionBars().getStatusLineManager());
+		SensorMasterBlock block = new SensorMasterBlock();
 		block.createContent(managedForm);
 	}
 
@@ -42,7 +42,7 @@ public class ManagementView extends ViewPart {
 		managedForm.getForm().setLayoutData(gridData);
 		return managedForm;
 	}
-	
+
 	@Override
 	public void setFocus() {
 		managedForm.getForm().setFocus();
