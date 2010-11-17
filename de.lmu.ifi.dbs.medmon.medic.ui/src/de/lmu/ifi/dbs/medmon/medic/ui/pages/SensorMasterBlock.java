@@ -40,6 +40,7 @@ import de.lmu.ifi.dbs.medmon.medic.ui.provider.DataLabelProvider;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.SensorDetailPageProvider;
 import de.lmu.ifi.dbs.medmon.medic.ui.viewer.SensorTableViewer;
 import de.lmu.ifi.dbs.medmon.medic.ui.wizard.DataSelectionWizard;
+import de.lmu.ifi.dbs.medmon.medic.ui.wizard.ImportWizard;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
@@ -92,12 +93,12 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 		Button bOpen = toolkit.createButton(sensorClient, "Sensor hinzufuegen", SWT.NONE);
 		bOpen.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
 		bOpen.setText("Sensor oeffnen");
-		bOpen.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_ADD_16));
+		//bOpen.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_ADD_16));
 
 		Button bSensorRefresh = toolkit.createButton(sensorClient, "Aktualisieren", SWT.NONE);
 		bSensorRefresh.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		bSensorRefresh.setAlignment(SWT.RIGHT);
-		bSensorRefresh.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN,IMedmonConstants.IMG_REFRESH_16));
+		//bSensorRefresh.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN,IMedmonConstants.IMG_REFRESH_16));
 		toolkit.paintBordersFor(sensorClient);
 
 		/* DataSection */
@@ -146,7 +147,7 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 		});
 		
 		Button bImport = toolkit.createButton(sensorComposite, "Importieren", SWT.NONE);
-		bImport.setImage(ResourceManager.getPluginImageDescriptor(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_ARROW_DOWN_16).createImage());
+		//bImport.setImage(ResourceManager.getPluginImageDescriptor(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_ARROW_DOWN_16).createImage());
 		bImport.setLayoutData(new GridData(GridData.END, GridData.CENTER, false, false));
 		bImport.setEnabled(false);
 		
@@ -158,11 +159,11 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 		databaseTabItem.setText("Datenbank");
 		
 		Composite dbComposite = toolkit.createComposite(tabFolder, SWT.NONE);
-		dbComposite.setLayout(new GridLayout(2, false));
+		dbComposite.setLayout(new GridLayout(3, false));
 		
 		TreeViewer treeViewer = new TreeViewer(dbComposite, SWT.NONE);
 		Tree tree = treeViewer.getTree();
-		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 		
 		Button bLoad = toolkit.createButton(dbComposite, "Laden", SWT.NONE);
 		bLoad.addSelectionListener(new SelectionAdapter() {
@@ -173,11 +174,22 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 				dialog.open();
 			}
 		});
-		bLoad.setImage(ResourceManager.getPluginImageDescriptor(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_ARROW_UP_16).createImage());
+		//bLoad.setImage(ResourceManager.getPluginImageDescriptor(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_ARROW_UP_16).createImage());
 		bLoad.setLayoutData(new GridData(GridData.END, GridData.CENTER, true, false));
 		
+		Button bDBImport = toolkit.createButton(dbComposite, "Importieren", SWT.NONE);
+		bDBImport.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				//TODO Wizard Defaults
+				IWizard wizard = new ImportWizard();
+				WizardDialog dialog = new WizardDialog(e.widget.getDisplay().getActiveShell(), wizard);
+				dialog.open();
+			}
+		});
+		
 		Button bRefresh = toolkit.createButton(dbComposite, "Aktualisieren", SWT.NONE);
-		bRefresh.setImage(ResourceManager.getPluginImageDescriptor(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_REFRESH_16).createImage());
+		//bRefresh.setImage(ResourceManager.getPluginImageDescriptor(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_REFRESH_16).createImage());
 		bRefresh.setLayoutData(new GridData(GridData.END, GridData.CENTER, false, false));
 
 		databaseTabItem.setControl(dbComposite);

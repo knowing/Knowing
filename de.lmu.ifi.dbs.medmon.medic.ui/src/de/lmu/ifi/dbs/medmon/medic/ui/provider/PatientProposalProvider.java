@@ -15,6 +15,9 @@ import de.lmu.ifi.dbs.medmon.database.util.JPAUtil;
 public class PatientProposalProvider implements IContentProposalProvider {
 
 	
+	private final static char LEFT = '<';
+	private final static char RIGHT = '>';
+
 	@Override
 	public IContentProposal[] getProposals(String contents, int position) {
 		EntityManager entityManager = JPAUtil.currentEntityManager();
@@ -26,10 +29,19 @@ public class PatientProposalProvider implements IContentProposalProvider {
 		int index = 0;
 		IContentProposal[] returns = new IContentProposal[results.size()];
 		for (Patient patient : results) {
-			String content = patient.toString();
+			String content = patient.toString() + "<" + patient.getId() + ">";
 			returns[index++] = new ContentProposal(content);
 		}
 		return returns;
+	}
+	
+	public static Patient parsePatient(String patient) {
+		int left_index = patient.indexOf(LEFT);
+		int right_index = patient.indexOf(RIGHT);
+		String idString = patient.substring(left_index+1, right_index);
+		int id = Integer.valueOf(idString);
+		EntityManager entityManager = JPAUtil.currentEntityManager();
+		return entityManager.find(Patient.class, id);
 	}
 
 }

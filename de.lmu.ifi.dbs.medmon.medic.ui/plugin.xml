@@ -193,14 +193,14 @@
                visible="true">
          </view>
          <view
-               id="de.lmu.ifi.dbs.medmon.sensor.Management"
+               id="de.lmu.ifi.dbs.medmon.medic.ui.DataManagement"
                minimized="false"
                relationship="stack"
                relative="de.lmu.ifi.dbs.medmon.medic.Management"
                showTitle="true">
          </view>
          <view
-               id="de.lmu.ifi.dbs.medmon.therapy.view.DiseaseManagement"
+               id="de.lmu.ifi.dbs.medmon.medic.ui.TherapyManagement"
                minimized="false"
                relationship="stack"
                relative="de.lmu.ifi.dbs.medmon.medic.Management"

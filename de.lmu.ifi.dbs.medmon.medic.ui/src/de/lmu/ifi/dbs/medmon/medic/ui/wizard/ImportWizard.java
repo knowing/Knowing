@@ -54,7 +54,7 @@ public class ImportWizard extends Wizard {
 		System.out.println("Patient: " + patient);
 		System.out.println("Start: " + start);
 		System.out.println("End: " + end);
-		persistData();
+		//persistData();
 		return true;
 	}
 
