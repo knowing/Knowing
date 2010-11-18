@@ -16,6 +16,7 @@ Require-Bundle: org.eclipse.ui,
  de.lmu.ifi.dbs.medmon.sensor.core;bundle-version="1.0.0",
  de.lmu.ifi.dbs.medmon.datamining.core;bundle-version="1.0.0",
  de.lmu.ifi.dbs.elki.libs;bundle-version="1.0.0",
- de.lmu.ifi.dbs.medmon.rcp;bundle-version="1.0.0"
+ de.lmu.ifi.dbs.medmon.rcp;bundle-version="1.0.0",
+ org.eclipse.core.resources;bundle-version="3.6.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

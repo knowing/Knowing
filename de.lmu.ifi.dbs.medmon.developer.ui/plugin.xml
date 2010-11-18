@@ -86,6 +86,12 @@
             id="de.lmu.ifi.dbs.medmon.developer.ui.ClusteringWizard"
             name="New Cluster">
       </wizard>
+      <wizard
+            class="de.lmu.ifi.dbs.medmon.developer.ui.wizard.DPUWizard"
+            finalPerspective="de.lmu.ifi.dbs.medmon.developer.perspective"
+            id="de.lmu.ifi.dbs.medmon.developer.ui.dpu"
+            name="New DPU">
+      </wizard>
    </extension>
 
 </plugin>

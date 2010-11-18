@@ -1,31 +1,35 @@
 package de.lmu.ifi.dbs.medmon.developer.ui.pages;
 
+import java.util.LinkedList;
+
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.dialogs.AbstractElementListSelectionDialog;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.ui.forms.widgets.Section;
 
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.util.FrameworkUtil;
+import de.lmu.ifi.dbs.medmon.developer.ui.dnd.ProcessorDragListener;
+import de.lmu.ifi.dbs.medmon.developer.ui.dnd.ProcessorDropListener;
 import de.lmu.ifi.dbs.medmon.developer.ui.provider.ProcessorsContentProvider;
 import de.lmu.ifi.dbs.medmon.developer.ui.provider.ProcessorsLabelProvider;
 
@@ -35,8 +39,15 @@ public class ProcessorUnitManagePage extends FormPage {
 
 	private Text fText;
 	private String fFilter;
-	private Text tName;
-	private Text text;
+	private Text tName, text;
+
+	private Button bAdd;
+
+	private boolean dirty;
+
+	private ListViewer processorsViewer;
+
+	private ListViewer unitListViewer;
 
 	/**
 	 * Create the form page.
@@ -70,25 +81,35 @@ public class ProcessorUnitManagePage extends FormPage {
 		Label lName = managedForm.getToolkit().createLabel(managedForm.getForm().getBody(), "Name", SWT.NONE);
 		lName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 
+		DPUController controller = new DPUController();
 		tName = managedForm.getToolkit().createText(managedForm.getForm().getBody(), "New Text", SWT.NONE);
 		tName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		tName.addListener(SWT.Modify, controller);
 		Label label = new Label(managedForm.getForm().getBody(), SWT.NONE);
 		label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 
 		fText = managedForm.getToolkit().createText(body, "<filter>", SWT.NONE);
 		fText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		ListViewer unitListViewer = new ListViewer(body, SWT.BORDER | SWT.V_SCROLL);
-		List unitList = unitListViewer.getList();
-		unitList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 6));
+		unitListViewer = new ListViewer(body, SWT.BORDER | SWT.V_SCROLL);
+		unitListViewer.setContentProvider(new ProcessorsContentProvider());
+		unitListViewer.setLabelProvider(new ProcessorsLabelProvider());
+		unitListViewer.getList().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 6));
+		unitListViewer.getList().addListener(SWT.Modify, controller);
+		unitListViewer.setInput(new LinkedList<DataProcessor>());
+		int operations = DND.DROP_COPY| DND.DROP_MOVE;
+		Transfer[] transferTypes = new Transfer[]{TextTransfer.getInstance()};
+		unitListViewer.addDropSupport(operations, transferTypes, new ProcessorDropListener(unitListViewer));
 
-		Button add = managedForm.getToolkit().createButton(body, "add", SWT.NONE);
-		add.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
+		bAdd = managedForm.getToolkit().createButton(body, "add", SWT.NONE);
+		bAdd.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
+		bAdd.addListener(SWT.Selection, controller);
 
-		ListViewer processorsViewer = new ListViewer(body, SWT.BORDER | SWT.V_SCROLL);
+		processorsViewer = new ListViewer(body, SWT.BORDER | SWT.V_SCROLL);
 		processorsViewer.setContentProvider(new ProcessorsContentProvider());
 		processorsViewer.setLabelProvider(new ProcessorsLabelProvider());
-		processorsViewer.setInput(this);
+		processorsViewer.setInput(FrameworkUtil.evaluateDataProcessors());
+		processorsViewer.addDragSupport(operations, transferTypes, new ProcessorDragListener(processorsViewer));
 		
 		List processorsList = processorsViewer.getList();
 		processorsList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 5));
@@ -114,8 +135,42 @@ public class ProcessorUnitManagePage extends FormPage {
 		
 		sDescription.setClient(descriptionClient);
 		toolkit.paintBordersFor(sDescription);
-
 	}
 	
 	
+	
+	@Override
+	public boolean isDirty() {
+		return dirty;
+	}
+	
+	private class DPUController implements Listener {
+		
+		@Override
+		public void handleEvent(Event event) {
+			if(event.type == SWT.Modify) {
+				dirty = true;
+				getEditor().editorDirtyStateChanged();
+			}
+			if(event.widget == bAdd) {
+				//Normal viewer.add(Object) doesn't allow duplicates
+				IStructuredSelection selection = (IStructuredSelection) processorsViewer.getSelection();
+				if(!selection.isEmpty()) {
+					if(selection.getFirstElement() instanceof IDataProcessor) {
+						IDataProcessor processor = (IDataProcessor) selection.getFirstElement();
+						unitListViewer.setInput(processor);
+					} else if (selection.getFirstElement() instanceof DataProcessor) {
+						DataProcessor processor = (DataProcessor) selection.getFirstElement();
+						unitListViewer.setInput(processor);
+					}
+					
+				}
+				
+			}
+		}
+		
+		private void addProcessor() {
+			
+		}
+	}
 }

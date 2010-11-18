@@ -23,6 +23,12 @@ public class DataProcessor {
 		this.id = id;
 		this.providedby = providedby;
 	}
+	
+	public DataProcessor(IDataProcessor processor) {
+		this.name = processor.getName();
+		this.id = processor.getID();
+		this.providedby = "unkown"; //TODO get BundleID
+	}
 
 	public String getName() {
 		return name;
