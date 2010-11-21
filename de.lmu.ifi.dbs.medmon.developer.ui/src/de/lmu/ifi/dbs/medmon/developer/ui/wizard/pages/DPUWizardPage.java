@@ -72,9 +72,6 @@ public class DPUWizardPage extends WizardPage {
 	public List<DataProcessor> getDataProcessors() {
 		//Sample ones
 		LinkedList<DataProcessor> returns = new LinkedList<DataProcessor>();
-		returns.add(new DataProcessor("Sample1", "Sample1.1.0a", "datamining.core"));
-		returns.add(new DataProcessor("Sample2", "Sample2.5.1", "datamining.core"));
-		returns.add(new DataProcessor("Sample3", "Sample3.2.0c", "datamining.core"));
 		return returns;
 	}
 }

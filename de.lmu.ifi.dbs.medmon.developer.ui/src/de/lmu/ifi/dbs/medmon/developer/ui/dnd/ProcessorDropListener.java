@@ -5,6 +5,9 @@ import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TransferData;
 
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
+
 public class ProcessorDropListener extends ViewerDropAdapter {
 
 	public ProcessorDropListener(Viewer viewer) {
@@ -17,8 +20,15 @@ public class ProcessorDropListener extends ViewerDropAdapter {
 	@Override
 	public boolean performDrop(Object data) {
 		System.out.println("Data to Drop: " + data);
-		getViewer().setInput(data);
-		return false;
+		if(data == null)
+			return false;
+		DataProcessor[] toDrop = (DataProcessor[])data;
+		DataProcessingUnit dpu = (DataProcessingUnit) getViewer().getInput();
+		
+		for (DataProcessor dataProcessor : toDrop)
+			dpu.getProcessors().add(dataProcessor);
+		
+		return true;
 	}
 
 	@Override
@@ -29,7 +39,7 @@ public class ProcessorDropListener extends ViewerDropAdapter {
 	@Override
 	public void drop(DropTargetEvent event) {
 		int location = this.determineLocation(event);
-		String target = (String) determineTarget(event);
+		DataProcessor target = (DataProcessor)determineTarget(event);
 		String translatedLocation ="";
 		switch (location){
 		case 1 :
@@ -48,6 +58,7 @@ public class ProcessorDropListener extends ViewerDropAdapter {
 		System.out.println(translatedLocation);
 		System.out.println("The drop was done on the element: " + target );
 		super.drop(event);
+		getViewer().refresh();
 	}
 
 }

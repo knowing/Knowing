@@ -25,10 +25,15 @@ public class ProcessorDragListener implements DragSourceListener {
 	public void dragSetData(DragSourceEvent event) {
 		// Here you do the convertion to the type which is expected.
 		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-		DataProcessor firstElement = (DataProcessor) selection.getFirstElement();
+		Object[] array = selection.toArray();
+		DataProcessor[] processors = new DataProcessor[array.length];
+		//Maybe a bit eaiser?
+		for (int i = 0; i < processors.length; i++) {
+			processors[i] = (DataProcessor) array[i];			
+		}
 		
-		if (TextTransfer.getInstance().isSupportedType(event.dataType))
-			event.data = firstElement.toString();
+		if (ProcessorTransfer.getInstance().isSupportedType(event.dataType))
+			event.data = processors;
 	}
 
 	@Override

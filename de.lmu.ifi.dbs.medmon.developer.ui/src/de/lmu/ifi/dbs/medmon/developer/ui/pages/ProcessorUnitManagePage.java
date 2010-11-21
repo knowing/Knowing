@@ -30,6 +30,9 @@ import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.util.FrameworkUtil;
 import de.lmu.ifi.dbs.medmon.developer.ui.dnd.ProcessorDragListener;
 import de.lmu.ifi.dbs.medmon.developer.ui.dnd.ProcessorDropListener;
+import de.lmu.ifi.dbs.medmon.developer.ui.dnd.ProcessorTransfer;
+import de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorUnitEditorInput;
+import de.lmu.ifi.dbs.medmon.developer.ui.provider.DPUContentProvider;
 import de.lmu.ifi.dbs.medmon.developer.ui.provider.ProcessorsContentProvider;
 import de.lmu.ifi.dbs.medmon.developer.ui.provider.ProcessorsLabelProvider;
 
@@ -92,13 +95,13 @@ public class ProcessorUnitManagePage extends FormPage {
 		fText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		unitListViewer = new ListViewer(body, SWT.BORDER | SWT.V_SCROLL);
-		unitListViewer.setContentProvider(new ProcessorsContentProvider());
+		unitListViewer.setContentProvider(new DPUContentProvider());
 		unitListViewer.setLabelProvider(new ProcessorsLabelProvider());
 		unitListViewer.getList().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 6));
 		unitListViewer.getList().addListener(SWT.Modify, controller);
-		unitListViewer.setInput(new LinkedList<DataProcessor>());
+		unitListViewer.setInput(((ProcessorUnitEditorInput)getEditorInput()).getDpu());
 		int operations = DND.DROP_COPY| DND.DROP_MOVE;
-		Transfer[] transferTypes = new Transfer[]{TextTransfer.getInstance()};
+		Transfer[] transferTypes = new Transfer[]{ProcessorTransfer.getInstance()};
 		unitListViewer.addDropSupport(operations, transferTypes, new ProcessorDropListener(unitListViewer));
 
 		bAdd = managedForm.getToolkit().createButton(body, "add", SWT.NONE);
@@ -167,10 +170,6 @@ public class ProcessorUnitManagePage extends FormPage {
 				}
 				
 			}
-		}
-		
-		private void addProcessor() {
-			
 		}
 	}
 }

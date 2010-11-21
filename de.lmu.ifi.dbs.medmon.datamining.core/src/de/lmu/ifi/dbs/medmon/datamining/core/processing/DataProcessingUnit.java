@@ -1,5 +1,6 @@
 package de.lmu.ifi.dbs.medmon.datamining.core.processing;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,6 +28,8 @@ public class DataProcessingUnit{
 	@XmlElementWrapper(name = "dpu")		
 	@XmlElement(name = "dataProcessor")			
 	public List<DataProcessor> getProcessors() {
+		if(processors == null)
+			processors = new LinkedList<DataProcessor>();
 		return processors;
 	}
 	

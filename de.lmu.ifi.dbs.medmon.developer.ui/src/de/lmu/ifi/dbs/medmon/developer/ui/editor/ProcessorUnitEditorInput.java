@@ -93,7 +93,7 @@ public class ProcessorUnitEditorInput implements IEditorInput {
 
 	@Override
 	public String getToolTipText() {
-		return "";
+		return "Tooltip";
 	}
 
 	@Override
