@@ -1,8 +1,6 @@
 package de.lmu.ifi.dbs.medmon.developer.ui.editor;
 
 import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -19,7 +17,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
 import de.lmu.ifi.dbs.medmon.developer.ui.pages.ProcessorUnitConfigurationPage;
 import de.lmu.ifi.dbs.medmon.developer.ui.pages.ProcessorUnitManagePage;
 
@@ -27,7 +24,6 @@ public class ProcessorListFormEditor extends FormEditor {
 
 	public static final String ID = "de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorListFormEditor";
 	
-	private DataProcessingUnit dpu;
 	private File dpuXML;
 	
 	
@@ -35,7 +31,8 @@ public class ProcessorListFormEditor extends FormEditor {
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		super.init(site, input);
 		setPartName(input.getName());
-		createDPUFile(input);
+		ProcessorUnitEditorInput dpuInput = (ProcessorUnitEditorInput)input;
+		saveDPUFile(dpuInput.getDpu());
 	}
 
 	@Override
@@ -51,7 +48,10 @@ public class ProcessorListFormEditor extends FormEditor {
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-
+		ProcessorUnitEditorInput dpuInput = (ProcessorUnitEditorInput)getEditorInput();
+		saveDPUFile(dpuInput.getDpu());
+		setPartName(dpuInput.getDpu().getName());
+		getActivePageInstance().doSave(monitor);
 	}
 
 	@Override
@@ -69,9 +69,7 @@ public class ProcessorListFormEditor extends FormEditor {
 	 * Creates a DataProcessingUnit XML file
 	 * @param input
 	 */
-	private void createDPUFile(IEditorInput input) {
-		ProcessorUnitEditorInput dpuInput = (ProcessorUnitEditorInput)input;
-		dpu = dpuInput.getDpu();
+	private void saveDPUFile(DataProcessingUnit dpu) {
 		
 		//Check out the workspace location
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -79,7 +77,13 @@ public class ProcessorListFormEditor extends FormEditor {
 		IPath location = root.getLocation();
 		
 		try {
-			dpuXML = new File(location.toOSString() + File.separator + input.getName() + ".xml");
+			if(dpuXML == null) {
+				dpuXML = new File(location.toOSString() + File.separator + dpu.getName() + ".xml");
+			} else 	if(!dpuXML.getName().equals(dpu.getName() + ".xml")) {
+				if(dpuXML.delete()) {
+					dpuXML = new File(location.toOSString() + File.separator + dpu.getName() + ".xml");
+				}		
+			}
 			JAXBContext context = JAXBContext.newInstance(DataProcessingUnit.class);
 			Marshaller m = context.createMarshaller();
 			m.marshal(dpu, dpuXML);
@@ -88,6 +92,4 @@ public class ProcessorListFormEditor extends FormEditor {
 		}	
 	}
 	
-	
-
 }

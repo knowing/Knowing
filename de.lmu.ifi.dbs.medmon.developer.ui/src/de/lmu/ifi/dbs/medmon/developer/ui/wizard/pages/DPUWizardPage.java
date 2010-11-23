@@ -70,7 +70,6 @@ public class DPUWizardPage extends WizardPage {
 	}
 	
 	public List<DataProcessor> getDataProcessors() {
-		//Sample ones
 		LinkedList<DataProcessor> returns = new LinkedList<DataProcessor>();
 		return returns;
 	}

@@ -1,12 +1,10 @@
 package de.lmu.ifi.dbs.medmon.developer.ui.pages;
 
-import java.util.LinkedList;
-
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -25,6 +23,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.util.FrameworkUtil;
@@ -35,8 +34,13 @@ import de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorUnitEditorInput;
 import de.lmu.ifi.dbs.medmon.developer.ui.provider.DPUContentProvider;
 import de.lmu.ifi.dbs.medmon.developer.ui.provider.ProcessorsContentProvider;
 import de.lmu.ifi.dbs.medmon.developer.ui.provider.ProcessorsLabelProvider;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.core.databinding.beans.PojoObservables;
 
 public class ProcessorUnitManagePage extends FormPage {
+	private DataBindingContext m_bindingContext;
 
 	public static final String ID = "de.lmu.ifi.dbs.medmon.developer.ui.pages.UnitFormPage";
 
@@ -52,6 +56,8 @@ public class ProcessorUnitManagePage extends FormPage {
 
 	private ListViewer unitListViewer;
 
+	private DataProcessingUnit dpu;
+
 	/**
 	 * Create the form page.
 	 * 
@@ -64,6 +70,7 @@ public class ProcessorUnitManagePage extends FormPage {
 	 */
 	public ProcessorUnitManagePage(FormEditor editor) {
 		super(editor, ID, "Processing Unit");
+		dpu = ((ProcessorUnitEditorInput)editor.getEditorInput()).getDpu();
 	}
 
 	/**
@@ -98,7 +105,6 @@ public class ProcessorUnitManagePage extends FormPage {
 		unitListViewer.setContentProvider(new DPUContentProvider());
 		unitListViewer.setLabelProvider(new ProcessorsLabelProvider());
 		unitListViewer.getList().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 6));
-		unitListViewer.getList().addListener(SWT.Modify, controller);
 		unitListViewer.setInput(((ProcessorUnitEditorInput)getEditorInput()).getDpu());
 		int operations = DND.DROP_COPY| DND.DROP_MOVE;
 		Transfer[] transferTypes = new Transfer[]{ProcessorTransfer.getInstance()};
@@ -138,13 +144,29 @@ public class ProcessorUnitManagePage extends FormPage {
 		
 		sDescription.setClient(descriptionClient);
 		toolkit.paintBordersFor(sDescription);
+		m_bindingContext = initDataBindings();
 	}
 	
-	
+	@Override
+	public void doSave(IProgressMonitor monitor) {
+		dirty = false;
+		getEditor().editorDirtyStateChanged();
+		super.doSave(monitor);
+	}
 	
 	@Override
 	public boolean isDirty() {
 		return dirty;
+	}
+	
+	protected DataBindingContext initDataBindings() {
+		DataBindingContext bindingContext = new DataBindingContext();
+		//
+		IObservableValue tNameObserveTextObserveWidget = SWTObservables.observeText(tName, SWT.Modify);
+		IObservableValue dpuNameObserveValue = PojoObservables.observeValue(dpu, "name");
+		bindingContext.bindValue(tNameObserveTextObserveWidget, dpuNameObserveValue, null, null);
+		//
+		return bindingContext;
 	}
 	
 	private class DPUController implements Listener {
@@ -172,4 +194,5 @@ public class ProcessorUnitManagePage extends FormPage {
 			}
 		}
 	}
+
 }
