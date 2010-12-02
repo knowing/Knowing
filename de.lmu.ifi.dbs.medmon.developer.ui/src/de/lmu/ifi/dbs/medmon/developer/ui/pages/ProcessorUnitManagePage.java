@@ -48,7 +48,7 @@ public class ProcessorUnitManagePage extends FormPage {
 	private String fFilter;
 	private Text tName, text;
 
-	private Button bAdd;
+	private Button bAdd, bRemove;
 
 	private boolean dirty;
 
@@ -70,7 +70,7 @@ public class ProcessorUnitManagePage extends FormPage {
 	 */
 	public ProcessorUnitManagePage(FormEditor editor) {
 		super(editor, ID, "Processing Unit");
-		dpu = ((ProcessorUnitEditorInput)editor.getEditorInput()).getDpu();
+		dpu = ((ProcessorUnitEditorInput) editor.getEditorInput()).getDpu();
 	}
 
 	/**
@@ -105,9 +105,9 @@ public class ProcessorUnitManagePage extends FormPage {
 		unitListViewer.setContentProvider(new DPUContentProvider());
 		unitListViewer.setLabelProvider(new ProcessorsLabelProvider());
 		unitListViewer.getList().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 6));
-		unitListViewer.setInput(((ProcessorUnitEditorInput)getEditorInput()).getDpu());
-		int operations = DND.DROP_COPY| DND.DROP_MOVE;
-		Transfer[] transferTypes = new Transfer[]{ProcessorTransfer.getInstance()};
+		unitListViewer.setInput(((ProcessorUnitEditorInput) getEditorInput()).getDpu());
+		int operations = DND.DROP_COPY | DND.DROP_MOVE;
+		Transfer[] transferTypes = new Transfer[] { ProcessorTransfer.getInstance() };
 		unitListViewer.addDropSupport(operations, transferTypes, new ProcessorDropListener(unitListViewer));
 
 		bAdd = managedForm.getToolkit().createButton(body, "add", SWT.NONE);
@@ -119,12 +119,13 @@ public class ProcessorUnitManagePage extends FormPage {
 		processorsViewer.setLabelProvider(new ProcessorsLabelProvider());
 		processorsViewer.setInput(FrameworkUtil.evaluateDataProcessors());
 		processorsViewer.addDragSupport(operations, transferTypes, new ProcessorDragListener(processorsViewer));
-		
+
 		List processorsList = processorsViewer.getList();
 		processorsList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 5));
 
-		Button remove = managedForm.getToolkit().createButton(body, "remove", SWT.NONE);
-		remove.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
+		bRemove = managedForm.getToolkit().createButton(body, "remove", SWT.NONE);
+		bRemove.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
+		bRemove.addListener(SWT.Selection, controller);
 		new Label(body, SWT.NONE);
 
 		Button up = managedForm.getToolkit().createButton(managedForm.getForm().getBody(), "move up", SWT.NONE);
@@ -134,31 +135,35 @@ public class ProcessorUnitManagePage extends FormPage {
 		down.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
 		new Label(body, SWT.NONE);
 
-		Section sDescription = managedForm.getToolkit().createSection(body,	Section.TWISTIE | Section.TITLE_BAR);
+		Section sDescription = managedForm.getToolkit().createSection(body, Section.TWISTIE | Section.TITLE_BAR);
 		sDescription.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
-		sDescription.setText("Description");	
+		sDescription.setText("Description");
 
 		Composite descriptionClient = toolkit.createComposite(sDescription);
 		descriptionClient.setLayout(new FillLayout(SWT.HORIZONTAL));
 		text = toolkit.createText(descriptionClient, "", SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
-		
+
 		sDescription.setClient(descriptionClient);
 		toolkit.paintBordersFor(sDescription);
 		m_bindingContext = initDataBindings();
+		
+		//Everything ok
+		dirty = false;
+		getEditor().editorDirtyStateChanged();
 	}
-	
+
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		dirty = false;
 		getEditor().editorDirtyStateChanged();
-		super.doSave(monitor);
+		//super.doSave(monitor);
 	}
-	
+
 	@Override
 	public boolean isDirty() {
 		return dirty;
 	}
-	
+
 	protected DataBindingContext initDataBindings() {
 		DataBindingContext bindingContext = new DataBindingContext();
 		//
@@ -168,29 +173,40 @@ public class ProcessorUnitManagePage extends FormPage {
 		//
 		return bindingContext;
 	}
-	
+
+	/*
+	 * Create own class for this
+	 */
+
 	private class DPUController implements Listener {
-		
+
 		@Override
 		public void handleEvent(Event event) {
-			if(event.type == SWT.Modify) {
+			if (event.type == SWT.Modify) {
 				dirty = true;
 				getEditor().editorDirtyStateChanged();
 			}
-			if(event.widget == bAdd) {
-				//Normal viewer.add(Object) doesn't allow duplicates
+			if (event.widget == bAdd) {
 				IStructuredSelection selection = (IStructuredSelection) processorsViewer.getSelection();
-				if(!selection.isEmpty()) {
-					if(selection.getFirstElement() instanceof IDataProcessor) {
+				if (!selection.isEmpty()) {
+					DataProcessingUnit input = (DataProcessingUnit) unitListViewer.getInput();
+					if (selection.getFirstElement() instanceof IDataProcessor) {
 						IDataProcessor processor = (IDataProcessor) selection.getFirstElement();
-						unitListViewer.setInput(processor);
+						input.add(new DataProcessor(processor));
 					} else if (selection.getFirstElement() instanceof DataProcessor) {
 						DataProcessor processor = (DataProcessor) selection.getFirstElement();
-						unitListViewer.setInput(processor);
+						input.add(processor);
 					}
-					
+					unitListViewer.refresh();
 				}
-				
+			} else if (event.widget == bRemove) {
+				IStructuredSelection selection = (IStructuredSelection) unitListViewer.getSelection();
+				if (!selection.isEmpty()) {
+					DataProcessingUnit input = (DataProcessingUnit) unitListViewer.getInput();
+					DataProcessor processor = (DataProcessor) selection.getFirstElement();
+					input.remove(processor);
+					unitListViewer.refresh();
+				}
 			}
 		}
 	}

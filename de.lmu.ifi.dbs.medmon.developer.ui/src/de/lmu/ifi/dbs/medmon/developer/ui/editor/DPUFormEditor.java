@@ -20,9 +20,9 @@ import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.developer.ui.pages.ProcessorUnitConfigurationPage;
 import de.lmu.ifi.dbs.medmon.developer.ui.pages.ProcessorUnitManagePage;
 
-public class ProcessorListFormEditor extends FormEditor {
+public class DPUFormEditor extends FormEditor {
 
-	public static final String ID = "de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorListFormEditor";
+	public static final String ID = "de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUFormEditor";
 	
 	private File dpuXML;
 	

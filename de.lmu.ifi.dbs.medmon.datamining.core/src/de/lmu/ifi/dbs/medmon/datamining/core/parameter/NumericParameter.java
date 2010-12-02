@@ -1,7 +1,6 @@
 package de.lmu.ifi.dbs.medmon.datamining.core.parameter;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Represents an AlgorithmParameter for {@link ISensorDataAlgorithm} in order to
@@ -62,6 +61,11 @@ public class NumericParameter implements IProcessorParameter<Integer> {
 		if(isValid(value))
 			this.value = value;
 	}
+	
+	@Override
+	public void setValueAsString(String value) {
+		setValue(Integer.valueOf(value));		
+	}
 
 	@Override
 	public Integer getValue() {
@@ -83,6 +87,11 @@ public class NumericParameter implements IProcessorParameter<Integer> {
 		if(value <= maximum || value >= minimum)
 			return true;
 		return false;
+	}
+
+	@Override
+	public String getType() {
+		return INT_TYPE;
 	}
 
 }

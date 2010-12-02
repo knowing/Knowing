@@ -1,11 +1,18 @@
 package de.lmu.ifi.dbs.medmon.developer.ui.dnd;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
 
 import org.eclipse.swt.dnd.ByteArrayTransfer;
-import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TransferData;
 
+import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
+import de.lmu.ifi.dbs.medmon.datamining.core.parameter.XMLParameterWrapper;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
 
 /**
@@ -65,8 +72,15 @@ public class ProcessorTransfer extends ByteArrayTransfer {
 		String name = in.readUTF();
 		String id = in.readUTF();
 		String provider = in.readUTF();
-		System.out.println("[Name " + name + "] [id " +  id +  "] [ provider " + provider + "]");
-		return new DataProcessor(name, id, provider);
+		int count = in.readInt();
+		ArrayList<XMLParameterWrapper> parameters = new ArrayList<XMLParameterWrapper>(count+5);
+		for(int i=0; i < count; i++) {
+			String key = in.readUTF();
+			String value = in.readUTF();
+			String type = in.readUTF();
+			parameters.add(new XMLParameterWrapper(key, value, type));
+		}
+		return new DataProcessor(name, id, provider, parameters);
 	}
 	
 	protected byte[] toByteArray(DataProcessor[] processors) {
@@ -91,10 +105,32 @@ public class ProcessorTransfer extends ByteArrayTransfer {
 	      return bytes;
 	}
 	
+	/**
+	 * UTFString: name
+	 * UTFString: ID
+	 * UTFString: providedBy
+	 * Integer:	  parameters count
+	 * for(parameters count)
+	 *  UTFWrite: key
+	 *  UTFWrite: value
+	 *  UTFWrite: type
+	 * @param processor
+	 * @param dataOut
+	 * @throws IOException
+	 */
 	private void writeProcessor(DataProcessor processor, DataOutputStream dataOut) throws IOException {
 		dataOut.writeUTF(processor.getName());
 		dataOut.writeUTF(processor.getId());
 		dataOut.writeUTF(processor.getProvidedby());
+		
+		Map<String, IProcessorParameter> parameters = processor.getParameters();
+		//MapSize
+		dataOut.writeInt(parameters.size());
+		for (String key : parameters.keySet()) {
+			dataOut.writeUTF(key);
+			dataOut.writeUTF(String.valueOf(parameters.get(key).getValue()));
+			dataOut.writeUTF(parameters.get(key).getType());
+		}
 	}
 	
 	@Override

@@ -1,7 +1,6 @@
 package de.lmu.ifi.dbs.medmon.developer.ui.editor;
 
 import java.io.File;
-import java.util.LinkedList;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -49,26 +48,15 @@ public class ProcessorUnitEditorInput implements IEditorInput {
 	}
 
 	public boolean addDataProcessor(DataProcessor processor) {
-		if (dpu.getProcessors() == null)
-			dpu.setProcessors(new LinkedList<DataProcessor>());
-		return dpu.getProcessors().add(processor);
+		return dpu.add(processor);
 	}
 
 	public boolean removeDataProcessor(DataProcessor processor) {
-		if (dpu.getProcessors() == null)
-			return false;
-		return dpu.getProcessors().remove(processor);
+		return dpu.remove(processor);
 	}
 
 	public DataProcessor[] getProcessors() {
-		if (dpu.getProcessors() == null || dpu.getProcessors().isEmpty())
-			return new DataProcessor[0];
-
-		DataProcessor[] returns = new DataProcessor[dpu.getProcessors().size()];
-		int index = 0;
-		for (DataProcessor processor : dpu.getProcessors())
-			returns[index++] = processor;
-		return returns;
+		return dpu.toArray();
 	}
 
 	@Override

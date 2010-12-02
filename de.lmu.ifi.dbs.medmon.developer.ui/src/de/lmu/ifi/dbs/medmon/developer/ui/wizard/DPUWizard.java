@@ -8,8 +8,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.WorkbenchException;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
+import de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUFormEditor;
 import de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorUnitEditorInput;
-import de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorListFormEditor;
 import de.lmu.ifi.dbs.medmon.developer.ui.wizard.pages.DPUWizardPage;
 
 public class DPUWizard extends Wizard implements IWorkbenchWizard {
@@ -34,7 +34,7 @@ public class DPUWizard extends Wizard implements IWorkbenchWizard {
 		dpu.setProcessors(page.getDataProcessors());
 		ProcessorUnitEditorInput input = new ProcessorUnitEditorInput(dpu);
 		try {
-			workbench.getActiveWorkbenchWindow().getActivePage().openEditor(input, ProcessorListFormEditor.ID);
+			workbench.getActiveWorkbenchWindow().getActivePage().openEditor(input, DPUFormEditor.ID);
 			workbench.showPerspective("de.lmu.ifi.dbs.medmon.developer.perspective", workbench.getActiveWorkbenchWindow());
 		} catch (PartInitException e) {
 			e.printStackTrace();

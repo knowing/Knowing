@@ -31,8 +31,9 @@ public interface IDataProcessor {
 	public IProcessorParameter getParameter(String key);
 	
 	/**
+	 * It's highly recommended to use the parameter's name as a key.
 	 * 
-	 * @param key
+	 * @param key (parameter's name)
 	 * @param parameter
 	 * @return previous value or null if none
 	 */

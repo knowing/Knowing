@@ -4,7 +4,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
-import org.eclipse.swt.dnd.TextTransfer;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
 
@@ -18,7 +17,7 @@ public class ProcessorDragListener implements DragSourceListener {
 
 	@Override
 	public void dragStart(DragSourceEvent event) {
-		System.out.println("Drag start");
+	
 	}
 
 	@Override
@@ -38,7 +37,7 @@ public class ProcessorDragListener implements DragSourceListener {
 
 	@Override
 	public void dragFinished(DragSourceEvent event) {
-		System.out.println("Drag finished");
+		
 	}
 
 }

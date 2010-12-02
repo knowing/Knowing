@@ -58,6 +58,14 @@ public class ClusterParameter implements IProcessorParameter<ClusterUnit> {
 		if(isValid(value))
 			current = value;
 	}
+	
+	@Override
+	public void setValueAsString(String value) {
+		//TODO ClusterUnit 
+		ClusterUnit clusterUnit = new ClusterUnit();
+		clusterUnit.setName(value);
+		setValue(clusterUnit);
+	}
 
 	@Override
 	public ClusterUnit getValue() {
@@ -69,6 +77,11 @@ public class ClusterParameter implements IProcessorParameter<ClusterUnit> {
 		if(value == null || value.getName() == null || value.getName().isEmpty())
 			return false;
 		return true;
+	}
+	
+	@Override
+	public String getType() {
+		return CLUSTER_TYPE;
 	}
 
 	// Should be externial //
@@ -112,5 +125,7 @@ public class ClusterParameter implements IProcessorParameter<ClusterUnit> {
 		Unmarshaller um = context.createUnmarshaller();	
 		return (ClusterUnit) um.unmarshal(new File(xmlFile));		
 	}
+	
+
 
 }

@@ -15,18 +15,16 @@ public class ProcessorDropListener extends ViewerDropAdapter {
 	}
 
 	// This method performs the actual drop
-	// We simply add the String we receive to the model and trigger a refresh of the 
-	// viewer by calling its setInput method.
 	@Override
 	public boolean performDrop(Object data) {
-		System.out.println("Data to Drop: " + data);
 		if(data == null)
 			return false;
 		DataProcessor[] toDrop = (DataProcessor[])data;
 		DataProcessingUnit dpu = (DataProcessingUnit) getViewer().getInput();
 		
-		for (DataProcessor dataProcessor : toDrop)
-			dpu.getProcessors().add(dataProcessor);
+		for (DataProcessor dataProcessor : toDrop) 
+			dpu.add(dataProcessor);
+			
 		
 		return true;
 	}
@@ -55,8 +53,8 @@ public class ProcessorDropListener extends ViewerDropAdapter {
 			translatedLocation = "Dropped into nothing ";
 			break;
 		}
-		System.out.println(translatedLocation);
-		System.out.println("The drop was done on the element: " + target );
+		//System.out.println(translatedLocation);
+		//System.out.println("The drop was done on the element: " + target );
 		super.drop(event);
 		getViewer().refresh();
 	}

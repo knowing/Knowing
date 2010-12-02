@@ -6,6 +6,10 @@ import org.eclipse.ui.forms.MasterDetailsBlock;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
+import de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorUnitEditorInput;
+
 
 public class ProcessorUnitConfigurationPage extends FormPage {
 	
@@ -14,12 +18,17 @@ public class ProcessorUnitConfigurationPage extends FormPage {
 	
 	public ProcessorUnitConfigurationPage(FormEditor editor) {
 		super(editor, ID, "Configuration");
+		DataProcessingUnit dpu = ((ProcessorUnitEditorInput) editor.getEditorInput()).getDpu();
+		
+		for (DataProcessor processor : dpu.getProcessors()) {
+			processor.loadParameters();
+		}
 	}
 	
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
-		MasterDetailsBlock block = new ConfigurationMasterBlock();
+		MasterDetailsBlock block = new ConfigurationMasterBlock((ProcessorUnitEditorInput) getEditorInput());
 		block.createContent(managedForm);
 	}
-
+	
 }

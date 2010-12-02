@@ -23,16 +23,11 @@ public class ProcessorsContentProvider implements IStructuredContentProvider {
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		this.viewer = viewer;
-		System.err.println("ProcessorsContentProvider.inputChanged()");
-		viewer.refresh();
-		
+		this.viewer = viewer;	
 	}
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		System.err.println("ProcessorsContentProvider.getElements()");
-		System.out.println("InputElement: " + inputElement);
 		//Refresh list by giving a new list
 		if(inputElement != processors && inputElement != null && inputElement instanceof List<?>)
 			processors = (List<DataProcessor>) inputElement;

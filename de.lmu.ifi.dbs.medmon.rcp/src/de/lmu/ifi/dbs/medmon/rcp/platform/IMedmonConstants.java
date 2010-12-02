@@ -34,6 +34,7 @@ public interface IMedmonConstants {
 	//Editors
 	public static final String ALGORITHM_EDITOR = "de.lmu.ifi.dbs.medmon.algorithm.AlgorithmEditor";
 	public static final String PATIENT_EDITOR = "de.lmu.ifi.dbs.medmon.medic.PatientEditor";
+	public static final String DPU_FORM_EDITOR = "de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUFormEditor";
 	
 	//Commands
 	public static final String CALL_PATIENT_EDITOR = "de.lmu.ifi.dbs.medmon.medic.OpenPatientEditor";

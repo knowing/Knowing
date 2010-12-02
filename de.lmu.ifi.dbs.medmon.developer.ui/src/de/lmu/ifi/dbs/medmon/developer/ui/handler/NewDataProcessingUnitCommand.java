@@ -8,7 +8,7 @@ import org.eclipse.ui.PlatformUI;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorUnitEditorInput;
-import de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorListFormEditor;
+import de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUFormEditor;
 
 public class NewDataProcessingUnitCommand extends AbstractHandler {
 
@@ -18,7 +18,7 @@ public class NewDataProcessingUnitCommand extends AbstractHandler {
 			
 		try {
 			System.out.println("Opening Editor");
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(input, ProcessorListFormEditor.ID);
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(input, DPUFormEditor.ID);
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		}

@@ -1,5 +1,6 @@
 package de.lmu.ifi.dbs.medmon.datamining.core.parameter;
 
+
 /**
  * Generic Interface for {@link ISensorDataAlgorithm} properties
  * 
@@ -8,11 +9,23 @@ package de.lmu.ifi.dbs.medmon.datamining.core.parameter;
  */
 public interface IProcessorParameter<E> {
 
+	public static final String INT_TYPE = "int";
+	public static final String STRING_TYPE = "string";
+	public static final String BOOL_TYPE = "bool";
+	public static final String CLUSTER_TYPE = "cluster";
+	
 	/**
 	 * To create a label describing the parameter
 	 * @return Parametername 
 	 */
 	public String getName();
+	
+	
+	/**
+	 * 
+	 * @return type name 
+	 */
+	public String getType();
 	
 	/**
 	 * Generic method to display possible values
@@ -29,11 +42,14 @@ public interface IProcessorParameter<E> {
 	
 	public E getValue();
 	
+	public void setValueAsString(String value);
+	
 	/**
 	 * Check if a value is valid
 	 * @param value
 	 * @return
 	 */
 	public boolean isValid(E value);
+	
 		
 }

@@ -18,6 +18,11 @@
                   label="New Wizard"
                   style="push">
             </command>
+            <command
+                  commandId="de.lmu.ifi.dbs.medmon.developer.ui.LoadDPU"
+                  label="Load DPU"
+                  style="push">
+            </command>
          </menu>
       </menuContribution>
    </extension>
@@ -27,13 +32,13 @@
             class="de.lmu.ifi.dbs.medmon.developer.ui.pages.ProcessorUnitConfigurationPage"
             default="false"
             id="de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorListEditor"
-            name="ProcessorListEditor">
+            name="DPU Editor">
       </editor>
       <editor
-            class="de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorListFormEditor"
+            class="de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUFormEditor"
             default="false"
-            id="de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorListFormEditor"
-            name="ProcessorListFormEditor">
+            id="de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUFormEditor"
+            name="DPU Form Editor">
       </editor>
    </extension>
    <extension
@@ -77,6 +82,11 @@
             defaultHandler="de.lmu.ifi.dbs.medmon.developer.ui.handler.ClusterWizardHandler"
             id="de.lmu.ifi.dbs.medmon.developer.ui.ClusterWizardCommand"
             name="Clustering Wizard">
+      </command>
+      <command
+            defaultHandler="de.lmu.ifi.dbs.medmon.developer.ui.handler.LoadDPUHandler"
+            id="de.lmu.ifi.dbs.medmon.developer.ui.LoadDPU"
+            name="Load DPU">
       </command>
    </extension>
    <extension

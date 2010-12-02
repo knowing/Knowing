@@ -5,7 +5,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -16,6 +18,10 @@ import org.osgi.framework.BundleContext;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.cluster.DoubleCluster;
+import de.lmu.ifi.dbs.medmon.datamining.core.parameter.ClusterParameter;
+import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
+import de.lmu.ifi.dbs.medmon.datamining.core.parameter.NumericParameter;
+import de.lmu.ifi.dbs.medmon.datamining.core.parameter.StringParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
@@ -26,7 +32,7 @@ public class Activator implements BundleActivator {
 	
 	private static BundleContext context;
 
-	static BundleContext getContext() {
+	public static BundleContext getContext() {
 		return context;
 	}
 
@@ -37,7 +43,7 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 		createConfigDir();
-		//createTestXML();
+		//createDPUXML();
 		//createClusterXML();
 	}
 
@@ -87,7 +93,8 @@ public class Activator implements BundleActivator {
 		}
 	}
 	
-	public void createTestXML() {
+	public void createDPUXML() {
+		System.out.println("Activator.createDPUXML()");
 		List<DataProcessor> processors = new ArrayList<DataProcessor>();
 		
 		//Create Processor-Models
@@ -96,10 +103,18 @@ public class Activator implements BundleActivator {
 		dpm1.setId("de.lmu.ifi.dbs.medmon.filter1");
 		dpm1.setProvidedby("de.lmu.ifi.dbs.medmon");
 		
+		Map<String, IProcessorParameter> parameters = new HashMap<String, IProcessorParameter>();
+		parameters.put("P1", new StringParameter("P1", new String[] { "1", "2" }));
+		parameters.put("P2", new NumericParameter("P2"));
+		parameters.put("Cluster", new ClusterParameter("home"));
+		dpm1.setParameters(parameters);
+		
+		
 		DataProcessor dpm2 = new DataProcessor();
 		dpm2.setName("Analyzer");
 		dpm2.setId("de.lmu.ifi.dbs.medmon.analyzer");
 		dpm2.setProvidedby("de.lmu.ifi.dbs.medmon");
+		dpm2.setParameters(parameters);
 		
 		processors.add(dpm1);
 		processors.add(dpm2);	

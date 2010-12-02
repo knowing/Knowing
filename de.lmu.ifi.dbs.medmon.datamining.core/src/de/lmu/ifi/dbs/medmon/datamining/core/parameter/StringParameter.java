@@ -43,12 +43,20 @@ public class StringParameter implements IProcessorParameter<String> {
 		}
 		return false;
 	}
-
-
 	
 	@Override
 	public String getName() {
 		return name;
+	}
+	
+	@Override
+	public String getType() {
+		return STRING_TYPE;
+	}
+	
+	@Override
+	public void setValueAsString(String value) {
+		setValue(value);		
 	}
 
 }
