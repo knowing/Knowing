@@ -1,8 +1,8 @@
 package de.lmu.ifi.dbs.medmon.sensor.core.container;
 
 import java.io.IOException;
+import java.util.Date;
 
-import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
 
 /**
@@ -15,11 +15,19 @@ import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
  * 
  * 
  * @author Nepomuk Seiler
- * @version 1.1
+ * @version 1.3
  */
 public interface ISensorDataContainer<E> {
 	
 	//Level constants. Should be compared via % 10
+	//TODO use Enumeration ContainerType
+	/*
+	 * 	public static final int ROOT 	= ContainerType.ROOT.ordinal();
+	public static final int HOUR	= ContainerType.HOUR.ordinal();
+	public static final int DAY	 	= ContainerType.DAY.ordinal();
+	public static final int WEEK 	= ContainerType.WEEK.ordinal();
+	public static final int MONTH 	= ContainerType.MONTH.ordinal();
+	 */
 	public static final int ROOT 	= 0;
 	public static final int HOUR	= 2;
 	public static final int DAY	 	= 3;
@@ -30,6 +38,8 @@ public interface ISensorDataContainer<E> {
 	
 	//Standard tree methods
 	public ISensorDataContainer<E> getParent();
+	
+	public void setParent(ISensorDataContainer<E> parent);
 	
 	public ISensorDataContainer<E>[] getChildren();
 	
@@ -42,7 +52,7 @@ public interface ISensorDataContainer<E> {
 	/**
 	 * @return ISensorDataContainer.DAY | WEEK | MONTH
 	 */
-	public int getType();
+	public ContainerType getType();
 	
 	/**
 	 * Provides the SensorData ownd by this container. It's possible
@@ -59,11 +69,16 @@ public interface ISensorDataContainer<E> {
 	 */
 	public Block getBlock();
 	
+	public void setBlock(Block block);
+	
 	/**
 	 * Used to display the Node correctly.
 	 * e.g the record date of the SensorData (DAY) 
 	 * @return Node name
 	 */
 	public String getName();
+	
+	@Deprecated
+	public Date getTimestamp();
 	
 }

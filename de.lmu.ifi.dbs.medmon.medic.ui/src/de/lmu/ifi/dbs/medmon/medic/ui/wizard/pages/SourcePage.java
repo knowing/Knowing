@@ -38,6 +38,7 @@ import de.lmu.ifi.dbs.medmon.medic.ui.provider.PatientProposalProvider;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.TextContentAdapter2;
 import de.lmu.ifi.dbs.medmon.medic.ui.viewer.SensorTableViewer;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.Block;
+import de.lmu.ifi.dbs.medmon.sensor.core.container.ContainerType;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.RootSensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
@@ -148,11 +149,8 @@ public class SourcePage extends WizardPage {
 						throws InvocationTargetException, InterruptedException {
 					monitor.beginTask("Daten laden", 20);
 					try {
-						//data = SDRConverter.convertSDRtoContainer(tSDRFile.getText(), 0, 1200);
 						IConverter converter = getSensor().getConverter();
-						Block[] blocks =converter.convertToBlock(tSDRFile.getText(), Calendar.HOUR_OF_DAY);
-						data = new RootSensorDataContainer();
-						converter.parseBlockToContainer(data, blocks);						
+						data = converter.readFile(tSDRFile.getText(), ContainerType.WEEK, ContainerType.HOUR, null);
 							
 					} catch (IOException e) {
 						e.printStackTrace();

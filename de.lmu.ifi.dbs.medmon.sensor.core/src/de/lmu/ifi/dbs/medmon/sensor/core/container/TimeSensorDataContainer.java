@@ -1,43 +1,55 @@
 package de.lmu.ifi.dbs.medmon.sensor.core.container;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class TimeSensorDataContainer<E> extends AbstractSensorDataContainer<E> {
 
 	protected String formatPattern = "dd.MM.yyyy - HH:mm";
-	
-	public TimeSensorDataContainer(ISensorDataContainer<E> parent, int type, Block block) {
+
+	public TimeSensorDataContainer(ISensorDataContainer<E> parent, ContainerType type, Block block) {
 		super(parent, type, block);
 		initFormatPattern();
 	}
-	
-	public TimeSensorDataContainer( int type, Block block) {
+
+	public TimeSensorDataContainer(ContainerType type, Block block) {
 		this(null, type, block);
 	}
-		
+
+	public TimeSensorDataContainer(ContainerType type) {
+		this(null, type, null);
+	}
+
+	public TimeSensorDataContainer(ISensorDataContainer<E> parent, ContainerType type) {
+		this(parent, type, null);
+	}
+
 	private void initFormatPattern() {
-		switch(getType()) {
-		case ISensorDataContainer.HOUR: formatPattern = "HH:mm"; break;
-		case ISensorDataContainer.DAY: formatPattern = "dd.MM.yyyy"; break;
-		case ISensorDataContainer.WEEK: formatPattern = "dd.MM.yyyy"; break;
+		switch (getType()) {
+		case HOUR:
+			formatPattern = "HH:mm";
+			break;
+		case DAY:
+			formatPattern = "dd.MM.yyyy";
+			break;
+		case WEEK:
+			formatPattern = "dd.MM.yyyy";
+			break;
 		}
+	}
+
+	@Override
+	public Date getTimestamp() {
+		return block.getDescriptor().getStartDate();
 	}
 
 	@Override
 	public String getName() {
 		SimpleDateFormat df = new SimpleDateFormat(formatPattern);
-		Date date;
-		try {
-			date = block.getFirstTimestamp();
-			if(date == null)
-				return "unkown";
-			return df.format(date);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return "Fehlerhafte Datei";
-		}	
+		Date date = block.getDescriptor().getStartDate();
+		if (date == null)
+			return "unkown";
+		return df.format(date);
 	}
 
 	@Override
@@ -65,6 +77,5 @@ public class TimeSensorDataContainer<E> extends AbstractSensorDataContainer<E> {
 			return false;
 		return true;
 	}
-	
-	
+
 }

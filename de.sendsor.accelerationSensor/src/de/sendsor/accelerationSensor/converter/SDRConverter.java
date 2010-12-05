@@ -12,14 +12,20 @@ import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.model.DataPK;
-import de.lmu.ifi.dbs.medmon.sensor.core.container.*;
+import de.lmu.ifi.dbs.medmon.sensor.core.container.Block;
+import de.lmu.ifi.dbs.medmon.sensor.core.container.BlockDescriptor;
+import de.lmu.ifi.dbs.medmon.sensor.core.container.ContainerType;
+import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
+import de.lmu.ifi.dbs.medmon.sensor.core.container.RootSensorDataContainer;
+import de.lmu.ifi.dbs.medmon.sensor.core.container.TimeSensorDataContainer;
+import de.lmu.ifi.dbs.medmon.sensor.core.converter.AbstractConverter;
 import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
+import de.lmu.ifi.dbs.medmon.sensor.core.util.TimeUtil;
 
 /**
  * Class for converting SDR Files to {@link ISensorDataContainers}
@@ -27,20 +33,19 @@ import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
  * @author Alexander Stautner, Nepomuk Seiler
  * @param <E>
  */
-public class SDRConverter implements IConverter<Data> {
+public class SDRConverter extends AbstractConverter<Data> {
 
 	public final static int BLOCKSIZE = 512;
 	public final static int CONTENT_BLOCK = 504;
 	private final static int MINUTEINBLOCKS = 9;
 
-	private final static long TIME_CORRECTION_BEFORE = 7000; // Should be 7392 (
-																// = 504 / 3 *
-																// 44 )
+	private final static long TIME_CORRECTION_BEFORE = 7000; // Should be 7392 = 504 / 3 * 44																
 	private final static long TIME_CORRECTION_AFTER = 44;
 
 	@Override
-	public Block[] convertToBlock(String file, int calendarConstant) throws IOException {
+	public Block[] convertToBlock(String file, ContainerType type) throws IOException {
 		// Initialize time handling
+		int calendarConstant = TimeUtil.getCalendarConstant(type);
 		Calendar startDate = null;
 		Calendar compareDate = null;
 		Calendar endDate = new GregorianCalendar();
@@ -86,6 +91,7 @@ public class SDRConverter implements IConverter<Data> {
 
 			// Check Time
 			if (startDate.get(calendarConstant) != endDate.get(calendarConstant)) {
+				System.out.println("-----------------------------");
 				System.out.println("Start: " + startDate.getTime() + " End: " + compareDate.getTime());
 				Block block = new Block(file, blockBegin, blockOffset, startDate.getTime(), compareDate.getTime());
 				blocklist.add(block);
@@ -95,7 +101,7 @@ public class SDRConverter implements IConverter<Data> {
 				System.out.println(block);
 			}
 
-			// Checks if the file ended
+			// Checks if the recorded data ended
 			if (recordEnd(day, hour))
 				break;
 
@@ -107,54 +113,11 @@ public class SDRConverter implements IConverter<Data> {
 		in.close();
 		return blocklist.toArray(new Block[blocklist.size()]);
 	}
-
-	@Override
-	public ISensorDataContainer<Data> parseBlockToContainer(ISensorDataContainer<Data> parent, Block[] blocks) throws IOException {
-		if (parent == null)
-			parent = new RootSensorDataContainer<Data>();
-
-		int day = -1;
-		Calendar cal = GregorianCalendar.getInstance();
-		LinkedList<ISensorDataContainer<Data>> containerList = new LinkedList<ISensorDataContainer<Data>>();
-		for (Block block : blocks) {
-			cal.setTime(block.getFirstTimestamp());
-
-			// First Loop
-			if (day == -1)
-				day = cal.get(Calendar.DAY_OF_YEAR);
-
-			// Day ended
-			if (cal.get(Calendar.DAY_OF_YEAR) != day) {
-				parent.addChild(toDayContainer(containerList));
-				// Start new Day
-				containerList = new LinkedList<ISensorDataContainer<Data>>();
-			}
-			day = cal.get(Calendar.DAY_OF_YEAR);
-			containerList.add(new TimeSensorDataContainer<Data>(ISensorDataContainer.HOUR, block));
-		}
-		
-		//Add the rest
-		parent.addChild(toDayContainer(containerList));
-		return parent;
-	}
-
-	@Override
-	public Data[] parseBlockToData(Block block) throws IOException {
-		return convertSDRtoData(block.getFile(), block.getBegin(), block.getEnd());
-	}
 	
-	private ISensorDataContainer<Data> toDayContainer(LinkedList<ISensorDataContainer<Data>>  containerList) throws IOException {
-		//Create placeholder Block
-		Block firstBlock = containerList.getFirst().getBlock();
-		Block lastBlock = containerList.getLast().getBlock();
-		Block dayBlock = new Block(firstBlock.getFile(), firstBlock.getBegin(), lastBlock.getEnd(),
-				firstBlock.getFirstTimestamp(), lastBlock.getLastTimestamp());
-		TimeSensorDataContainer<Data> returns = new TimeSensorDataContainer<Data>(ISensorDataContainer.DAY, dayBlock);
-		
-		for (ISensorDataContainer<Data> iSensorDataContainer : containerList)
-			returns.addChild(iSensorDataContainer);
-		
-		return returns;
+	@Override
+	public Data[] readData(Block block) throws IOException {	
+		String file = (String) block.getDescriptor().getAttribute(BlockDescriptor.FILE);
+		return convertSDRtoData(file, block.getBegin(), block.getEnd());
 	}
 
 	/**
@@ -166,10 +129,10 @@ public class SDRConverter implements IConverter<Data> {
 	 * @return Data[]
 	 * @throws IOException
 	 */
-	public Data[] convertSDRtoData(String file, int begin, int end) throws IOException {
+	public Data[] convertSDRtoData(String file, long begin, long end) throws IOException {
 		// Initialize position handling
-		//begin = begin * MINUTEINBLOCKS;
-		//end = end * MINUTEINBLOCKS;
+		// begin = begin * MINUTEINBLOCKS;
+		// end = end * MINUTEINBLOCKS;
 		byte[] daten = new byte[BLOCKSIZE];
 
 		// Initialize time handling
@@ -181,9 +144,9 @@ public class SDRConverter implements IConverter<Data> {
 		List<Data> datalist = new LinkedList<Data>();
 
 		// Convert each block
-		for (int i = begin; i <= end; i++) {
+		for (long i = begin; i <= end; i++) {
 			// Search position
-			int position = i * BLOCKSIZE;
+			long position = i * BLOCKSIZE;
 			in.seek(position);
 			// Load Data into data-Buffer
 			in.read(daten, 0, BLOCKSIZE);
@@ -210,7 +173,7 @@ public class SDRConverter implements IConverter<Data> {
 				datalist.add(new Data(id, x, y, z));
 				time += TIME_CORRECTION_AFTER;
 			}
-		
+
 		}
 		System.out.println("Converted Data[]: " + datalist.size());
 		in.close();
@@ -241,6 +204,15 @@ public class SDRConverter implements IConverter<Data> {
 		return year;
 	}
 
+	/**
+	 * Currently a SDR file is a bunch of zeros. Those zeros are placeholders
+	 * and will be overitten. This method checks if the end of the recorded data
+	 * is reached, however not the end of the file.
+	 * 
+	 * @param day
+	 * @param hour
+	 * @return
+	 */
 	private boolean recordEnd(int day, int hour) {
 		return (day == 48) && (hour == 48);
 	}

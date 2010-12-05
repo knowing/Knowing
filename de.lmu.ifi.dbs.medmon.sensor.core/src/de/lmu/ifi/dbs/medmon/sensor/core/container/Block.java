@@ -1,11 +1,14 @@
 package de.lmu.ifi.dbs.medmon.sensor.core.container;
 
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
+
+import javax.persistence.EntityManager;
+
+import org.eclipse.core.runtime.Assert;
 
 import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
+import de.lmu.ifi.dbs.medmon.sensor.core.util.TimeUtil;
 
 /**
  * Placeholder for a Block in a SensorFile
@@ -15,123 +18,143 @@ import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
  */
 public class Block {
 
-	private final String file;
-	private final int begin;
-	private final int end;
+	public static final int FILE_BLOCK = 0;
+	public static final int DB_BLOCK = 1;
 
-	private int calendarConstant = -1;
-	
-	private Date firstTimestamp;
-	private Date lastTimestamp;
-	
+	private final long begin;
+	private final long end;
+	private final int type;
 
-	
-	
-	public Block(String file, int begin, int end, int calendarConstant, Date firstTimestamp, Date lastTimestamp) {
-		this.file = file;
+	private BlockDescriptor descriptor;
+
+	/**
+	 * Constructor to use Block as a placeholder for a file
+	 * @param file
+	 * @param begin
+	 * @param end
+	 * @param calendarConstant
+	 * @param firstTimestamp
+	 * @param lastTimestamp
+	 */
+	public Block(String file, long begin, long end, int calendarConstant, Date firstTimestamp, Date lastTimestamp) {
 		this.begin = begin;
 		this.end = end;
-		this.calendarConstant = calendarConstant;
-		this.firstTimestamp = firstTimestamp;
-		this.lastTimestamp = lastTimestamp;
+		this.type = FILE_BLOCK;
+		descriptor = new BlockDescriptor(file, firstTimestamp,lastTimestamp);
+		descriptor.setAttribute(BlockDescriptor.CALENDAR, calendarConstant);
 	}
 
-	public Block(String file, int begin, int end, Date firstTimestamp, Date lastTimestamp) {
-		this.file = file;
+	public Block(String file, long begin, long end, Date firstTimestamp, Date lastTimestamp) {
+		this(file, begin, end, TimeUtil.getCalendarConstant(firstTimestamp, lastTimestamp), firstTimestamp, lastTimestamp);
+	}
+
+	public Block(String file, long begin, long end, int calendarConstant) {
+		this(file, begin, end, null, null);
+	}
+
+	/**
+	 * Constructor to use Block as a placeholder for DB Query
+	 * @param em
+	 * @param begin
+	 * @param end
+	 * @param firstTimestamp
+	 * @param lastTimestamp
+	 */
+	public Block(EntityManager em, long begin, long end, Date firstTimestamp, Date lastTimestamp) {
 		this.begin = begin;
 		this.end = end;
-		this.firstTimestamp = firstTimestamp;
-		this.lastTimestamp = lastTimestamp;		
+		this.type= DB_BLOCK;
+		descriptor = new BlockDescriptor(em, firstTimestamp, lastTimestamp);
 	}
 	
-	public Block(String file, int begin, int end, int calendarConstant) {
-		this(file, begin, end, null,null);
+	public Block(EntityManager em, long begin, long end) {
+		this.begin = begin;
+		this.end = end;
+		this.type= DB_BLOCK;
+		descriptor = new BlockDescriptor(em, new Date(begin), new Date(end));
 	}
-
-	public String getFile() {
-		return file;
-	}
-
-	public int getBegin() {
+	
+	public long getBegin() {
 		return begin;
 	}
 
-	public int getEnd() {
+	public long getEnd() {
 		return end;
 	}
 	
+	public int getType() {
+		return type;
+	}
+
 	public Object[] importData(IConverter converter) throws IOException {
-		return converter.parseBlockToData(this);
+		return converter.readData(this);
 	}
 	
-	public Date getFirstTimestamp() throws IOException {			
-		return firstTimestamp;
+	public long size() {
+		return (end - begin);
+	}
+
+	public BlockDescriptor getDescriptor() {
+		return descriptor;
 	}
 	
-	public Date getLastTimestamp() throws IOException {
-		return lastTimestamp;
-	}
-	
-	public int size() {
-		//return (end - begin) * SDRConverter.CONTENT_BLOCK;
-		return (end - begin) * 504;
-	}
-	
-	public int getCalendarConstant() {
-		//Lazy initialize calendarConstant
-		if(calendarConstant == -1 && firstTimestamp != null && lastTimestamp != null) {
-			Calendar first = new GregorianCalendar();
-			Calendar last  = new GregorianCalendar();
-			first.setTime(firstTimestamp);
-			last.setTime(lastTimestamp);
+	/**
+	 * The block must refere to the same File / Database. If not
+	 * the result is unpredictable.
+	 * @param block - a new, merged Block
+	 * @return
+	 */
+	public Block merge(Block block) {
+		System.out.println("----------------BLOCK MERGING--------------------");
+		System.out.println(this + " and " + block);
+		if(block == null)
+			return this;
+		
+		Assert.isTrue(type == block.type, "Blocks don't have the same type: " + type + " != " + block.type);
+		
+		//Merge FILE_BLOCK
+		if(type == FILE_BLOCK) {
+			Assert.isTrue(descriptor.getAttribute(BlockDescriptor.FILE) == block.descriptor.getAttribute(BlockDescriptor.FILE), "Blocks dont' have the same file");
+			long begin = 0;
+			long end = 0;
+			Date firstTimestamp, lastTimestamp;
+			//Get the minimum block
+			if(this.begin <= block.begin) {
+				begin = this.begin;
+				firstTimestamp = (Date) descriptor.getAttribute(BlockDescriptor.STARTDATE);
+			} else {
+				begin = block.begin;
+				firstTimestamp = (Date) block.descriptor.getAttribute(BlockDescriptor.STARTDATE);
+			}
 			
-			//Checking the Calendar Constant: General -> Detail
-			if(first.get(Calendar.WEEK_OF_YEAR) == last.get(Calendar.WEEK_OF_YEAR)) //Same Week
-				calendarConstant = Calendar.WEEK_OF_YEAR;
-			if(first.get(Calendar.DAY_OF_YEAR) == last.get(Calendar.DAY_OF_YEAR))	//Same Day
-				calendarConstant = Calendar.DAY_OF_YEAR;
-			if(first.get(Calendar.HOUR_OF_DAY) == last.get(Calendar.HOUR_OF_DAY))	//Same Hour
-				calendarConstant = Calendar.HOUR_OF_DAY;
+			if(this.end >= block.end) {
+				end = this.end;
+				lastTimestamp = (Date) descriptor.getAttribute(BlockDescriptor.ENDDATE);
+			} else {
+				begin = block.begin;
+				lastTimestamp = (Date) block.descriptor.getAttribute(BlockDescriptor.ENDDATE);
+			}
+			System.out.println("Merged block: " + begin + "-" + end);
+			
+			return new Block((String) descriptor.getAttribute(BlockDescriptor.FILE), begin, end, firstTimestamp, lastTimestamp);
 		}
-		return calendarConstant;
+		
+		return null;
 	}
 
 	@Override
 	public String toString() {
-		return "Block [file=" + file + ", begin=" + begin + ", end=" + end + ", size=" + size() + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("Block [begin=");
+		builder.append(begin);
+		builder.append(", end=");
+		builder.append(end);
+		builder.append(", type=");
+		builder.append(type);
+		builder.append("]");
+		return builder.toString();
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + begin;
-		result = prime * result + end;
-		result = prime * result + ((file == null) ? 0 : file.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Block other = (Block) obj;
-		if (begin != other.begin)
-			return false;
-		if (end != other.end)
-			return false;
-		if (file == null) {
-			if (other.file != null)
-				return false;
-		} else if (!file.equals(other.file))
-			return false;
-		return true;
-	}
-
 	
 	
+
 }

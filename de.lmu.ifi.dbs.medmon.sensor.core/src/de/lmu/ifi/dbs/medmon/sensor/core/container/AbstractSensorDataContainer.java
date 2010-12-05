@@ -32,12 +32,12 @@ public abstract class AbstractSensorDataContainer<E> implements ISensorDataConta
 	private E[] data;
 
 	// Verifiy the tree level of this container
-	private int type;
+	private ContainerType type;
 
 	// DataBlock
 	protected Block block;
 
-	public AbstractSensorDataContainer(ISensorDataContainer parent, int type, E[] data) {
+	public AbstractSensorDataContainer(ISensorDataContainer parent, ContainerType type, E[] data) {
 		this.parent = parent;
 		this.type = type;
 		this.data = data;
@@ -47,7 +47,7 @@ public abstract class AbstractSensorDataContainer<E> implements ISensorDataConta
 			parent.addChild(this);
 	}
 
-	public AbstractSensorDataContainer(ISensorDataContainer<E> parent, int type, Block block) {
+	public AbstractSensorDataContainer(ISensorDataContainer<E> parent, ContainerType type, Block block) {
 		this.parent = parent;
 		this.type = type;
 		this.block = block;
@@ -58,13 +58,18 @@ public abstract class AbstractSensorDataContainer<E> implements ISensorDataConta
 
 	}
 
-	public AbstractSensorDataContainer(int type, E[] data) {
+	public AbstractSensorDataContainer(ContainerType type, E[] data) {
 		this(null, type, data);
 	}
 
 	@Override
 	public ISensorDataContainer<E> getParent() {
 		return parent;
+	}
+	
+	@Override
+	public void setParent(ISensorDataContainer parent) {
+		this.parent = parent;		
 	}
 
 	@Override
@@ -84,6 +89,7 @@ public abstract class AbstractSensorDataContainer<E> implements ISensorDataConta
 		if (children.contains(child))
 			return false;
 		children.add(child);
+		child.setParent(this);
 		return true;
 	}
 
@@ -98,13 +104,18 @@ public abstract class AbstractSensorDataContainer<E> implements ISensorDataConta
 	}
 
 	@Override
-	public int getType() {
+	public ContainerType getType() {
 		return type;
 	}
 
 	@Override
 	public Block getBlock() {
 		return block;
+	}
+	
+	@Override
+	public void setBlock(Block block) {
+		this.block = block;
 	}
 
 	/**
@@ -125,8 +136,10 @@ public abstract class AbstractSensorDataContainer<E> implements ISensorDataConta
 	 */
 	protected E[] evaluateData(IConverter converter) throws IOException {
 		if (block != null)
-			return importData(block, converter);
+			return (E[]) converter.readData(block);
+			
 
+		//TODO Use block
 		LinkedList<E> ret = new LinkedList<E>();
 		for (ISensorDataContainer<E> container : children) {
 			for (E data : container.getSensorData(converter)) {
@@ -135,10 +148,6 @@ public abstract class AbstractSensorDataContainer<E> implements ISensorDataConta
 		}
 		E[] returns = (E[]) new Object[ret.size()];
 		return ret.toArray(returns);
-	}
-
-	protected E[] importData(Block block, IConverter<E> converter) throws IOException {
-		return converter.parseBlockToData(block);
 	}
 
 	// TODO Implement Listener Support
@@ -156,7 +165,7 @@ public abstract class AbstractSensorDataContainer<E> implements ISensorDataConta
 		int result = 1;
 		result = prime * result + Arrays.hashCode(data);
 		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
-		result = prime * result + type;
+		result = prime * result + type.ordinal();
 		return result;
 	}
 

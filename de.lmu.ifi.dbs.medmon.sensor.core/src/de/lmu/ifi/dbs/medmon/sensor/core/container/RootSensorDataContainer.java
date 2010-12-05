@@ -1,9 +1,11 @@
 package de.lmu.ifi.dbs.medmon.sensor.core.container;
 
+import java.util.Date;
+
 public class RootSensorDataContainer<E> extends AbstractSensorDataContainer<E> {
 
 	public RootSensorDataContainer() {
-		super(ROOT, null);
+		super(ContainerType.ROOT, null);
 	}
 	
 	public RootSensorDataContainer(ISensorDataContainer<E>[] children) {
@@ -15,6 +17,11 @@ public class RootSensorDataContainer<E> extends AbstractSensorDataContainer<E> {
 	@Override
 	public String getName() {
 		return "root";
+	}
+
+	@Override
+	public Date getTimestamp() {
+		return null;
 	}
 
 }

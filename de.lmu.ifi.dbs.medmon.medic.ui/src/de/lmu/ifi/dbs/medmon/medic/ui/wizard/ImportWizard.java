@@ -13,6 +13,7 @@ import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.database.util.JPAUtil;
 import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.ImportDataPage;
 import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SourcePage;
+import de.lmu.ifi.dbs.medmon.sensor.core.container.ContainerType;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
 import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
@@ -54,7 +55,7 @@ public class ImportWizard extends Wizard {
 		System.out.println("Patient: " + patient);
 		System.out.println("Start: " + start);
 		System.out.println("End: " + end);
-		//persistData();
+		persistData();
 		return true;
 	}
 
@@ -74,7 +75,7 @@ public class ImportWizard extends Wizard {
 		for (ISensorDataContainer c : container) {
 			System.out.println("Check ContainerType: " + c + " Type: " + c.getType() + " Hour: "
 					+ ISensorDataContainer.HOUR);
-			if (c.getType() == ISensorDataContainer.HOUR)
+			if (c.getType() == ContainerType.HOUR)
 				persist(c, patient.getId());
 
 		}
@@ -90,8 +91,7 @@ public class ImportWizard extends Wizard {
 			if (sensor == null)
 				sensor = sourcePage.getSensor();
 			IConverter converter = sensor.getConverter();
-			Object[] sensorData;
-			sensorData = container.getSensorData(converter);
+			Object[] sensorData = container.getSensorData(converter);
 			for (Object each : sensorData) {
 				Data data = (Data) each;
 				data.getId().setPatientId(id);

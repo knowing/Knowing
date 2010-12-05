@@ -161,15 +161,16 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 		Composite dbComposite = toolkit.createComposite(tabFolder, SWT.NONE);
 		dbComposite.setLayout(new GridLayout(3, false));
 		
-		TreeViewer treeViewer = new TreeViewer(dbComposite, SWT.NONE);
-		Tree tree = treeViewer.getTree();
-		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
+		final TreeViewer dbViewer = new TreeViewer(dbComposite, SWT.NONE);
+		dbViewer.setContentProvider(new DataContentProvider());
+		dbViewer.setLabelProvider(new DataLabelProvider());
+		dbViewer.getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 		
 		Button bLoad = toolkit.createButton(dbComposite, "Laden", SWT.NONE);
 		bLoad.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				IWizard wizard = new DataSelectionWizard();
+				IWizard wizard = new DataSelectionWizard(dbViewer);
 				WizardDialog dialog = new WizardDialog(e.widget.getDisplay().getActiveShell(), wizard);
 				dialog.open();
 			}

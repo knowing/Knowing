@@ -12,6 +12,8 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 
 import de.lmu.ifi.dbs.medmon.sensor.core.container.Block;
+import de.lmu.ifi.dbs.medmon.sensor.core.container.ContainerType;
+import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.RootSensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
 import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
@@ -56,9 +58,7 @@ public class SensorManagementController extends HyperlinkAdapter implements List
 		IConverter<?> converter = sensor.getConverter();
 		String file = converter.openChooseInputDialog(sensorViewer.getControl().getShell());
 		try {
-			Block[] blocks = converter.convertToBlock(file, Calendar.HOUR_OF_DAY);
-			RootSensorDataContainer<?> root = new RootSensorDataContainer();
-			converter.parseBlockToContainer(root, blocks);
+			ISensorDataContainer root = converter.readFile(file, ContainerType.WEEK, ContainerType.HOUR, null);
 			dataViewer.setInput(root);
 		} catch (IOException e) {
 			e.printStackTrace();

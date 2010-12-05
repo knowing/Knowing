@@ -9,6 +9,5 @@ package de.lmu.ifi.dbs.medmon.sensor.core.container;
  */
 public enum ContainerType {
 
-	ROOT, YEAR, MONTH, WEEK, DAY, HOUR,
-	BLOCK
+	ROOT, YEAR, MONTH, WEEK, DAY, HOUR
 }

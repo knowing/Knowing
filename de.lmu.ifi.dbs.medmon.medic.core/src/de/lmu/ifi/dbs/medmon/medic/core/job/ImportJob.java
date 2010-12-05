@@ -34,12 +34,13 @@ public class ImportJob extends Job {
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 
+		/*
 		try {
 			data = converter.parseBlockToData(block);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		*/
 		if (isModal(this)) {
 			// The progress dialog is still open so
 			// just open the message

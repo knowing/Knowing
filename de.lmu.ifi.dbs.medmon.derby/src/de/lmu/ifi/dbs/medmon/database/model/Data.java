@@ -1,10 +1,19 @@
 package de.lmu.ifi.dbs.medmon.database.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
-
-import java.util.Calendar;
 import java.util.Date;
+
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 /**
@@ -112,8 +121,6 @@ public class Data implements Serializable {
 		this.patient = patient;
 	}
 	
-	
-
 	@Override
 	public String toString() {
 		return "Data [id=" + id + ", imported=" + imported + ", x=" + x
