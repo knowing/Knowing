@@ -67,12 +67,14 @@ public interface IMedmonConstants {
 	public static final String IMG_REMOVE_24 = "icons/24/gtk-remove.png";
 	public static final String IMG_REFRESH_24 = "icons/24/gtk-refresh.png";
 	public static final String IMG_OPEN_24 = "icons/24/gtk-open.png";
+	public static final String IMG_PLAY_24 = "icons/24/gtk-play.png";
 	public static final String IMG_SAVE_AS_24 = "icons/24/gtk-save-as.png";
 	
 	
 	//Images 48x48
 	public static final String IMG_DIRECTORY_48 = "icons/48/gtk-directory.png";
 	public static final String IMG_CHART_48 = "icons/48/gtk-chart.png";
+	public static final String IMG_PLAY_48 = "icons/48/gtk-play.png";
 	public static final String IMG_SEARCH_48 = "icons/48/gtk-find.png";
 	public static final String IMG_DATA_48 = "icons/48/gtk-removable.png";
 	

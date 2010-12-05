@@ -1,6 +1,10 @@
 package de.lmu.ifi.dbs.medmon.developer.ui.pages;
 
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.beans.PojoObservables;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
@@ -19,7 +23,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -34,10 +41,8 @@ import de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorUnitEditorInput;
 import de.lmu.ifi.dbs.medmon.developer.ui.provider.DPUContentProvider;
 import de.lmu.ifi.dbs.medmon.developer.ui.provider.ProcessorsContentProvider;
 import de.lmu.ifi.dbs.medmon.developer.ui.provider.ProcessorsLabelProvider;
-import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.core.databinding.beans.PojoObservables;
+import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
+import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 
 public class ProcessorUnitManagePage extends FormPage {
 	private DataBindingContext m_bindingContext;
@@ -104,7 +109,7 @@ public class ProcessorUnitManagePage extends FormPage {
 		unitListViewer = new ListViewer(body, SWT.BORDER | SWT.V_SCROLL);
 		unitListViewer.setContentProvider(new DPUContentProvider());
 		unitListViewer.setLabelProvider(new ProcessorsLabelProvider());
-		unitListViewer.getList().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 6));
+		unitListViewer.getList().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 5));
 		unitListViewer.setInput(((ProcessorUnitEditorInput) getEditorInput()).getDpu());
 		int operations = DND.DROP_COPY | DND.DROP_MOVE;
 		Transfer[] transferTypes = new Transfer[] { ProcessorTransfer.getInstance() };
@@ -133,7 +138,23 @@ public class ProcessorUnitManagePage extends FormPage {
 
 		Button down = managedForm.getToolkit().createButton(managedForm.getForm().getBody(), "move down", SWT.NONE);
 		down.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
-		new Label(body, SWT.NONE);
+
+		Section runSection = managedForm.getToolkit().createSection(managedForm.getForm().getBody(), Section.TITLE_BAR);
+		runSection.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+		managedForm.getToolkit().paintBordersFor(runSection);
+		runSection.setText("Running the DPU");
+
+		Composite composite = managedForm.getToolkit().createComposite(runSection, SWT.NONE);
+		managedForm.getToolkit().paintBordersFor(composite);
+		runSection.setClient(composite);
+		composite.setLayout(new GridLayout(1, false));
+
+		ImageHyperlink linkRunDpu = managedForm.getToolkit().createImageHyperlink(composite, SWT.NONE);
+		managedForm.getToolkit().paintBordersFor(linkRunDpu);
+		linkRunDpu.setText("Run DPU");
+		linkRunDpu.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_PLAY_24));
+		linkRunDpu.addHyperlinkListener(controller);
+		new Label(managedForm.getForm().getBody(), SWT.NONE);
 
 		Section sDescription = managedForm.getToolkit().createSection(body, Section.TWISTIE | Section.TITLE_BAR);
 		sDescription.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
@@ -146,8 +167,8 @@ public class ProcessorUnitManagePage extends FormPage {
 		sDescription.setClient(descriptionClient);
 		toolkit.paintBordersFor(sDescription);
 		m_bindingContext = initDataBindings();
-		
-		//Everything ok
+
+		// Everything ok
 		dirty = false;
 		getEditor().editorDirtyStateChanged();
 	}
@@ -156,7 +177,7 @@ public class ProcessorUnitManagePage extends FormPage {
 	public void doSave(IProgressMonitor monitor) {
 		dirty = false;
 		getEditor().editorDirtyStateChanged();
-		//super.doSave(monitor);
+		// super.doSave(monitor);
 	}
 
 	@Override
@@ -174,11 +195,10 @@ public class ProcessorUnitManagePage extends FormPage {
 		return bindingContext;
 	}
 
-	/*
-	 * Create own class for this
-	 */
-
-	private class DPUController implements Listener {
+	
+	//TODO Create own class for this
+	
+	private class DPUController implements Listener, IHyperlinkListener {
 
 		@Override
 		public void handleEvent(Event event) {
@@ -208,6 +228,29 @@ public class ProcessorUnitManagePage extends FormPage {
 					unitListViewer.refresh();
 				}
 			}
+		}
+		
+
+		@Override
+		public void linkActivated(HyperlinkEvent event) {
+			System.out.println("Link activated");
+			/*
+			 * 1) Ueberpruefen ob es schon eine LaunchConfiguration gibt
+			 * 1a) Diese ausführen
+			 * 1b) Sonst LaunchConfiguration erstellen
+			 * 2)  Datensatz abfragen (CSV Dialog)
+			 * 3)   
+			 */
+		}
+
+		@Override
+		public void linkEntered(HyperlinkEvent event) {
+						
+		}
+
+		@Override
+		public void linkExited(HyperlinkEvent event) {
+					
 		}
 	}
 

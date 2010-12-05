@@ -20,13 +20,6 @@ public class FrameworkUtil {
 
 	private static final Logger logger = Logger.getLogger(Activator.PLUGIN_ID);
 
-	public static IDataProcessor[] evaluateDataProcessors() {
-		Object[] processors = FrameworkUtil.<IDataProcessor> evaluateExtensions(IDataProcessor.PROCESSOR_ID);
-		IDataProcessor[] returns = new IDataProcessor[processors.length];
-		for (int i = 0; i < returns.length; i++)
-			returns[i] = (IDataProcessor) processors[i];
-		return returns;
-	}
 
 	/**
 	 * Provides all registered ISensorDataAlgorithm Extensions. No TypeCast
@@ -108,6 +101,14 @@ public class FrameworkUtil {
 				return iDataProcessor;
 		}
 		return null;
+	}
+	
+	public static IDataProcessor[] evaluateDataProcessors() {
+		Object[] processors = FrameworkUtil.<IDataProcessor> evaluateExtensions(IDataProcessor.PROCESSOR_ID);
+		IDataProcessor[] returns = new IDataProcessor[processors.length];
+		for (int i = 0; i < returns.length; i++)
+			returns[i] = (IDataProcessor) processors[i];
+		return returns;
 	}
 
 }

@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.medmon.datamining.core.util;
+package de.lmu.ifi.dbs.medmon.datamining.core.processing.internal;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import de.lmu.ifi.dbs.medmon.datamining.core.annotations.SensorData;
 import de.lmu.ifi.dbs.medmon.datamining.core.annotations.SensorDataClass;
 import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
+import de.lmu.ifi.dbs.medmon.datamining.core.util.AnnotationUtil;
 
 public class DataConverter {
 

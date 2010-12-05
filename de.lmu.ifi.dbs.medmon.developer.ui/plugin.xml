@@ -103,5 +103,21 @@
             name="New DPU">
       </wizard>
    </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            configTypeID="de.lmu.ifi.dbs.medmon.datamining.core.DPULaunchConfigurationType"
+            icon="icons/dpu.png"
+            id="de.lmu.ifi.dbs.medmon.developer.ui.DPUlaunchConfigurationTypeImage">
+      </launchConfigurationTypeImage>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="de.lmu.ifi.dbs.medmon.developer.ui.launch.DPULaunchConfigurationTabGroup"
+            id="de.lmu.ifi.dbs.medmon.developer.ui.DPUlaunchConfigurationTabGroup"
+            type="de.lmu.ifi.dbs.medmon.datamining.core.DPULaunchConfigurationType">
+      </launchConfigurationTabGroup>
+   </extension>
 
 </plugin>

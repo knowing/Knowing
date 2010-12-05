@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="de.lmu.ifi.dbs.medmon.datamining.core.launch.DPULaunchDelegate"
+            delegateDescription="Launches a DataProcessingUnit"
+            delegateName="DPU Launcher"
+            id="de.lmu.ifi.dbs.medmon.datamining.core.DPULaunchConfigurationType"
+            modes="run"
+            name="DPU File">
+      </launchConfigurationType>
+   </extension>
+
+</plugin>
