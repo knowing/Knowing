@@ -25,7 +25,7 @@ public class ImportJobManager {
 			ConvertJob convertJob = new ConvertJob("Convert",c, converter);
 			convertJob.schedule();
 			Data[] data = convertJob.getConvertedData();
-			PersistJob persistJob = new PersistJob("Persist", data);
+			PersistJob persistJob = new PersistJob("Persist", data, 0);
 			//DataProcessJob processJob = new DataProcessJob("Analyze", data, algorithm);
 			
 			persistJob.schedule();

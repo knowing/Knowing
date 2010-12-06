@@ -15,7 +15,7 @@ public class PersistRule implements ISchedulingRule {
 
 	@Override
 	public boolean isConflicting(ISchedulingRule rule) {
-		if(rule instanceof ConvertRule)
+		if(rule instanceof ConvertRule || rule instanceof PersistRule)
 			return true;
 		return false;
 	}
