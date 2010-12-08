@@ -56,6 +56,10 @@ public abstract class CSVFile {
      * The current char used as text qualifier.
      */
     protected char textQualifier;
+    /**
+     * Describes the csv content
+     */
+    protected CSVDescriptor descriptor = new CSVDescriptor();
 
     /**
      * CSVFile constructor with the default field separator and text qualifier.
@@ -119,5 +123,9 @@ public abstract class CSVFile {
     public char getTextQualifier() {
         return textQualifier;
     }
+    
+    public CSVDescriptor getDescriptor() {
+		return descriptor;
+	}
 }
 
