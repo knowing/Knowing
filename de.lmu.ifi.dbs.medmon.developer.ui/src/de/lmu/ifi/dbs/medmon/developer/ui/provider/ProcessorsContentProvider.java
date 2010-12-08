@@ -6,9 +6,7 @@ import java.util.List;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.AbstractAlgorithm;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
 
 public class ProcessorsContentProvider implements IStructuredContentProvider {

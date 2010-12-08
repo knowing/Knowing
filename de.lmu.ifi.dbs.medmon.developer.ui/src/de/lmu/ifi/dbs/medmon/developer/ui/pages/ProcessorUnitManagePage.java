@@ -111,6 +111,7 @@ public class ProcessorUnitManagePage extends FormPage {
 		unitListViewer.setLabelProvider(new ProcessorsLabelProvider());
 		unitListViewer.getList().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 5));
 		unitListViewer.setInput(((ProcessorUnitEditorInput) getEditorInput()).getDpu());
+		getSite().setSelectionProvider(unitListViewer);
 		int operations = DND.DROP_COPY | DND.DROP_MOVE;
 		Transfer[] transferTypes = new Transfer[] { ProcessorTransfer.getInstance() };
 		unitListViewer.addDropSupport(operations, transferTypes, new ProcessorDropListener(unitListViewer));
