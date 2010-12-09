@@ -19,7 +19,6 @@ public class CSVFieldLabelProvider extends LabelProvider implements ITableLabelP
 		switch(columnIndex) {
 		case 0: return String.valueOf(field.getPosition());
 		case 1: return field.getType().getName();
-		case 2: return field.getFormatter();
 		}
 		return getText(element);
 	}

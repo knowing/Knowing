@@ -3,19 +3,12 @@ package de.lmu.ifi.dbs.medmon.datamining.core.csv;
 public class CSVField {
 
 	private int position;
-	
-	private String formatter;
-		
+			
 	private Class type;
 
-	public CSVField(int position, String formatter, Class type) {
-		this.position = position;
-		this.formatter = formatter;
-		this.type = type;
-	}
-
 	public CSVField(int position, Class type) {
-		this(position, "", type);
+		this.position = position;
+		this.type = type;
 	}
 
 	public int getPosition() {
@@ -34,12 +27,31 @@ public class CSVField {
 		this.type = type;
 	}
 
-	public String getFormatter() {
-		return formatter;
+	@Override
+	public String toString() {
+		return "CSVField [position=" + position + ", type=" + type + "]";
 	}
 
-	public void setFormatter(String formatter) {
-		this.formatter = formatter;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + position;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CSVField other = (CSVField) obj;
+		if (position != other.position)
+			return false;
+		return true;
 	}
 	
 	

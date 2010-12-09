@@ -49,6 +49,7 @@ public class TypeEditingSupport extends EditingSupport {
 				break;
 		case 1: field.setType(Date.class);
 		}
+		viewer.refresh();
 	}
 
 }

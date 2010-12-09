@@ -4,15 +4,17 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Combo;
 
 import de.lmu.ifi.dbs.medmon.developer.ui.csv.CSVConfiguration;
 
@@ -49,6 +51,17 @@ public class DPUMainTab extends AbstractLaunchConfigurationTab {
 		
 		Button bCSVFile = new Button(container, SWT.NONE);
 		bCSVFile.setText("choose");
+		bCSVFile.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog dialog = new FileDialog(tCSV.getShell(), SWT.SINGLE);
+				dialog.setFilterExtensions(new String[] {"*.csv"});
+				dialog.setFilterNames(new String[] {"CSV File"});
+				String file = dialog.open(); //Of the last selected file
+				csvConfiguration.setTestfile(file);
+				tCSV.setText(file);
+			}
+		});
 		
 		Group gCSVConfig = new Group(container, SWT.NONE);
 		gCSVConfig.setText("CSV Configuration");

@@ -112,8 +112,8 @@ public class CSVFileReader extends CSVFile {
 	 * @throws FileNotFoundException
 	 *             If the file to be read does not exist
 	 */
-	public CSVFileReader(String inputFileName, char sep, CSVDescriptor descriptor) throws FileNotFoundException {
-		this(inputFileName, sep);
+	public CSVFileReader(String inputFileName, CSVDescriptor descriptor) throws FileNotFoundException {
+		this(inputFileName, descriptor.getFieldSeparator(), descriptor.getTextQualifier());
 		this.descriptor = descriptor;
 	}
 
@@ -159,7 +159,7 @@ public class CSVFileReader extends CSVFile {
 
 	}
 
-	public Map<Integer, Object> readFieldsToMap() throws IOException {
+	public Map<Integer, Object> readFieldsToMap() throws IOException, NumberFormatException, ParseException {
 		Map<Integer, Object> returns = new HashMap<Integer, Object>();
 		List<String> fields = readFields();
 		int position = 0;
@@ -174,17 +174,11 @@ public class CSVFileReader extends CSVFile {
 		return returns;
 	}
 
-	protected Object castField(String value, Class clazz) {
-		try {
+	protected Object castField(String value, Class clazz) throws NumberFormatException, ParseException {
 			if (clazz.equals(Double.class))
 				return Double.valueOf(value);
 			if (clazz.equals(Date.class))
 				return new SimpleDateFormat(descriptor.getDatePattern()).parseObject(value); 
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		} 
 		return value;
 	}
 

@@ -69,7 +69,14 @@ public class CSVDescriptor {
 	public void setTextQualifier(char textQualifier) {
 		this.textQualifier = textQualifier;
 	}
+
+	@Override
+	public String toString() {
+		return "CSVDescriptor [fieldSeparator=" + fieldSeparator + ", textQualifier=" + textQualifier
+				+ ", datePattern=" + datePattern + ", fields=" + fields + "]";
+	}
     
+	
     
     
 }
