@@ -29,11 +29,14 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
+import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.util.FrameworkUtil;
+import de.lmu.ifi.dbs.medmon.developer.ui.adaptable.DataProcessorTabbedPropertySheetPage;
 import de.lmu.ifi.dbs.medmon.developer.ui.dnd.ProcessorDragListener;
 import de.lmu.ifi.dbs.medmon.developer.ui.dnd.ProcessorDropListener;
 import de.lmu.ifi.dbs.medmon.developer.ui.dnd.ProcessorTransfer;
@@ -44,7 +47,7 @@ import de.lmu.ifi.dbs.medmon.developer.ui.provider.ProcessorsLabelProvider;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 
-public class ProcessorUnitManagePage extends FormPage {
+public class ProcessorUnitManagePage extends FormPage implements ITabbedPropertySheetPageContributor {
 	private DataBindingContext m_bindingContext;
 
 	public static final String ID = "de.lmu.ifi.dbs.medmon.developer.ui.pages.UnitFormPage";
@@ -196,9 +199,22 @@ public class ProcessorUnitManagePage extends FormPage {
 		return bindingContext;
 	}
 
-	
-	//TODO Create own class for this
-	
+	@Override
+	public String getContributorId() {
+		return ID;
+	}
+
+	@Override
+	public Object getAdapter(Class adapter) {
+		System.out.println("ProcessorUnitManagePage.getAdapter()");
+		System.out.println("Adapter: " + adapter);
+		if (adapter == IPropertySheetPage.class)
+			return new DataProcessorTabbedPropertySheetPage();
+		return super.getAdapter(adapter);
+	}
+
+	// TODO Create own class for this
+
 	private class DPUController implements Listener, IHyperlinkListener {
 
 		@Override
@@ -230,28 +246,25 @@ public class ProcessorUnitManagePage extends FormPage {
 				}
 			}
 		}
-		
 
 		@Override
 		public void linkActivated(HyperlinkEvent event) {
 			System.out.println("Link activated");
 			/*
-			 * 1) Ueberpruefen ob es schon eine LaunchConfiguration gibt
-			 * 1a) Diese ausführen
-			 * 1b) Sonst LaunchConfiguration erstellen
-			 * 2)  Datensatz abfragen (CSV Dialog)
-			 * 3)   
+			 * 1) Ueberpruefen ob es schon eine LaunchConfiguration gibt 1a)
+			 * Diese ausführen 1b) Sonst LaunchConfiguration erstellen 2)
+			 * Datensatz abfragen (CSV Dialog) 3)
 			 */
 		}
 
 		@Override
 		public void linkEntered(HyperlinkEvent event) {
-						
+
 		}
 
 		@Override
 		public void linkExited(HyperlinkEvent event) {
-					
+
 		}
 	}
 
