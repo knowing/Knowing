@@ -13,9 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
-import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.XMLParameterWrapper;
@@ -162,8 +160,9 @@ public class DataProcessor implements IAdaptable {
 
 	@Override
 	public Object getAdapter(Class adapter) {
-		if (adapter == IPropertySource.class) {
-
+		System.out.println("DataProcessor.getAdapter()");
+		System.out.println("Adapter: " + adapter);
+		if (adapter == IPropertySource.class ) {
 			if (propertySource == null) {
 				// cache the buttonelementpropertysource
 				propertySource = new DataProcessorElement(this);

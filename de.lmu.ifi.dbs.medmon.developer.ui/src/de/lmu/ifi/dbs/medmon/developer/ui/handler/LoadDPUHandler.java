@@ -46,6 +46,7 @@ public class LoadDPUHandler extends AbstractHandler {
 			ProcessorUnitEditorInput input = new ProcessorUnitEditorInput(dpu);
 			System.out.println("Opening Editor");
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(input, DPUFormEditor.ID);
+			//PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(input, DPUEditor.ID);
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		} catch (JAXBException e) {

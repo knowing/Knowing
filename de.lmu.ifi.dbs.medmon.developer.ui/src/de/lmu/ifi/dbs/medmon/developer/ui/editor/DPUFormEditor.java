@@ -15,6 +15,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
+import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.developer.ui.pages.ProcessorUnitConfigurationPage;
@@ -25,6 +27,8 @@ public class DPUFormEditor extends FormEditor {
 	public static final String ID = "de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUFormEditor";
 	
 	private File dpuXML;
+
+	private ProcessorUnitManagePage processorUnitManagePage;
 	
 	
 	@Override
@@ -37,9 +41,10 @@ public class DPUFormEditor extends FormEditor {
 
 	@Override
 	protected void addPages() {
-
 		try {
-			addPage(new ProcessorUnitManagePage(this));
+			processorUnitManagePage = new ProcessorUnitManagePage(this);
+			getSite().setSelectionProvider(processorUnitManagePage.getSite().getSelectionProvider());
+			addPage(processorUnitManagePage);
 			addPage(new ProcessorUnitConfigurationPage(this));
 		} catch (PartInitException e) {
 			e.printStackTrace();
@@ -60,9 +65,15 @@ public class DPUFormEditor extends FormEditor {
 	}
 
 	@Override
-	public boolean isSaveAsAllowed() {
-		
+	public boolean isSaveAsAllowed() {	
 		return false;
+	}
+	
+	@Override
+	public Object getAdapter(Class adapter) {
+        if (adapter == IPropertySheetPage.class)
+            return new TabbedPropertySheetPage(processorUnitManagePage);
+		return super.getAdapter(adapter);
 	}
 	
 	/**

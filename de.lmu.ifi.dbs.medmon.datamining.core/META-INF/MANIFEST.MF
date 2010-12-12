@@ -20,5 +20,6 @@ Export-Package: de.lmu.ifi.dbs.medmon.datamining.core.annotations,
  de.lmu.ifi.dbs.medmon.datamining.core.launch,
  de.lmu.ifi.dbs.medmon.datamining.core.parameter,
  de.lmu.ifi.dbs.medmon.datamining.core.processing,
+ de.lmu.ifi.dbs.medmon.datamining.core.property,
  de.lmu.ifi.dbs.medmon.datamining.core.util
 Import-Package: org.eclipse.swt.widgets

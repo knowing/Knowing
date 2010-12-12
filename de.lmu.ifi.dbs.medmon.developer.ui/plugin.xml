@@ -29,16 +29,15 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="de.lmu.ifi.dbs.medmon.developer.ui.pages.ProcessorUnitConfigurationPage"
-            default="false"
-            id="de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorListEditor"
-            name="DPU Editor">
-      </editor>
-      <editor
             class="de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUFormEditor"
             default="false"
             id="de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUFormEditor"
             name="DPU Form Editor">
+      </editor>
+      <editor
+            class="de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUEditor"
+            id="de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUEditor"
+            name="DPU Editor">
       </editor>
    </extension>
    <extension
@@ -48,6 +47,11 @@
             id="de.lmu.ifi.dbs.medmon.developer.ui.dataView"
             name="DataView"
             restorable="true">
+      </view>
+      <view
+            class="de.lmu.ifi.dbs.medmon.developer.ui.view.DPUView"
+            id="de.lmu.ifi.dbs.medmon.developer.ui.view.DPUView"
+            name="DPU View">
       </view>
    </extension>
    <extension
@@ -122,7 +126,7 @@
       <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
       <propertyContributor
-            contributorId="de.lmu.ifi.dbs.medmon.developer.ui.pages.UnitFormPage">
+            contributorId="de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUEditor">
          <propertyCategory
                category="general">
          </propertyCategory>
@@ -131,7 +135,7 @@
    <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
       <propertyTabs
-            contributorId="de.lmu.ifi.dbs.medmon.developer.ui.pages.UnitFormPage">
+            contributorId="de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUEditor">
          <propertyTab
                afterTab="de.lmu.ifi.dbs.medmon.datamining.core.ParameterPropertyTab"
                category="general"
@@ -148,7 +152,7 @@
    <extension
          point="org.eclipse.ui.views.properties.tabbed.propertySections">
       <propertySections
-            contributorId="de.lmu.ifi.dbs.medmon.developer.ui.pages.UnitFormPage">
+            contributorId="de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUEditor">
          <propertySection
                class="de.lmu.ifi.dbs.medmon.developer.ui.adaptable.DataProcessorGeneralSection"
                id="de.lmu.ifi.dbs.medmon.datamining.core.DataProcessorGeneralSection"
