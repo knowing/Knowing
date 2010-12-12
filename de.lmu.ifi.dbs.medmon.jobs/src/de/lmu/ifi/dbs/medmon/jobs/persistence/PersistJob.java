@@ -45,7 +45,7 @@ public class PersistJob extends Job {
 	
 	protected IStatus singlePersist(Data[] data, IProgressMonitor monitor) {
 		monitor.beginTask("persist", IProgressMonitor.UNKNOWN);
-		EntityManager entityManager = JPAUtil.currentEntityManager();
+		EntityManager entityManager = JPAUtil.createEntityManager();
 		entityManager.getTransaction().begin();
 
 		for (Data each : data) {
@@ -55,12 +55,13 @@ public class PersistJob extends Job {
 			
 		
 		entityManager.getTransaction().commit();
+		entityManager.close();
 		monitor.done();
 		return Status.OK_STATUS;
 	}
 	
 	protected IStatus multiPersist(ISensorDataContainer root, IConverter converter, IProgressMonitor monitor) {
-		EntityManager entityManager = JPAUtil.currentEntityManager();
+		EntityManager entityManager = JPAUtil.createEntityManager();
 		monitor.beginTask("Persist: " + root.getName(), root.getChildren().length);
 		for (ISensorDataContainer c : root.getChildren()) {
 			try {
@@ -80,6 +81,7 @@ public class PersistJob extends Job {
 				e.printStackTrace();
 			}
 		}
+		entityManager.close();
 		monitor.done();
 		return Status.OK_STATUS;
 	}

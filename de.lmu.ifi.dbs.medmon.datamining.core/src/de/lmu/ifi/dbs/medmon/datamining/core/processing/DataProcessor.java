@@ -12,18 +12,20 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.XMLParameterWrapper;
+import de.lmu.ifi.dbs.medmon.datamining.core.property.DataProcessorElement;
 import de.lmu.ifi.dbs.medmon.datamining.core.util.FrameworkUtil;
 
 @XmlRootElement(name = "dataProcessor")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "name", "id", "providedby", "wrappedParameters" })
-public class DataProcessor implements IPropertySource{
+public class DataProcessor implements IAdaptable{
 
 	@XmlElement
 	private String name;
@@ -39,6 +41,8 @@ public class DataProcessor implements IPropertySource{
 	private List<XMLParameterWrapper> wrappedParameters = new ArrayList<XMLParameterWrapper>();
 
 	private transient Map<String, IProcessorParameter> parameters = new HashMap<String, IProcessorParameter>();
+
+	private DataProcessorElement propertySource;
 
 	/**
 	 * Default constructor for JAXB
@@ -156,36 +160,15 @@ public class DataProcessor implements IPropertySource{
 	}
 
 	@Override
-	public Object getEditableValue() {
-		System.out.println("DataProcessor.getEditableValue()");
+	public Object getAdapter(Class adapter) {
+		 if (adapter == IPropertySource.class) {
+				if (propertySource == null) {
+					// cache the buttonelementpropertysource
+					propertySource = new DataProcessorElement(this);
+				}
+				return propertySource;
+			 }
 		return null;
 	}
 
-	@Override
-	public IPropertyDescriptor[] getPropertyDescriptors() {
-		System.out.println("DataProcessor.getPropertyDescriptors()");
-		return new IPropertyDescriptor[] { new TextPropertyDescriptor("name", "name")};
-	}
-
-	@Override
-	public Object getPropertyValue(Object id) {
-		System.out.println("DataProcessor.getPropertyValue(): " + id);
-		return name;
-	}
-
-	@Override
-	public boolean isPropertySet(Object id) {
-		System.out.println("DataProcessor.isPropertySet(): " + id);
-		return false;
-	}
-
-	@Override
-	public void resetPropertyValue(Object id) {
-		System.out.println("DataProcessor.resetPropertyValue(): " + id);		
-	}
-
-	@Override
-	public void setPropertyValue(Object id, Object value) {
-		System.out.println("DataProcessor.setPropertyValue(): " + id + " / " + value);
-	}
 }

@@ -82,18 +82,6 @@ public class ImportWizard extends Wizard {
 		new PersistJob(root.getName(), root, converter, patient.getId()).schedule();
 	}
 
-/*	private void persistData() {
-		if (patient == null)
-			patient = sourcePage.getPatient();
-		ISensorDataContainer[] container = dataPage.getSelection();
-		for (ISensorDataContainer c : container) {
-			System.out.println("Check ContainerType: " + c + " Type: " + c.getType() + " Hour: " + ISensorDataContainer.HOUR);
-			if (c.getType() == ContainerType.HOUR)
-				persist(c, patient.getId());
-
-		}
-	}*/
-
 	private void persist(ISensorDataContainer container, int id) {
 		System.out.println("Trying to persist: " + container + " for id " + id);
 		if (sensor == null)
@@ -111,28 +99,6 @@ public class ImportWizard extends Wizard {
 		} finally {
 		}
 		
-		/*EntityManager em = JPAUtil.currentEntityManager();
-
-		em.getTransaction().begin();
-		try {
-			System.out.println("Beginning Transaction for Container " + container);
-			if (sensor == null)
-				sensor = sourcePage.getSensor();
-			IConverter converter = sensor.getConverter();
-			Object[] sensorData = container.getSensorData(converter);
-			for (Object each : sensorData) {
-				Data data = (Data) each;
-				data.getId().setPatientId(id);
-				em.persist(data);
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		System.out.println("Committing....");
-		em.getTransaction().commit();
-		System.out.println("Commited Transaction");*/
 	}
 
 }

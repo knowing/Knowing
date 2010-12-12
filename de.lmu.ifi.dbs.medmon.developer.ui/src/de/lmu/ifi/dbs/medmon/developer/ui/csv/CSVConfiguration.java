@@ -10,9 +10,11 @@ import java.util.Map;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -35,17 +37,13 @@ public class CSVConfiguration extends Composite {
 
 	
 	private String testfile;
+	private Button bTest;
 	
 	private CSVDescriptor descriptor = new CSVDescriptor();
-	private Table table;
-	private Text tFormatter;
-
-	private Button bTest;
-
-	private TableViewer viewer;
-	
 	private List<CSVField> fields = new ArrayList<CSVField>();
-
+	
+	private Text tFormatter;
+	private TableViewer fieldViewer;
 	private ComboViewer separatorViewer;
 
 	/**
@@ -83,8 +81,7 @@ public class CSVConfiguration extends Composite {
 		gFields.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 
 		final TableViewer tableViewer = createFieldViewer(gFields);
-		table = tableViewer.getTable();
-		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 2));
+		tableViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 2));
 
 		Button bAdd = new Button(gFields, SWT.NONE);
 		bAdd.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
@@ -105,9 +102,9 @@ public class CSVConfiguration extends Composite {
 			public void widgetSelected(SelectionEvent e) {
 				IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
 				if(selection.isEmpty())
-					return;
-				
-				System.out.println(selection);
+					return;		
+				removeField((CSVField) selection.getFirstElement());
+				fieldViewer.refresh();
 			}
 		});
 		
@@ -118,8 +115,7 @@ public class CSVConfiguration extends Composite {
 		bTest.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				boolean success = testCSVConversion();
-
+				testCSVConversion();
 			}
 		});
 		new Label(this, SWT.NONE);
@@ -127,17 +123,17 @@ public class CSVConfiguration extends Composite {
 	}
 
 	private TableViewer createFieldViewer(Composite parent) {
-		viewer = new TableViewer(parent, SWT.FULL_SELECTION);
-		createColumns(viewer);
-		viewer.setContentProvider(new CSVFieldContentProvider());
-		viewer.setLabelProvider(new CSVFieldLabelProvider());
-		viewer.setInput(fields);
+		fieldViewer = new TableViewer(parent, SWT.FULL_SELECTION);
+		createColumns(fieldViewer);
+		fieldViewer.setContentProvider(new CSVFieldContentProvider());
+		fieldViewer.setLabelProvider(new CSVFieldLabelProvider());
+		fieldViewer.setInput(fields);
 
-		final Table table = viewer.getTable();
+		final Table table = fieldViewer.getTable();
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		
-		return viewer;
+		return fieldViewer;
 	}
 
 	private void createColumns(TableViewer viewer) {
@@ -214,6 +210,15 @@ public class CSVConfiguration extends Composite {
 		return fields.size();
 	}
 	
+	private void removeField(CSVField field) {
+		boolean remove = fields.remove(field);
+		if(remove) {
+			int position = 0;
+			for (CSVField f : fields)
+				f.setPosition(position++);
+		}
+	}
+	
 	private char getSeparatorSelection() {
 		IStructuredSelection selection = (IStructuredSelection) separatorViewer.getSelection();
 		if(selection.isEmpty())
@@ -222,12 +227,46 @@ public class CSVConfiguration extends Composite {
 		return sep.charAt(0);
 	}
 	
+	private void setSeparatorSelection(String separator)  {
+		separatorViewer.setSelection(new StructuredSelection(separator));	
+	}
+	
+	private void setSeparatorSelection(char separator) {
+		setSeparatorSelection(new String(new char[] { separator}));
+	}
+	
 	public CSVDescriptor getDescriptor() {
+		descriptor.getFields().clear();
+		descriptor.setDatePattern(tFormatter.getText());
+		descriptor.setFieldSeparator(getSeparatorSelection());
+		for (CSVField field : fields)
+			descriptor.addField(field.getPosition(), field.getType());
+
 		return descriptor;
+	}
+	
+	public void setDescriptor(CSVDescriptor descriptor) {
+		this.descriptor = descriptor;
+		if(descriptor == null)
+			return;
+		fields.clear();
+		for (Integer position : descriptor.getFields().keySet())
+			fields.add(new CSVField(position, descriptor.getField(position)));
+		fieldViewer.setInput(fields);
+		tFormatter.setText(descriptor.getDatePattern());
+		setSeparatorSelection(descriptor.getFieldSeparator());
+	}
+			
+	
+	public void addModifyListener(ModifyListener listener) {
+		tFormatter.addModifyListener(listener);
+		separatorViewer.getCombo().addModifyListener(listener);
 	}
 	
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
+
+
 }

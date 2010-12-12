@@ -160,8 +160,11 @@ public class CSVFileReader extends CSVFile {
 	}
 
 	public Map<Integer, Object> readFieldsToMap() throws IOException, NumberFormatException, ParseException {
-		Map<Integer, Object> returns = new HashMap<Integer, Object>();
 		List<String> fields = readFields();
+		//End reached
+		if(fields == null)
+			return null;
+		Map<Integer, Object> returns = new HashMap<Integer, Object>();
 		int position = 0;
 		for (String value : fields) {
 			Class clazz = descriptor.getField(position);
