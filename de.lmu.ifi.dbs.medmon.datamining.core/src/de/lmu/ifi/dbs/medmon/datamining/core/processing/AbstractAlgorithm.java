@@ -6,7 +6,7 @@ import java.util.Map;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
 
 
-public abstract class AbstractAlgorithm<E> implements IAlgorithm<E> {
+public abstract class AbstractAlgorithm implements IAlgorithm {
 	
 	protected final HashMap<String, IProcessorParameter> parameters = new HashMap<String, IProcessorParameter>();
 	
@@ -27,11 +27,11 @@ public abstract class AbstractAlgorithm<E> implements IAlgorithm<E> {
 	
 	@Override
 	public boolean isCompatible(IDataProcessor processor) {
-		return processor.getClass() == getDataClass();
+		return processor.dimension() == dimension() || dimension() == INDEFINITE_DIMENSION;
 	}
 	
 	@Override
 	public String getID() {
-		return getDataClass().getName() + "." + getName() + "." + getVersion();
+		return getClass().getName() + "." + getName() + "." + getVersion();
 	}
 }

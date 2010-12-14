@@ -15,11 +15,15 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import de.lmu.ifi.dbs.medmon.datamining.core.annotations.SensorData;
+import de.lmu.ifi.dbs.medmon.datamining.core.annotations.SensorDataClass;
+
 
 /**
  * The persistent class for the DATA database table.
  * 
  */
+@SensorDataClass(dimension = 3)
 @Entity
 @Table(name="DATA")
 @NamedQueries({
@@ -36,14 +40,17 @@ public class Data implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date imported;
 	
+	@SensorData
 	@Column(nullable=false)
-	private int x;
+	private double x;
 
+	@SensorData
 	@Column(nullable=false)
-	private int y;
+	private double y;
 
+	@SensorData
 	@Column(nullable=false)
-	private int z;
+	private double z;
 
 	//bi-directional many-to-one association to Comment
     @ManyToOne
@@ -81,27 +88,27 @@ public class Data implements Serializable {
 		this.imported = imported;
 	}
 	
-	public int getX() {
+	public double getX() {
 		return this.x;
 	}
 
-	public void setX(int x) {
+	public void setX(double x) {
 		this.x = x;
 	}
 
-	public int getY() {
+	public double getY() {
 		return this.y;
 	}
 
-	public void setY(int y) {
+	public void setY(double y) {
 		this.y = y;
 	}
 
-	public int getZ() {
+	public double getZ() {
 		return this.z;
 	}
 
-	public void setZ(int z) {
+	public void setZ(double z) {
 		this.z = z;
 	}
 

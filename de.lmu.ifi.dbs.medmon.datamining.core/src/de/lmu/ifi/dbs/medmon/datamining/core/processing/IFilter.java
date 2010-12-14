@@ -1,8 +1,10 @@
 package de.lmu.ifi.dbs.medmon.datamining.core.processing;
 
-public interface IFilter<E> extends IDataProcessor {
+import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
+
+public interface IFilter extends IDataProcessor {
 	
 	@Override
-	public E process(Object data);
+	public RawData process(RawData data);
 
 }

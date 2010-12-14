@@ -14,6 +14,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.internal.DataConverter;
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
@@ -41,8 +42,8 @@ public class OpenDefaultPerspectiveHandler extends AbstractHandler {
 				e.printStackTrace();
 			}
 		}
-			
-		IAnalyzedData data = algorithm.process(sensorData);
+		
+		IAnalyzedData data = algorithm.process(DataConverter.convert(sensorData));
 		//Set the new analyzed data
 		service.setSelection(data, IPatientService.ANALYZED_DATA);
 		//Try to open the corresponding perspective

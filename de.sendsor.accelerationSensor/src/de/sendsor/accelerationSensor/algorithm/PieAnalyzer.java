@@ -1,6 +1,5 @@
 package de.sendsor.accelerationSensor.algorithm;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -14,10 +13,9 @@ import org.eclipse.core.runtime.Assert;
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.cluster.DoubleCluster;
+import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.ClusterParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
-import de.lmu.ifi.dbs.medmon.datamining.core.parameter.NumericParameter;
-import de.lmu.ifi.dbs.medmon.datamining.core.parameter.StringParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.AbstractAlgorithm;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
@@ -33,9 +31,9 @@ import de.sendsor.accelerationSensor.util.Utils;
  * Analyze the data via a simple clustering algorithm.
  * 
  * @author Nepomuk Seiler
- * @version 0.2
+ * @version 0.4
  */
-public class PieAnalyzer extends AbstractAlgorithm<Data> {
+public class PieAnalyzer extends AbstractAlgorithm {
 
 	static final Logger log = Logger.getLogger(PieAnalyzer.class.getName());
 
@@ -51,12 +49,11 @@ public class PieAnalyzer extends AbstractAlgorithm<Data> {
 	}
 
 	@Override
-	public IAnalyzedData process(Object data) {
-		// Can only handle Data.class
-		Assert.isTrue(data instanceof Data[]);
-
+	public IAnalyzedData process(RawData data) {
+		
+		
 		List<LabeledDoubleFeature> features = new ArrayList<LabeledDoubleFeature>();
-		List<LabeledDoubleFeature> rawVectors = Utils.readRawFeaturesFromData((Data[]) data);
+		List<LabeledDoubleFeature> rawVectors = Utils.readRawFeaturesFromData(data);
 		List<LabeledDoubleFeature> converted = raw2Features(rawVectors);
 		log.info("read " + rawVectors.size() + ", compactified to "	+ converted.size());
 		features.addAll(converted);
@@ -71,7 +68,7 @@ public class PieAnalyzer extends AbstractAlgorithm<Data> {
 	}
 	
 	@Override
-	public IAnalyzedData process(Object data, IAnalyzedData analyzedData) {
+	public IAnalyzedData process(RawData data, IAnalyzedData analyzedData) {
 		//TODO Implement Process-Chaining
 		return null;
 	}
@@ -218,8 +215,13 @@ public class PieAnalyzer extends AbstractAlgorithm<Data> {
 	}
 
 	@Override
-	public Class<?> getDataClass() {
-		return Data.class;
+	public boolean isTimeSensitiv() {
+		return false;
+	}
+
+	@Override
+	public int dimension() {
+		return 3;
 	}
 
 }

@@ -6,12 +6,13 @@ import java.util.GregorianCalendar;
 import org.jfree.data.time.Hour;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
+import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.NumericParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.StringParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.AbstractAlgorithm;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
 
-public class SimpleAnalyzer extends AbstractAlgorithm<Data> {
+public class SimpleAnalyzer extends AbstractAlgorithm {
 
 	public static final String PIE_CHART = "Pie-Chart";
 	public static final String BAR_CHART = "Bar-Chart";
@@ -30,7 +31,7 @@ public class SimpleAnalyzer extends AbstractAlgorithm<Data> {
 	}
 
 	@Override
-	public IAnalyzedData process(Object data) {
+	public IAnalyzedData process(RawData data) {
 		//SampleData Generation
 		SimpleAnalyzerData analyzedData = SimpleAnalyzerData.getInstance();
 		Hour[] hours = getHours();
@@ -49,7 +50,7 @@ public class SimpleAnalyzer extends AbstractAlgorithm<Data> {
 	}
 	
 	@Override
-	public IAnalyzedData process(Object data, IAnalyzedData analyzedData) {
+	public IAnalyzedData process(RawData data, IAnalyzedData analyzedData) {
 		return null;
 	}
 	
@@ -69,10 +70,6 @@ public class SimpleAnalyzer extends AbstractAlgorithm<Data> {
 		return "0.2";
 	}
 	
-	@Override
-	public Class<?> getDataClass() {
-		return Data.class.getClass();
-	}
 	
 	private static Hour[] getHours() {
 		Hour[] returns = new Hour[48];
@@ -84,6 +81,16 @@ public class SimpleAnalyzer extends AbstractAlgorithm<Data> {
 		}
 			
 		return returns;
+	}
+
+	@Override
+	public boolean isTimeSensitiv() {
+		return false;
+	}
+
+	@Override
+	public int dimension() {
+		return INDEFINITE_DIMENSION;
 	}
 
 }

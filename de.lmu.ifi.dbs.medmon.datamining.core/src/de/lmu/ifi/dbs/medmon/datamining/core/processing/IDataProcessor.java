@@ -2,24 +2,31 @@ package de.lmu.ifi.dbs.medmon.datamining.core.processing;
 
 import java.util.Map;
 
+import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
 
 
 public interface IDataProcessor {
 	
 	public static final String PROCESSOR_ID = "de.lmu.ifi.dbs.medmon.sensor.processing.processor";
+	public static final int INDEFINITE_DIMENSION = -1;
 
 	/**
 	 * 
 	 * @param data
 	 * @return
 	 */
-	public Object process(Object data);
+	public Object process(RawData data);
 	
+	/**
+	 * Current default implementation checks only if dimensions fit.
+	 * @param processor
+	 * @return
+	 */
 	public boolean isCompatible(IDataProcessor processor);
 	
-	public Class<?> getDataClass();
-	
+	public int dimension();
+		
 	/**
 	 * If the algorithm has parameters, it should be configured
 	 * with a Properties Object and be provided via this method

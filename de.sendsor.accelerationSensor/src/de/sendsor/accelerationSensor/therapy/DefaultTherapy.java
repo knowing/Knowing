@@ -1,6 +1,5 @@
 package de.sendsor.accelerationSensor.therapy;
 
-import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
 import de.lmu.ifi.dbs.medmon.medic.core.extensions.IDisease;
 import de.lmu.ifi.dbs.medmon.medic.core.extensions.ITherapy;
@@ -8,9 +7,9 @@ import de.lmu.ifi.dbs.medmon.medic.core.extensions.ITherapy;
 public class DefaultTherapy implements ITherapy{
 
 	private final IDisease disease;
-	private final IAlgorithm<Data> algorithm;
+	private final IAlgorithm algorithm;
 	
-	public DefaultTherapy(IDisease disease, IAlgorithm<Data> algorithm) {
+	public DefaultTherapy(IDisease disease, IAlgorithm algorithm) {
 		this.disease = disease;
 		this.algorithm = algorithm;
 	}
