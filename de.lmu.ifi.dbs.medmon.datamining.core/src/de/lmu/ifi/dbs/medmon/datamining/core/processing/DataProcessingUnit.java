@@ -11,7 +11,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 //This statement means that class "DataProcessingUnit.java" is the root-element 
-@XmlRootElement(namespace = "de.lmu.ifi.dbs.medmon.datamining.core.processing")
+//(namespace = "de.lmu.ifi.dbs.medmon.datamining.core.processing")
+@XmlRootElement
 public class DataProcessingUnit{
 	
 	private List<DataProcessor> processors;

@@ -43,7 +43,8 @@ public class DPUFormEditor extends FormEditor {
 	protected void addPages() {
 		try {
 			processorUnitManagePage = new ProcessorUnitManagePage(this);
-			getSite().setSelectionProvider(processorUnitManagePage.getSite().getSelectionProvider());
+			//TODO setSelectionProvider
+			//getSite().setSelectionProvider(processorUnitManagePage.getSite().getSelectionProvider());
 			addPage(processorUnitManagePage);
 			addPage(new ProcessorUnitConfigurationPage(this));
 		} catch (PartInitException e) {

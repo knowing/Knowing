@@ -1,10 +1,21 @@
 package de.lmu.ifi.dbs.medmon.medic.core;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
 
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
 import de.lmu.ifi.dbs.medmon.medic.core.extensions.IDisease;
+import de.lmu.ifi.dbs.medmon.medic.core.unit.MedicProcessingUnit;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 
 /**
