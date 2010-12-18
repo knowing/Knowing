@@ -18,11 +18,17 @@ import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
 public class PieAnalyzerData implements IAnalyzedData {
 
 	private DefaultPieDataset dataset = new DefaultPieDataset();
+	private ChartComposite chartComposite;
 	
 	@Override
 	public void createContent(Composite parent) {
 		JFreeChart chart = createChart(dataset);
-		new ChartComposite(parent, SWT.NONE, chart, true);
+		chartComposite = new ChartComposite(parent, SWT.NONE, chart, true);
+	}
+	
+	@Override
+	public void dispose() {
+		chartComposite.dispose();		
 	}
 
 	public void setValue(Comparable key, double value) {

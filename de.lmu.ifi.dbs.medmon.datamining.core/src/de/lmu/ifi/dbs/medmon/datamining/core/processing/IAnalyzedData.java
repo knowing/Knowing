@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Composite;
  * and provide it for further processing
  * 
  * @author Nepomuk Seiler
- * @version 0.2
+ * @version 1.0
  */
 public interface IAnalyzedData {
 	
@@ -18,5 +18,7 @@ public interface IAnalyzedData {
 	 * @return Composite to show up in some MonitorView
 	 */
 	public void createContent(Composite parent);
+	
+	public void dispose();
 
 }

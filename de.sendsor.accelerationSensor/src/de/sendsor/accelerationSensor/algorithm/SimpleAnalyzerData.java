@@ -24,6 +24,7 @@ public class SimpleAnalyzerData implements IAnalyzedData {
 
 	private static IntervalXYDataset dataset;
 	private static XYIntervalSeries[] categories;
+	private ChartComposite chartComposite;
 		
 	public SimpleAnalyzerData(IntervalXYDataset dataset) {
 		this.dataset = dataset;
@@ -37,7 +38,12 @@ public class SimpleAnalyzerData implements IAnalyzedData {
 	@Override
 	public void createContent(Composite parent) {
 		JFreeChart chart = createChart(dataset);
-		new ChartComposite(parent, SWT.NONE, chart, true);
+		chartComposite = new ChartComposite(parent, SWT.NONE, chart, true);
+	}
+	
+	@Override
+	public void dispose() {
+		chartComposite.dispose();
 	}
 
 	private JFreeChart createChart(IntervalXYDataset dataset) {
@@ -101,6 +107,6 @@ public class SimpleAnalyzerData implements IAnalyzedData {
 		for(Category category : cats) 
 			returns[category.ordinal()] = category.name();
 		return returns;
-	}	
-
+	}
+	
 }

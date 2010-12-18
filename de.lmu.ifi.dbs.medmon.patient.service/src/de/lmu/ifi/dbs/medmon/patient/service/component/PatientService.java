@@ -3,6 +3,7 @@ package de.lmu.ifi.dbs.medmon.patient.service.component;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.PropertyException;
 
@@ -60,9 +61,9 @@ public class PatientService implements IPatientService {
 		} else if (first instanceof IAlgorithm) {
 			support.firePropertyChange(ALGORITHM, selections.get(ALGORITHM), first);
 			selections.put(ALGORITHM, (IAlgorithm)first);
-		} else if(first instanceof IAnalyzedData) {
+		} else if(first instanceof Map) {
 			support.firePropertyChange(ANALYZED_DATA, selections.get(ANALYZED_DATA), first);
-			selections.put(ANALYZED_DATA, (IAnalyzedData)first);
+			selections.put(ANALYZED_DATA, (Map<String, IAnalyzedData>)first);
 		} else if(first instanceof Data) {
 			support.firePropertyChange(SENSOR_DATA, selections.get(SENSOR_DATA), first);
 			selections.put(SENSOR_DATA, convert(selection.toArray()));

@@ -2,10 +2,10 @@ package de.sendsor.accelerationSensor.algorithm;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Map;
 
 import org.jfree.data.time.Hour;
 
-import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.NumericParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.StringParameter;
@@ -14,60 +14,58 @@ import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
 
 public class SimpleAnalyzer extends AbstractAlgorithm {
 
-	public static final String PIE_CHART = "Pie-Chart";
-	public static final String BAR_CHART = "Bar-Chart";
-	
 	public static final String NAME = "Simple Analyzer";
 	
+	private static final String PIE_CHART = "Pie-Chart";
+	private static final String BAR_CHART = "Bar-Chart";
+		
 	public SimpleAnalyzer() {
+		super(NAME, INDEFINITE_DIMENSION);
 		init();
 	}
 	
 	private void init() {
 		NumericParameter toleranz = new NumericParameter("Toleranz", -10, 10, 0);
-		StringParameter display = new StringParameter("Darstellung", new String[] {PIE_CHART, BAR_CHART});
+		StringParameter display = new StringParameter("Darstellung", new String[] {PIE_CHART, BAR_CHART}); //Obsolete
 		parameters.put(toleranz.getName(), toleranz);
 		parameters.put(display.getName(), display);
+		
+		analyzedData.put(PIE_CHART, null);
+		analyzedData.put(BAR_CHART, null);
+		
+		description = "A Simple Sample Analyzer";
+		version = "0.4";
 	}
 
 	@Override
-	public IAnalyzedData[] process(RawData data) {
+	public Map<String, IAnalyzedData> process(RawData data) {
 		//SampleData Generation
-		SimpleAnalyzerData analyzedData = SimpleAnalyzerData.getInstance();
+		SimpleAnalyzerData barData = SimpleAnalyzerData.getInstance();
 		Hour[] hours = getHours();
 		
 		for(int i=0; i < hours.length; i += 3)
-			analyzedData.addPeriod(hours[i], hours[i+1], Category.WALK);
+			barData.addPeriod(hours[i], hours[i+1], Category.WALK);
 		
 		for(int i=0; i < hours.length; i += 7)
-			analyzedData.addPeriod(hours[i], hours[i+2], Category.LIE);
+			barData.addPeriod(hours[i], hours[i+2], Category.LIE);
 		
 		
 		for(int i=0; i < hours.length; i += 2)
-			analyzedData.addPeriod(hours[i], hours[i], Category.SIT);
-		
-		return new IAnalyzedData[] {analyzedData };
+			barData.addPeriod(hours[i], hours[i], Category.SIT);
+	
+		analyzedData.put(BAR_CHART, barData);
+		analyzedData.put(DEFAULT_DATA, barData);
+		return analyzedData;
 	}
 	
 	@Override
-	public IAnalyzedData[] process(RawData data, IAnalyzedData[] analyzedData) {
+	public Map<String, IAnalyzedData> process(RawData data, Map<String, IAnalyzedData> analyzedData) {
 		return null;
 	}
 	
-	
 	@Override
-	public String getName() {
-		return NAME;
-	}
-
-	@Override
-	public String getDescription() {
-		return "A Simple Analyzer";
-	}
-
-	@Override
-	public String getVersion() {
-		return "0.2";
+	public String[] analyzedDataKeys() {
+		return new String[] { PIE_CHART, BAR_CHART };
 	}
 	
 	
@@ -86,11 +84,6 @@ public class SimpleAnalyzer extends AbstractAlgorithm {
 	@Override
 	public boolean isTimeSensitiv() {
 		return false;
-	}
-
-	@Override
-	public int dimension() {
-		return INDEFINITE_DIMENSION;
 	}
 
 }

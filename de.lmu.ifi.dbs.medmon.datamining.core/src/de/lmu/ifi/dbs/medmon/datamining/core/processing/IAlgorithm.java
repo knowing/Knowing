@@ -1,31 +1,39 @@
 package de.lmu.ifi.dbs.medmon.datamining.core.processing;
 
+import java.util.Map;
+
 import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
 
 /**
- * <p>An Algorithm always returns {@link IAnalyzedData} which is used
- * to visualize the results.</p>
+ * <p>An Algorithm always returns an array of {@link IAnalyzedData} which 
+ * is used to visualize the results. Via <code>analyzedDataDescriptions</code>
+ * the selected IAnalyzedData is being visualized.
+ * </p>
  * 
  * <p>Furthermore an algorithm should be capable of processing
  * {@link RawData} step by step, so the process method is extended.</p>
  * 
  * @author Nepomuk Seiler
+ * @version 1.2
  */
 public interface IAlgorithm extends IDataProcessor {
 
+	public static final String DEFAULT_DATA = "Standard Output";
+	public static final String TABLE_DATA   = "Table Output";
+	
 	@Override
-	public IAnalyzedData[] process(RawData data);
+	public Map<String, IAnalyzedData> process(RawData data);
 	
 	/**
 	 * For analyzing data in more than one step, this method
-	 * takes the created IAnalyzedData object from his predecessor
-	 * and use it for his IAnalyzedData Object.
+	 * takes the created Map<String, IAnalyzedData> object from his predecessor
+	 * and use it for his Map<String, IAnalyzedData> Object.
 	 * 
 	 * @param data
 	 * @param analyzedData
-	 * @return IAnalyzedData
+	 * @return Map<String, IAnalyzedData>
 	 */
-	public IAnalyzedData[] process(RawData data, IAnalyzedData[] analyzedData);
+	public Map<String, IAnalyzedData> process(RawData data, Map<String, IAnalyzedData> analyzedData);
 	
 	/**
 	 * An algorithm can work with or without timestamps.
@@ -34,5 +42,11 @@ public interface IAlgorithm extends IDataProcessor {
 	 * @return processor needs timesensitiv data
 	 */
 	public boolean isTimeSensitiv();
-
+	
+	
+	/**
+	 * For UI to choose differente IAnalyzedData
+	 * @return String - the keys of the Map<String, IAnalyzedData>
+	 */
+	public String[] analyzedDataKeys();
 }

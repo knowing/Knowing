@@ -1,6 +1,7 @@
 package de.lmu.ifi.dbs.medmon.medic.ui.handler;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -43,9 +44,9 @@ public class OpenDefaultPerspectiveHandler extends AbstractHandler {
 			}
 		}
 		
-		IAnalyzedData[] data = algorithm.process(DataConverter.convert(sensorData));
+		Map<String, IAnalyzedData> data = algorithm.process(DataConverter.convert(sensorData));
 		//Set the new analyzed data
-		service.setSelection(data[0], IPatientService.ANALYZED_DATA);
+		service.setSelection(data, IPatientService.ANALYZED_DATA);
 		//Try to open the corresponding perspective
 		try {
 			IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
