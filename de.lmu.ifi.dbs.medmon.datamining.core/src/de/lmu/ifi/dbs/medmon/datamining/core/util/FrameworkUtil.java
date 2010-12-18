@@ -1,6 +1,12 @@
 package de.lmu.ifi.dbs.medmon.datamining.core.util;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.CoreException;
@@ -13,13 +19,14 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.Activator;
+import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
+import de.lmu.ifi.dbs.medmon.datamining.core.csv.CSVFileReader;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
 
 public class FrameworkUtil {
 
 	private static final Logger logger = Logger.getLogger(Activator.PLUGIN_ID);
-
 
 	/**
 	 * Provides all registered ISensorDataAlgorithm Extensions. No TypeCast
@@ -82,19 +89,19 @@ public class FrameworkUtil {
 			if (algorithm instanceof IAlgorithm && algorithm.getName().equals(name))
 				return (IAlgorithm) algorithm;
 		}
-		
+
 		return null;
 	}
 
 	public static IDataProcessor findDataProcessor(String id) {
 		logger.info("Find DataProcessor: " + id);
-		//Check Extension Points
+		// Check Extension Points
 		IDataProcessor[] processors = evaluateDataProcessors();
 		for (IDataProcessor iDataProcessor : processors) {
 			if (iDataProcessor.getID().equals(id))
 				return iDataProcessor;
 		}
-		//Check registered Services
+		// Check registered Services
 		processors = evaluateService(IDataProcessor.class.getName());
 		for (IDataProcessor iDataProcessor : processors) {
 			if (iDataProcessor.getID().equals(id))
@@ -102,12 +109,56 @@ public class FrameworkUtil {
 		}
 		return null;
 	}
-	
+
 	public static IDataProcessor[] evaluateDataProcessors() {
 		Object[] processors = FrameworkUtil.<IDataProcessor> evaluateExtensions(IDataProcessor.PROCESSOR_ID);
 		IDataProcessor[] returns = new IDataProcessor[processors.length];
 		for (int i = 0; i < returns.length; i++)
 			returns[i] = (IDataProcessor) processors[i];
+		return returns;
+	}
+
+
+	/**
+	 * The CSVFileReader must be initialized with a CSVDescriptor Time
+	 * inefficient / Space efficient
+	 * 
+	 * @param reader
+	 * @return
+	 * @throws ParseException
+	 * @throws IOException
+	 * @throws NumberFormatException
+	 */
+	public static RawData covertCSV(CSVFileReader reader) throws NumberFormatException, IOException, ParseException {
+		Map<Integer, Class> fields = reader.getDescriptor().getFields();
+		List<Integer> positions = new ArrayList<Integer>();
+		for (Integer position : fields.keySet()) {
+			Class clazz = fields.get(position);
+			if (clazz == Double.class)
+				positions.add(position); // This is a double value
+		}
+
+		int dimension = 0;
+		RawData rawData = new RawData(positions.size());
+		for (Integer position : positions) {
+			List<Double> list = new LinkedList<Double>();
+			Map<Integer, Object> line = reader.readFieldsToMap();
+			while (line != null) {
+				list.add((Double) line.get(position));
+				line = reader.readFieldsToMap();
+			}
+			reader = reader.recreate();	//start from beginning
+			rawData.setDimension(dimension++, toArray(list));
+		}
+
+		return rawData;
+	}
+
+	private static double[] toArray(List<Double> list) {
+		double[] returns = new double[list.size()];
+		int i = 0;
+		for (Double d : list)
+			returns[i++] = d;
 		return returns;
 	}
 

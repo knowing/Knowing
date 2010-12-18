@@ -14,7 +14,7 @@ import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
 public interface IAlgorithm extends IDataProcessor {
 
 	@Override
-	public IAnalyzedData process(RawData data);
+	public IAnalyzedData[] process(RawData data);
 	
 	/**
 	 * For analyzing data in more than one step, this method
@@ -25,7 +25,7 @@ public interface IAlgorithm extends IDataProcessor {
 	 * @param analyzedData
 	 * @return IAnalyzedData
 	 */
-	public IAnalyzedData process(RawData data, IAnalyzedData analyzedData);
+	public IAnalyzedData[] process(RawData data, IAnalyzedData[] analyzedData);
 	
 	/**
 	 * An algorithm can work with or without timestamps.

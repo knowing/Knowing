@@ -34,13 +34,12 @@ public class CSVFileReader extends CSVFile {
 	 * The buffered reader linked to the CSV file to be read.
 	 */
 	protected BufferedReader in;
-
+	
 	/**
-	 * empty CSVFileReader constructor. For use of strings.
+	 * For 
 	 */
-	public CSVFileReader() {
-		super();
-	}
+	private final String inputFileName;
+
 
 	/**
 	 * CSVFileReader constructor just need the name of the existing CSV file
@@ -53,6 +52,7 @@ public class CSVFileReader extends CSVFile {
 	 */
 	public CSVFileReader(String inputFileName) throws FileNotFoundException {
 		super();
+		this.inputFileName = inputFileName;
 		in = new BufferedReader(new FileReader(inputFileName));
 	}
 
@@ -68,6 +68,7 @@ public class CSVFileReader extends CSVFile {
 	 */
 	public CSVFileReader(String inputFileName, char sep) throws FileNotFoundException {
 		super(sep);
+		this.inputFileName = inputFileName;
 		in = new BufferedReader(new FileReader(inputFileName));
 	}
 
@@ -85,6 +86,7 @@ public class CSVFileReader extends CSVFile {
 	 */
 	public CSVFileReader(String inputFileName, char sep, char qual) throws FileNotFoundException {
 		super(sep, qual);
+		this.inputFileName = inputFileName;
 		in = new BufferedReader(new FileReader(inputFileName));
 	}
 
@@ -101,7 +103,7 @@ public class CSVFileReader extends CSVFile {
 	public CSVFileReader(File inputFile, char string) throws FileNotFoundException {
 		this(inputFile.getAbsolutePath(), string);
 	}
-	
+		
 	/**
 	 * CSVFileReader constructor with a given field separator.
 	 * 
@@ -115,6 +117,16 @@ public class CSVFileReader extends CSVFile {
 	public CSVFileReader(String inputFileName, CSVDescriptor descriptor) throws FileNotFoundException {
 		this(inputFileName, descriptor.getFieldSeparator(), descriptor.getTextQualifier());
 		this.descriptor = descriptor;
+	}
+	
+	/**
+	 * 
+	 * @return same object with new Reader
+	 * @throws IOException
+	 */
+	public CSVFileReader recreate() throws IOException {
+		in.close();
+		return new CSVFileReader(inputFileName, descriptor);
 	}
 
 	/**
@@ -194,7 +206,7 @@ public class CSVFileReader extends CSVFile {
 	public void close() throws IOException {
 		in.close();
 	}
-
+	
 	/**
 	 * Handles a quoted field.
 	 * 

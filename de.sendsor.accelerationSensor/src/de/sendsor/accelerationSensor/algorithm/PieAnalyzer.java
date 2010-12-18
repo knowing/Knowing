@@ -49,7 +49,7 @@ public class PieAnalyzer extends AbstractAlgorithm {
 	}
 
 	@Override
-	public IAnalyzedData process(RawData data) {
+	public IAnalyzedData[] process(RawData data) {
 		
 		
 		List<LabeledDoubleFeature> features = new ArrayList<LabeledDoubleFeature>();
@@ -64,11 +64,11 @@ public class PieAnalyzer extends AbstractAlgorithm {
 		
 		// test
 		List<DoubleCluster> cluster = getCluster();
-		return test(cluster, features);
+		return new IAnalyzedData[] {test(cluster, features)};
 	}
 	
 	@Override
-	public IAnalyzedData process(RawData data, IAnalyzedData analyzedData) {
+	public IAnalyzedData[] process(RawData data, IAnalyzedData[] analyzedData) {
 		//TODO Implement Process-Chaining
 		return null;
 	}

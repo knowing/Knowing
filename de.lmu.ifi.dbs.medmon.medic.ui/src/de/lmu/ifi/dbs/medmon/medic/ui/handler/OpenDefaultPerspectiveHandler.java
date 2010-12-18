@@ -43,9 +43,9 @@ public class OpenDefaultPerspectiveHandler extends AbstractHandler {
 			}
 		}
 		
-		IAnalyzedData data = algorithm.process(DataConverter.convert(sensorData));
+		IAnalyzedData[] data = algorithm.process(DataConverter.convert(sensorData));
 		//Set the new analyzed data
-		service.setSelection(data, IPatientService.ANALYZED_DATA);
+		service.setSelection(data[0], IPatientService.ANALYZED_DATA);
 		//Try to open the corresponding perspective
 		try {
 			IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);

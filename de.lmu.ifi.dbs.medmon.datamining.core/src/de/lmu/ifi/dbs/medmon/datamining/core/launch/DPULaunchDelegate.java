@@ -2,6 +2,8 @@ package de.lmu.ifi.dbs.medmon.datamining.core.launch;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +20,8 @@ import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import de.lmu.ifi.dbs.medmon.datamining.core.csv.CSVDescriptor;
 import de.lmu.ifi.dbs.medmon.datamining.core.csv.CSVFileReader;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.internal.Processor;
+import de.lmu.ifi.dbs.medmon.datamining.core.util.FrameworkUtil;
 
 public class DPULaunchDelegate extends LaunchConfigurationDelegate {
 
@@ -57,9 +61,18 @@ public class DPULaunchDelegate extends LaunchConfigurationDelegate {
 			DataProcessingUnit dpu = (DataProcessingUnit) unmarshaller.unmarshal(new File(dpuFile));
 			context.createMarshaller().marshal(dpu, System.out);
 			monitor.worked(1);
+			
+			Processor processor = Processor.getInstance();
+			processor.run(dpu, FrameworkUtil.covertCSV(reader));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (JAXBException e) {
+			e.printStackTrace();
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 	}

@@ -31,7 +31,13 @@ public class Processor {
 		return run(chain, rawData);
 	}
 	
+	public IAnalyzedData run(DataProcessingUnit dpu, RawData rawData) {
+		IDataProcessor[] chain = createProcessorChain(dpu);
+		return run(chain, rawData);
+	}
+	
 	private IAnalyzedData run(IDataProcessor[] chain, RawData rawData) {
+		System.out.println("RawData: " + rawData);
 		return null;
 	}
 	

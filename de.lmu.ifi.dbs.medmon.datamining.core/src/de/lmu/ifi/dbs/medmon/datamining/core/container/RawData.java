@@ -28,6 +28,8 @@ public class RawData {
 
 	public void setDimension(int dimension, double[] data) {
 		rawdata[dimension] = data;
+		if(timestamp.length != data.length)
+			timestamp = new long[data.length];
 	}
 
 	public double[] getDimension(int dimension) {
@@ -61,7 +63,7 @@ public class RawData {
 			builder.append("{");
 			for (int j = 0; j < dimension; j++) {
 				builder.append(rawdata[j][i]);
-				builder.append(" / ");
+				builder.append(" @ ");
 				builder.append(timestamp[i]);
 				builder.append(",");
 			}
