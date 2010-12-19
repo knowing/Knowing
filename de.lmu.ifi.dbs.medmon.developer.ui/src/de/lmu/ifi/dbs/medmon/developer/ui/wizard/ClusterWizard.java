@@ -68,7 +68,6 @@ public class ClusterWizard extends Wizard implements IWorkbenchWizard {
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return true;
@@ -76,8 +75,7 @@ public class ClusterWizard extends Wizard implements IWorkbenchWizard {
 
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 }

@@ -21,7 +21,7 @@ import de.lmu.ifi.dbs.medmon.datamining.core.csv.CSVDescriptor;
 import de.lmu.ifi.dbs.medmon.datamining.core.csv.CSVFileReader;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.internal.Processor;
-import de.lmu.ifi.dbs.medmon.datamining.core.util.FrameworkUtil;
+import de.lmu.ifi.dbs.medmon.datamining.core.util.ClusterUtils;
 
 public class DPULaunchDelegate extends LaunchConfigurationDelegate {
 
@@ -47,7 +47,6 @@ public class DPULaunchDelegate extends LaunchConfigurationDelegate {
 		descriptor.setDatePattern(pattern);
 		descriptor.setFields(xmlToNative(fields));
 		monitor.worked(1);
-		System.out.println("CSV Descriptor: " + descriptor);
 		
 		//Initialize the files
 		String csvFile = configuration.getAttribute(DPULaunchDelegate.CSV_FILE, "");	
@@ -63,7 +62,7 @@ public class DPULaunchDelegate extends LaunchConfigurationDelegate {
 			monitor.worked(1);
 			
 			Processor processor = Processor.getInstance();
-			processor.run(dpu, FrameworkUtil.covertCSV(reader));
+			processor.run(dpu, ClusterUtils.covertCSV(reader));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (JAXBException e) {

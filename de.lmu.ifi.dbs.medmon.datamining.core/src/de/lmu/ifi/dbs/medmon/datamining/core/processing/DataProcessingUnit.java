@@ -77,13 +77,13 @@ public class DataProcessingUnit{
 
 	public boolean remove(Object o) {
 		boolean remove = processors.remove(o);
-		firePropertyChanged();
+		firePropertyChanged(o, null);
 		return remove;
 	}
 
 	public void clear() {
 		processors.clear();
-		firePropertyChanged();
+		firePropertyChanged(null, processors);
 	}
 
 	public DataProcessor get(int index) {
@@ -122,9 +122,5 @@ public class DataProcessingUnit{
 	protected void firePropertyChanged(Object oldValue, Object newValue) {
 		support.firePropertyChange("processors", oldValue, newValue);
 	}
-	
-	protected void firePropertyChanged() {
-		firePropertyChanged(processors, processors);
-	}
-	
+		
 }

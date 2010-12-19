@@ -2,10 +2,14 @@ package de.lmu.ifi.dbs.medmon.datamining.core.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
+import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
 import de.lmu.ifi.dbs.medmon.datamining.core.csv.CSVFileReader;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
@@ -87,6 +91,50 @@ public class ClusterUtils {
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * The CSVFileReader must be initialized with a CSVDescriptor Time
+	 * inefficient / Space efficient
+	 * 
+	 * @param reader
+	 * @return
+	 * @throws ParseException
+	 * @throws IOException
+	 * @throws NumberFormatException
+	 */
+	public static RawData covertCSV(CSVFileReader reader) throws NumberFormatException, IOException, ParseException {
+		Map<Integer, Class> fields = reader.getDescriptor().getFields();
+		List<Integer> positions = new ArrayList<Integer>();
+		for (Integer position : fields.keySet()) {
+			Class clazz = fields.get(position);
+			if (clazz == Double.class)
+				positions.add(position); // This is a double value
+		}
+
+		int dimension = 0;
+		RawData rawData = new RawData(positions.size());
+		for (Integer position : positions) {
+			List<Double> list = new LinkedList<Double>();
+			Map<Integer, Object> line = reader.readFieldsToMap();
+			while (line != null) {
+				list.add((Double) line.get(position));
+				line = reader.readFieldsToMap();
+			}
+			reader = reader.recreate();	//start from beginning
+			rawData.setDimension(dimension++, toArray(list));
+		}
+
+		return rawData;
+	}
+	
+
+	private static double[] toArray(List<Double> list) {
+		double[] returns = new double[list.size()];
+		int i = 0;
+		for (Double d : list)
+			returns[i++] = d;
+		return returns;
 	}
 	
 }

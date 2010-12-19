@@ -20,6 +20,7 @@ public interface IAlgorithm extends IDataProcessor {
 
 	public static final String DEFAULT_DATA = "Standard Output";
 	public static final String TABLE_DATA   = "Table Output";
+	public static final String CLUSTER_DATA = "Cluster Output";
 	
 	@Override
 	public Map<String, IAnalyzedData> process(RawData data);

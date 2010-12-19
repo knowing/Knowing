@@ -171,6 +171,13 @@ public class CSVFileReader extends CSVFile {
 
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @throws IOException
+	 * @throws NumberFormatException
+	 * @throws ParseException
+	 */
 	public Map<Integer, Object> readFieldsToMap() throws IOException, NumberFormatException, ParseException {
 		List<String> fields = readFields();
 		//End reached
@@ -251,5 +258,9 @@ public class CSVFileReader extends CSVFile {
 			sb.append(s.substring(i, j));
 			return j;
 		}
+	}
+	
+	public String getInputFileName() {
+		return inputFileName;
 	}
 }

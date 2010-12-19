@@ -1,10 +1,17 @@
 package de.lmu.ifi.dbs.medmon.developer.ui.pages;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ListViewer;
@@ -34,6 +41,7 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.DPUValidator;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
@@ -62,10 +70,12 @@ public class ProcessorUnitManagePage extends FormPage implements ITabbedProperty
 	private boolean dirty;
 
 	private ListViewer processorsViewer;
-
 	private ListViewer unitListViewer;
 
 	private DataProcessingUnit dpu;
+	private DPUValidator validator;
+
+	private IManagedForm managedForm;
 
 	/**
 	 * Create the form page.
@@ -80,6 +90,7 @@ public class ProcessorUnitManagePage extends FormPage implements ITabbedProperty
 	public ProcessorUnitManagePage(FormEditor editor) {
 		super(editor, ID, "Processing Unit");
 		dpu = ((ProcessorUnitEditorInput) editor.getEditorInput()).getDpu();
+		validator = new DPUValidator(dpu);
 	}
 
 	/**
@@ -89,6 +100,7 @@ public class ProcessorUnitManagePage extends FormPage implements ITabbedProperty
 	 */
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
+		this.managedForm = managedForm;
 		FormToolkit toolkit = managedForm.getToolkit();
 		ScrolledForm form = managedForm.getForm();
 		form.setText("Data Processor Unit");
@@ -101,6 +113,7 @@ public class ProcessorUnitManagePage extends FormPage implements ITabbedProperty
 		lName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 
 		DPUController controller = new DPUController();
+		dpu.addPropertyChangeListener(controller);
 		tName = managedForm.getToolkit().createText(managedForm.getForm().getBody(), "New Text", SWT.NONE);
 		tName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		tName.addListener(SWT.Modify, controller);
@@ -114,7 +127,7 @@ public class ProcessorUnitManagePage extends FormPage implements ITabbedProperty
 		unitListViewer.setContentProvider(new DPUContentProvider());
 		unitListViewer.setLabelProvider(new ProcessorsLabelProvider());
 		unitListViewer.getList().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 5));
-		unitListViewer.setInput(((ProcessorUnitEditorInput) getEditorInput()).getDpu());
+		unitListViewer.setInput(dpu);
 		getSite().setSelectionProvider(unitListViewer);
 		int operations = DND.DROP_COPY | DND.DROP_MOVE;
 		Transfer[] transferTypes = new Transfer[] { ProcessorTransfer.getInstance() };
@@ -187,7 +200,7 @@ public class ProcessorUnitManagePage extends FormPage implements ITabbedProperty
 		//
 		return bindingContext;
 	}
-	
+
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		dirty = false;
@@ -205,10 +218,7 @@ public class ProcessorUnitManagePage extends FormPage implements ITabbedProperty
 		return ID;
 	}
 
-
-	// TODO Create own class for this
-
-	private class DPUController implements Listener, IHyperlinkListener {
+	private class DPUController implements Listener, IHyperlinkListener, PropertyChangeListener {
 
 		@Override
 		public void handleEvent(Event event) {
@@ -219,25 +229,34 @@ public class ProcessorUnitManagePage extends FormPage implements ITabbedProperty
 			if (event.widget == bAdd) {
 				IStructuredSelection selection = (IStructuredSelection) processorsViewer.getSelection();
 				if (!selection.isEmpty()) {
-					DataProcessingUnit input = (DataProcessingUnit) unitListViewer.getInput();
 					if (selection.getFirstElement() instanceof IDataProcessor) {
 						IDataProcessor processor = (IDataProcessor) selection.getFirstElement();
-						input.add(new DataProcessor(processor));
+						dpu.add(new DataProcessor(processor));
 					} else if (selection.getFirstElement() instanceof DataProcessor) {
 						DataProcessor processor = (DataProcessor) selection.getFirstElement();
-						input.add(processor);
+						dpu.add(processor);
 					}
 					unitListViewer.refresh();
 				}
 			} else if (event.widget == bRemove) {
 				IStructuredSelection selection = (IStructuredSelection) unitListViewer.getSelection();
 				if (!selection.isEmpty()) {
-					DataProcessingUnit input = (DataProcessingUnit) unitListViewer.getInput();
 					DataProcessor processor = (DataProcessor) selection.getFirstElement();
-					input.remove(processor);
+					dpu.remove(processor);
 					unitListViewer.refresh();
 				}
 			}
+		}
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			validator.validate();
+			managedForm.getMessageManager().removeAllMessages();
+			Map<String, String> errors = validator.getErrors();			
+			//Insert new errors
+			for (String key : errors.keySet())
+				managedForm.getMessageManager().addMessage(key, errors.get(key), null, IMessageProvider.ERROR);
+				
 		}
 
 		@Override
@@ -259,6 +278,7 @@ public class ProcessorUnitManagePage extends FormPage implements ITabbedProperty
 		public void linkExited(HyperlinkEvent event) {
 
 		}
+
 	}
 
 }

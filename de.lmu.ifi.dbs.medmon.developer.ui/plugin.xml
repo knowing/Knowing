@@ -73,6 +73,9 @@
                relative="org.eclipse.ui.editorss"
                visible="true">
          </view>
+         <actionSet
+               id="org.eclipse.debug.ui.launchActionSet">
+         </actionSet>
       </perspectiveExtension>
    </extension>
    <extension

@@ -15,13 +15,16 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUFormEditor;
 import de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorUnitEditorInput;
+import de.lmu.ifi.dbs.medmon.developer.ui.perspective.PerspectiveFactory;
 
 public class LoadDPUHandler extends AbstractHandler {
 
@@ -45,11 +48,15 @@ public class LoadDPUHandler extends AbstractHandler {
 			DataProcessingUnit dpu = (DataProcessingUnit) um.unmarshal(dpuFile);
 			ProcessorUnitEditorInput input = new ProcessorUnitEditorInput(dpu);
 			System.out.println("Opening Editor");
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(input, DPUFormEditor.ID);
+			IWorkbench workbench = PlatformUI.getWorkbench();
+			workbench.getActiveWorkbenchWindow().getActivePage().openEditor(input, DPUFormEditor.ID);
+			workbench.showPerspective(PerspectiveFactory.ID, workbench.getActiveWorkbenchWindow());
 			//PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(input, DPUEditor.ID);
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		} catch (JAXBException e) {
+			e.printStackTrace();
+		} catch (WorkbenchException e) {
 			e.printStackTrace();
 		}
 		return null;

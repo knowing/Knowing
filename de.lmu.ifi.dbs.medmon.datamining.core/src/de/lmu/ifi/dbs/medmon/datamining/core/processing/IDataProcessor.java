@@ -52,6 +52,6 @@ public interface IDataProcessor {
 	
 	public String getVersion();
 	
-	public String getID();
+	public String getId();
 	
 }

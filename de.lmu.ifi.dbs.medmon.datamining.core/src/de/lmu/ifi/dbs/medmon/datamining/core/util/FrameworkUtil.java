@@ -3,7 +3,6 @@ package de.lmu.ifi.dbs.medmon.datamining.core.util;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +67,8 @@ public class FrameworkUtil {
 		final LinkedList<E> services = new LinkedList<E>();
 		try {
 			ServiceReference[] serviceReferences = context.getServiceReferences(clazz, null);
+			if(serviceReferences == null)
+				return null;
 			for (ServiceReference serviceReference : serviceReferences) {
 				if (serviceReference == null)
 					continue;
@@ -98,13 +99,15 @@ public class FrameworkUtil {
 		// Check Extension Points
 		IDataProcessor[] processors = evaluateDataProcessors();
 		for (IDataProcessor iDataProcessor : processors) {
-			if (iDataProcessor.getID().equals(id))
+			if (iDataProcessor.getId().equals(id))
 				return iDataProcessor;
 		}
 		// Check registered Services
 		processors = evaluateService(IDataProcessor.class.getName());
+		if(processors == null)
+			return null;
 		for (IDataProcessor iDataProcessor : processors) {
-			if (iDataProcessor.getID().equals(id))
+			if (iDataProcessor.getId().equals(id))
 				return iDataProcessor;
 		}
 		return null;
@@ -115,50 +118,6 @@ public class FrameworkUtil {
 		IDataProcessor[] returns = new IDataProcessor[processors.length];
 		for (int i = 0; i < returns.length; i++)
 			returns[i] = (IDataProcessor) processors[i];
-		return returns;
-	}
-
-
-	/**
-	 * The CSVFileReader must be initialized with a CSVDescriptor Time
-	 * inefficient / Space efficient
-	 * 
-	 * @param reader
-	 * @return
-	 * @throws ParseException
-	 * @throws IOException
-	 * @throws NumberFormatException
-	 */
-	public static RawData covertCSV(CSVFileReader reader) throws NumberFormatException, IOException, ParseException {
-		Map<Integer, Class> fields = reader.getDescriptor().getFields();
-		List<Integer> positions = new ArrayList<Integer>();
-		for (Integer position : fields.keySet()) {
-			Class clazz = fields.get(position);
-			if (clazz == Double.class)
-				positions.add(position); // This is a double value
-		}
-
-		int dimension = 0;
-		RawData rawData = new RawData(positions.size());
-		for (Integer position : positions) {
-			List<Double> list = new LinkedList<Double>();
-			Map<Integer, Object> line = reader.readFieldsToMap();
-			while (line != null) {
-				list.add((Double) line.get(position));
-				line = reader.readFieldsToMap();
-			}
-			reader = reader.recreate();	//start from beginning
-			rawData.setDimension(dimension++, toArray(list));
-		}
-
-		return rawData;
-	}
-
-	private static double[] toArray(List<Double> list) {
-		double[] returns = new double[list.size()];
-		int i = 0;
-		for (Double d : list)
-			returns[i++] = d;
 		return returns;
 	}
 

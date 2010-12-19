@@ -62,8 +62,6 @@ public class DataProcessor implements IAdaptable {
 		this.providedby = providedby;
 		setWrappedParameters(parameters);
 		loadParameters();
-		System.out.println("C DataProcessor: " + parameters);
-		System.out.println("Parameters: " + this.parameters);
 	}
 
 	/**
@@ -74,7 +72,7 @@ public class DataProcessor implements IAdaptable {
 	 */
 	public DataProcessor(IDataProcessor processor) {
 		this.name = processor.getName();
-		this.id = processor.getID();
+		this.id = processor.getId();
 		this.providedby = "unkown"; // TODO get BundleID
 		setParameters(processor.getParameters());
 		loadParameters(processor);
@@ -128,7 +126,6 @@ public class DataProcessor implements IAdaptable {
 	 */
 	public void loadParameters() {
 		IDataProcessor processor = FrameworkUtil.findDataProcessor(id);
-		System.out.println("Processor to find: " + id + " p: " + processor);
 		if (processor == null)
 			return;
 		loadParameters(processor);
@@ -142,7 +139,6 @@ public class DataProcessor implements IAdaptable {
 	 */
 	public void loadParameters(IDataProcessor processor) {
 		// Set parameter values
-		System.out.println("LoadParameters from: " + processor);
 		parameters = processor.getParameters();
 		for (XMLParameterWrapper each : wrappedParameters) {
 			System.out.println(each.getKey() + " -> " + each.getValue());
@@ -160,8 +156,6 @@ public class DataProcessor implements IAdaptable {
 
 	@Override
 	public Object getAdapter(Class adapter) {
-		System.out.println("DataProcessor.getAdapter()");
-		System.out.println("Adapter: " + adapter);
 		if (adapter == IPropertySource.class ) {
 			if (propertySource == null) {
 				// cache the buttonelementpropertysource

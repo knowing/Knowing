@@ -11,6 +11,7 @@ public class RawData {
 	private double[][] rawdata;
 	private long[] timestamp;
 	private final int dimension;
+	private String label;
 
 	public RawData(int dimension) {
 		this(new double[dimension][], new long[0], dimension);
@@ -21,9 +22,14 @@ public class RawData {
 	}
 	
 	public RawData(double[][] rawdata, long[] timestamp, int dimension) {
+		this("",rawdata, timestamp, dimension);
+	}
+	
+	public RawData(String label, double[][] rawdata, long[] timestamp, int dimension) {
 		this.rawdata = rawdata;
 		this.timestamp = timestamp;
 		this.dimension = dimension;
+		this.label = label;
 	}
 
 	public void setDimension(int dimension, double[] data) {
@@ -50,6 +56,14 @@ public class RawData {
 	
 	public int dimension() {
 		return dimension;
+	}
+	
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	
+	public String getLabel() {
+		return label;
 	}
 
 	@Override

@@ -48,7 +48,6 @@ public class MonitorView extends ViewPart implements PropertyChangeListener {
 
 	private void createTabItems(Map<String, IAnalyzedData> data, TabFolder tabFolder) {
 		Set<String> keys = data.keySet();
-		System.out.println("Keys: " + keys);
 		for (String key : keys) {
 			if(key.equals(IAlgorithm.DEFAULT_DATA))
 				continue;

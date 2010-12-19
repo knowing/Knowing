@@ -55,6 +55,7 @@ public class SimpleAnalyzer extends AbstractAlgorithm {
 	
 		analyzedData.put(BAR_CHART, barData);
 		analyzedData.put(DEFAULT_DATA, barData);
+		analyzedData.put(TABLE_DATA, barData);
 		return analyzedData;
 	}
 	
