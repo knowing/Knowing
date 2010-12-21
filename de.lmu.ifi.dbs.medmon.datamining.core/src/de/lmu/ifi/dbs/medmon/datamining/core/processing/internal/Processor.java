@@ -2,6 +2,8 @@ package de.lmu.ifi.dbs.medmon.datamining.core.processing.internal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
@@ -13,6 +15,8 @@ import de.lmu.ifi.dbs.medmon.datamining.core.util.FrameworkUtil;
 
 public class Processor {
 
+	private static final Logger log = Logger.getLogger(Processor.class.getName());
+	
 	private static Processor instance;
 	
 	private Processor() {
@@ -25,20 +29,30 @@ public class Processor {
 		return instance;
 	}
 	
-	public IAnalyzedData run(DataProcessingUnit dpu, Object[] input) {
+	public Map<String, IAnalyzedData> run(DataProcessingUnit dpu, Object[] input) {
 		IDataProcessor[] chain = createProcessorChain(dpu);
 		RawData rawData = createRawData(input);
 		return run(chain, rawData);
 	}
 	
-	public IAnalyzedData run(DataProcessingUnit dpu, RawData rawData) {
+	public Map<String, IAnalyzedData> run(DataProcessingUnit dpu, RawData rawData) {
 		IDataProcessor[] chain = createProcessorChain(dpu);
 		return run(chain, rawData);
 	}
 	
-	private IAnalyzedData run(IDataProcessor[] chain, RawData rawData) {
-		System.out.println("RawData: " + rawData);
-		return null;
+	private Map<String, IAnalyzedData> run(IDataProcessor[] chain, RawData rawData) {
+		log.info("Start processing DPU");
+		Map<String, IAnalyzedData> returns = null;
+		RawData newData = null;
+		for (int i = 0; i < chain.length; i++) {
+			if(i == 0)
+				newData = (RawData) chain[i].process(rawData);
+			else if (i == chain.length - 1)
+				returns = (Map<String, IAnalyzedData>) chain[i].process(newData);
+			else
+				newData = (RawData) chain[i].process(newData);
+		}
+		return returns;
 	}
 	
 	private IDataProcessor[] createProcessorChain(DataProcessingUnit dpu) {
@@ -57,5 +71,6 @@ public class Processor {
 	private RawData createRawData(Object[] input) {
 		return DataConverter.convert(input);
 	}
+	
 	
 }

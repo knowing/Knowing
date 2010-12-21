@@ -19,5 +19,13 @@
             class="de.lmu.ifi.dbs.medmon.datamining.core.filter.BypassFilter">
       </filter>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="de.lmu.ifi.dbs.medmon.datamining.core.view.MonitorView"
+            id="de.lmu.ifi.dbs.medmon.datamining.core.view.MonitorView"
+            name="Monitor View">
+      </view>
+   </extension>
 
 </plugin>

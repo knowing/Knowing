@@ -67,7 +67,7 @@
       <perspectiveExtension
             targetID="de.lmu.ifi.dbs.medmon.developer.perspective">
          <view
-               id="de.lmu.ifi.dbs.medmon.developer.ui.dataView"
+               id="de.lmu.ifi.dbs.medmon.datamining.core.view.MonitorView"
                minimized="false"
                relationship="bottom"
                relative="org.eclipse.ui.editorss"
@@ -86,12 +86,6 @@
                ratio="0.25f"
                relationship="left"
                relative="org.eclipse.ui.editorss">
-         </view>
-         <view
-               id="org.eclipse.ui.console.ConsoleView"
-               minimized="false"
-               relationship="stack"
-               relative="de.lmu.ifi.dbs.medmon.developer.ui.dataView">
          </view>
          <actionSet
                id="org.eclipse.debug.ui.launchActionSet">

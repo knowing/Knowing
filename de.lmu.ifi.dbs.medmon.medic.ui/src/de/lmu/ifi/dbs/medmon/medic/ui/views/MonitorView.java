@@ -36,10 +36,8 @@ public class MonitorView extends ViewPart implements PropertyChangeListener {
 
 		Map<String, IAnalyzedData> data = (Map<String, IAnalyzedData>) Activator.getPatientService().getSelection(
 				IPatientService.ANALYZED_DATA);
-		System.out.println("AnalyzedData: " + data);
 		if (data != null)
 			createTabItems(data, tabFolder);
-		System.out.println("PartControl created");
 	}
 
 	public void setFocus() {
@@ -51,7 +49,6 @@ public class MonitorView extends ViewPart implements PropertyChangeListener {
 		for (String key : keys) {
 			if(key.equals(IAlgorithm.DEFAULT_DATA))
 				continue;
-			System.out.println("Create Tab for: " + key);
 			TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
 			tabItem.setText(key);
 			Composite composite = new Composite(tabFolder, SWT.NONE);
