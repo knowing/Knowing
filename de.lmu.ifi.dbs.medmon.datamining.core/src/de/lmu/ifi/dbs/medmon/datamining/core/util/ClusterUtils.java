@@ -29,8 +29,6 @@ public class ClusterUtils {
 	
 	public static List<LabeledDoubleFeature> readRawFeaturesFromData(File file, String label) throws IOException {
 		final List<LabeledDoubleFeature> returns = new ArrayList<LabeledDoubleFeature>();
-		System.out.println("File: " + file.getAbsolutePath() + "; Label: " + label);
-
 		log.info("Converting CSV to DoubleLabeledFeature");
         CSVFileReader in = new CSVFileReader(file, ',');
         List<String> fields = in.readFields();
@@ -43,6 +41,21 @@ public class ClusterUtils {
         in.close();
 		
         return returns;
+	}
+	
+	public static List<LabeledDoubleFeature> readRawFeaturesFromData(RawData data) {
+		final List<LabeledDoubleFeature> returns = new ArrayList<LabeledDoubleFeature>();
+		log.info("Converting RawData to DoubleLabeledFeature");
+		int length = data.getDimension(0).length;
+		for (int i = 0; i < length; i++) {
+			double[] values = new double[data.dimension()];
+			for (int j = 0; j < data.dimension(); j++) {
+				values[j] = data.getDimension(j)[i];
+			}
+			returns.add(new LabeledDoubleFeature(values, data.getLabel()));
+		}
+		
+		return returns;
 	}
 	
 	public static List<LabeledDoubleFeature> raw2Features(List<LabeledDoubleFeature> raw) {

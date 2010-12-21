@@ -123,7 +123,8 @@ public class ClusterParameter implements IProcessorParameter<ClusterUnit> {
 	public static ClusterUnit XMLtoClusterUnit(String xmlFile) throws JAXBException {
 		JAXBContext context = JAXBContext.newInstance(ClusterUnit.class);
 		Unmarshaller um = context.createUnmarshaller();	
-		return (ClusterUnit) um.unmarshal(new File(xmlFile));		
+		File file = new File(xmlFile);
+		return (ClusterUnit) um.unmarshal(file);		
 	}
 	
 

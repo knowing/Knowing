@@ -1,11 +1,6 @@
 package de.lmu.ifi.dbs.medmon.datamining.core.util;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.CoreException;
@@ -18,8 +13,6 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.Activator;
-import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
-import de.lmu.ifi.dbs.medmon.datamining.core.csv.CSVFileReader;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
 
@@ -56,6 +49,7 @@ public class FrameworkUtil {
 
 			}
 		} catch (CoreException ex) {
+			ex.printStackTrace();
 			logger.severe(ex.getMessage());
 		}
 		E[] returns = (E[]) new Object[extensions.size()];

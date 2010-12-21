@@ -19,9 +19,9 @@ public abstract class AbstractAlgorithm implements IAlgorithm {
 	private final String name;
 	private final int dimension;
 	
-	protected String description;
-	protected String version;
-		
+	protected String description = "";
+	protected String version = "0.0";
+			
 	public AbstractAlgorithm(String name, int dimension) {
 		this.name = name;
 		this.dimension = dimension;

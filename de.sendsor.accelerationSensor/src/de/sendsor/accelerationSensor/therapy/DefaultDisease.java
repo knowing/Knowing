@@ -21,11 +21,13 @@ public class DefaultDisease implements IDisease {
 
 	@Override
 	public ITherapy[] getTherapies() {
-		ITherapy[] therapies = new ITherapy[2];
+		ITherapy[] therapies = new ITherapy[3];
 		IAlgorithm alg1 = FrameworkUtil.findAlgorithm(SimpleAnalyzer.NAME);
 		IAlgorithm alg2 = FrameworkUtil.findAlgorithm(PieAnalyzer.NAME);
+		IAlgorithm alg3 = FrameworkUtil.findAlgorithm("KMeans Algorithm");
 		therapies[0] = new DefaultTherapy(this, alg1);
 		therapies[1] = new DefaultTherapy(this, alg2);
+		therapies[2] = new DefaultTherapy(this, alg3);
 		return therapies;
 	}
 

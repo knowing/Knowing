@@ -16,9 +16,9 @@
       <algorithm
             class="de.sendsor.accelerationSensor.algorithm.PieAnalyzer">
       </algorithm>
-   </extension>
-   <extension
-         point="de.lmu.ifi.dbs.medmon.disease">
+      <algorithm
+            class="de.sendsor.accelerationSensor.algorithm.KMeansAlgorithm">
+      </algorithm>
    </extension>
    <extension
          point="de.lmu.ifi.dbs.medmon.disease">

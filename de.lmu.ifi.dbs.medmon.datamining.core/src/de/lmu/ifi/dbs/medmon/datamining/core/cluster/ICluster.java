@@ -7,7 +7,5 @@ public interface ICluster<E> {
 	public String getLabel();
 	
 	public List<E> getValues();
-	
-	public ClusterType getType();
-	
+		
 }

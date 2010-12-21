@@ -9,8 +9,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import org.eclipse.core.runtime.Assert;
-
 import de.lmu.ifi.dbs.elki.algorithm.clustering.KMeans;
 import de.lmu.ifi.dbs.elki.data.Clustering;
 import de.lmu.ifi.dbs.elki.data.DatabaseObject;
@@ -24,6 +22,8 @@ import de.lmu.ifi.dbs.elki.database.ids.DBID;
 import de.lmu.ifi.dbs.elki.distance.distancefunction.EuclideanDistanceFunction;
 import de.lmu.ifi.dbs.elki.utilities.exceptions.UnableToComplyException;
 import de.lmu.ifi.dbs.elki.utilities.pairs.Pair;
+import de.lmu.ifi.dbs.medmon.datamining.core.analyzed.ClusterAnalyzedData;
+import de.lmu.ifi.dbs.medmon.datamining.core.analyzed.TableAnalyzedData;
 import de.lmu.ifi.dbs.medmon.datamining.core.cluster.DoubleCluster;
 import de.lmu.ifi.dbs.medmon.datamining.core.clustering.TrainCluster;
 import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
@@ -36,7 +36,7 @@ import de.lmu.ifi.dbs.utilities.Arrays2;
 import de.lmu.ifi.dbs.utilities.Math2;
 
 public class KMeansAlgorithm extends AbstractAlgorithm {
-	
+
 	private static final Logger log = Logger.getLogger(TrainCluster.class.getName());
 
 	static final int KMEANS_K = 1000;
@@ -44,18 +44,52 @@ public class KMeansAlgorithm extends AbstractAlgorithm {
 	static final int KERNEL_SIZE = 7;
 	static final int MIN_INSTANCES_PER_CLUSTER = 5;
 	
+	private ClusterAnalyzedData clusterAnalyzedData;
+	private TableAnalyzedData tableAnalyzedData;
+
 	public KMeansAlgorithm() {
 		super("KMeans Algorithm", IAlgorithm.INDEFINITE_DIMENSION);
 	}
 
 	@Override
 	public Map<String, IAnalyzedData> process(RawData data) {
-		return null;
+		clusterAnalyzedData = new ClusterAnalyzedData();
+		tableAnalyzedData = TableAnalyzedData.getInstance(new String[] { "Label", "Centroid" });
+		analyzedData.put(CLUSTER_DATA, clusterAnalyzedData);
+		analyzedData.put(DEFAULT_DATA, tableAnalyzedData);
+		analyzedData.put(TABLE_DATA, tableAnalyzedData);
+		try {
+			List<DoubleCluster> cluster = cluster(data);
+			clusterAnalyzedData.setClusterlist(cluster);
+			for (DoubleCluster doubleCluster : cluster) {
+				String centroid = Arrays2.join(doubleCluster.getCentroidArray(), " ; ");
+				tableAnalyzedData.addRow(doubleCluster.getLabel(), centroid);
+			}
+			
+		} catch (UnableToComplyException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return analyzedData;
 	}
 
 	@Override
-	public Map<String, IAnalyzedData> process(RawData data, Map<String, IAnalyzedData> analyzedData) {
-		return null;
+	public Map<String, IAnalyzedData> process(RawData data, Map<String, IAnalyzedData> analyzedData) {	
+		this.clusterAnalyzedData = (ClusterAnalyzedData) analyzedData.get(CLUSTER_DATA);
+		try {
+			List<DoubleCluster> cluster = cluster(data);
+			for (DoubleCluster doubleCluster : cluster) {
+				clusterAnalyzedData.addCluster(doubleCluster);
+				String centroid = Arrays2.join(doubleCluster.getCentroidArray(), ";");
+				tableAnalyzedData.addRow(doubleCluster.getLabel(), centroid);
+			}
+		} catch (UnableToComplyException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return analyzedData;
 	}
 
 	@Override
@@ -68,17 +102,8 @@ public class KMeansAlgorithm extends AbstractAlgorithm {
 		return new String[] { CLUSTER_DATA };
 	}
 
-	public List<DoubleCluster> cluster(File[] files, String[] lables) throws UnableToComplyException, IOException {
-		Assert.isTrue(files.length == lables.length);
-		
-		List<LabeledDoubleFeature> features = new ArrayList<LabeledDoubleFeature>();
-		for (int i = 0; i < lables.length; i++) {
-			String label = lables[i];
-			File file = files[i];
-			List<LabeledDoubleFeature> rawVectors = ClusterUtils.readRawFeaturesFromData(file, label);
-			List<LabeledDoubleFeature> converted = raw2Features(rawVectors);
-			features.addAll(converted);
-		}
+	public List<DoubleCluster> cluster(RawData data) throws UnableToComplyException, IOException {
+		List<LabeledDoubleFeature> features = createFeatures(data);
 		log.info("features: " + features.size());
 
 		log.info("KMeans clustering");
@@ -90,14 +115,13 @@ public class KMeansAlgorithm extends AbstractAlgorithm {
 		for (LabeledDoubleFeature v : features) {
 			DoubleVector elkivec = new DoubleVector(v.getValues());
 			vecMap.put(elkivec, v);
-			db.insert(new Pair<DatabaseObject, DatabaseObjectMetadata>(elkivec,	assoc));
+			db.insert(new Pair<DatabaseObject, DatabaseObjectMetadata>(elkivec, assoc));
 		}
 
 		// init KMeans
 
 		log.info("k=" + KMEANS_K + "; maxiterations=" + KMEANS_MAX_ITERATION);
-		KMeans kmeans = new KMeans(EuclideanDistanceFunction.STATIC, KMEANS_K,
-				KMEANS_MAX_ITERATION);
+		KMeans kmeans = new KMeans(EuclideanDistanceFunction.STATIC, KMEANS_K, KMEANS_MAX_ITERATION);
 
 		// do clustering
 		List<DoubleCluster> doubleClusters = new ArrayList<DoubleCluster>();
@@ -119,13 +143,31 @@ public class KMeansAlgorithm extends AbstractAlgorithm {
 			}
 		}
 
-		log.info("Found " + doubleClusters.size() + " clusters with > "
-				+ MIN_INSTANCES_PER_CLUSTER + " members");
+		log.info("Found " + doubleClusters.size() + " clusters with > " + MIN_INSTANCES_PER_CLUSTER + " members");
 		return doubleClusters;
 	}
 
-	private List<LabeledDoubleFeature> raw2Features(
-			List<LabeledDoubleFeature> raw) {
+	private List<LabeledDoubleFeature> createFeatures(File[] files, String[] lables) throws IOException {
+		List<LabeledDoubleFeature> features = new ArrayList<LabeledDoubleFeature>();
+		for (int i = 0; i < lables.length; i++) {
+			String label = lables[i];
+			File file = files[i];
+			List<LabeledDoubleFeature> rawVectors = ClusterUtils.readRawFeaturesFromData(file, label);
+			List<LabeledDoubleFeature> converted = raw2Features(rawVectors);
+			features.addAll(converted);
+		}
+		return features;
+	}
+
+	private List<LabeledDoubleFeature> createFeatures(RawData data) {
+		List<LabeledDoubleFeature> features = new ArrayList<LabeledDoubleFeature>();
+		List<LabeledDoubleFeature> rawVectors = ClusterUtils.readRawFeaturesFromData(data);
+		List<LabeledDoubleFeature> converted = raw2Features(rawVectors);
+		features.addAll(converted);
+		return features;
+	}
+
+	private List<LabeledDoubleFeature> raw2Features(List<LabeledDoubleFeature> raw) {
 		final int window = 40;
 		final int stepSize = 40;
 		final int dim = raw.get(0).getValues().length;
@@ -155,15 +197,13 @@ public class KMeansAlgorithm extends AbstractAlgorithm {
 
 			// concatenate and build new vector
 			double[] newValues = Arrays2.append(mean, variance);
-			compact.add(new LabeledDoubleFeature(newValues, raw.get(0)
-					.getLabel()));
+			compact.add(new LabeledDoubleFeature(newValues, raw.get(0).getLabel()));
 		}
 
 		return compact;
 	}
 
-	private DoubleCluster buildCluster(double[] centroid,
-			List<LabeledDoubleFeature> clusterVectors) {
+	private DoubleCluster buildCluster(double[] centroid, List<LabeledDoubleFeature> clusterVectors) {
 		// count labels in this cluster
 		HashMap<String, Double> labels = new HashMap<String, Double>();
 		for (LabeledDoubleFeature v : clusterVectors) {
