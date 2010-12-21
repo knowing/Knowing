@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="de.lmu.ifi.dbs.medmon.dataminig.core.processor" name="Data Processor" schema="schema/de.lmu.ifi.dbs.medmon.datamining.core.processor.exsd"/>
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
@@ -11,6 +12,12 @@
             modes="run"
             name="DPU File">
       </launchConfigurationType>
+   </extension>
+   <extension
+         point="de.lmu.ifi.dbs.medmon.dataminig.core.processor">
+      <filter
+            class="de.lmu.ifi.dbs.medmon.datamining.core.filter.BypassFilter">
+      </filter>
    </extension>
 
 </plugin>

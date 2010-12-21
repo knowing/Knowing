@@ -26,6 +26,8 @@ public class DefaultTherapy implements ITherapy{
 
 	@Override
 	public String getName() {
+		if(algorithm == null)
+			return "Algorithm not available";
 		return algorithm.getName();
 	}
 

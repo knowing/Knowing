@@ -73,6 +73,26 @@
                relative="org.eclipse.ui.editorss"
                visible="true">
          </view>
+         <view
+               id="org.eclipse.ui.views.PropertySheet"
+               minimized="false"
+               ratio="0.8f"
+               relationship="right"
+               relative="org.eclipse.ui.editorss">
+         </view>
+         <view
+               id="org.eclipse.ui.views.ResourceNavigator"
+               minimized="false"
+               ratio="0.25f"
+               relationship="left"
+               relative="org.eclipse.ui.editorss">
+         </view>
+         <view
+               id="org.eclipse.ui.console.ConsoleView"
+               minimized="false"
+               relationship="stack"
+               relative="de.lmu.ifi.dbs.medmon.developer.ui.dataView">
+         </view>
          <actionSet
                id="org.eclipse.debug.ui.launchActionSet">
          </actionSet>

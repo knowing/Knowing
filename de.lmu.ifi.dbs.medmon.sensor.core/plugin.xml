@@ -2,6 +2,5 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="de.lmu.ifi.dbs.medmon.sensor" name="de.lmu.ifi.dbs.medmon.sensor" schema="schema/de.lmu.ifi.dbs.medmon.sensor.exsd"/>
-   <extension-point id="de.lmu.ifi.dbs.medmon.sensor.processing.processor" name="Data Processor" schema="schema/de.lmu.ifi.dbs.medmon.sensor.processing.processor.exsd"/>
 
 </plugin>

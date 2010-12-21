@@ -71,7 +71,6 @@ public class FrameworkUtil {
 					services.add((E) service);
 			}
 		} catch (InvalidSyntaxException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		E[] returns = (E[]) new Object[services.size()];

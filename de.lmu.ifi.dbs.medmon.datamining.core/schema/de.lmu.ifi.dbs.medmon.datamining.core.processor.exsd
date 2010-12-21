@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="de.lmu.ifi.dbs.medmon.sensor.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="de.lmu.ifi.dbs.medmon.dataminig.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="de.lmu.ifi.dbs.medmon.sensor.core" id="de.lmu.ifi.dbs.medmon.sensor.processing.processor" name="Data Processor"/>
+         <meta.schema plugin="de.lmu.ifi.dbs.medmon.dataminig.core" id="de.lmu.ifi.dbs.medmon.dataminig.core.processor" name="Data Processor"/>
       </appinfo>
       <documentation>
          [Enter description of this extension point.]
@@ -19,6 +19,7 @@
       <complexType>
          <choice minOccurs="0" maxOccurs="unbounded">
             <element ref="algorithm"/>
+            <element ref="filter"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -55,7 +56,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":de.lmu.ifi.dbs.medmon.sensor.core.processing.IAlgorithm"/>
+                  <meta.attribute kind="java" basedOn=":de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -64,13 +65,13 @@
 
    <element name="filter">
       <complexType>
-         <attribute name="new_attribute" type="string" use="required">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":de.lmu.ifi.dbs.medmon.sensor.core.processing.IFilter"/>
+                  <meta.attribute kind="java" basedOn=":de.lmu.ifi.dbs.medmon.datamining.core.processing.IFilter"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -79,13 +80,13 @@
 
    <element name="processor">
       <complexType>
-         <attribute name="new_attribute" type="string" use="required">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":de.lmu.ifi.dbs.medmon.sensor.core.processing.IDataProcessor"/>
+                  <meta.attribute kind="java" basedOn=":de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor"/>
                </appinfo>
             </annotation>
          </attribute>

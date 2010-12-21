@@ -8,7 +8,7 @@ import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
 
 public interface IDataProcessor {
 	
-	public static final String PROCESSOR_ID = "de.lmu.ifi.dbs.medmon.sensor.processing.processor";
+	public static final String PROCESSOR_ID = "de.lmu.ifi.dbs.medmon.dataminig.core.processor";
 	public static final int INDEFINITE_DIMENSION = -1;
 
 	/**

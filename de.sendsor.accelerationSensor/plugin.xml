@@ -9,22 +9,22 @@
       </sensor>
    </extension>
    <extension
-         point="de.lmu.ifi.dbs.medmon.sensor.processing.processor">
+         point="de.lmu.ifi.dbs.medmon.disease">
+      <disease
+            class="de.sendsor.accelerationSensor.therapy.DefaultDisease">
+      </disease>
+   </extension>
+   <extension
+         point="de.lmu.ifi.dbs.medmon.dataminig.core.processor">
       <algorithm
-            class="de.sendsor.accelerationSensor.algorithm.SimpleAnalyzer">
+            class="de.sendsor.accelerationSensor.algorithm.KMeansAlgorithm">
       </algorithm>
       <algorithm
             class="de.sendsor.accelerationSensor.algorithm.PieAnalyzer">
       </algorithm>
       <algorithm
-            class="de.sendsor.accelerationSensor.algorithm.KMeansAlgorithm">
+            class="de.sendsor.accelerationSensor.algorithm.SimpleAnalyzer">
       </algorithm>
-   </extension>
-   <extension
-         point="de.lmu.ifi.dbs.medmon.disease">
-      <disease
-            class="de.sendsor.accelerationSensor.therapy.DefaultDisease">
-      </disease>
    </extension>
 
 </plugin>
