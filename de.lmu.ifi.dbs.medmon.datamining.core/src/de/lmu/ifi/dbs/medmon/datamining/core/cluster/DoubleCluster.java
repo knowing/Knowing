@@ -13,13 +13,12 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType
 public class DoubleCluster extends AbstractCluster<Double>{
 
-	private List<Double> values;
+	private List<Double> centroid;
+	private String label;
 	private int numChildren;
 	
 
-	public DoubleCluster() {
-		super("unkown");
-	}
+	public DoubleCluster() {}
 	
 	public DoubleCluster(String label, double[] centroid) {
 		this(label, centroid, 0);
@@ -27,28 +26,26 @@ public class DoubleCluster extends AbstractCluster<Double>{
 	
 
 	public DoubleCluster(String label,double[] centroid, int numChildren) {
-		super(label);
+		this.label = label;
 		this.numChildren = numChildren;
-		this.values = new LinkedList<Double>();
+		this.centroid = new LinkedList<Double>();
 		for (double d : centroid) 
-			this.values.add(d);
+			this.centroid.add(d);
 	}
-	
+
 	@XmlElementWrapper(name = "centroid")		
-	@XmlElement(name = "double")	
-	@Override
-	public List<Double> getValues() {
-		return values;
+	@XmlElement(name = "double")			
+	protected List<Double> getCentroid() {
+		return centroid;
 	}
-	
-	@Override
-	public ClusterType getType() {
-		return ClusterType.CENTROID;
+
+	protected void setCentroid(List<Double> centroid) {
+		this.centroid = centroid;
 	}
 	
 	@XmlAttribute
 	public String getLabel() {
-		return super.getLabel();
+		return label;
 	}
 
 	protected void setLabel(String label) {
@@ -56,15 +53,21 @@ public class DoubleCluster extends AbstractCluster<Double>{
 	}
 	
 	public double[] getCentroidArray() {
-		double[] returns = new double[values.size()];
+		double[] returns = new double[centroid.size()];
 		int index = 0;
-		for (Double d : values)
+		for (Double d : centroid)
 			returns[index++] = d;
 		return returns;
 	}
 	
 	public int getNumChildren() {
 		return numChildren;
+	}
+
+	
+	@Override
+	public List<Double> getValues() {
+		return getCentroid();
 	}
 	
 }
