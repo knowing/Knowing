@@ -107,7 +107,12 @@ public class DataProcessingUnit{
 		return removedValue;
 	}	
 	
+	@Override
+	public String toString() {
+		return name;
+	}
 	
+	//TODO Maybe use Eclipse PropertyChange Support with ListenerList
 	/* Property Change Support */
 	private final transient PropertyChangeSupport support = new PropertyChangeSupport(this);
 	
