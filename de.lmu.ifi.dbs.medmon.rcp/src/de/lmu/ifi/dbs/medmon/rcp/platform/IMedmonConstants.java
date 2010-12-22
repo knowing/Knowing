@@ -7,7 +7,8 @@ public interface IMedmonConstants {
 	public static final String DIR_SEPERATOR = System.getProperty("file.separator");
 	public static final String DIR_MEDMON = DIR_USER_HOME + DIR_SEPERATOR + ".medmon";
 	public static final String DIR_DERBY = DIR_MEDMON + DIR_SEPERATOR + "db";
-	public static final String DIR_DPU = DIR_MEDMON + DIR_SEPERATOR + "data";
+	public static final String DIR_DPU = DIR_MEDMON + DIR_SEPERATOR + "dpu";
+	public static final String DIR_MPU = DIR_MEDMON + DIR_SEPERATOR + "mpu";
 	public static final String DIR_CU = DIR_MEDMON + DIR_SEPERATOR + "cluster";
 	
 	

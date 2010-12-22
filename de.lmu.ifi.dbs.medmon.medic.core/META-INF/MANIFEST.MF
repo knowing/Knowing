@@ -13,4 +13,6 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.lmu.ifi.dbs.medmon.patient.service
 Export-Package: de.lmu.ifi.dbs.medmon.medic.core.extensions,
+ de.lmu.ifi.dbs.medmon.medic.core.job,
+ de.lmu.ifi.dbs.medmon.medic.core.unit,
  de.lmu.ifi.dbs.medmon.medic.core.util

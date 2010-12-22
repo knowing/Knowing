@@ -1,5 +1,6 @@
 package de.lmu.ifi.dbs.medmon.rcp;
 
+import java.io.File;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.SimpleFormatter;
 
@@ -11,6 +12,7 @@ import org.osgi.service.log.LogEntry;
 import org.osgi.service.log.LogListener;
 import org.osgi.service.log.LogReaderService;
 
+import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.logging.JdkLogForwarder;
 import de.lmu.ifi.dbs.medmon.rcp.platform.logging.LogsPublisher;
 
@@ -66,7 +68,19 @@ public class Activator extends AbstractUIPlugin {
 
 		// / We start the publisher which publishes logs every 3 seconds.
 		// logsPublisher.start();
+		
+		createFolders();
 
+	}
+
+	private void createFolders() {
+		File[] folder = new File[3];
+		folder[0] = new File(IMedmonConstants.DIR_CU);
+		folder[1] = new File(IMedmonConstants.DIR_DPU);
+		folder[2] = new File(IMedmonConstants.DIR_MPU);
+		for (File file : folder) 
+			if(!file.exists())
+				file.mkdirs();
 	}
 
 	/*

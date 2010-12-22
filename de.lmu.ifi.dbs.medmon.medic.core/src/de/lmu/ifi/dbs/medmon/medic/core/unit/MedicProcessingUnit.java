@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -14,9 +15,14 @@ import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MedicProcessingUnit {
-
-	@XmlElementWrapper(name = "mpu")		
-	@XmlElement(name = "dpu")	
+	
+	@XmlAttribute
+	private String name;
+	
+	@XmlElement
+	private String description;
+	
+	@XmlElementWrapper
 	private List<DataProcessingUnit> dpus;
 	
 	public MedicProcessingUnit() {
@@ -29,5 +35,26 @@ public class MedicProcessingUnit {
 	
 	public void setDpus(List<DataProcessingUnit> dpus) {
 		this.dpus = dpus;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	@Override
+	public String toString() {
+		return name;
 	}
 }

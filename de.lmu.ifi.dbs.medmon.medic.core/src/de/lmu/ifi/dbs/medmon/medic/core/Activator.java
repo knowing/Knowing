@@ -12,6 +12,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
 
+import de.lmu.ifi.dbs.medmon.datamining.core.parameter.XMLParameterWrapper;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
 import de.lmu.ifi.dbs.medmon.medic.core.extensions.IDisease;
@@ -54,6 +55,7 @@ public class Activator extends AbstractUIPlugin {
 		patientTracker.open();
 		
 		plugin = this;
+		//testMPU();
 	}
 
 	/*
@@ -82,5 +84,31 @@ public class Activator extends AbstractUIPlugin {
 	
 	public static IPatientService getPatientService() {
 		return (IPatientService) patientTracker.getService();
+	}
+	
+	private void testMPU() {
+		DataProcessingUnit dpu = new DataProcessingUnit();
+		List<XMLParameterWrapper> parameters = new ArrayList<XMLParameterWrapper>();
+		parameters.add(new XMLParameterWrapper("key1", "value1", "double"));
+		parameters.add(new XMLParameterWrapper("key2", "value2", "double"));
+		DataProcessor p1 = new DataProcessor("name1", "id1", "provider", parameters);
+		DataProcessor p2 = new DataProcessor("name1", "id1", "provider", parameters);
+		dpu.add(p1);
+		dpu.add(p2);
+		
+		MedicProcessingUnit mpu = new MedicProcessingUnit();
+		mpu.setDpus(Collections.singletonList(dpu));
+		mpu.setName("MPU Name");
+		mpu.setDescription("The description");
+		
+		try {
+			JAXBContext context = JAXBContext.newInstance(MedicProcessingUnit.class);
+			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			m.marshal(mpu, System.out);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+		
 	}
 }
