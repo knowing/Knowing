@@ -126,6 +126,11 @@
             name="Datenverwaltung"
             restorable="true">
       </view>
+      <view
+            class="de.lmu.ifi.dbs.medmon.medic.ui.views.MedicProcessingView"
+            id="de.lmu.ifi.dbs.medmon.medic.ui.views.MedicProcessingView"
+            name="Medic Processing">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
