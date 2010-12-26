@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -17,6 +19,7 @@ import org.eclipse.ui.forms.widgets.Section;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.medic.core.unit.MedicProcessingUnit;
+import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.DPULabelProvider;
 
 import org.eclipse.swt.layout.GridLayout;
@@ -84,6 +87,13 @@ public class MPUDetailsPage implements IDetailsPage {
 		dpuViewer.setContentProvider(new ArrayContentProvider());
 		dpuViewer.setLabelProvider(new DPULabelProvider());
 		dpuViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		dpuViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				Activator.getPatientService().setSelection(event.getSelection());				
+			}
+		});
 	}
 
 	@Override

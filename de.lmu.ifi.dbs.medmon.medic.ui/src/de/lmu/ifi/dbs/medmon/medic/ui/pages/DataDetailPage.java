@@ -23,6 +23,9 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.Section;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
+import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
+import de.lmu.ifi.dbs.medmon.medic.ui.provider.ISharedImages;
+import de.lmu.ifi.dbs.medmon.medic.ui.views.MedicProcessingView;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.CommandUtil;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
@@ -123,13 +126,13 @@ public class DataDetailPage implements IDetailsPage {
 		bClient.setLayout(new FillLayout());
 		
 		ImageHyperlink sensorLink = toolkit.createImageHyperlink(bClient, SWT.NONE);
-		sensorLink.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_DIRECTORY_48));
+		sensorLink.setImage(Activator.getImageDescriptor(ISharedImages.IMG_GO_NEXT_48).createImage());
 		sensorLink.setText("Datenanalyse");
 		
 		sensorLink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent event) {
-				CommandUtil.openView(IMedmonConstants.THERAPY_MANAGEMENT_VIEW);
+				CommandUtil.openView(MedicProcessingView.ID);
 			}
 		});
 		

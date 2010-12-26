@@ -1,34 +1,31 @@
 package de.lmu.ifi.dbs.medmon.medic.ui.views;
 
-import java.io.File;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.ManagedForm;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.ColumnLayout;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 
-import de.lmu.ifi.dbs.medmon.medic.core.unit.MedicProcessingUnit;
+import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
 import de.lmu.ifi.dbs.medmon.medic.ui.pages.MPUMasterBlock;
+import de.lmu.ifi.dbs.medmon.medic.ui.provider.ISharedImages;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
+import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 
 public class MedicProcessingView extends ViewPart {
 
@@ -114,14 +111,40 @@ public class MedicProcessingView extends ViewPart {
 		sRunning.setExpanded(true);
 		
 		Composite runningClient = toolkit.createComposite(sRunning, SWT.NONE);
-		runningClient.setLayout(new RowLayout());
+		runningClient.setLayout(new ColumnLayout());
 		sRunning.setClient(runningClient);
 		
 		ImageHyperlink run = new ImageHyperlink(runningClient, SWT.NONE);
 		run.setText("Daten verarbeiten");
+		run.setImage(Activator.getImageDescriptor(ISharedImages.IMG_GO_NEXT_24).createImage());
+		run.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
+			public void linkActivated(HyperlinkEvent event) {
+				IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+				try {
+					handlerService.executeCommand(IMedmonConstants.OPEN_DEFAULT_VISUALIZE_PERSPECTIVE, null);
+				} catch (Exception ex) {
+					throw new RuntimeException(IMedmonConstants.OPEN_DEFAULT_VISUALIZE_PERSPECTIVE, ex);
+				}
+			}
+		});
 		
 		ImageHyperlink runAndPersist = new ImageHyperlink(runningClient, SWT.NONE);
-		run.setText("Daten verarbeiten und in Datenbank speichern");
+		runAndPersist.setText("Daten verarbeiten und in Datenbank speichern");
+		
+		runAndPersist.setImage(Activator.getImageDescriptor(ISharedImages.IMG_GO_NEXT_24).createImage());
+		runAndPersist.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
+			public void linkActivated(HyperlinkEvent event) {
+				IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+				try {
+					handlerService.executeCommand(IMedmonConstants.OPEN_DEFAULT_VISUALIZE_PERSPECTIVE, null);
+				} catch (Exception ex) {
+					throw new RuntimeException(IMedmonConstants.OPEN_DEFAULT_VISUALIZE_PERSPECTIVE, ex);
+				}
+			}
+		});
+		
 		
 		createActions();
 		initializeToolBar();

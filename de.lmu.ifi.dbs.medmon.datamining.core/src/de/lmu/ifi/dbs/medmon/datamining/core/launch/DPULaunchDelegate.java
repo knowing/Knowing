@@ -20,8 +20,8 @@ import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-import de.lmu.ifi.dbs.medmon.datamining.core.csv.CSVDescriptor;
-import de.lmu.ifi.dbs.medmon.datamining.core.csv.CSVFileReader;
+import de.lmu.ifi.dbs.medmon.datamining.core.csv.io.CSVDescriptor;
+import de.lmu.ifi.dbs.medmon.datamining.core.csv.io.CSVFileReader;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.internal.Processor;
@@ -29,7 +29,7 @@ import de.lmu.ifi.dbs.medmon.datamining.core.util.ClusterUtils;
 
 public class DPULaunchDelegate extends LaunchConfigurationDelegate {
 
-	private static ListenerList listenerList = new ListenerList();
+	
 	
 	public static final String DPU_FILE = "dpu.file";
 	public static final String CSV_FILE = "csv.file";
@@ -69,7 +69,6 @@ public class DPULaunchDelegate extends LaunchConfigurationDelegate {
 			
 			Processor processor = Processor.getInstance();
 			Map<String, IAnalyzedData> output = processor.run(dpu, ClusterUtils.covertCSV(reader));
-			fireEvent(output);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (JAXBException e) {
@@ -104,20 +103,4 @@ public class DPULaunchDelegate extends LaunchConfigurationDelegate {
 		return returns;
 	}
 	
-	private void fireEvent(Map<String, IAnalyzedData> value) {
-		 Object[] listeners = listenerList.getListeners();
-		 PropertyChangeEvent event = new PropertyChangeEvent(this, "data", null, value);
-		 for (int i = 0; i < listeners.length; ++i) {
-		        ((IPropertyChangeListener) listeners[i]).propertyChange(event);
-		 }
-	}
-
-	public static void add(IPropertyChangeListener listener) {
-		listenerList.add(listener);
-	}
-
-	public static void remove(IPropertyChangeListener listener) {
-		listenerList.remove(listener);
-	}
-
 }

@@ -13,7 +13,7 @@ import org.eclipse.jface.wizard.Wizard;
 
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.database.util.JPAUtil;
-import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.DataSelectionPage;
+import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SelectDBDataPage;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.Block;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.ContainerType;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.RootSensorDataContainer;
@@ -21,7 +21,7 @@ import de.lmu.ifi.dbs.medmon.sensor.core.container.TimeSensorDataContainer;
 
 public class DataSelectionWizard extends Wizard {
 
-	private DataSelectionPage page;
+	private SelectDBDataPage page;
 	private final Viewer viewer;
 
 	public DataSelectionWizard(Viewer viewer) {
@@ -31,7 +31,7 @@ public class DataSelectionWizard extends Wizard {
 
 	@Override
 	public void addPages() {
-		page = new DataSelectionPage();
+		page = new SelectDBDataPage();
 		addPage(page);
 	}
 

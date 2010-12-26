@@ -175,7 +175,6 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 				dialog.open();
 			}
 		});
-		//bLoad.setImage(ResourceManager.getPluginImageDescriptor(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_ARROW_UP_16).createImage());
 		bLoad.setLayoutData(new GridData(GridData.END, GridData.CENTER, true, false));
 		
 		Button bDBImport = toolkit.createButton(dbComposite, "Importieren", SWT.NONE);
@@ -190,7 +189,6 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 		});
 		
 		Button bRefresh = toolkit.createButton(dbComposite, "Aktualisieren", SWT.NONE);
-		//bRefresh.setImage(ResourceManager.getPluginImageDescriptor(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_REFRESH_16).createImage());
 		bRefresh.setLayoutData(new GridData(GridData.END, GridData.CENTER, false, false));
 
 		databaseTabItem.setControl(dbComposite);

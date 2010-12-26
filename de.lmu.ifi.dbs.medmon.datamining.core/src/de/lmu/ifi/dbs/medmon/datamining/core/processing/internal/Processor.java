@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
 import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
@@ -18,6 +22,9 @@ public class Processor {
 	private static final Logger log = Logger.getLogger(Processor.class.getName());
 	
 	private static Processor instance;
+	
+	//TODO find other way to register listeners
+	private static ListenerList listenerList = new ListenerList();
 	
 	private Processor() {
 		
@@ -52,6 +59,7 @@ public class Processor {
 			else
 				newData = (RawData) chain[i].process(newData);
 		}
+		fireEvent(returns);
 		return returns;
 	}
 	
@@ -61,15 +69,30 @@ public class Processor {
 		for (DataProcessor dp : processors) {
 			//Doesn't check anything - just fit the peaces together
 			IDataProcessor idp = FrameworkUtil.findDataProcessor(dp.getId());
-			System.out.println("IDataProcessor: " + idp);
 			iProcessors.add(idp);
 		}
-		System.out.println("ProcessorChain: " + iProcessors);
 		return iProcessors.toArray(new IDataProcessor[iProcessors.size()]);
 	}
 	
 	private RawData createRawData(Object[] input) {
 		return DataConverter.convert(input);
+	}
+	
+	private void fireEvent(Map<String, IAnalyzedData> value) {
+		System.out.println("Event fired: " + value);
+		 Object[] listeners = listenerList.getListeners();
+		 PropertyChangeEvent event = new PropertyChangeEvent(this, "data", null, value);
+		 for (int i = 0; i < listeners.length; ++i) {
+		        ((IPropertyChangeListener) listeners[i]).propertyChange(event);
+		 }
+	}
+
+	public static void add(IPropertyChangeListener listener) {
+		listenerList.add(listener);
+	}
+
+	public static void remove(IPropertyChangeListener listener) {
+		listenerList.remove(listener);
 	}
 	
 	

@@ -98,6 +98,7 @@ public class DPUFormEditor extends FormEditor {
 			}
 			JAXBContext context = JAXBContext.newInstance(DataProcessingUnit.class);
 			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			m.marshal(dpu, dpuXML);
 		} catch (JAXBException e) {
 			e.printStackTrace();

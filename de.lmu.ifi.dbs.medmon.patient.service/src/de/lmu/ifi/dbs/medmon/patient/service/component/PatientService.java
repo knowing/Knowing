@@ -14,6 +14,7 @@ import org.osgi.service.component.ComponentContext;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
@@ -73,6 +74,9 @@ public class PatientService implements IPatientService {
 		} else if(first instanceof ISensor) {
 			support.firePropertyChange(SENSOR, selections.get(SENSOR), first);
 			selections.put(SENSOR, (ISensor)first);
+		} else if(first instanceof DataProcessingUnit) {
+			support.firePropertyChange(DPU, selections.get(DPU), first);
+			selections.put(DPU, (DataProcessingUnit)first);
 		} else {
 			return false;
 		}

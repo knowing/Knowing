@@ -27,13 +27,25 @@ import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 public class MPUMasterBlock extends MasterDetailsBlock {
 
 	private FormToolkit toolkit;
+	
+	private int orientation = SWT.VERTICAL;
 
 	/**
 	 * Create the master details block.
 	 */
 	public MPUMasterBlock() {
 		// Create the master details block
+	}	
+
+	/**
+	 * 
+	 * @param orientation SWT.VERTICAL or SWT.HORIZONTAL
+	 */
+	public MPUMasterBlock(int orientation) {
+		this.orientation = orientation;
 	}
+
+
 
 	/**
 	 * Create contents of the master details block.
@@ -43,7 +55,7 @@ public class MPUMasterBlock extends MasterDetailsBlock {
 	@Override
 	protected void createMasterPart(final IManagedForm managedForm, Composite parent) {
 		toolkit = managedForm.getToolkit();
-		sashForm.setOrientation(SWT.VERTICAL);
+		sashForm.setOrientation(orientation);
 		//		
 		Section section = toolkit.createSection(parent, ExpandableComposite.EXPANDED | ExpandableComposite.TITLE_BAR);
 		section.setText("Analyseverfahren");

@@ -5,17 +5,15 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="menu:org.eclipse.ui.main.menu">
+            locationURI="menu:org.eclipse.ui.main.menu?after=de.lmu.ifi.dbs.medmon.ui.file">
          <menu
                label="Data Procesing">
             <command
-                  commandId="de.lmu.ifi.dbs.medmon.developer.ui.NewDataProcessingUnit"
-                  label="New Data Processing List"
-                  style="push">
-            </command>
-            <command
                   commandId="org.eclipse.ui.newWizard"
-                  label="New Wizard"
+                  disabledIcon="IMG_TOOL_NEW_WIZARD_DISABLED"
+                  hoverIcon="IMG_TOOL_NEW_WIZARD_HOVER"
+                  icon="IMG_TOOL_NEW_WIZARD"
+                  label="Open Wizard"
                   style="push">
             </command>
             <command
@@ -31,6 +29,7 @@
       <editor
             class="de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUFormEditor"
             default="false"
+            icon="icons/dpu_16.png"
             id="de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUFormEditor"
             name="DPU Form Editor">
       </editor>
@@ -43,21 +42,22 @@
    <extension
          point="org.eclipse.ui.views">
       <view
+            category="de.lmu.ifi.dbs.medmon.developer.ui.datamining"
             class="de.lmu.ifi.dbs.medmon.developer.ui.view.DataView"
             id="de.lmu.ifi.dbs.medmon.developer.ui.dataView"
             name="DataView"
             restorable="true">
       </view>
-      <view
-            class="de.lmu.ifi.dbs.medmon.developer.ui.view.DPUView"
-            id="de.lmu.ifi.dbs.medmon.developer.ui.view.DPUView"
-            name="DPU View">
-      </view>
+      <category
+            id="de.lmu.ifi.dbs.medmon.developer.ui.datamining"
+            name="Data Mining">
+      </category>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
             class="de.lmu.ifi.dbs.medmon.developer.ui.perspective.PerspectiveFactory"
+            icon="icons/cluster_16.png"
             id="de.lmu.ifi.dbs.medmon.developer.perspective"
             name="Developer Perspective">
       </perspective>
@@ -113,22 +113,32 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <wizard
+            category="de.lmu.ifi.dbs.medmon.developer.ui.datamining"
             class="de.lmu.ifi.dbs.medmon.developer.ui.wizard.ClusterWizard"
+            descriptionImage="icons/cluster_48.png"
+            icon="icons/cluster_16.png"
             id="de.lmu.ifi.dbs.medmon.developer.ui.ClusteringWizard"
-            name="New Cluster">
+            name="Train Cluster">
       </wizard>
       <wizard
+            category="de.lmu.ifi.dbs.medmon.developer.ui.datamining"
             class="de.lmu.ifi.dbs.medmon.developer.ui.wizard.DPUWizard"
+            descriptionImage="icons/dpu_48.png"
             finalPerspective="de.lmu.ifi.dbs.medmon.developer.perspective"
+            icon="icons/dpu_16.png"
             id="de.lmu.ifi.dbs.medmon.developer.ui.dpu"
-            name="New DPU">
+            name="Data Processing Unit">
       </wizard>
+      <category
+            id="de.lmu.ifi.dbs.medmon.developer.ui.datamining"
+            name="Data Mining">
+      </category>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
             configTypeID="de.lmu.ifi.dbs.medmon.datamining.core.DPULaunchConfigurationType"
-            icon="icons/dpu.png"
+            icon="icons/dpu_16.png"
             id="de.lmu.ifi.dbs.medmon.developer.ui.DPUlaunchConfigurationTypeImage">
       </launchConfigurationTypeImage>
    </extension>

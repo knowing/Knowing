@@ -23,6 +23,7 @@ public class MedicProcessingUnit {
 	private String description;
 	
 	@XmlElementWrapper
+	@XmlElement(name = "DataProcessingUnit")
 	private List<DataProcessingUnit> dpus;
 	
 	public MedicProcessingUnit() {

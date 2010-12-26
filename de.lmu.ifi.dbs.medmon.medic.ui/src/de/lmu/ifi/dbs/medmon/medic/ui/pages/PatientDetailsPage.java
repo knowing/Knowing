@@ -18,6 +18,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IDetailsPage;
@@ -34,11 +35,10 @@ import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
 import de.lmu.ifi.dbs.medmon.datamining.core.util.AlgorithmUtil;
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
+import de.lmu.ifi.dbs.medmon.medic.ui.provider.ISharedImages;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.CommandUtil;
-import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
-import org.eclipse.swt.widgets.Label;
 
 public class PatientDetailsPage implements IDetailsPage {
 
@@ -142,7 +142,7 @@ public class PatientDetailsPage implements IDetailsPage {
 		Composite bClient = toolkit.createComposite(bSection);
 		bClient.setLayout(new FillLayout());
 		ImageHyperlink sensorLink = toolkit.createImageHyperlink(bClient, SWT.NONE);
-		sensorLink.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_DIRECTORY_48));
+		sensorLink.setImage(Activator.getImageDescriptor(ISharedImages.IMG_GO_NEXT_48).createImage());
 		sensorLink.setText("Sensordaten auswaehlen");
 		
 		sensorLink.addHyperlinkListener(new HyperlinkAdapter() {

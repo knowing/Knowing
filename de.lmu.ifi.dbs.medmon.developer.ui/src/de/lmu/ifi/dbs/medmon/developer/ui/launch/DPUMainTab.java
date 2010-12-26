@@ -26,9 +26,9 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import de.lmu.ifi.dbs.medmon.datamining.core.csv.CSVDescriptor;
+import de.lmu.ifi.dbs.medmon.datamining.core.csv.io.CSVDescriptor;
+import de.lmu.ifi.dbs.medmon.datamining.core.csv.widget.CSVConfiguration;
 import de.lmu.ifi.dbs.medmon.datamining.core.launch.DPULaunchDelegate;
-import de.lmu.ifi.dbs.medmon.developer.ui.csv.CSVConfiguration;
 
 public class DPUMainTab extends AbstractLaunchConfigurationTab {
 

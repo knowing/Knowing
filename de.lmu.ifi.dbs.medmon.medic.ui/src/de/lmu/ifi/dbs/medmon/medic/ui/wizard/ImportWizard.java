@@ -1,21 +1,16 @@
 package de.lmu.ifi.dbs.medmon.medic.ui.wizard;
 
 import java.io.IOException;
-import java.util.Date;
-
-import javax.persistence.EntityManager;
 
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
-import de.lmu.ifi.dbs.medmon.database.util.JPAUtil;
 import de.lmu.ifi.dbs.medmon.jobs.persistence.PersistJob;
 import de.lmu.ifi.dbs.medmon.jobs.persistence.PersistRule;
-import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.ImportDataPage;
-import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SourcePage;
-import de.lmu.ifi.dbs.medmon.sensor.core.container.ContainerType;
+import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SelectDataPage;
+import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SensorPage;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.RootSensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
@@ -23,8 +18,8 @@ import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
 
 public class ImportWizard extends Wizard {
 
-	private SourcePage sourcePage;
-	private ImportDataPage dataPage;
+	private SensorPage sourcePage;
+	private SelectDataPage dataPage;
 
 	private ISensor<?> sensor;
 	private Patient patient;
@@ -42,22 +37,18 @@ public class ImportWizard extends Wizard {
 	@Override
 	public void addPages() {
 		if (patient == null && sensor == null) {
-			sourcePage = new SourcePage();
+			sourcePage = new SensorPage();
 			addPage(sourcePage);
 		}
 
-		dataPage = new ImportDataPage();
+		dataPage = new SelectDataPage();
 		addPage(dataPage);
 	}
 
 	@Override
 	public boolean performFinish() {
 		Patient patient = sourcePage.getPatient();
-		Date start = dataPage.getStart();
-		Date end = dataPage.getEnd();
 		System.out.println("Patient: " + patient);
-		System.out.println("Start: " + start);
-		System.out.println("End: " + end);
 		persistData();
 		return true;
 	}

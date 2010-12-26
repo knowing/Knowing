@@ -22,7 +22,9 @@
    <extension
          point="org.eclipse.ui.views">
       <view
+            category="de.lmu.ifi.dbs.medmon.developer.ui.datamining"
             class="de.lmu.ifi.dbs.medmon.datamining.core.view.MonitorView"
+            icon="icons/monitor_16.png"
             id="de.lmu.ifi.dbs.medmon.datamining.core.view.MonitorView"
             name="Monitor View">
       </view>

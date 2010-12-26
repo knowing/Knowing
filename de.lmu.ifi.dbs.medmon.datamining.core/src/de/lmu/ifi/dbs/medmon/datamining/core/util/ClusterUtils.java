@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
-import de.lmu.ifi.dbs.medmon.datamining.core.csv.CSVFileReader;
+import de.lmu.ifi.dbs.medmon.datamining.core.csv.io.CSVFileReader;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;

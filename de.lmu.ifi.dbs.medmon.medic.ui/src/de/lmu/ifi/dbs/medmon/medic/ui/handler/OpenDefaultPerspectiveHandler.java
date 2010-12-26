@@ -13,9 +13,10 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 
 import de.lmu.ifi.dbs.medmon.database.model.Data;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.internal.DataConverter;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.internal.Processor;
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
@@ -30,7 +31,6 @@ public class OpenDefaultPerspectiveHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		//TODO Check the selections a provide solution to solve problem, e.g. Dialog for user
 		IPatientService service = Activator.getPatientService();
-		IAlgorithm algorithm = (IAlgorithm) service.getSelection(IPatientService.ALGORITHM);
 		
 		//Analyze data -> implement job to provide progressbar
 		Data[] sensorData = (Data[]) service.getSelection(IPatientService.SENSOR_DATA);
@@ -44,9 +44,6 @@ public class OpenDefaultPerspectiveHandler extends AbstractHandler {
 			}
 		}
 		
-		Map<String, IAnalyzedData> data = algorithm.process(DataConverter.convert(sensorData));
-		//Set the new analyzed data
-		service.setSelection(data, IPatientService.ANALYZED_DATA);
 		//Try to open the corresponding perspective
 		try {
 			IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
@@ -54,6 +51,13 @@ public class OpenDefaultPerspectiveHandler extends AbstractHandler {
 		} catch (WorkbenchException e) {
 			e.printStackTrace();
 		}
+		
+		//Processing Data
+		DataProcessingUnit dpu = (DataProcessingUnit) service.getSelection(IPatientService.DPU);
+		Processor processor = Processor.getInstance();
+		Map<String, IAnalyzedData> data = processor.run(dpu, DataConverter.convert(sensorData));
+		//Set the new analyzed data
+		service.setSelection(data, IPatientService.ANALYZED_DATA);
 		return null;
 	}
 

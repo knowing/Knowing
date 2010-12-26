@@ -13,15 +13,6 @@
       </application>
    </extension>
    <extension
-         point="org.eclipse.ui.perspectives">
-      <perspective
-            class="de.lmu.ifi.dbs.medmon.rcp.Perspective"
-            icon="IMG_ETOOL_HOME_NAV"
-            id="de.lmu.ifi.dbs.medmon.rcp.HomePerspective"
-            name="Startseite">
-      </perspective>
-   </extension>
-   <extension
          id="product"
          point="org.eclipse.core.runtime.products">
       <product
@@ -38,41 +29,49 @@
       </product>
    </extension>
    <extension
-         point="org.eclipse.ui.views">
-      <view
-            class="de.lmu.ifi.dbs.medmon.rcp.view.HomeView"
-            id="de.lmu.ifi.dbs.medmon.rcp.home"
-            name="Startseite"
-            restorable="true">
-      </view>
-   </extension>
-   <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="de.lmu.ifi.dbs.medmon.rcp.HomePerspective">
-         <view
-               id="de.lmu.ifi.dbs.medmon.rcp.home"
-               minimized="false"
-               moveable="false"
-               ratio="0.95f"
-               relationship="top"
-               relative="org.eclipse.ui.editorss"
-               showTitle="true"
-               standalone="true"
-               visible="true">
-         </view>
-      </perspectiveExtension>
-   </extension>
-   <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
             locationURI="menu:org.eclipse.ui.main.menu">
          <menu
+               id="de.lmu.ifi.dbs.medmon.ui.file"
                label="Programm">
             <command
+                  commandId="org.eclipse.ui.newWizard"
+                  label="Assistent starten"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.file.newQuickMenu"
+                  label="Neu"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.file.exit"
+                  label="Beenden"
+                  style="push">
+            </command>
+         </menu>
+         <menu
+               id="de.lmu.ifi.dbs.medmon.ui.view"
+               label="Ansicht">
+            <command
+                  commandId="org.eclipse.ui.perspectives.showPerspective"
+                  label="Perspektiven"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.views.showView"
+                  label="View oeffnen"
+                  style="push">
+            </command>
+         </menu>
+         <menu
+               id="de.lmu.ifi.dbs.medmon.ui.help"
+               label="Hilfe">
+            <command
                   commandId="org.eclipse.equinox.p2.ui.sdk.install"
-                  icon="icons/16/gtk-add.png"
+                  icon="icons/update_16.png"
                   label="Neue Funktionen installieren"
                   style="push">
             </command>
@@ -83,25 +82,12 @@
                   style="push">
             </command>
             <separator
-                  name="de.lmu.ifi.dbs.medmon.rcp.separator1">
+                  name="de.lmu.ifi.dbs.medmon.rcp.about"
+                  visible="true">
             </separator>
             <command
-                  commandId="org.eclipse.ui.file.exit"
-                  icon="icons/16/gtk-cancel.png"
-                  label="Beenden"
-                  style="push">
-            </command>
-         </menu>
-         <menu
-               label="Ansicht">
-            <command
-                  commandId="org.eclipse.ui.perspectives.showPerspective"
-                  label="Perspektiven"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.ui.views.showView"
-                  label="View oeffnen"
+                  commandId="org.eclipse.ui.help.aboutAction"
+                  label="About Medmon"
                   style="push">
             </command>
          </menu>

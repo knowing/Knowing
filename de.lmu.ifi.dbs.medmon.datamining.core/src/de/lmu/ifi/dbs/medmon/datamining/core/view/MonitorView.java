@@ -10,14 +10,13 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
-import de.lmu.ifi.dbs.medmon.datamining.core.launch.DPULaunchDelegate;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.internal.Processor;
 
 public class MonitorView extends ViewPart implements IPropertyChangeListener{
 
@@ -27,7 +26,7 @@ public class MonitorView extends ViewPart implements IPropertyChangeListener{
 	
 
 	public MonitorView() {
-		DPULaunchDelegate.add(this);
+		Processor.add(this);
 	}
 
 	/**
@@ -90,6 +89,7 @@ public class MonitorView extends ViewPart implements IPropertyChangeListener{
 			
 			@Override
 			public void run() {
+				System.out.println("TabFolder: " + tabFolder);
 				if (tabFolder == null)
 					return;
 

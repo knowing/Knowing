@@ -21,6 +21,7 @@ public interface IPatientService {
 	public static final String SENSOR_CONTAINER = "de.lmu.ifi.dbs.medmon.sensor.core.container";
 	public static final String ALGORITHM = "de.lmu.ifi.dbs.medmon.datamining.processing.algorithm";
 	public static final String ANALYZED_DATA = "de.lmu.ifi.dbs.medmon.datamining.processing.ianalyzed";
+	public static final String DPU = "de.lmu.ifi.dbs.medmon.datamining.processing.dataprocessingunit";
 	
 	/**
 	 * Checks if the selection is supported and add it.
