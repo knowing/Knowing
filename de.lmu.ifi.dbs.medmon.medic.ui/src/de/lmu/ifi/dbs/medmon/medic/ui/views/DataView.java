@@ -8,9 +8,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.part.ViewPart;
 
+import de.lmu.ifi.dbs.medmon.base.ui.viewer.SensorTableViewer;
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.sample.SampleDataFactory;
-import de.lmu.ifi.dbs.medmon.medic.ui.viewer.SensorTableViewer;
 
 public class DataView extends ViewPart {
 	

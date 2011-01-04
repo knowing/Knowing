@@ -35,9 +35,13 @@ public interface IPatientService {
 	/**
 	 * 
 	 * @param clazz 
-	 * <li> PATIENT (Patient.class.getName())
-	 * <li> SENSOR_DATA (SensorData.class.getName())
-	 * <li> ALGORITHM (ISensorDataAlgorithm.class.getName())
+	 * <li> IPatientService.PATIENT 
+	 * <li> IPatientService.SENSOR_DATA 
+	 * <li> IPatientService.SENSOR
+	 * <li> IPatientService.ANALYZED_DATA
+	 * <li> IPatientService.DPU
+	 * <li> IPatientService.SENSOR_CONTAINER
+	 * 
 	 * @return the Object if selected
 	 */
 	public Object getSelection(String clazz);

@@ -112,7 +112,7 @@ public class DataProcessingUnit{
 		return name;
 	}
 	
-	//TODO Maybe use Eclipse PropertyChange Support with ListenerList
+	//TODO Use Eclipse PropertyChange Support with ListenerList
 	/* Property Change Support */
 	private final transient PropertyChangeSupport support = new PropertyChangeSupport(this);
 	

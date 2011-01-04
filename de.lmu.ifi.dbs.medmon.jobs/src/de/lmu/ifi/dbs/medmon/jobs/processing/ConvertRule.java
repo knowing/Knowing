@@ -15,7 +15,7 @@ public class ConvertRule implements ISchedulingRule {
 
 	@Override
 	public boolean isConflicting(ISchedulingRule rule) {
-		if(rule instanceof PersistRule || rule instanceof DataProcessRule)
+		if(rule instanceof PersistRule || rule instanceof DataProcessRule || rule instanceof ConvertRule)
 			return true;
 		return false;
 	}

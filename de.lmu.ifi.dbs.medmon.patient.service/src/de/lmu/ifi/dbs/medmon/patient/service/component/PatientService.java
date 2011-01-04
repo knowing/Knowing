@@ -57,8 +57,9 @@ public class PatientService implements IPatientService {
 	private boolean handleIStructuredSelection(IStructuredSelection selection) {
 		Object first = selection.getFirstElement();
 		if(first instanceof Patient) {
+			support.firePropertyChange(PATIENT, selections.get(PATIENT), first);
 			selections.clear();			//Reset Selections if new patient is being set
-			selections.put(PATIENT, (Patient)first);
+			selections.put(PATIENT, (Patient)first);		
 		} else if (first instanceof IAlgorithm) {
 			support.firePropertyChange(ALGORITHM, selections.get(ALGORITHM), first);
 			selections.put(ALGORITHM, (IAlgorithm)first);

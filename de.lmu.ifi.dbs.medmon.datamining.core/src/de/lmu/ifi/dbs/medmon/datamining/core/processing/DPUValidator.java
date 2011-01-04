@@ -24,8 +24,8 @@ public class DPUValidator {
 	}
 
 	/**
-	 * checks for IDataProcessor service availability, interoperability
-	 * and proper order.
+	 * checks for IDataProcessor service availability, interoperability and
+	 * proper order.
 	 * 
 	 * @return true - if no errors were found
 	 */
@@ -98,9 +98,11 @@ public class DPUValidator {
 			return true;
 		int dimension = processors.get(0).dimension();
 		for (IDataProcessor p : processors) {
-			if (p.dimension() != IAlgorithm.INDEFINITE_DIMENSION && dimension != p.dimension()) {
+			if (!(dimension == IAlgorithm.INDEFINITE_DIMENSION || 
+					p.dimension() == IAlgorithm.INDEFINITE_DIMENSION || 
+					dimension == p.dimension())) {
 				String msg = "Processors incompatible: " + dimension + " != " + p.dimension();
-				errors.put(p.getId(), msg );
+				errors.put(p.getId(), msg);
 				return false;
 			}
 		}
@@ -110,7 +112,7 @@ public class DPUValidator {
 	public DataProcessingUnit getDpu() {
 		return dpu;
 	}
-	
+
 	public Map<String, String> getErrors() {
 		return errors;
 	}

@@ -32,11 +32,8 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.Section;
 
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
-import de.lmu.ifi.dbs.medmon.datamining.core.util.AlgorithmUtil;
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.ISharedImages;
-import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.CommandUtil;
 
@@ -180,7 +177,6 @@ public class PatientDetailsPage implements IDetailsPage {
 		analyse.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				setDefaultAlgorithm();
 				//OpenDefaultPerspectiveHandler.excuteCommand();
 			}
 		});
@@ -223,17 +219,6 @@ public class PatientDetailsPage implements IDetailsPage {
 		System.out.println("PatientDetailsPage Refresh");
 	}
 	
-	//TODO Create Configuration for standard algorithm
-	/**
-	 * Uebergangsmethode bis per Konfiguration ein Standardalgorithmus
-	 * gesetzt werden kann!!
-	 */
-	private void setDefaultAlgorithm() {
-		IAlgorithm[] algorithms = AlgorithmUtil.evaluateAlgorithms();
-		if(algorithms != null && algorithms[0] != null)
-			Activator.getPatientService().setSelection(algorithms[0], IPatientService.ALGORITHM);
-	}
-
 	private class Controller implements Listener, ISelectionChangedListener {
 
 		@Override

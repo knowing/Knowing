@@ -1,8 +1,13 @@
 package de.lmu.ifi.dbs.medmon.medic.ui.views;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -21,13 +26,16 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 
+import de.lmu.ifi.dbs.medmon.base.ui.dialog.DialogFactory;
+import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
 import de.lmu.ifi.dbs.medmon.medic.ui.pages.MPUMasterBlock;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.ISharedImages;
+import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 
-public class MedicProcessingView extends ViewPart {
+public class MedicProcessingView extends ViewPart implements PropertyChangeListener {
 
 	public static final String ID = "de.lmu.ifi.dbs.medmon.medic.ui.views.MedicProcessingView"; //$NON-NLS-1$
 	private FormToolkit toolkit;
@@ -39,6 +47,7 @@ public class MedicProcessingView extends ViewPart {
 	
 
 	public MedicProcessingView() {
+		Activator.getPatientService().addPropertyChangeListener(IPatientService.PATIENT, this);
 	}
 
 	/**
@@ -76,12 +85,25 @@ public class MedicProcessingView extends ViewPart {
 		lPatient.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 
 		tPatient = toolkit.createText(patientClient, "New Text", SWT.NONE);
-		tPatient.setText("");
-		GridData gd_text = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_text.widthHint = 150;
-		tPatient.setLayoutData(gd_text);
+		Patient p = (Patient) Activator.getPatientService().getSelection(IPatientService.PATIENT);
+		if(p != null)
+			tPatient.setText(p.toString());	
+		GridData data = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		data.widthHint = 150;
+		tPatient.setLayoutData(data);
 
 		Button bPatient = toolkit.createButton(patientClient, "Auswaehlen", SWT.NONE);
+		bPatient.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Patient patient = DialogFactory.openPatientSelectionDialog(getSite().getShell());
+				if(patient == null)
+					return;
+				tPatient.setText(patient.toString());
+				Activator.getPatientService().setSelection(patient, IPatientService.PATIENT);
+			}
+		});
+		
 
 		Label lCluster = toolkit.createLabel(patientClient, "Vergleichsdaten", SWT.NONE);
 		lCluster.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -192,6 +214,12 @@ public class MedicProcessingView extends ViewPart {
 	@Override
 	public void setFocus() {
 		//
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

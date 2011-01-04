@@ -18,6 +18,7 @@ public class PatientManagementController implements Listener {
 	public static final Integer BUTTON_ADD = 0;
 	public static final Integer BUTTON_SAVE = 1;
 	public static final Integer BUTTON_DEL = 2;
+	public static final Integer BUTTON_REFRESH = 3;
 
 	private final TableViewer viewer;
 
@@ -34,6 +35,8 @@ public class PatientManagementController implements Listener {
 				savePatient();
 			else if (event.widget.getData() == BUTTON_DEL)
 				removePatient();
+			else if(event.widget.getData() == BUTTON_REFRESH)
+				viewer.setInput(this);
 		}
 	}
 

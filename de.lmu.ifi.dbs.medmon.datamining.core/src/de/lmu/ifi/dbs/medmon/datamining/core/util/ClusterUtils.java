@@ -9,11 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
 import de.lmu.ifi.dbs.medmon.datamining.core.csv.io.CSVFileReader;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
+import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.utilities.Arrays2;
 import de.lmu.ifi.dbs.utilities.Math2;
 
@@ -26,23 +28,23 @@ import de.lmu.ifi.dbs.utilities.Math2;
 public class ClusterUtils {
 
 	private static final Logger log = Logger.getLogger(ClusterUtils.class.getName());
-	
+
 	public static List<LabeledDoubleFeature> readRawFeaturesFromData(File file, String label) throws IOException {
 		final List<LabeledDoubleFeature> returns = new ArrayList<LabeledDoubleFeature>();
 		log.info("Converting CSV to DoubleLabeledFeature");
-        CSVFileReader in = new CSVFileReader(file, ',');
-        List<String> fields = in.readFields();
-        while (fields != null) {
-            fields.remove(0); // kill date value
-            LabeledDoubleFeature v = new LabeledDoubleFeature(fields, label);
-            returns.add(v);
-            fields = in.readFields();
-        }
-        in.close();
-		
-        return returns;
+		CSVFileReader in = new CSVFileReader(file, ',');
+		List<String> fields = in.readFields();
+		while (fields != null) {
+			fields.remove(0); // kill date value
+			LabeledDoubleFeature v = new LabeledDoubleFeature(fields, label);
+			returns.add(v);
+			fields = in.readFields();
+		}
+		in.close();
+
+		return returns;
 	}
-	
+
 	public static List<LabeledDoubleFeature> readRawFeaturesFromData(RawData data) {
 		final List<LabeledDoubleFeature> returns = new ArrayList<LabeledDoubleFeature>();
 		log.info("Converting RawData to DoubleLabeledFeature");
@@ -54,10 +56,10 @@ public class ClusterUtils {
 			}
 			returns.add(new LabeledDoubleFeature(values, data.getLabel()));
 		}
-		
+
 		return returns;
 	}
-	
+
 	public static List<LabeledDoubleFeature> raw2Features(List<LabeledDoubleFeature> raw) {
 		final int window = 40;
 		final int stepSize = 40;
@@ -88,24 +90,22 @@ public class ClusterUtils {
 
 			// concatenate and build new vector
 			double[] newValues = Arrays2.append(mean, variance);
-			compact.add(new LabeledDoubleFeature(newValues, raw.get(0)
-					.getLabel()));
+			compact.add(new LabeledDoubleFeature(newValues, raw.get(0).getLabel()));
 		}
 
 		return compact;
 	}
 
-	
 	public static IDataProcessor parseProcessingUnit(DataProcessingUnit dpu) {
 		List<DataProcessor> processors = dpu.getProcessors();
 		for (DataProcessor dataProcessor : processors) {
 			String id = dataProcessor.getId();
 			IDataProcessor processor = FrameworkUtil.findDataProcessor(id);
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * The CSVFileReader must be initialized with a CSVDescriptor Time
 	 * inefficient / Space efficient
@@ -116,7 +116,7 @@ public class ClusterUtils {
 	 * @throws IOException
 	 * @throws NumberFormatException
 	 */
-	public static RawData covertCSV(CSVFileReader reader) throws NumberFormatException, IOException, ParseException {
+	public static RawData convertFromCSV(CSVFileReader reader) throws NumberFormatException, IOException, ParseException {
 		Map<Integer, Class> fields = reader.getDescriptor().getFields();
 		List<Integer> positions = new ArrayList<Integer>();
 		for (Integer position : fields.keySet()) {
@@ -134,13 +134,12 @@ public class ClusterUtils {
 				list.add((Double) line.get(position));
 				line = reader.readFieldsToMap();
 			}
-			reader = reader.recreate();	//start from beginning
+			reader = reader.recreate(); // start from beginning
 			rawData.setDimension(dimension++, toArray(list));
 		}
 
 		return rawData;
 	}
-	
 
 	private static double[] toArray(List<Double> list) {
 		double[] returns = new double[list.size()];
@@ -149,5 +148,26 @@ public class ClusterUtils {
 			returns[i++] = d;
 		return returns;
 	}
-	
+
+	public static String createClusterUnitFile(ClusterUnit cu, String lastname, int id) {
+		StringBuffer sb = new StringBuffer();
+		sb.append(IMedmonConstants.DIR_CU);
+		sb.append(IMedmonConstants.DIR_SEPERATOR);
+		sb.append(lastname);
+		sb.append("-");
+		sb.append(String.format("%011d", id));
+		File dir = new File(sb.toString());
+		if(dir.mkdirs()) {
+			if(!dir.isDirectory()) {
+				if(dir.delete())
+					dir.mkdirs();
+			}
+		}
+		sb.append(IMedmonConstants.DIR_SEPERATOR);
+		sb.append(cu.getName());	
+		sb.append(".xml");
+		return sb.toString();
+	}
+
+
 }

@@ -7,7 +7,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
 
@@ -15,15 +14,17 @@ public class ConvertJob extends Job {
 
 	private static final ConvertRule rule = new ConvertRule();
 	
-	private final IConverter<Data> converter;
-	private final ISensorDataContainer<Data> container;
+	private final IConverter<Object> converter;
+	private final ISensorDataContainer<Object> container;
+	private final String family;
 	
-	private Data[] convertedData;
+	private Object[] convertedData;
 
-	public ConvertJob(String name, ISensorDataContainer<Data> container, IConverter<Data> converter) {
+	public ConvertJob(String name, ISensorDataContainer<Object> container, IConverter<Object> converter, String family) {
 		super(name);
 		this.container = container;
 		this.converter = converter;
+		this.family = family;
 		setRule(rule);
 	}
 
@@ -38,9 +39,14 @@ public class ConvertJob extends Job {
 		}
 		return Status.OK_STATUS;
 	}
+	
+	@Override
+	public boolean belongsTo(Object family) {
+		return family.equals(this.family);
+	}
 
 
-	public Data[] getConvertedData() {
+	public Object[] getConvertedData() {
 		return convertedData;
 	}
 

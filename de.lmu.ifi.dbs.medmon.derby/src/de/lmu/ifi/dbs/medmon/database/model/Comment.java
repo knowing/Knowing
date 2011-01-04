@@ -2,6 +2,8 @@ package de.lmu.ifi.dbs.medmon.database.model;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import java.util.Date;
 import java.util.Set;
 
 
@@ -18,6 +20,11 @@ public class Comment implements Serializable {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(nullable=false)
 	private int id;
+	
+	@Basic(optional = false)
+	@Column(name = "imported", insertable = false, updatable = false, unique = true)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date timestamp;
 
     @Lob()
 	@Column(nullable=false)
@@ -29,13 +36,21 @@ public class Comment implements Serializable {
 
     public Comment() {
     }
-
+    
 	public int getId() {
 		return this.id;
 	}
 
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	public void setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
+	}
+	
+	public Date getTimestamp() {
+		return timestamp;
 	}
 
 	public String getComments() {

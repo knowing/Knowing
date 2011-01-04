@@ -19,10 +19,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
-import de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterFile;
-import de.lmu.ifi.dbs.medmon.developer.ui.provider.ClusterFileContentProvider;
-import de.lmu.ifi.dbs.medmon.developer.ui.provider.ClusterFileEditingSupport;
-import de.lmu.ifi.dbs.medmon.developer.ui.provider.ClusterFileLabelProvider;
+import de.lmu.ifi.dbs.medmon.base.ui.cluster.ClusterFile;
+import de.lmu.ifi.dbs.medmon.base.ui.provider.ClusterTableItemContentProvider;
+import de.lmu.ifi.dbs.medmon.base.ui.provider.ClusterTableItemEditingSupport;
+import de.lmu.ifi.dbs.medmon.base.ui.provider.ClusterTableItemLabelProvider;
 
 public class ClusterWizardPage extends WizardPage {
 	
@@ -86,10 +86,16 @@ public class ClusterWizardPage extends WizardPage {
 		new Label(container, SWT.NONE);
 		TableViewer tableViewer = new TableViewer(parent, SWT.BORDER | SWT.FULL_SELECTION);
 		createColumns(tableViewer);
-		tableViewer.setContentProvider(new ClusterFileContentProvider());
-		tableViewer.setLabelProvider(new ClusterFileLabelProvider());
+		tableViewer.setContentProvider(new ClusterTableItemContentProvider());
+		tableViewer.setLabelProvider(new ClusterTableItemLabelProvider());
 		
 		return tableViewer;		
+	}
+	
+	public ClusterFile[] getClusterFiles() {
+		if(clusterFileViewer.getInput() instanceof ClusterFile[])
+			return (ClusterFile[]) clusterFileViewer.getInput();
+		return (ClusterFile[]) ClusterTableItemContentProvider.listInput((List<?>) clusterFileViewer.getInput());
 	}
 	
 	private void createColumns(TableViewer viewer) {
@@ -103,18 +109,14 @@ public class ClusterWizardPage extends WizardPage {
 			column.getColumn().setResizable(true);
 			column.getColumn().setMoveable(true);
 			// enable editing support
-			column.setEditingSupport(new ClusterFileEditingSupport(viewer, i));
+			column.setEditingSupport(new ClusterTableItemEditingSupport(viewer, i));
 		}
 		Table table = viewer.getTable();
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 	}
 	
-	public ClusterFile[] getClusterFiles() {
-		if(clusterFileViewer.getInput() instanceof ClusterFile[])
-			return (ClusterFile[]) clusterFileViewer.getInput();
-		return ClusterFileContentProvider.listInput((List<?>) clusterFileViewer.getInput());
-	}
+
 	
 	public String getClusterUnit() {
 		return tName.getText();

@@ -6,6 +6,8 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -26,6 +28,7 @@ import de.lmu.ifi.dbs.medmon.medic.ui.controller.PatientManagementController;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.PatientContentProvider;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.PatientLabelProvider;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
+import org.eclipse.swt.widgets.Label;
 
 
 public class PatientEditorBlock extends MasterDetailsBlock {
@@ -85,6 +88,10 @@ public class PatientEditorBlock extends MasterDetailsBlock {
 		delete.addListener(SWT.Selection, controller);
 		
 		pSection.setClient(pClient);		
+		
+		Button bRefresh = toolkit.createButton(pClient, "Aktualisieren", SWT.NONE);
+		bRefresh.setData(PatientManagementController.BUTTON_REFRESH);
+		bRefresh.addListener(SWT.Selection, controller);
 
 	}
 	

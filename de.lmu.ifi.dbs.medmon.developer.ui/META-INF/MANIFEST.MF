@@ -21,6 +21,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.debug.core;bundle-version="3.6.0",
  org.eclipse.debug.ui;bundle-version="3.6.1",
  org.eclipse.ui.views;bundle-version="3.5.0",
- org.eclipse.ui.views.properties.tabbed;bundle-version="3.5.100"
+ org.eclipse.ui.views.properties.tabbed;bundle-version="3.5.100",
+ de.lmu.ifi.dbs.medmon.base.ui;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

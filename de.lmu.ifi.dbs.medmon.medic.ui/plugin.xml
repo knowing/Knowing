@@ -73,7 +73,7 @@
       <view
             name="Patienten"
             icon="icons/patients_16.png"
-            category="de.lmu.ifi.dbs.medmon.medic.ui.category"
+            category="de.lmu.ifi.dbs.medmon.medic.ui.medmon"
             class="de.lmu.ifi.dbs.medmon.medic.ui.views.PatientListView"
             id="de.lmu.ifi.dbs.medmon.medic.ui.PatientListView">
       </view>
@@ -89,22 +89,23 @@
             category="de.lmu.ifi.dbs.medmon.medic.ui.medmon"
             class="de.lmu.ifi.dbs.medmon.medic.ui.views.CommentView"
             icon="icons/comment_16.png"
-            id="de.lmu.ifi.dbs.medmon.medic.ui.views.CommentView"
+            id="de.lmu.ifi.dbs.medmon.medic.ui.CommentView"
             name="Comment View">
       </view>
       <view
-            category="de.lmu.ifi.dbs.medmon.medic.ui.category"
+            category="de.lmu.ifi.dbs.medmon.medic.ui.medmon"
             class="de.lmu.ifi.dbs.medmon.medic.ui.views.DataView"
-            icon="icons/data_16.png"
+            icon="icons/sensor_16.png"
             id="de.lmu.ifi.dbs.medmon.medic.ui.DataView"
-            name="Sensordaten"
+            name="Sensoren"
             restorable="true">
       </view>
       <view
             category="de.lmu.ifi.dbs.medmon.medic.ui.medmon"
             class="de.lmu.ifi.dbs.medmon.medic.ui.views.DataTreeView"
+            icon="icons/tree_16.png"
             id="de.lmu.ifi.dbs.medmon.medic.ui.DataTreeView"
-            name="Baumansicht"
+            name="Daten"
             restorable="true">
       </view>
       <view
@@ -168,22 +169,27 @@
                ratio="0.5f"
                relationship="bottom"
                relative="org.eclipse.ui.editorss"
+               showTitle="false"
                visible="true">
          </view>
          <view
-               id="de.lmu.ifi.dbs.medmon.medic.ui.DataTreeView"
+               closeable="true"
+               id="de.lmu.ifi.dbs.medmon.medic.ui.CommentView"
                minimized="false"
-               ratio="0.5f"
+               ratio="0.4f"
                relationship="left"
                relative="org.eclipse.ui.editorss"
+               showTitle="false"
                visible="true">
          </view>
          <view
-               id="de.lmu.ifi.dbs.medmon.medic.ui.views.CommentView"
+               closeable="false"
+               id="de.lmu.ifi.dbs.medmon.medic.ui.DataTreeView"
                minimized="false"
-               ratio="0.5f"
+               ratio="0.6f"
                relationship="right"
-               relative="org.eclipse.ui.editorss"
+               relative="de.lmu.ifi.dbs.medmon.medic.ui.CommentView"
+               showTitle="false"
                visible="true">
          </view>
       </perspectiveExtension>
@@ -260,29 +266,54 @@
             name="Patienteditor oeffnen">
       </command>
       <command
+            categoryId="de.lmu.ifi.dbs.medmon.medic.ui.commands.patient"
             defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.NewPatientHandler"
             id="de.lmu.ifi.dbs.medmon.medic.create"
             name="Patient anlegen">
       </command>
       <command
+            categoryId="de.lmu.ifi.dbs.medmon.medic.ui.commands.patient"
             defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.DeletePatientHandler"
             id="de.lmu.ifi.dbs.medmon.medic.delete"
             name="Patient entfernen">
       </command>
       <command
+            categoryId="de.lmu.ifi.dbs.medmon.medic.ui.commands.patient"
             defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.ImportPatientHandler"
             id="de.lmu.ifi.dbs.medmon.medic.import"
             name="Patient importieren">
       </command>
       <command
+            categoryId="de.lmu.ifi.dbs.medmon.medic.ui.commands.patient"
             defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.ExportPatientHandler"
             id="de.lmu.ifi.dbs.medmon.medic.export"
             name="Patient exportieren">
       </command>
       <command
-            defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.CallImportWizard"
-            id="de.lmu.ifi.dbs.medmon.sensor.CallImportWizard"
-            name="Call ImportWizard">
+            defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.ImportWizardHandler"
+            id="de.lmu.ifi.dbs.medmon.medic.ui.handler.CallImportWizard"
+            name="Import Wizard">
+      </command>
+      <command
+            categoryId="de.lmu.ifi.dbs.medmon.medic.ui.commands.patient"
+            defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.PatientManagementHandler"
+            id="de.lmu.ifi.dbs.medmon.medic.ui.patientmanagement"
+            name="Verwaltung">
+      </command>
+      <category
+            id="de.lmu.ifi.dbs.medmon.medic.ui.commands.patient"
+            name="Verwaltung">
+      </category>
+      <command
+            category="de.lmu.ifi.dbs.medmon.medic.ui.commands.patient"
+            defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.QuickAnalyseHandler"
+            id="de.lmu.ifi.dbs.medmon.medic.ui.quickanalyse"
+            name="Schnellanalyse">
+      </command>
+      <command
+            defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.ClusterWizardHandler"
+            id="de.lmu.ifi.dbs.medmon.medic.ui.clusterwizard"
+            name="Vergleichsdaten">
       </command>
    </extension>
    <extension
@@ -293,6 +324,13 @@
          <menu
                id="de.lmu.ifi.dbs.medmon.medic.ui.patientmenu"
                label="Patienten">
+            <command
+                  commandId="de.lmu.ifi.dbs.medmon.medic.ui.patientmanagement"
+                  icon="icons/patients_16.png"
+                  id="de.lmu.ifi.dbs.medmon.medic.ui.patientmenu.management"
+                  label="Verwaltung"
+                  style="push">
+            </command>
             <command
                   commandId="de.lmu.ifi.dbs.medmon.medic.create"
                   icon="icons/add-patient_16.png"
@@ -327,6 +365,11 @@
                   label="Analyse Ansicht"
                   style="push">
             </command>
+            <command
+                  commandId="de.lmu.ifi.dbs.medmon.medic.ui.quickanalyse"
+                  label="Schnellanalyse"
+                  style="push">
+            </command>
          </menu>
       </menuContribution>
    </extension>
@@ -350,6 +393,8 @@
       <wizard
             category="de.lmu.ifi.dbs.medmon.medic.ui.medic"
             class="de.lmu.ifi.dbs.medmon.medic.ui.wizard.TrainClusterWizard"
+            descriptionImage="icons/cluster_48.png"
+            finalPerspective="de.lmu.ifi.dbs.medmon.medic.ui.default"
             icon="icons/cluster_16.png"
             id="de.lmu.ifi.dbs.medmon.medic.ui.clusterWizard"
             name="Vergleichsdaten erzeugen">
@@ -378,6 +423,17 @@
             id="de.lmu.ifi.dbs.medmon.medic.ui.patientImportWizard"
             name="Patient importieren">
       </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commandImages">
+      <image
+            commandId="de.lmu.ifi.dbs.medmon.medic.ui.quickanalyse"
+            icon="icons/medic_processing_16.png">
+      </image>
+      <image
+            commandId="de.lmu.ifi.dbs.medmon.medic.ui.clusterwizard"
+            icon="icons/cluster_16.png">
+      </image>
    </extension>
 
 </plugin>

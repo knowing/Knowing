@@ -16,6 +16,8 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
+import de.lmu.ifi.dbs.medmon.medic.ui.handler.ClusterWizardHandler;
+import de.lmu.ifi.dbs.medmon.medic.ui.handler.ImportWizardHandler;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.ISharedImages;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.CommandUtil;
@@ -76,10 +78,9 @@ public class HomeView extends ViewPart {
 				IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(
 						IHandlerService.class);
 				try {
-					handlerService.executeCommand(IMedmonConstants.CALL_IMPORT_WIZARD, null);
+					handlerService.executeCommand(ImportWizardHandler.ID, null);
 				} catch (Exception ex) {
-					ex.printStackTrace();
-					throw new RuntimeException(IMedmonConstants.CALL_IMPORT_WIZARD);
+					throw new RuntimeException(ImportWizardHandler.ID, ex);
 				}
 			}
 		});
@@ -91,6 +92,13 @@ public class HomeView extends ViewPart {
 		cluster.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
+				IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(
+						IHandlerService.class);
+				try {
+					handlerService.executeCommand(ClusterWizardHandler.ID, null);
+				} catch (Exception ex) {
+					throw new RuntimeException(ClusterWizardHandler.ID, ex);
+				}				
 			}
 		});
 

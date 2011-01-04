@@ -71,21 +71,12 @@ public class RawData {
 		StringBuilder builder = new StringBuilder();
 		builder.append("RawData [dimension=");
 		builder.append(dimension);
-		builder.append("] RawData= ");
-		builder.append("\n");
-		for (int i = 0; i < 10; i++) {
-			builder.append("{");
-			for (int j = 0; j < dimension; j++) {
-				builder.append(rawdata[j][i]);
-				builder.append(" @ ");
-				builder.append(timestamp[i]);
-				builder.append(",");
-			}
-			builder.delete(builder.length()-1, builder.length());
-			builder.append("}");
-			builder.append("\n");
-		}
+		builder.append(", label=");
+		builder.append(label);
+		builder.append("]");
 		return builder.toString();
 	}
+
+
 
 }

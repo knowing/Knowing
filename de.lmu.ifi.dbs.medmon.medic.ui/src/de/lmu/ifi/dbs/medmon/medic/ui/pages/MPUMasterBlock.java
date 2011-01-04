@@ -29,12 +29,13 @@ public class MPUMasterBlock extends MasterDetailsBlock {
 	private FormToolkit toolkit;
 	
 	private int orientation = SWT.VERTICAL;
-
+	
+	
 	/**
 	 * Create the master details block.
 	 */
 	public MPUMasterBlock() {
-		// Create the master details block
+		this(SWT.VERTICAL);
 	}	
 
 	/**
@@ -44,8 +45,7 @@ public class MPUMasterBlock extends MasterDetailsBlock {
 	public MPUMasterBlock(int orientation) {
 		this.orientation = orientation;
 	}
-
-
+	
 
 	/**
 	 * Create contents of the master details block.

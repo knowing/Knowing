@@ -18,13 +18,13 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
+import de.lmu.ifi.dbs.medmon.base.ui.provider.ClusterUnitLabelProvider;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.ClusterParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.NumericParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.StringParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
-import de.lmu.ifi.dbs.medmon.developer.ui.provider.ClusterUnitLabelProvider;
 import de.lmu.ifi.dbs.medmon.developer.ui.widgets.CustomScale;
 
 public class AlgorithmConfigurationPart extends SectionPart {

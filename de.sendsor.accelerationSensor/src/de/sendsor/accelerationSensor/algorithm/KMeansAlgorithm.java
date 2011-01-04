@@ -77,6 +77,7 @@ public class KMeansAlgorithm extends AbstractAlgorithm {
 	@Override
 	public Map<String, IAnalyzedData> process(RawData data, Map<String, IAnalyzedData> analyzedData) {	
 		this.clusterAnalyzedData = (ClusterAnalyzedData) analyzedData.get(CLUSTER_DATA);
+		this.tableAnalyzedData = (TableAnalyzedData) analyzedData.get(TABLE_DATA);
 		try {
 			List<DoubleCluster> cluster = cluster(data);
 			for (DoubleCluster doubleCluster : cluster) {

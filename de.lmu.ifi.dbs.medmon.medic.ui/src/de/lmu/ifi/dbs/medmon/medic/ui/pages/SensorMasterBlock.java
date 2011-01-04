@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.MasterDetailsBlock;
@@ -32,13 +31,12 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
+import de.lmu.ifi.dbs.medmon.base.ui.viewer.SensorTableViewer;
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
 import de.lmu.ifi.dbs.medmon.medic.ui.controller.SensorManagementController;
-import de.lmu.ifi.dbs.medmon.medic.ui.controller.PatientManagementController;
-import de.lmu.ifi.dbs.medmon.medic.ui.provider.DataContentProvider;
-import de.lmu.ifi.dbs.medmon.medic.ui.provider.DataLabelProvider;
+import de.lmu.ifi.dbs.medmon.medic.ui.provider.SensorContainerContentProvider;
+import de.lmu.ifi.dbs.medmon.medic.ui.provider.SensorContainerLabelProvider;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.SensorDetailPageProvider;
-import de.lmu.ifi.dbs.medmon.medic.ui.viewer.SensorTableViewer;
 import de.lmu.ifi.dbs.medmon.medic.ui.wizard.DataSelectionWizard;
 import de.lmu.ifi.dbs.medmon.medic.ui.wizard.ImportWizard;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
@@ -132,8 +130,8 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 		
 		//TODO Implement MULTI Selection
 		TreeViewer dataViewer = new TreeViewer(sensorComposite, SWT.NONE);
-		dataViewer.setContentProvider(new DataContentProvider());
-		dataViewer.setLabelProvider(new DataLabelProvider());
+		dataViewer.setContentProvider(new SensorContainerContentProvider());
+		dataViewer.setLabelProvider(new SensorContainerLabelProvider());
 		dataViewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
 				
 		
@@ -162,8 +160,8 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 		dbComposite.setLayout(new GridLayout(3, false));
 		
 		final TreeViewer dbViewer = new TreeViewer(dbComposite, SWT.NONE);
-		dbViewer.setContentProvider(new DataContentProvider());
-		dbViewer.setLabelProvider(new DataLabelProvider());
+		dbViewer.setContentProvider(new SensorContainerContentProvider());
+		dbViewer.setLabelProvider(new SensorContainerLabelProvider());
 		dbViewer.getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 		
 		Button bLoad = toolkit.createButton(dbComposite, "Laden", SWT.NONE);

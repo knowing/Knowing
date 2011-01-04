@@ -13,6 +13,8 @@ public class DataProcessRule implements ISchedulingRule {
 
 	@Override
 	public boolean isConflicting(ISchedulingRule rule) {
+		if(rule instanceof DataProcessRule)
+			return true;
 		if(rule instanceof ConvertRule)
 			return true;
 		return false;

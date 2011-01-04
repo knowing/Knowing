@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-
 public class CSVDescriptor {
 
 	public static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd hh:mm:ss.SSS";
@@ -79,6 +78,15 @@ public class CSVDescriptor {
 
 	public void setTextQualifier(char textQualifier) {
 		this.textQualifier = textQualifier;
+	}
+
+	public int getNumericFieldCount() {
+		int count = 0;
+		for (Class clazz : fields.values()) {
+			if (clazz == Double.class || clazz == Float.class || clazz == Long.class || clazz == Integer.class)
+				count++;
+		}
+		return count;
 	}
 
 	@Override

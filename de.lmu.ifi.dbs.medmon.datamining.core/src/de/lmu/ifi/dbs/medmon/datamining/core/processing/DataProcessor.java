@@ -150,8 +150,11 @@ public class DataProcessor implements IAdaptable {
 	}
 
 	public boolean isAvailable() {
-		IDataProcessor processor = FrameworkUtil.findDataProcessor(id);
-		return processor != null;
+		return loadProcessor() != null;
+	}
+	
+	public IDataProcessor loadProcessor() {
+		return FrameworkUtil.findDataProcessor(id);
 	}
 
 	@Override

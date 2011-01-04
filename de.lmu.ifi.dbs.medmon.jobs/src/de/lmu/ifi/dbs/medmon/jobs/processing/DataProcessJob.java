@@ -1,58 +1,51 @@
 package de.lmu.ifi.dbs.medmon.jobs.processing;
 
+import java.util.Map;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-import de.lmu.ifi.dbs.medmon.database.model.Data;
+import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.internal.Processor;
 
 public class DataProcessJob extends Job {
 
 	private static final DataProcessRule rule = new DataProcessRule();
 	
-	private final Data[] data;
+	private final RawData data;
+	private final DataProcessingUnit dpu;
+	private final Processor processor;
+	private final Map<String, IAnalyzedData> acc;
 
-	//private final IAlgorithm<Data> algorithm;
-	//private final IAnalyzedData alreadyAnalyzed;
+	private final String family;
 
-	//private IAnalyzedData analyzed;
-	
-	
-	public DataProcessJob(String name, Data[] data) {
+	public DataProcessJob(String name, DataProcessingUnit dpu, Processor processor, RawData data, Map<String, IAnalyzedData> acc, String family) {
 		super(name);
+		this.dpu = dpu;
+		this.processor = processor;
 		this.data = data;
-		//this.algorithm = algorithm;		IAlgorithm<Data> algorithm,
-		//this.alreadyAnalyzed = analyzed;	IAnalyzedData analyzed
+		this.acc = acc;
+		this.family = family;
 		setRule(rule);
-		
-	}
-	
-	@Override
-	protected IStatus run(IProgressMonitor monitor) {
-		// DUMMY
-		return Status.OK_STATUS;
-	}
-	
-/*	public DataProcessJob(String name, Data[] data, IAlgorithm<Data> algorithm) {
-		this(name, data, algorithm, null);
 	}
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		monitor.beginTask("analyze", IProgressMonitor.UNKNOWN);
-		//TODO Process-Chaining
-		if(alreadyAnalyzed == null)
-			analyzed = algorithm.process(data);
-		else
-			analyzed = algorithm.process(data, alreadyAnalyzed);
 		
 		return Status.OK_STATUS;
 	}
-
-	public IAnalyzedData getAnalyzed() {
-		return analyzed;
-	}*/
 	
+	@Override
+	public boolean belongsTo(Object family) {
+		return family.equals(this.family);
+	}
+	
+	public Map<String, IAnalyzedData> getAcc() {
+		return acc;
+	}
 
 }

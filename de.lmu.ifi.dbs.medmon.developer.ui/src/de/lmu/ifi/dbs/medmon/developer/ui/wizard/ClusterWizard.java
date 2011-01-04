@@ -14,7 +14,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 
 import de.lmu.ifi.dbs.elki.utilities.exceptions.UnableToComplyException;
-import de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterFile;
+import de.lmu.ifi.dbs.medmon.base.ui.cluster.ClusterFile;
 import de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.cluster.DoubleCluster;
 import de.lmu.ifi.dbs.medmon.datamining.core.clustering.TrainCluster;
@@ -33,6 +33,7 @@ public class ClusterWizard extends Wizard implements IWorkbenchWizard {
 
 	@Override
 	public boolean performFinish() {
+		//TODO CHANGE THIS
 		TrainCluster clusterer = new TrainCluster();
 		ClusterUnit clusterUnit = new ClusterUnit();
 		clusterUnit.setName(page.getClusterUnit());
@@ -41,7 +42,7 @@ public class ClusterWizard extends Wizard implements IWorkbenchWizard {
 		String[] lables = new String[clusterFiles.length];
 		int index = 0;
 		for (ClusterFile clusterFile : clusterFiles) {
-			files[index] = new File(clusterFile.getFile());
+			files[index] = new File(clusterFile.getSource());
 			lables[index++] = clusterFile.getLabel();
 		}
 

@@ -47,18 +47,14 @@ public class ImportWizard extends Wizard {
 
 	@Override
 	public boolean performFinish() {
-		Patient patient = sourcePage.getPatient();
-		System.out.println("Patient: " + patient);
 		persistData();
 		return true;
 	}
 
 	@Override
-	public IWizardPage getNextPage(IWizardPage page) {
-		if (page.getPreviousPage() == sourcePage)
-			sourcePage.importData();
+	public IWizardPage getNextPage(IWizardPage page) {		
 		if (page == dataPage)
-			dataPage.setViewerInput(sourcePage.getData());
+			dataPage.setViewerInput(sourcePage.importData());
 		return super.getNextPage(page);
 	}
 	

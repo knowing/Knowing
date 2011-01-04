@@ -6,6 +6,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.ManagedForm;
 
+import de.lmu.ifi.dbs.medmon.base.ui.filter.ClusterDPUFilter;
 import de.lmu.ifi.dbs.medmon.medic.ui.pages.MPUMasterBlock;
 
 public class SelectMPUPage extends WizardPage {
@@ -30,6 +31,7 @@ public class SelectMPUPage extends WizardPage {
 		MPUMasterBlock block = new MPUMasterBlock(SWT.HORIZONTAL);
 		block.createContent(managedForm);
 		setControl(managedForm.getForm());
+		setPageComplete(true);
 	}
 	
 	protected ManagedForm createManagedForm(final Composite parent) {
@@ -48,5 +50,6 @@ public class SelectMPUPage extends WizardPage {
 		managedForm.dispose();
 		super.dispose();
 	}
+	
 
 }

@@ -68,7 +68,7 @@ public class DPULaunchDelegate extends LaunchConfigurationDelegate {
 			monitor.worked(1);
 			
 			Processor processor = Processor.getInstance();
-			Map<String, IAnalyzedData> output = processor.run(dpu, ClusterUtils.covertCSV(reader));
+			Map<String, IAnalyzedData> output = processor.run(dpu, ClusterUtils.convertFromCSV(reader));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (JAXBException e) {

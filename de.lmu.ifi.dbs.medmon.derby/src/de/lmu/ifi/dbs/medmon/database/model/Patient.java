@@ -17,28 +17,37 @@ import java.util.Set;
     @NamedQuery(name = "Patient.findById", query = "SELECT p FROM Patient p WHERE p.id = :id"),
     @NamedQuery(name = "Patient.findByFirstname", query = "SELECT p FROM Patient p WHERE p.firstname = :firstname"),
     @NamedQuery(name = "Patient.findByLastname", query = "SELECT p FROM Patient p WHERE p.lastname = :lastname"),
+    @NamedQuery(name = "Patient.findByInsuranceId", query = "SELECT p FROM Patient p WHERE p.insuranceId = :insuranceId"),
+    @NamedQuery(name = "Patient.findIdentical", query = "SELECT p FROM Patient p WHERE p.firstname = :firstname AND p.lastname = :lastname AND p.birth = :birth"),
     @NamedQuery(name = "Patient.likeName", query="SELECT p FROM Patient p WHERE lower(p.lastname) LIKE :lastname OR lower(p.firstname) LIKE :firstname")})
 public class Patient implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	public static final short MALE = 0;
+	public static final short FEMALE = 1;
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(nullable=false)
 	private int id;
 
+	@Column(length=30)
+	private String firstname;
+
+	@Column(length=30)
+	private String lastname;
+	
+	@Column
+	private short gender;
+	
+	@Column(unique = true)
+	private String insuranceId;
+	
     @Temporal( TemporalType.DATE)
 	private Date birth;
 
     @Lob()
 	private String comment;
-
-	@Column(length=30)
-	private String firstname;
-
-	private short gender;
-
-	@Column(length=30)
-	private String lastname;
 
     @Temporal( TemporalType.DATE)
 	private Date therapystart;
@@ -69,6 +78,39 @@ public class Patient implements Serializable {
 		this.id = id;
 	}
 
+	public String getFirstname() {
+		return this.firstname;
+	}
+
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
+	}
+	
+	public String getLastname() {
+		return this.lastname;
+	}
+
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
+	}
+	
+	public String getInsuranceId() {
+		return insuranceId;
+	}
+	
+	public void setInsuranceId(String insuranceId) {
+		this.insuranceId = insuranceId;
+	}
+
+	public short getGender() {
+		return this.gender;
+	}
+
+	public void setGender(short gender) {
+		this.gender = gender;
+	}
+	
+
 	public Date getBirth() {
 		return this.birth;
 	}
@@ -83,30 +125,6 @@ public class Patient implements Serializable {
 
 	public void setComment(String comment) {
 		this.comment = comment;
-	}
-
-	public String getFirstname() {
-		return this.firstname;
-	}
-
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
-	}
-
-	public short getGender() {
-		return this.gender;
-	}
-
-	public void setGender(short gender) {
-		this.gender = gender;
-	}
-
-	public String getLastname() {
-		return this.lastname;
-	}
-
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
 	}
 
 	public Date getTherapystart() {
