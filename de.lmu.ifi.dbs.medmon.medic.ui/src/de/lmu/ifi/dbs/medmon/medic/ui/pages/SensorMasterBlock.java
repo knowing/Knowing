@@ -168,7 +168,7 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 		bLoad.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				IWizard wizard = new DataSelectionWizard(dbViewer);
+				IWizard wizard = new DataSelectionWizard();
 				WizardDialog dialog = new WizardDialog(e.widget.getDisplay().getActiveShell(), wizard);
 				dialog.open();
 			}

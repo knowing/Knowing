@@ -3,8 +3,10 @@ package de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -26,12 +28,13 @@ public class SelectDataPage extends WizardPage {
 	private Composite container;
 
 	private TreeViewer treeViewer;
-	private Button bImportAll;
-	
+	private Button bImportAll;	
 	
 	private boolean importAll = true;
 	private boolean persist = false;
 	private boolean deleteAfter = true;
+
+	private IStructuredSelection initialSelection;
 
 	public SelectDataPage() {
 		super("selectDataPage");
@@ -39,6 +42,11 @@ public class SelectDataPage extends WizardPage {
 		setMessage("Die zu analysierenden Daten auswaehlen");
 		setTitle("Sensordaten");
 		setPageComplete(true);
+	}
+	
+	public SelectDataPage(ISensorDataContainer[] initialSelection) {
+		this();
+		this.initialSelection = new StructuredSelection(initialSelection);
 	}
 
 	@Override
@@ -58,8 +66,11 @@ public class SelectDataPage extends WizardPage {
 			public void selectionChanged(SelectionChangedEvent event) {
 				bImportAll.setSelection(false);
 				importAll = false;
+				System.out.println("Selection: " + event.getSelection());
 			}
 		});
+		/*if(initialSelection != null && !initialSelection.isEmpty())
+			treeViewer.setSelection(initialSelection, true);*/
 		
 		final Button bToDB = new Button(container, SWT.CHECK);
 		bToDB.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));

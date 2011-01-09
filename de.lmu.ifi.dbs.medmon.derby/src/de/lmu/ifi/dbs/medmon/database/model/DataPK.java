@@ -1,10 +1,12 @@
 package de.lmu.ifi.dbs.medmon.database.model;
 
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.Date;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * The primary key class for the DATA database table.

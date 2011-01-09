@@ -1,7 +1,12 @@
 package de.lmu.ifi.dbs.medmon.base.ui.widgets;
 
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -17,6 +22,8 @@ import de.lmu.ifi.dbs.medmon.base.ui.viewer.SensorTableViewer;
 import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
 
 public class SensorSourceWidget extends Composite {
+	
+	private ListenerList listenerList = new ListenerList();
 	
 	private Text tFile;
 	private SensorTableViewer sensorViewer;
@@ -38,6 +45,13 @@ public class SensorSourceWidget extends Composite {
 		sensorViewer.setContentProvider(new SensorContentProvider());
 		sensorViewer.setInput(this);
 		sensorViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+		sensorViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				firePropertyChanged("sensor", sensor, ((IStructuredSelection)event.getSelection()).getFirstElement());		
+			}
+		});
 		
 		tFile = new Text(this, SWT.BORDER);
 		tFile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -52,8 +66,11 @@ public class SensorSourceWidget extends Composite {
 					return;
 				sensor = (ISensor) ((IStructuredSelection)selection).getFirstElement();
 				file = sensor.getConverter().openChooseInputDialog(getShell());
-				if(file != null)
+				if(file != null) {
+					firePropertyChanged("file", tFile.getText(), file);
 					tFile.setText(file);
+				}
+					
 			}
 		});
 
@@ -70,6 +87,22 @@ public class SensorSourceWidget extends Composite {
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
+	}
+
+	public void addPropertyChangeListener(IPropertyChangeListener listener) {
+		listenerList.add(listener);
+	}
+	
+	public void removePropertyChangeListener(IPropertyChangeListener listener) {
+		listenerList.add(listener);
+	}
+	
+	private void firePropertyChanged(String property,Object oldValue, Object newValue) {
+		for (Object listener : listenerList.getListeners()) {
+			IPropertyChangeListener propertyListener = (IPropertyChangeListener) listener;
+			PropertyChangeEvent event = new PropertyChangeEvent(this, property, oldValue, newValue);
+			propertyListener.propertyChange(event);
+		}
 	}
 
 }

@@ -3,15 +3,9 @@ package de.lmu.ifi.dbs.medmon.sensor.core.container;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.runtime.Assert;
-
-import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
 
 /**
@@ -22,6 +16,7 @@ import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
  */
 public abstract class AbstractSensorDataContainer<E> implements ISensorDataContainer {
 
+	
 	// null for root
 	private ISensorDataContainer<E> parent;
 
@@ -149,7 +144,7 @@ public abstract class AbstractSensorDataContainer<E> implements ISensorDataConta
 		E[] returns = (E[]) new Object[ret.size()];
 		return ret.toArray(returns);
 	}
-
+	
 	// TODO Implement Listener Support
 
 	// Standard Methods

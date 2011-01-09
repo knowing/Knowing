@@ -3,6 +3,8 @@ package de.lmu.ifi.dbs.medmon.sensor.core.container;
 import java.io.IOException;
 import java.util.Date;
 
+import org.eclipse.core.runtime.IAdaptable;
+
 import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
 
 /**
@@ -17,7 +19,7 @@ import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
  * @author Nepomuk Seiler
  * @version 1.3
  */
-public interface ISensorDataContainer<E> {
+public interface ISensorDataContainer<E>{
 	
 	//Level constants. Should be compared via % 10
 	//TODO use Enumeration ContainerType

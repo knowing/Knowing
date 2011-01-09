@@ -23,9 +23,9 @@ public interface IConverter<E> {
 	
 	public E[] readData(Block block) throws IOException;
 	
-	public Block[] convertToBlock(String file, ContainerType type) throws IOException;
+	public ISensorDataContainer<E> convertToContainer(String file, ContainerType root, ContainerType leaf, List<ISensorDataContainer<E>> acc) throws IOException;
 	
-	public ISensorDataContainer<E> readFile(String file, ContainerType root, ContainerType leaf, List<ISensorDataContainer<E>> acc) throws IOException;
+	public Block[] convertToBlock(String file, ContainerType type) throws IOException;
 	
 	/**
 	 * 

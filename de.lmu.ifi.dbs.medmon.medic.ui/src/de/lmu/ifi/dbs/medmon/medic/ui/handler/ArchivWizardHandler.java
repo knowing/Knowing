@@ -6,18 +6,17 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import de.lmu.ifi.dbs.medmon.medic.ui.wizard.ImportWizard;
+import de.lmu.ifi.dbs.medmon.medic.ui.wizard.ArchivWizard;
 
-public class ImportWizardHandler extends AbstractHandler {
+public class ArchivWizardHandler extends AbstractHandler {
+
+	public static final String ID = "de.lmu.ifi.dbs.medmon.medic.ui.archivwizard";
 	
-	public static final String ID = "de.lmu.ifi.dbs.medmon.medic.ui.dataImportWizard";
-
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		ImportWizard wizard = new ImportWizard();
+		ArchivWizard wizard = new ArchivWizard();
 		WizardDialog dialog = new WizardDialog(HandlerUtil.getActiveShell(event), wizard);
 		dialog.open();
-
 		return null;
 	}
 

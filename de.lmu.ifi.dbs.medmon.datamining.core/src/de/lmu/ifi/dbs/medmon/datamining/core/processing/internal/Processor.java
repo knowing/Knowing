@@ -101,11 +101,11 @@ public class Processor {
 		}
 	}
 
-	public static void add(IPropertyChangeListener listener) {
+	public static void addPropertyChangeListener(IPropertyChangeListener listener) {
 		listenerList.add(listener);
 	}
 
-	public static void remove(IPropertyChangeListener listener) {
+	public static void removePropertyChangeListener(IPropertyChangeListener listener) {
 		listenerList.remove(listener);
 	}
 

@@ -17,6 +17,7 @@ import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
@@ -43,16 +44,17 @@ import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
 
 public class SensorPage extends WizardPage {
 
+	private Button bSDRFile, bPatient;
 	private Text tPatient, tSDRFile;
-
+	private TableViewer sensorViewer;
+	
+	private IStructuredSelection initialSelection;
+	private String initialPatient;
+	
 	private ISensorDataContainer data;
 	
 	private boolean flip = false;
-	private TableViewer sensorViewer;
-
-	private Button bSDRFile;
-
-	private Button bPatient;
+		
 
 	/**
 	 * Create the wizard.
@@ -61,6 +63,12 @@ public class SensorPage extends WizardPage {
 		super("Data");
 		setTitle("Daten");
 		setDescription("Daten auswaehlen");
+	}
+	
+	public SensorPage(Patient patient, ISensor sensor) {
+		this();
+		initialPatient = PatientProposalProvider.parseString(patient);
+		initialSelection = new StructuredSelection(sensor);
 	}
 
 	/**
@@ -79,13 +87,15 @@ public class SensorPage extends WizardPage {
 		GridData data = new GridData(SWT.LEFT, SWT.CENTER, false, false,	1, 1);
 		data.widthHint = 170;
 		tPatient.setLayoutData(data);
+		if(initialPatient != null)
+			tPatient.setText(initialPatient);
 		createContentAssistent(tPatient);
 
 		bPatient = new Button(container, SWT.NONE);
 		bPatient.setText("Patient auswaehlen");
 		bPatient.addListener(SWT.Selection, controller);
 
-		sensorViewer = new SensorTableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
+		sensorViewer = new SensorTableViewer(container, SWT.BORDER | SWT.FULL_SELECTION, initialSelection);
 		sensorViewer.setInput(this); //TODO search for sensors
 		Table table = sensorViewer.getTable();
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
@@ -142,7 +152,7 @@ public class SensorPage extends WizardPage {
 					monitor.beginTask("Daten laden", 0);
 					try {
 						IConverter converter = getSensor().getConverter();
-						data = converter.readFile(tSDRFile.getText(), ContainerType.WEEK, ContainerType.HOUR, null);
+						data = converter.convertToContainer(tSDRFile.getText(), ContainerType.WEEK, ContainerType.HOUR, null);
 							
 					} catch (IOException e) {
 						e.printStackTrace();
@@ -163,6 +173,7 @@ public class SensorPage extends WizardPage {
 		flip = !tSDRFile.getText().isEmpty() && (getPatient() != null);
 		setPageComplete(flip);
 	}
+	
 
 	public Patient getPatient() {
 		return PatientProposalProvider.parsePatient(tPatient.getText());
@@ -206,7 +217,7 @@ public class SensorPage extends WizardPage {
 			if (dialog.open() == Window.OK) {
 				// Assuming that there's only one Patient Selection
 				Patient patient = (Patient) dialog.getResult()[0];
-				tPatient.setText(patient.toString() + "<" + patient.getId() + ">");
+				tPatient.setText(PatientProposalProvider.parseString(patient));
 				done();
 			}
 		}

@@ -20,7 +20,7 @@ public class XMLParameterWrapper {
 	private String type;
 	
 	public XMLParameterWrapper() {
-		
+		this("","","");
 	}
 		
 	public XMLParameterWrapper(String key, String value, String type) {

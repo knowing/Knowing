@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import de.lmu.ifi.dbs.medmon.base.ui.cluster.ClusterContainer;
 import de.lmu.ifi.dbs.medmon.base.ui.cluster.ClusterFile;
@@ -30,7 +31,6 @@ import de.lmu.ifi.dbs.medmon.base.ui.provider.ClusterTableItemContentProvider;
 import de.lmu.ifi.dbs.medmon.base.ui.provider.ClusterTableItemEditingSupport;
 import de.lmu.ifi.dbs.medmon.base.ui.provider.ClusterTableItemLabelProvider;
 import de.lmu.ifi.dbs.medmon.base.ui.provider.SensorContainerContentProvider;
-import de.lmu.ifi.dbs.medmon.base.ui.provider.SensorContainerLabelProvider;
 import de.lmu.ifi.dbs.medmon.base.ui.widgets.SensorSourceWidget;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.ContainerType;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
@@ -146,11 +146,11 @@ public class ClusterWizardPage extends WizardPage {
 
 				} else if (prevPage.getCurrentKey().equals(SelectDataSourcePage.SENSOR)) {
 					ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(),
-							new SensorContainerLabelProvider(), new SensorContainerContentProvider());
+							new WorkbenchLabelProvider(), new SensorContainerContentProvider());
 					SensorSourceWidget source = (SensorSourceWidget) prevPage.getConfiguration();
 					try {
 						ISensorDataContainer<?> input = source.getSensor().getConverter()
-								.readFile(source.getFile(), ContainerType.WEEK, ContainerType.HOUR, null);
+								.convertToContainer(source.getFile(), ContainerType.WEEK, ContainerType.HOUR, null);
 						dialog.setInput(input);
 						dialog.open();
 						Object[] result = dialog.getResult();

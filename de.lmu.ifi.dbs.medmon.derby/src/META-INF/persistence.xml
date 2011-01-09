@@ -5,10 +5,10 @@
 	<persistence-unit name="medmon" transaction-type="RESOURCE_LOCAL">
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 		<class>de.lmu.ifi.dbs.medmon.database.model.Appointment</class>
-		<class>de.lmu.ifi.dbs.medmon.database.model.Comment</class>
-		<class>de.lmu.ifi.dbs.medmon.database.model.Data</class>
 		<class>de.lmu.ifi.dbs.medmon.database.model.DataPK</class>
 		<class>de.lmu.ifi.dbs.medmon.database.model.Patient</class>
+		<class>de.lmu.ifi.dbs.medmon.database.model.Data</class>
+		<class>de.lmu.ifi.dbs.medmon.database.model.Archiv</class>
 
 		<properties>
 			<!-- Embedded Derby Login -->

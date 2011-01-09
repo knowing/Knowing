@@ -1,5 +1,6 @@
 package de.lmu.ifi.dbs.medmon.base.ui.viewer;
 
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -21,6 +22,13 @@ public class SensorTableViewer extends TableViewer {
 	public SensorTableViewer(Composite parent, int style) {
 		super(parent, style);
 		init();
+	}
+	
+	public SensorTableViewer(Composite parent, int style, IStructuredSelection initialSelection) {
+		super(parent, style);
+		init();
+		if(initialSelection != null && !initialSelection.isEmpty())
+			setSelection(initialSelection);
 	}
 	
 	public SensorTableViewer(Table table) {

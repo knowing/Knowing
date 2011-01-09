@@ -2,5 +2,15 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="de.lmu.ifi.dbs.medmon.sensor" name="de.lmu.ifi.dbs.medmon.sensor" schema="schema/de.lmu.ifi.dbs.medmon.sensor.exsd"/>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer"
+            class="de.lmu.ifi.dbs.medmon.sensor.core.adapter.ContainerAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+      </factory>
+   </extension>
 
 </plugin>

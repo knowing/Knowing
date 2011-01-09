@@ -43,5 +43,9 @@ public class PatientProposalProvider implements IContentProposalProvider {
 		EntityManager entityManager = JPAUtil.currentEntityManager();
 		return entityManager.find(Patient.class, id);
 	}
+	
+	public static String parseString(Patient patient) {
+		return patient.toString() + "<" + patient.getId() + ">";
+	}
 
 }

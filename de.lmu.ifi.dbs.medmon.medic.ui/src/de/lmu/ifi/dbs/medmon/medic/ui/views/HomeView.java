@@ -67,6 +67,12 @@ public class HomeView extends ViewPart {
 		analyse.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		analyse.setText("Analysieren");
 		analyse.setImage(Activator.getImageDescriptor(ISharedImages.IMG_VISUALIZE_48).createImage());
+		analyse.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
+			public void linkActivated(HyperlinkEvent e) {
+				CommandUtil.openPerpsective("de.lmu.ifi.dbs.medmon.medic.ui.default");
+			}
+		});
 
 		ImageHyperlink sensor = toolkit.createImageHyperlink(container, SWT.NONE);
 		sensor.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));

@@ -17,9 +17,7 @@ public interface IPatientService {
 	
 	public static final String PATIENT = "de.lmu.ifi.dbs.medmon.database.model.patient";
 	public static final String SENSOR = "de.lmu.ifi.dbs.medmon.sensor.core.sensor.isensor";
-	public static final String SENSOR_DATA = "de.lmu.ifi.dbs.medmon.database.model.data";
 	public static final String SENSOR_CONTAINER = "de.lmu.ifi.dbs.medmon.sensor.core.container";
-	public static final String ALGORITHM = "de.lmu.ifi.dbs.medmon.datamining.processing.algorithm";
 	public static final String ANALYZED_DATA = "de.lmu.ifi.dbs.medmon.datamining.processing.ianalyzed";
 	public static final String DPU = "de.lmu.ifi.dbs.medmon.datamining.processing.dataprocessingunit";
 	

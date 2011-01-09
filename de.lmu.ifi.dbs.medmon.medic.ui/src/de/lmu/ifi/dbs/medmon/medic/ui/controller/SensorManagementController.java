@@ -58,7 +58,7 @@ public class SensorManagementController extends HyperlinkAdapter implements List
 		IConverter<?> converter = sensor.getConverter();
 		String file = converter.openChooseInputDialog(sensorViewer.getControl().getShell());
 		try {
-			ISensorDataContainer root = converter.readFile(file, ContainerType.WEEK, ContainerType.HOUR, null);
+			ISensorDataContainer root = converter.convertToContainer(file, ContainerType.WEEK, ContainerType.HOUR, null);
 			dataViewer.setInput(root);
 		} catch (IOException e) {
 			e.printStackTrace();

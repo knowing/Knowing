@@ -59,6 +59,10 @@ public class Patient implements Serializable {
 	//bi-directional many-to-one association to Data
 	@OneToMany(mappedBy="patient")
 	private Set<Data> data;
+	
+	//bi-directional many-to-one association to Data
+	@OneToMany(mappedBy="patient")
+	private Set<Archiv> archives;
 
     public Patient() {
     }
@@ -149,6 +153,14 @@ public class Patient implements Serializable {
 
 	public void setData(Set<Data> data) {
 		this.data = data;
+	}
+	
+	public Set<Archiv> getArchives() {
+		return archives;
+	}
+	
+	public void setArchives(Set<Archiv> archives) {
+		this.archives = archives;
 	}
 	
 	@Override

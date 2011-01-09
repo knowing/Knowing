@@ -57,7 +57,7 @@ public class FrameworkUtil {
 	}
 
 	public static <E> E[] evaluateService(String clazz) {
-		BundleContext context = Activator.getContext();
+		BundleContext context = Activator.getDefault().getBundle().getBundleContext();
 		final LinkedList<E> services = new LinkedList<E>();
 		try {
 			ServiceReference[] serviceReferences = context.getServiceReferences(clazz, null);

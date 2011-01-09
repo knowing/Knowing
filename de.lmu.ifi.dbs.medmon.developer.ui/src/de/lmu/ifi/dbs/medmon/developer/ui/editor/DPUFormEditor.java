@@ -72,8 +72,9 @@ public class DPUFormEditor extends FormEditor {
 	
 	@Override
 	public Object getAdapter(Class adapter) {
-        if (adapter == IPropertySheetPage.class)
-            return new TabbedPropertySheetPage(processorUnitManagePage);
+		System.out.println("DPUFormEditor.getAdapter() " + adapter);
+        //if (adapter == IPropertySheetPage.class)
+            //return new TabbedPropertySheetPage(processorUnitManagePage);
 		return super.getAdapter(adapter);
 	}
 	

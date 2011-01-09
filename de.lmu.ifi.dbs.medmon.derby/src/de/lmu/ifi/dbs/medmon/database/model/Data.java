@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -54,8 +55,8 @@ public class Data implements Serializable {
 
 	//bi-directional many-to-one association to Comment
     @ManyToOne
-	@JoinColumn(name="COMMENT_ID")
-	private Comment comment;
+    @JoinColumn(name="ARCHIV_ID", updatable=false, insertable=false)
+	private Archiv archiv;
 
 	//bi-directional many-to-one association to Patient
     @ManyToOne
@@ -112,12 +113,12 @@ public class Data implements Serializable {
 		this.z = z;
 	}
 
-	public Comment getComment() {
-		return this.comment;
+	public Archiv getArchiv() {
+		return archiv;
 	}
-
-	public void setComment(Comment comment) {
-		this.comment = comment;
+	
+	public void setArchiv(Archiv archiv) {
+		this.archiv = archiv;
 	}
 	
 	public Patient getPatient() {
@@ -131,7 +132,7 @@ public class Data implements Serializable {
 	@Override
 	public String toString() {
 		return "Data [id=" + id + ", imported=" + imported + ", x=" + x
-				+ ", y=" + y + ", z=" + z + ", comment=" + comment
+				+ ", y=" + y + ", z=" + z + ", comment=" + archiv
 				+ ", patient=" + patient + "]";
 	}
 

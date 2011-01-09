@@ -23,10 +23,9 @@ public class MonitorView extends ViewPart implements IPropertyChangeListener{
 	public static final String ID = "de.lmu.ifi.dbs.medmon.datamining.core.view.MonitorView"; //$NON-NLS-1$
 	
 	private TabFolder tabFolder;
-	
 
 	public MonitorView() {
-		Processor.add(this);
+		Processor.addPropertyChangeListener(this);
 	}
 
 	/**
@@ -35,7 +34,7 @@ public class MonitorView extends ViewPart implements IPropertyChangeListener{
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
-		tabFolder = new TabFolder(parent, SWT.NONE);
+		tabFolder = new TabFolder(parent, SWT.BOTTOM);
 
 		createActions();
 		initializeToolBar();
@@ -60,7 +59,7 @@ public class MonitorView extends ViewPart implements IPropertyChangeListener{
 	 * Create the actions.
 	 */
 	private void createActions() {
-		// Create the actions
+
 	}
 
 	/**
@@ -68,6 +67,7 @@ public class MonitorView extends ViewPart implements IPropertyChangeListener{
 	 */
 	private void initializeToolBar() {
 		IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
+		
 	}
 
 	/**

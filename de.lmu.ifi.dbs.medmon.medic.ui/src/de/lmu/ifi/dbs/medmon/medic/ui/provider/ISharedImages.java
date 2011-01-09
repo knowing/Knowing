@@ -7,6 +7,10 @@ public interface ISharedImages {
 	public static final String IMG_GO_NEXT_24 = "icons/go-next_24.png";
 	public static final String IMG_GO_NEXT_16 = "icons/go-next_16.png";
 	
+	public static final String IMG_COMMENT_48 = "icons/comment_48.png";
+	public static final String IMG_COMMENT_24 = "icons/comment_24.png";
+	public static final String IMG_COMMENT_16 = "icons/comment_16.png";
+	
 	public static final String IMG_PATIENTS_48 = "icons/patients_48.png";
 	public static final String IMG_PATIENTS_24 = "icons/patients_24.png";
 	public static final String IMG_PATIENTS_16 = "icons/patients_16.png";
@@ -14,6 +18,10 @@ public interface ISharedImages {
 	public static final String IMG_ADD_PATIENT_48 = "icons/add-patient_48.png";
 	public static final String IMG_ADD_PATIENT_24 = "icons/add-patient_24.png";
 	public static final String IMG_ADD_PATIENT_16 = "icons/add-patient_16.png";
+	
+	public static final String IMG_OPEN_PATIENT_48 = "icons/open-patient_48.png";
+	public static final String IMG_OPEN_PATIENT_24 = "icons/open-patient_24.png";
+	public static final String IMG_OPEN_PATIENT_16 = "icons/open-patient_16.png";
 	
 	public static final String IMG_IMPORT_48 = "icons/import_48.png";
 	public static final String IMG_IMPORT_24 = "icons/import_24.png";

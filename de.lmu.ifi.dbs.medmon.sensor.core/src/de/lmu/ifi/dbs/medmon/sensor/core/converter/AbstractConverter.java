@@ -16,7 +16,7 @@ import de.lmu.ifi.dbs.medmon.sensor.core.util.TimeUtil;
 public abstract class AbstractConverter<E> implements IConverter<E> {
 
 	@Override
-	public ISensorDataContainer<E> readFile(String file, ContainerType root, ContainerType leaf,
+	public ISensorDataContainer<E> convertToContainer(String file, ContainerType root, ContainerType leaf,
 			List<ISensorDataContainer<E>> acc) throws IOException {
 		// Initialize first list containing Block
 		if (acc == null) {
@@ -26,7 +26,7 @@ public abstract class AbstractConverter<E> implements IConverter<E> {
 				acc.add(new TimeSensorDataContainer<E>(leaf, block));
 			System.out.println("------------------------------");
 			System.out.println("First created Acc-List: " + acc);
-			return readFile(file, root, TimeUtil.getNext(leaf), acc);
+			return convertToContainer(file, root, TimeUtil.getNext(leaf), acc);
 		}
 
 		// Recursion end
@@ -79,7 +79,7 @@ public abstract class AbstractConverter<E> implements IConverter<E> {
 		// Fill AcclerationList
 		newAcc.add(newContainer);
 		
-		return readFile(file, root, TimeUtil.getNext(leaf), newAcc);
+		return convertToContainer(file, root, TimeUtil.getNext(leaf), newAcc);
 	}
 	
 	@Override

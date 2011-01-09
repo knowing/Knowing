@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -20,11 +21,7 @@ import de.lmu.ifi.dbs.medmon.database.model.DataPK;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.Block;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.BlockDescriptor;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.ContainerType;
-import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
-import de.lmu.ifi.dbs.medmon.sensor.core.container.RootSensorDataContainer;
-import de.lmu.ifi.dbs.medmon.sensor.core.container.TimeSensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.core.converter.AbstractConverter;
-import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
 import de.lmu.ifi.dbs.medmon.sensor.core.util.TimeUtil;
 
 /**
@@ -35,6 +32,8 @@ import de.lmu.ifi.dbs.medmon.sensor.core.util.TimeUtil;
  */
 public class SDRConverter extends AbstractConverter<Data> {
 
+	private static final Logger log = Logger.getLogger(SDRConverter.class.getName());
+	
 	public final static int BLOCKSIZE = 512;
 	public final static int CONTENT_BLOCK = 504;
 	private final static int MINUTEINBLOCKS = 9;
@@ -91,14 +90,14 @@ public class SDRConverter extends AbstractConverter<Data> {
 
 			// Check Time
 			if (startDate.get(calendarConstant) != endDate.get(calendarConstant)) {
-				System.out.println("-----------------------------");
-				System.out.println("Start: " + startDate.getTime() + " End: " + compareDate.getTime());
+				log.fine("-----------------------------");
+				log.fine("Start: " + startDate.getTime() + " End: " + compareDate.getTime());
 				Block block = new Block(file, blockBegin, blockOffset, startDate.getTime(), compareDate.getTime());
 				blocklist.add(block);
 				blockBegin = blockOffset + 1;
 				startDate.setTime(endDate.getTime());
 
-				System.out.println(block);
+				log.fine(block.toString());
 			}
 
 			// Checks if the recorded data ended
@@ -131,8 +130,6 @@ public class SDRConverter extends AbstractConverter<Data> {
 	 */
 	public Data[] convertSDRtoData(String file, long begin, long end) throws IOException {
 		// Initialize position handling
-		// begin = begin * MINUTEINBLOCKS;
-		// end = end * MINUTEINBLOCKS;
 		byte[] daten = new byte[BLOCKSIZE];
 
 		// Initialize time handling
@@ -175,7 +172,7 @@ public class SDRConverter extends AbstractConverter<Data> {
 			}
 
 		}
-		System.out.println("Converted Data[]: " + datalist.size());
+		log.info("Converted Data[]: " + datalist.size());
 		in.close();
 		return datalist.toArray(new Data[datalist.size()]);
 	}

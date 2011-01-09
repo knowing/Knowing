@@ -1,11 +1,10 @@
 package de.lmu.ifi.dbs.medmon.patient.service.component;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.xml.bind.PropertyException;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -57,27 +56,28 @@ public class PatientService implements IPatientService {
 	private boolean handleIStructuredSelection(IStructuredSelection selection) {
 		Object first = selection.getFirstElement();
 		if(first instanceof Patient) {
-			support.firePropertyChange(PATIENT, selections.get(PATIENT), first);
-			selections.clear();			//Reset Selections if new patient is being set
-			selections.put(PATIENT, (Patient)first);		
-		} else if (first instanceof IAlgorithm) {
-			support.firePropertyChange(ALGORITHM, selections.get(ALGORITHM), first);
-			selections.put(ALGORITHM, (IAlgorithm)first);
+			Object oldPatient = selections.put(PATIENT, (Patient)first);
+			Object oldAnalyzed = selections.put(ANALYZED_DATA, null);
+			Object oldContainer = selections.put(SENSOR_CONTAINER, null);
+			Object oldSensor = selections.put(SENSOR, null);
+			support.firePropertyChange(PATIENT, oldPatient, first);
+			support.firePropertyChange(ANALYZED_DATA, oldAnalyzed, null);
+			support.firePropertyChange(SENSOR_CONTAINER, oldContainer, null);
+			support.firePropertyChange(SENSOR, oldSensor, null);
 		} else if(first instanceof Map) {
-			support.firePropertyChange(ANALYZED_DATA, selections.get(ANALYZED_DATA), first);
-			selections.put(ANALYZED_DATA, (Map<String, IAnalyzedData>)first);
-		} else if(first instanceof Data) {
-			support.firePropertyChange(SENSOR_DATA, selections.get(SENSOR_DATA), first);
-			selections.put(SENSOR_DATA, convert(selection.toArray()));
+			Object old = selections.put(ANALYZED_DATA, (Map<String, IAnalyzedData>)first);
+			support.firePropertyChange(ANALYZED_DATA, old, first);
 		} else if(first instanceof ISensorDataContainer) {
-			support.firePropertyChange(SENSOR_CONTAINER, selections.get(SENSOR_CONTAINER), first);
-			selections.put(SENSOR_CONTAINER, (ISensorDataContainer)first);
+			Object old = selections.put(SENSOR_CONTAINER, (ISensorDataContainer)first);
+			support.firePropertyChange(SENSOR_CONTAINER, old, first);
 		} else if(first instanceof ISensor) {
-			support.firePropertyChange(SENSOR, selections.get(SENSOR), first);
-			selections.put(SENSOR, (ISensor)first);
+			Object oldSensor = selections.put(SENSOR, (ISensor)first);
+			Object oldContainer = selections.put(SENSOR_CONTAINER, null);
+			support.firePropertyChange(SENSOR, oldSensor, first);
+			support.firePropertyChange(SENSOR_CONTAINER, oldContainer, null);
 		} else if(first instanceof DataProcessingUnit) {
-			support.firePropertyChange(DPU, selections.get(DPU), first);
-			selections.put(DPU, (DataProcessingUnit)first);
+			Object old = selections.put(DPU, (DataProcessingUnit)first);
+			support.firePropertyChange(DPU, old, first);
 		} else {
 			return false;
 		}
@@ -91,7 +91,7 @@ public class PatientService implements IPatientService {
 			data[i] = (Data)selection[i];
 		return data;
 	}
-
+		
 	@Override
 	public Object getSelection(String clazz) {
 		return selections.get(clazz);
@@ -99,12 +99,10 @@ public class PatientService implements IPatientService {
 	
 	@Override
 	public void addPropertyChangeListener(String property,PropertyChangeListener listener) {
-		if(property.equals(ALGORITHM) ||
-				property.equals(ANALYZED_DATA) ||
+		if(property.equals(ANALYZED_DATA) ||
 				property.equals(PATIENT) ||
 				property.equals(SENSOR) ||
-				property.equals(SENSOR_CONTAINER) ||
-				property.equals(SENSOR_DATA))
+				property.equals(SENSOR_CONTAINER))
 		support.addPropertyChangeListener(property, listener);
 		else
 			throw new IllegalArgumentException("Value " + property + " is invalid. Choose from IPatientService");
