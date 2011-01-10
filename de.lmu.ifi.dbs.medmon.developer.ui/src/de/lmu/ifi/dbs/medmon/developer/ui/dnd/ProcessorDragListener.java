@@ -5,7 +5,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 
 public class ProcessorDragListener implements DragSourceListener {
 
@@ -25,10 +25,10 @@ public class ProcessorDragListener implements DragSourceListener {
 		// Here you do the convertion to the type which is expected.
 		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 		Object[] array = selection.toArray();
-		DataProcessor[] processors = new DataProcessor[array.length];
+		XMLDataProcessor[] processors = new XMLDataProcessor[array.length];
 		//Maybe a bit eaiser?
 		for (int i = 0; i < processors.length; i++) {
-			processors[i] = (DataProcessor) array[i];			
+			processors[i] = (XMLDataProcessor) array[i];			
 		}
 		
 		if (ProcessorTransfer.getInstance().isSupportedType(event.dataType))

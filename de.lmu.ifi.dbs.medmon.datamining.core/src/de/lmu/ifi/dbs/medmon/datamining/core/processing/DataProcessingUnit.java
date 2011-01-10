@@ -15,12 +15,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "DataProcessingUnit")
 public class DataProcessingUnit{
 	
-	private List<DataProcessor> processors;
+	private List<XMLDataProcessor> processors;
 	
 	private String name = "default";
 	
 	public DataProcessingUnit() {
-		processors = new LinkedList<DataProcessor>();
+		processors = new LinkedList<XMLDataProcessor>();
 	}
 	
 	@XmlAttribute
@@ -40,13 +40,13 @@ public class DataProcessingUnit{
 	 */
 	@XmlElementWrapper(name = "dpu")		
 	@XmlElement(name = "dataProcessor")			
-	public List<DataProcessor> getProcessors() {
+	public List<XMLDataProcessor> getProcessors() {
 		if(processors == null)
-			processors = new LinkedList<DataProcessor>();
+			processors = new LinkedList<XMLDataProcessor>();
 		return processors;
 	}
 	
-	public void setProcessors(List<DataProcessor> processors) {
+	public void setProcessors(List<XMLDataProcessor> processors) {
 		this.processors = processors;
 	}
 	
@@ -64,12 +64,12 @@ public class DataProcessingUnit{
 		return processors.contains(o);
 	}
 
-	public DataProcessor[] toArray() {
-		DataProcessor[] returns = new DataProcessor[size()];
+	public XMLDataProcessor[] toArray() {
+		XMLDataProcessor[] returns = new XMLDataProcessor[size()];
 		return processors.toArray(returns);
 	}
 
-	public boolean add(DataProcessor e) {
+	public boolean add(XMLDataProcessor e) {
 		boolean add = processors.add(e);
 		firePropertyChanged(null, e);
 		return add;
@@ -86,23 +86,23 @@ public class DataProcessingUnit{
 		firePropertyChanged(null, processors);
 	}
 
-	public DataProcessor get(int index) {
+	public XMLDataProcessor get(int index) {
 		return processors.get(index);
 	}
 
-	public DataProcessor set(int index, DataProcessor element) {
-		DataProcessor oldValue = processors.set(index, element);
+	public XMLDataProcessor set(int index, XMLDataProcessor element) {
+		XMLDataProcessor oldValue = processors.set(index, element);
 		firePropertyChanged(oldValue, element);
 		return oldValue;
 	}
 
-	public void add(int index, DataProcessor element) {
+	public void add(int index, XMLDataProcessor element) {
 		processors.add(index, element);
 		firePropertyChanged(null, element);
 	}
 
-	public DataProcessor remove(int index) {
-		DataProcessor removedValue = processors.remove(index);
+	public XMLDataProcessor remove(int index) {
+		XMLDataProcessor removedValue = processors.remove(index);
 		firePropertyChanged(removedValue, null);
 		return removedValue;
 	}	

@@ -13,7 +13,7 @@ import org.eclipse.swt.dnd.TransferData;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.XMLParameterWrapper;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 
 /**
  * DataProcessor serialization format is as follows:
@@ -36,7 +36,7 @@ public class ProcessorTransfer extends ByteArrayTransfer {
 	
 	@Override
 	protected void javaToNative(Object object, TransferData transferData) {
-		byte[] bytes = toByteArray((DataProcessor[])object);
+		byte[] bytes = toByteArray((XMLDataProcessor[])object);
 		if(bytes != null)
 			super.javaToNative(bytes, transferData);
 	}
@@ -47,16 +47,16 @@ public class ProcessorTransfer extends ByteArrayTransfer {
 		return fromByteArray(bytes);
 	}
 	
-	protected DataProcessor[] fromByteArray(byte[] bytes) {
+	protected XMLDataProcessor[] fromByteArray(byte[] bytes) {
 		DataInputStream in = new DataInputStream(new ByteArrayInputStream(bytes));
 		
 		try {
 			//Read array size
 			int n = in.readInt();
 			//Read processors
-			DataProcessor[] returns = new DataProcessor[n];
+			XMLDataProcessor[] returns = new XMLDataProcessor[n];
 			for (int i = 0; i < n; i++) {
-				DataProcessor processor = readProcessor(in);
+				XMLDataProcessor processor = readProcessor(in);
 				if(processor == null)
 					return null;
 				returns[i] = processor;
@@ -68,7 +68,7 @@ public class ProcessorTransfer extends ByteArrayTransfer {
 		}
 	}
 	
-	private DataProcessor readProcessor(DataInputStream in) throws IOException  {
+	private XMLDataProcessor readProcessor(DataInputStream in) throws IOException  {
 		String name = in.readUTF();
 		String id = in.readUTF();
 		String provider = in.readUTF();
@@ -80,10 +80,10 @@ public class ProcessorTransfer extends ByteArrayTransfer {
 			String type = in.readUTF();
 			parameters.add(new XMLParameterWrapper(key, value, type));
 		}
-		return new DataProcessor(name, id, provider, parameters);
+		return new XMLDataProcessor(name, id, provider, parameters);
 	}
 	
-	protected byte[] toByteArray(DataProcessor[] processors) {
+	protected byte[] toByteArray(XMLDataProcessor[] processors) {
 	      ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 	      DataOutputStream out = new DataOutputStream(byteOut);
 
@@ -95,7 +95,7 @@ public class ProcessorTransfer extends ByteArrayTransfer {
 
 	         /* write markers */
 	         for (int i = 0; i < processors.length; i++) {
-	            writeProcessor((DataProcessor)processors[i], out);
+	            writeProcessor((XMLDataProcessor)processors[i], out);
 	         }
 	         out.close();
 	         bytes = byteOut.toByteArray();
@@ -118,7 +118,7 @@ public class ProcessorTransfer extends ByteArrayTransfer {
 	 * @param dataOut
 	 * @throws IOException
 	 */
-	private void writeProcessor(DataProcessor processor, DataOutputStream dataOut) throws IOException {
+	private void writeProcessor(XMLDataProcessor processor, DataOutputStream dataOut) throws IOException {
 		dataOut.writeUTF(processor.getName());
 		dataOut.writeUTF(processor.getId());
 		dataOut.writeUTF(processor.getProvidedby());

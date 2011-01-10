@@ -32,12 +32,26 @@
    <extension
          point="org.eclipse.core.runtime.adapters">
       <factory
-            adaptableType="de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor"
-            class="de.lmu.ifi.dbs.medmon.datamining.core.adapter.ProcessParameterAdapterFactory">
+            adaptableType="de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor"
+            class="de.lmu.ifi.dbs.medmon.datamining.core.adapter.XMLProcessorAdapterFactory">
          <adapter
                type="de.lmu.ifi.dbs.medmon.datamining.core.property.DataProcessorElement">
          </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+      </factory>ry>
+      <factory
+            adaptableType="de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor"
+            class="de.lmu.ifi.dbs.medmon.datamining.core.adapter.ProcessorAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.views.properties.IPropertySheetPage">
+         </adapter>
       </factory>
    </extension>
+
 
 </plugin>

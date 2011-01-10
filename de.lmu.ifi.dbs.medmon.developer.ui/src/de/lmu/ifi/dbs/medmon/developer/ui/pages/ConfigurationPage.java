@@ -13,7 +13,7 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 
 public class ConfigurationPage implements IDetailsPage {
 
@@ -76,7 +76,7 @@ public class ConfigurationPage implements IDetailsPage {
 	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-		DataProcessor processor = (DataProcessor) structuredSelection.getFirstElement();
+		XMLDataProcessor processor = (XMLDataProcessor) structuredSelection.getFirstElement();
 		managedForm.setInput(processor);
 		update();
 	}

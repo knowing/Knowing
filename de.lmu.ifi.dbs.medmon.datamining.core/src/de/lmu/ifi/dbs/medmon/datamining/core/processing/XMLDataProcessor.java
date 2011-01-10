@@ -12,9 +12,6 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.views.properties.IPropertySource;
-
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.XMLParameterWrapper;
 import de.lmu.ifi.dbs.medmon.datamining.core.property.DataProcessorElement;
@@ -23,7 +20,7 @@ import de.lmu.ifi.dbs.medmon.datamining.core.util.FrameworkUtil;
 @XmlRootElement(name = "dataProcessor")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "name", "id", "providedby", "wrappedParameters" })
-public class DataProcessor implements IAdaptable {
+public class XMLDataProcessor  {
 
 	@XmlElement
 	private String name;
@@ -45,7 +42,7 @@ public class DataProcessor implements IAdaptable {
 	/**
 	 * Default constructor for JAXB
 	 */
-	public DataProcessor() {
+	public XMLDataProcessor() {
 	}
 
 	/**
@@ -56,7 +53,7 @@ public class DataProcessor implements IAdaptable {
 	 * @param providedby
 	 * @param parameters
 	 */
-	public DataProcessor(String name, String id, String providedby, List<XMLParameterWrapper> parameters) {
+	public XMLDataProcessor(String name, String id, String providedby, List<XMLParameterWrapper> parameters) {
 		this.name = name;
 		this.id = id;
 		this.providedby = providedby;
@@ -65,12 +62,12 @@ public class DataProcessor implements IAdaptable {
 	}
 
 	/**
-	 * Constructor for composing {@link DataProcessor}s from services and
+	 * Constructor for composing {@link XMLDataProcessor}s from services and
 	 * extensionpoints.
 	 * 
 	 * @param processor
 	 */
-	public DataProcessor(IDataProcessor processor) {
+	public XMLDataProcessor(IDataProcessor processor) {
 		this.name = processor.getName();
 		this.id = processor.getId();
 		this.providedby = "unkown"; // TODO get BundleID
@@ -157,16 +154,15 @@ public class DataProcessor implements IAdaptable {
 		return FrameworkUtil.findDataProcessor(id);
 	}
 
-	@Override
+/*	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == IPropertySource.class ) {
 			if (propertySource == null) {
-				// cache the buttonelementpropertysource
 				propertySource = new DataProcessorElement(this);
 			}
 			return propertySource;
 		}
 		return null;
-	}
+	}*/
 
 }

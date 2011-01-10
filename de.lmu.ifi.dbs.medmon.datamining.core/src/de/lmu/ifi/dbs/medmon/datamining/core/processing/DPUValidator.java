@@ -33,7 +33,7 @@ public class DPUValidator {
 		errors.clear();
 		boolean returns = true;
 		List<IDataProcessor> processors = new ArrayList<IDataProcessor>();
-		for (DataProcessor processor : dpu.getProcessors()) {
+		for (XMLDataProcessor processor : dpu.getProcessors()) {
 			IDataProcessor p = checkAvailability(processor);
 			if (p != null)
 				processors.add(p);
@@ -44,19 +44,19 @@ public class DPUValidator {
 		return returns;
 	}
 
-	public boolean solve(DataProcessor processor) {
+	public boolean solve(XMLDataProcessor processor) {
 		return true;
 	}
 
 	/**
-	 * {@link DataProcessor} is just a wrapper for an {@link IDataProcessor}
+	 * {@link XMLDataProcessor} is just a wrapper for an {@link IDataProcessor}
 	 * which is an OSGi-service. If the service exists ist checked by this
 	 * method.
 	 * 
 	 * @param processor
 	 * @return null or the IDataProcessor
 	 */
-	private IDataProcessor checkAvailability(DataProcessor processor) {
+	private IDataProcessor checkAvailability(XMLDataProcessor processor) {
 		IDataProcessor iDataProcessor = FrameworkUtil.findDataProcessor(processor.getId());
 		if (iDataProcessor == null)
 			errors.put(processor.getId(), "N/A");

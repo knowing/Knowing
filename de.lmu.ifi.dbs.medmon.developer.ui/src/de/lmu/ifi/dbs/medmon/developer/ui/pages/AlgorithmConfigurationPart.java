@@ -23,7 +23,7 @@ import de.lmu.ifi.dbs.medmon.datamining.core.parameter.ClusterParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.NumericParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.StringParameter;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
 import de.lmu.ifi.dbs.medmon.developer.ui.widgets.CustomScale;
 
@@ -86,9 +86,9 @@ public class AlgorithmConfigurationPart extends SectionPart {
 			update(((IDataProcessor) input).getParameters());
 			return true;
 		}
-		if(input instanceof DataProcessor) {
-			update(((DataProcessor)input).getParameters());
-			System.out.println(((DataProcessor)input).getParameters());
+		if(input instanceof XMLDataProcessor) {
+			update(((XMLDataProcessor)input).getParameters());
+			System.out.println(((XMLDataProcessor)input).getParameters());
 			return true;
 		}
 		return super.setFormInput(input);

@@ -16,7 +16,7 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 import de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorUnitEditorInput;
 import de.lmu.ifi.dbs.medmon.developer.ui.provider.DPUContentProvider;
 import de.lmu.ifi.dbs.medmon.developer.ui.provider.ProcessorsLabelProvider;
@@ -76,7 +76,7 @@ public class ConfigurationMasterBlock extends MasterDetailsBlock implements Prop
 	 */
 	@Override
 	protected void registerPages(DetailsPart part) {
-		part.registerPage(DataProcessor.class, new ConfigurationPage());
+		part.registerPage(XMLDataProcessor.class, new ConfigurationPage());
 	}
 
 	/**

@@ -6,7 +6,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
 
@@ -31,8 +31,8 @@ public class ClusterDPUFilter extends ViewerFilter {
 			return true;
 		
 		DataProcessingUnit dpu = (DataProcessingUnit) element;
-		List<DataProcessor> processors = dpu.getProcessors();
-		DataProcessor processor = processors.get(processors.size()-1);
+		List<XMLDataProcessor> processors = dpu.getProcessors();
+		XMLDataProcessor processor = processors.get(processors.size()-1);
 		IDataProcessor iProcessor= processor.loadProcessor();
 		
 		if(iProcessor == null || !(iProcessor instanceof IAlgorithm))

@@ -14,7 +14,7 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.XMLParameterWrapper;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 import de.lmu.ifi.dbs.medmon.medic.core.extensions.IDisease;
 import de.lmu.ifi.dbs.medmon.medic.core.unit.MedicProcessingUnit;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
@@ -91,8 +91,8 @@ public class Activator extends AbstractUIPlugin {
 		List<XMLParameterWrapper> parameters = new ArrayList<XMLParameterWrapper>();
 		parameters.add(new XMLParameterWrapper("key1", "value1", "double"));
 		parameters.add(new XMLParameterWrapper("key2", "value2", "double"));
-		DataProcessor p1 = new DataProcessor("name1", "id1", "provider", parameters);
-		DataProcessor p2 = new DataProcessor("name1", "id1", "provider", parameters);
+		XMLDataProcessor p1 = new XMLDataProcessor("name1", "id1", "provider", parameters);
+		XMLDataProcessor p2 = new XMLDataProcessor("name1", "id1", "provider", parameters);
 		dpu.add(p1);
 		dpu.add(p2);
 		

@@ -9,6 +9,7 @@ import javax.xml.bind.Marshaller;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.IEditorInput;
@@ -16,13 +17,15 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
+import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.developer.ui.pages.ProcessorUnitConfigurationPage;
 import de.lmu.ifi.dbs.medmon.developer.ui.pages.ProcessorUnitManagePage;
+import de.lmu.ifi.dbs.medmon.developer.ui.view.ProcessorView;
 
-public class DPUFormEditor extends FormEditor {
+public class DPUFormEditor extends FormEditor implements ITabbedPropertySheetPageContributor  {
 
 	public static final String ID = "de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUFormEditor";
 	
@@ -59,6 +62,20 @@ public class DPUFormEditor extends FormEditor {
 		setPartName(dpuInput.getDpu().getName());
 		getActivePageInstance().doSave(monitor);
 	}
+	
+	@Override
+	public String getContributorId() {
+		System.out.println("DPUEditor.getContributorId()");
+		return ProcessorView.ID;
+	}
+	
+	@Override
+    public Object getAdapter(Class adapter) {
+    	System.out.println("FormEditor.GetAdapter: " + adapter);
+        if (adapter == IPropertySheetPage.class)
+            return new TabbedPropertySheetPage(this);
+        return super.getAdapter(adapter);
+    }	
 
 	@Override
 	public void doSaveAs() {
@@ -69,15 +86,7 @@ public class DPUFormEditor extends FormEditor {
 	public boolean isSaveAsAllowed() {	
 		return false;
 	}
-	
-	@Override
-	public Object getAdapter(Class adapter) {
-		System.out.println("DPUFormEditor.getAdapter() " + adapter);
-        //if (adapter == IPropertySheetPage.class)
-            //return new TabbedPropertySheetPage(processorUnitManagePage);
-		return super.getAdapter(adapter);
-	}
-	
+		
 	/**
 	 * Creates a DataProcessingUnit XML file
 	 * @param input

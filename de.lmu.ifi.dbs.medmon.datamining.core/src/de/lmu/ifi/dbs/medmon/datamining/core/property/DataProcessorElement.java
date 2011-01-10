@@ -4,19 +4,19 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 
 public class DataProcessorElement implements IPropertySource {
 
-	private static final String PROPERTY_NAME = "dataprocessor.name";
-	private static final String PROPERTY_ID = "dataprocessor.id";
-	private static final String PROPERTY_PROVIDER = "dataprocessor.provider";
-	private static final String PROPERTY_PARAMETER = "dataprocessor.parameter.";
+	public static final String PROPERTY_NAME = "dataprocessor.name";
+	public static final String PROPERTY_ID = "dataprocessor.id";
+	public static final String PROPERTY_PROVIDER = "dataprocessor.provider";
+	public static final String PROPERTY_PARAMETER = "dataprocessor.parameter.";
 	
-	private final DataProcessor processor;
+	private final XMLDataProcessor processor;
 	private IPropertyDescriptor[] descriptors;
 	
-	public DataProcessorElement(DataProcessor processor) {
+	public DataProcessorElement(XMLDataProcessor processor) {
 		this.processor = processor;
 	}
 	

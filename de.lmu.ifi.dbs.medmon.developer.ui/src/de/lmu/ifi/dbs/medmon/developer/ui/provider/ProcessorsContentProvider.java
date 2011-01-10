@@ -6,13 +6,12 @@ import java.util.List;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
 
 public class ProcessorsContentProvider implements IStructuredContentProvider {
 
-	private List<DataProcessor> processors;
-	private Viewer viewer;
+	private List<XMLDataProcessor> processors;
 	
 	@Override
 	public void dispose() {
@@ -21,34 +20,34 @@ public class ProcessorsContentProvider implements IStructuredContentProvider {
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		this.viewer = viewer;	
+		
 	}
 
 	@Override
 	public Object[] getElements(Object inputElement) {
 		//Refresh list by giving a new list
 		if(inputElement != processors && inputElement != null && inputElement instanceof List<?>)
-			processors = (List<DataProcessor>) inputElement;
+			processors = (List<XMLDataProcessor>) inputElement;
 		if(processors == null)
-			processors = new LinkedList<DataProcessor>();
+			processors = new LinkedList<XMLDataProcessor>();
 		
-		if(inputElement instanceof DataProcessor)
-			processors.add((DataProcessor) inputElement);
+		if(inputElement instanceof XMLDataProcessor)
+			processors.add((XMLDataProcessor) inputElement);
 		if(inputElement instanceof IDataProcessor)
-			processors.add(new DataProcessor((IDataProcessor)inputElement));
+			processors.add(new XMLDataProcessor((IDataProcessor)inputElement));
 		
-		if(inputElement instanceof DataProcessor[]) {
-			DataProcessor[] processor = (DataProcessor[]) inputElement;
-			for (DataProcessor each : processor)
+		if(inputElement instanceof XMLDataProcessor[]) {
+			XMLDataProcessor[] processor = (XMLDataProcessor[]) inputElement;
+			for (XMLDataProcessor each : processor)
 				processors.add(each);
 		}
 		if(inputElement instanceof IDataProcessor[]) {
 			IDataProcessor[] processor = (IDataProcessor[]) inputElement;
 			for (IDataProcessor each : processor)
-				processors.add(new DataProcessor(each));
+				processors.add(new XMLDataProcessor(each));
 		}
 		
-		DataProcessor[] returns = new DataProcessor[processors.size()];
+		XMLDataProcessor[] returns = new XMLDataProcessor[processors.size()];
 		return processors.toArray(returns);
 	}
 	

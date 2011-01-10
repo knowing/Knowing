@@ -30,13 +30,10 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.EditorPart;
-import org.eclipse.ui.views.properties.IPropertySheetPage;
-import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
-import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.util.FrameworkUtil;
 import de.lmu.ifi.dbs.medmon.developer.ui.dnd.ProcessorDragListener;
 import de.lmu.ifi.dbs.medmon.developer.ui.dnd.ProcessorDropListener;
@@ -47,7 +44,7 @@ import de.lmu.ifi.dbs.medmon.developer.ui.provider.ProcessorsLabelProvider;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 
-public class DPUEditor extends EditorPart implements ITabbedPropertySheetPageContributor {
+public class DPUEditor extends EditorPart {
 
 	public static final String ID = "de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUEditor"; //$NON-NLS-1$
 	private FormToolkit toolkit;
@@ -206,17 +203,6 @@ public class DPUEditor extends EditorPart implements ITabbedPropertySheetPageCon
 		return false;
 	}
 	
-	@Override
-	public String getContributorId() {
-		return ID;
-	}
-	
-    public Object getAdapter(Class adapter) {
-        if (adapter == IPropertySheetPage.class)
-            return new TabbedPropertySheetPage(this);
-        return super.getAdapter(adapter);
-    }	
-	
 	private class DPUController implements Listener, IHyperlinkListener {
 
 		@Override
@@ -231,9 +217,9 @@ public class DPUEditor extends EditorPart implements ITabbedPropertySheetPageCon
 					DataProcessingUnit input = (DataProcessingUnit) unitListViewer.getInput();
 					if (selection.getFirstElement() instanceof IDataProcessor) {
 						IDataProcessor processor = (IDataProcessor) selection.getFirstElement();
-						input.add(new DataProcessor(processor));
-					} else if (selection.getFirstElement() instanceof DataProcessor) {
-						DataProcessor processor = (DataProcessor) selection.getFirstElement();
+						input.add(new XMLDataProcessor(processor));
+					} else if (selection.getFirstElement() instanceof XMLDataProcessor) {
+						XMLDataProcessor processor = (XMLDataProcessor) selection.getFirstElement();
 						input.add(processor);
 					}
 					unitListViewer.refresh();
@@ -242,7 +228,7 @@ public class DPUEditor extends EditorPart implements ITabbedPropertySheetPageCon
 				IStructuredSelection selection = (IStructuredSelection) unitListViewer.getSelection();
 				if (!selection.isEmpty()) {
 					DataProcessingUnit input = (DataProcessingUnit) unitListViewer.getInput();
-					DataProcessor processor = (DataProcessor) selection.getFirstElement();
+					XMLDataProcessor processor = (XMLDataProcessor) selection.getFirstElement();
 					input.remove(processor);
 					unitListViewer.refresh();
 				}

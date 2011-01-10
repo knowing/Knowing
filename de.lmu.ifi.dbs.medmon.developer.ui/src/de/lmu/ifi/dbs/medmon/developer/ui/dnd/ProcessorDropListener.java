@@ -6,7 +6,7 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TransferData;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 
 public class ProcessorDropListener extends ViewerDropAdapter {
 
@@ -19,10 +19,10 @@ public class ProcessorDropListener extends ViewerDropAdapter {
 	public boolean performDrop(Object data) {
 		if(data == null)
 			return false;
-		DataProcessor[] toDrop = (DataProcessor[])data;
+		XMLDataProcessor[] toDrop = (XMLDataProcessor[])data;
 		DataProcessingUnit dpu = (DataProcessingUnit) getViewer().getInput();
 		
-		for (DataProcessor dataProcessor : toDrop) 
+		for (XMLDataProcessor dataProcessor : toDrop) 
 			dpu.add(dataProcessor);
 			
 		
@@ -37,7 +37,7 @@ public class ProcessorDropListener extends ViewerDropAdapter {
 	@Override
 	public void drop(DropTargetEvent event) {
 		int location = this.determineLocation(event);
-		DataProcessor target = (DataProcessor)determineTarget(event);
+		XMLDataProcessor target = (XMLDataProcessor)determineTarget(event);
 		String translatedLocation ="";
 		switch (location){
 		case 1 :

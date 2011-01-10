@@ -2,9 +2,7 @@ package de.lmu.ifi.dbs.medmon.developer.ui.pages;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.PojoObservables;
@@ -12,7 +10,6 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
@@ -37,14 +34,11 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.views.properties.IPropertySheetPage;
-import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
-import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DPUValidator;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.util.FrameworkUtil;
 import de.lmu.ifi.dbs.medmon.developer.ui.dnd.ProcessorDragListener;
 import de.lmu.ifi.dbs.medmon.developer.ui.dnd.ProcessorDropListener;
@@ -56,7 +50,7 @@ import de.lmu.ifi.dbs.medmon.developer.ui.provider.ProcessorsLabelProvider;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 
-public class ProcessorUnitManagePage extends FormPage implements ITabbedPropertySheetPageContributor {
+public class ProcessorUnitManagePage extends FormPage {
 	private DataBindingContext m_bindingContext;
 
 	public static final String ID = "de.lmu.ifi.dbs.medmon.developer.ui.pages.UnitFormPage";
@@ -200,7 +194,7 @@ public class ProcessorUnitManagePage extends FormPage implements ITabbedProperty
 		//
 		return bindingContext;
 	}
-
+	
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		dirty = false;
@@ -211,11 +205,6 @@ public class ProcessorUnitManagePage extends FormPage implements ITabbedProperty
 	@Override
 	public boolean isDirty() {
 		return dirty;
-	}
-
-	@Override
-	public String getContributorId() {
-		return ID;
 	}
 
 	private class DPUController implements Listener, IHyperlinkListener, PropertyChangeListener {
@@ -231,9 +220,9 @@ public class ProcessorUnitManagePage extends FormPage implements ITabbedProperty
 				if (!selection.isEmpty()) {
 					if (selection.getFirstElement() instanceof IDataProcessor) {
 						IDataProcessor processor = (IDataProcessor) selection.getFirstElement();
-						dpu.add(new DataProcessor(processor));
-					} else if (selection.getFirstElement() instanceof DataProcessor) {
-						DataProcessor processor = (DataProcessor) selection.getFirstElement();
+						dpu.add(new XMLDataProcessor(processor));
+					} else if (selection.getFirstElement() instanceof XMLDataProcessor) {
+						XMLDataProcessor processor = (XMLDataProcessor) selection.getFirstElement();
 						dpu.add(processor);
 					}
 					unitListViewer.refresh();
@@ -241,7 +230,7 @@ public class ProcessorUnitManagePage extends FormPage implements ITabbedProperty
 			} else if (event.widget == bRemove) {
 				IStructuredSelection selection = (IStructuredSelection) unitListViewer.getSelection();
 				if (!selection.isEmpty()) {
-					DataProcessor processor = (DataProcessor) selection.getFirstElement();
+					XMLDataProcessor processor = (XMLDataProcessor) selection.getFirstElement();
 					dpu.remove(processor);
 					unitListViewer.refresh();
 				}

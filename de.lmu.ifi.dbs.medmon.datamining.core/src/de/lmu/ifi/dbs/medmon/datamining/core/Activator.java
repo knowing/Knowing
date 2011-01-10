@@ -25,7 +25,7 @@ import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.NumericParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.StringParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 
 public class Activator extends AbstractUIPlugin implements BundleActivator {
@@ -117,10 +117,10 @@ public class Activator extends AbstractUIPlugin implements BundleActivator {
 	
 	public void createDPUXML() {
 		System.out.println("Activator.createDPUXML()");
-		List<DataProcessor> processors = new ArrayList<DataProcessor>();
+		List<XMLDataProcessor> processors = new ArrayList<XMLDataProcessor>();
 		
 		//Create Processor-Models
-		DataProcessor dpm1 = new DataProcessor();
+		XMLDataProcessor dpm1 = new XMLDataProcessor();
 		dpm1.setName("Filter1");
 		dpm1.setId("de.lmu.ifi.dbs.medmon.filter1");
 		dpm1.setProvidedby("de.lmu.ifi.dbs.medmon");
@@ -132,7 +132,7 @@ public class Activator extends AbstractUIPlugin implements BundleActivator {
 		dpm1.setParameters(parameters);
 		
 		
-		DataProcessor dpm2 = new DataProcessor();
+		XMLDataProcessor dpm2 = new XMLDataProcessor();
 		dpm2.setName("Analyzer");
 		dpm2.setId("de.lmu.ifi.dbs.medmon.analyzer");
 		dpm2.setProvidedby("de.lmu.ifi.dbs.medmon");

@@ -11,7 +11,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
@@ -79,9 +79,9 @@ public class Processor {
 	}
 
 	private IDataProcessor[] createProcessorChain(DataProcessingUnit dpu) {
-		List<DataProcessor> processors = dpu.getProcessors();
+		List<XMLDataProcessor> processors = dpu.getProcessors();
 		List<IDataProcessor> iProcessors = new ArrayList<IDataProcessor>(processors.size() + 10);
-		for (DataProcessor dp : processors) {
+		for (XMLDataProcessor dp : processors) {
 			// Doesn't check anything - just fit the peaces together
 			IDataProcessor idp = FrameworkUtil.findDataProcessor(dp.getId());
 			iProcessors.add(idp);

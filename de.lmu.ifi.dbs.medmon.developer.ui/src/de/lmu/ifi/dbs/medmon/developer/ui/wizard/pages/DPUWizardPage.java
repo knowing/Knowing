@@ -14,7 +14,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
 
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
 
 public class DPUWizardPage extends WizardPage {
@@ -69,8 +69,8 @@ public class DPUWizardPage extends WizardPage {
 		return text.getText();
 	}
 	
-	public List<DataProcessor> getDataProcessors() {
-		LinkedList<DataProcessor> returns = new LinkedList<DataProcessor>();
+	public List<XMLDataProcessor> getDataProcessors() {
+		LinkedList<XMLDataProcessor> returns = new LinkedList<XMLDataProcessor>();
 		return returns;
 	}
 }

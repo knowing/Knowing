@@ -41,17 +41,15 @@
    </extension>
    <extension
          point="org.eclipse.ui.views">
-      <view
-            category="de.lmu.ifi.dbs.medmon.developer.ui.datamining"
-            class="de.lmu.ifi.dbs.medmon.developer.ui.view.DataView"
-            id="de.lmu.ifi.dbs.medmon.developer.ui.dataView"
-            name="DataView"
-            restorable="true">
-      </view>
       <category
             id="de.lmu.ifi.dbs.medmon.developer.ui.datamining"
             name="Data Mining">
       </category>
+      <view
+            class="de.lmu.ifi.dbs.medmon.developer.ui.view.ProcessorView"
+            id="de.lmu.ifi.dbs.medmon.developer.ui.view.ProcessorView"
+            name="Processor View">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
@@ -150,28 +148,30 @@
             type="de.lmu.ifi.dbs.medmon.datamining.core.DPULaunchConfigurationType">
       </launchConfigurationTabGroup>
    </extension>
-      <extension
+         <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
       <propertyContributor
-            contributorId="de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUEditor">
+            contributorId="de.lmu.ifi.dbs.medmon.developer.ui.view.ProcessorView">
          <propertyCategory
-               category="general">
+               category="general"></propertyCategory>
+         <propertyCategory
+               category="parameter">
          </propertyCategory>
       </propertyContributor>
    </extension>
    <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
       <propertyTabs
-            contributorId="de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUEditor">
+            contributorId="de.lmu.ifi.dbs.medmon.developer.ui.view.ProcessorView">
          <propertyTab
-               afterTab="de.lmu.ifi.dbs.medmon.datamining.core.ParameterPropertyTab"
+               afterTab="de.lmu.ifi.dbs.medmon.datamining.processor.parameter.parameter"
                category="general"
-               id="de.lmu.ifi.dbs.medmon.datamining.core.GeneralPropertyTab"
+               id="de.lmu.ifi.dbs.medmon.datamining.processor.parameter.general"
                label="General">
          </propertyTab>
          <propertyTab
-               category="general"
-               id="de.lmu.ifi.dbs.medmon.datamining.core.ParameterPropertyTab"
+               category="parameter"
+               id="de.lmu.ifi.dbs.medmon.datamining.processor.parameter.parameter"
                label="Parameter">
          </propertyTab>
       </propertyTabs>
@@ -179,13 +179,39 @@
    <extension
          point="org.eclipse.ui.views.properties.tabbed.propertySections">
       <propertySections
-            contributorId="de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUEditor">
+            contributorId="de.lmu.ifi.dbs.medmon.developer.ui.view.ProcessorView">
          <propertySection
-               class="de.lmu.ifi.dbs.medmon.developer.ui.adaptable.DataProcessorGeneralSection"
-               id="de.lmu.ifi.dbs.medmon.datamining.core.DataProcessorGeneralSection"
-               tab="de.lmu.ifi.dbs.medmon.datamining.core.GeneralPropertyTab">
+               class="de.lmu.ifi.dbs.medmon.developer.ui.property.GeneralPropertySection"
+               id="de.lmu.ifi.dbs.medmon.datamining.processor.parameter.general.section"
+               tab="de.lmu.ifi.dbs.medmon.datamining.processor.parameter.general" >
             <input
-                  type="de.lmu.ifi.dbs.medmon.datamining.core.property.DataProcessorElement">
+                  type="de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor">
+            </input>
+            <input
+                  type="de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor">
+            </input>
+         </propertySection>
+         <propertySection
+               afterSection="de.lmu.ifi.dbs.medmon.datamining.processor.parameter.integerparameter.section"
+               class="de.lmu.ifi.dbs.medmon.developer.ui.property.ClusterParameterPropertySection"
+               id="de.lmu.ifi.dbs.medmon.datamining.processor.parameter.clusterparameter.section"
+               tab="de.lmu.ifi.dbs.medmon.datamining.processor.parameter.parameter">
+            <input
+                  type="de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor">
+            </input>
+            <input
+                  type="de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor">
+            </input>
+         </propertySection>
+         <propertySection
+               class="de.lmu.ifi.dbs.medmon.developer.ui.property.IntegerPropertySection"
+               id="de.lmu.ifi.dbs.medmon.datamining.processor.parameter.integerparameter.section"
+               tab="de.lmu.ifi.dbs.medmon.datamining.processor.parameter.parameter">
+            <input
+                  type="de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor">
+            </input>
+            <input
+                  type="de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor">
             </input>
          </propertySection>
       </propertySections>

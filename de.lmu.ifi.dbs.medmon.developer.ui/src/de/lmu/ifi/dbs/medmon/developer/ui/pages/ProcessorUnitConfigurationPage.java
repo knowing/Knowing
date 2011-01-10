@@ -7,7 +7,7 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 import de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorUnitEditorInput;
 
 
@@ -20,7 +20,7 @@ public class ProcessorUnitConfigurationPage extends FormPage {
 		super(editor, ID, "Configuration");
 		DataProcessingUnit dpu = ((ProcessorUnitEditorInput) editor.getEditorInput()).getDpu();
 		
-		for (DataProcessor processor : dpu.getProcessors()) {
+		for (XMLDataProcessor processor : dpu.getProcessors()) {
 			processor.loadParameters();
 		}
 	}

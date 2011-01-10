@@ -13,7 +13,7 @@ import de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
 import de.lmu.ifi.dbs.medmon.datamining.core.csv.io.CSVFileReader;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.utilities.Arrays2;
@@ -97,8 +97,8 @@ public class ClusterUtils {
 	}
 
 	public static IDataProcessor parseProcessingUnit(DataProcessingUnit dpu) {
-		List<DataProcessor> processors = dpu.getProcessors();
-		for (DataProcessor dataProcessor : processors) {
+		List<XMLDataProcessor> processors = dpu.getProcessors();
+		for (XMLDataProcessor dataProcessor : processors) {
 			String id = dataProcessor.getId();
 			IDataProcessor processor = FrameworkUtil.findDataProcessor(id);
 		}

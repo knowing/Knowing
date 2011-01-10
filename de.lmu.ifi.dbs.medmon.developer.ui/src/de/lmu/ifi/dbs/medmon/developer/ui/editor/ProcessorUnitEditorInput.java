@@ -15,7 +15,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 
 public class ProcessorUnitEditorInput implements IEditorInput {
 
@@ -47,15 +47,15 @@ public class ProcessorUnitEditorInput implements IEditorInput {
 		return dpu;
 	}
 
-	public boolean addDataProcessor(DataProcessor processor) {
+	public boolean addDataProcessor(XMLDataProcessor processor) {
 		return dpu.add(processor);
 	}
 
-	public boolean removeDataProcessor(DataProcessor processor) {
+	public boolean removeDataProcessor(XMLDataProcessor processor) {
 		return dpu.remove(processor);
 	}
 
-	public DataProcessor[] getProcessors() {
+	public XMLDataProcessor[] getProcessors() {
 		return dpu.toArray();
 	}
 
