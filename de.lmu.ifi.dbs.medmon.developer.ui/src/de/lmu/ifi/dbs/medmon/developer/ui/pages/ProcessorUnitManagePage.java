@@ -199,7 +199,7 @@ public class ProcessorUnitManagePage extends FormPage {
 	public void doSave(IProgressMonitor monitor) {
 		dirty = false;
 		getEditor().editorDirtyStateChanged();
-		// super.doSave(monitor);
+		super.doSave(monitor);
 	}
 
 	@Override

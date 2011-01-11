@@ -9,7 +9,6 @@ import javax.xml.bind.Marshaller;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.IEditorInput;
@@ -30,8 +29,6 @@ public class DPUFormEditor extends FormEditor implements ITabbedPropertySheetPag
 	public static final String ID = "de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUFormEditor";
 	
 	private File dpuXML;
-
-	private ProcessorUnitManagePage processorUnitManagePage;
 	
 	
 	@Override
@@ -45,10 +42,7 @@ public class DPUFormEditor extends FormEditor implements ITabbedPropertySheetPag
 	@Override
 	protected void addPages() {
 		try {
-			processorUnitManagePage = new ProcessorUnitManagePage(this);
-			//TODO setSelectionProvider
-			//getSite().setSelectionProvider(processorUnitManagePage.getSite().getSelectionProvider());
-			addPage(processorUnitManagePage);
+			addPage(new ProcessorUnitManagePage(this));
 			addPage(new ProcessorUnitConfigurationPage(this));
 		} catch (PartInitException e) {
 			e.printStackTrace();
@@ -65,13 +59,11 @@ public class DPUFormEditor extends FormEditor implements ITabbedPropertySheetPag
 	
 	@Override
 	public String getContributorId() {
-		System.out.println("DPUEditor.getContributorId()");
 		return ProcessorView.ID;
 	}
 	
 	@Override
     public Object getAdapter(Class adapter) {
-    	System.out.println("FormEditor.GetAdapter: " + adapter);
         if (adapter == IPropertySheetPage.class)
             return new TabbedPropertySheetPage(this);
         return super.getAdapter(adapter);

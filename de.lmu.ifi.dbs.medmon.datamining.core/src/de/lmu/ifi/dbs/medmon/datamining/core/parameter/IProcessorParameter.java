@@ -1,8 +1,14 @@
 package de.lmu.ifi.dbs.medmon.datamining.core.parameter;
 
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertySource;
+
 
 /**
  * Generic Interface for {@link ISensorDataAlgorithm} properties
+ * 
+ * This Interface is very similiar to {@link IPropertySource} and {@link IPropertyDescriptor}
+ * Maybe in future releases this interface will be deprecated and uses the mentioned ones.
  * 
  * @author Nepomuk Seiler
  * @version 1.2
@@ -13,6 +19,7 @@ public interface IProcessorParameter<E> {
 	public static final String STRING_TYPE = "string";
 	public static final String BOOL_TYPE = "bool";
 	public static final String CLUSTER_TYPE = "cluster";
+	public static final String STATIC_TYPE = "static";
 	
 	/**
 	 * To create a label describing the parameter
