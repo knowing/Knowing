@@ -12,6 +12,7 @@ import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
+import de.lmu.ifi.dbs.medmon.datamining.core.parameter.NumericParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.XMLParameterWrapper;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 
@@ -78,9 +79,16 @@ public class ProcessorTransfer extends ByteArrayTransfer {
 			String key = in.readUTF();
 			String value = in.readUTF();
 			String type = in.readUTF();
-			parameters.add(new XMLParameterWrapper(key, value, type));
+			XMLParameterWrapper xmlParameter = new XMLParameterWrapper(key, value, type);
+			if(type.equals(IProcessorParameter.INT_TYPE)) {
+				int min = in.readInt();
+				int max = in.readInt();
+				xmlParameter.setMin(String.valueOf(min));
+				xmlParameter.setMax(String.valueOf(max));
+			}
+			parameters.add(xmlParameter);
 		}
-		return new XMLDataProcessor(name, id, provider, parameters);
+		return new XMLDataProcessor(name, id, provider, parameters.toArray(new XMLParameterWrapper[parameters.size()]));
 	}
 	
 	protected byte[] toByteArray(XMLDataProcessor[] processors) {
@@ -130,6 +138,12 @@ public class ProcessorTransfer extends ByteArrayTransfer {
 			dataOut.writeUTF(key);
 			dataOut.writeUTF(String.valueOf(parameters.get(key).getValue()));
 			dataOut.writeUTF(parameters.get(key).getType());
+			IProcessorParameter p = parameters.get(key);
+			if(p instanceof NumericParameter) {
+				NumericParameter parameter = (NumericParameter) p;
+				dataOut.writeInt(parameter.getMinimum());
+				dataOut.writeInt(parameter.getMaximum());
+			}
 		}
 	}
 	

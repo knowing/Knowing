@@ -28,6 +28,10 @@ public class NumericParameter implements IProcessorParameter<Integer> {
 	public NumericParameter(String name) {
 		this(name, 0, Integer.MAX_VALUE, 0);
 	}
+	
+	public NumericParameter(String name, int value) {
+		this(name, Integer.MIN_VALUE, Integer.MAX_VALUE, value);
+	}
 
 	public NumericParameter(String name, int minimum, int maximum) {
 		this(name, minimum, maximum, (Math.abs(maximum + minimum) / 2));

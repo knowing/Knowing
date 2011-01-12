@@ -21,7 +21,7 @@ public class ProcessorUnitConfigurationPage extends FormPage {
 		DataProcessingUnit dpu = ((ProcessorUnitEditorInput) editor.getEditorInput()).getDpu();
 		
 		for (XMLDataProcessor processor : dpu.getProcessors()) {
-			processor.loadParameters();
+			//processor.loadParameters();
 		}
 	}
 	

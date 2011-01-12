@@ -91,8 +91,8 @@ public class Activator extends AbstractUIPlugin {
 		List<XMLParameterWrapper> parameters = new ArrayList<XMLParameterWrapper>();
 		parameters.add(new XMLParameterWrapper("key1", "value1", "double"));
 		parameters.add(new XMLParameterWrapper("key2", "value2", "double"));
-		XMLDataProcessor p1 = new XMLDataProcessor("name1", "id1", "provider", parameters);
-		XMLDataProcessor p2 = new XMLDataProcessor("name1", "id1", "provider", parameters);
+		XMLDataProcessor p1 = new XMLDataProcessor("name1", "id1", "provider", parameters.toArray(new XMLParameterWrapper[parameters.size()]));
+		XMLDataProcessor p2 = new XMLDataProcessor("name1", "id1", "provider", parameters.toArray(new XMLParameterWrapper[parameters.size()]));
 		dpu.add(p1);
 		dpu.add(p2);
 		

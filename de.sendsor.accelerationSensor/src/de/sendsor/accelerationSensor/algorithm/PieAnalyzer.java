@@ -42,7 +42,7 @@ public class PieAnalyzer extends AbstractAlgorithm {
 	}
 
 	private void init() {
-		ClusterParameter parameter = new ClusterParameter(IMedmonConstants.DIR_CU);
+		ClusterParameter parameter = new ClusterParameter("Cluster");
 		parameters.put(parameter.getName(), parameter);
 		
 		analyzedData.put(PIE_CHART, null);

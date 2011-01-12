@@ -72,6 +72,8 @@ public class ClusterParameterPropertySection extends ParameterPropertySection {
 				JAXBContext context = JAXBContext.newInstance(ClusterUnit.class);
 				Unmarshaller um = context.createUnmarshaller();
 				ClusterUnit cluster = (ClusterUnit) um.unmarshal(new File(file));
+				parameter.setValue(cluster);
+				parameter.setValueAsString(file);
 				text.setText(file);	
 			} catch (JAXBException e1) {
 				e1.printStackTrace();

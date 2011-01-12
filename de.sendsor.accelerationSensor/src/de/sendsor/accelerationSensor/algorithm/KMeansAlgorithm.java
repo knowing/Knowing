@@ -27,6 +27,7 @@ import de.lmu.ifi.dbs.medmon.datamining.core.analyzed.TableAnalyzedData;
 import de.lmu.ifi.dbs.medmon.datamining.core.cluster.DoubleCluster;
 import de.lmu.ifi.dbs.medmon.datamining.core.clustering.TrainCluster;
 import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
+import de.lmu.ifi.dbs.medmon.datamining.core.parameter.NumericParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.AbstractAlgorithm;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
@@ -39,16 +40,30 @@ public class KMeansAlgorithm extends AbstractAlgorithm {
 
 	private static final Logger log = Logger.getLogger(TrainCluster.class.getName());
 
-	static final int KMEANS_K = 1000;
-	static final int KMEANS_MAX_ITERATION = 20;
-	static final int KERNEL_SIZE = 7;
-	static final int MIN_INSTANCES_PER_CLUSTER = 5;
+	private static final int KMEANS_K = 1000;
+	private static final int KMEANS_MAX_ITERATION = 20;
+	private static final int KERNEL_SIZE = 7;
+	private static final int MIN_INSTANCES_PER_CLUSTER = 5;
+	
+	//Keys
+	private static final String KMEANS_K_KEY = "KMEANS K";
+	private static final String KMEANS_MAX_ITERATION_KEY = "KMEANS MAX ITERATION";
+	private static final String KERNEL_SIZE_KEY = "KERNEL SIZE";
+	private static final String MIN_INSTANCES_PER_CLUSTER_KEY = "MIN INSTANCES PER CLUSTER";
 	
 	private ClusterAnalyzedData clusterAnalyzedData;
 	private TableAnalyzedData tableAnalyzedData;
 
 	public KMeansAlgorithm() {
 		super("KMeans Algorithm", IAlgorithm.INDEFINITE_DIMENSION);
+		init();
+	}
+	
+	private void init() {
+		parameters.put(KMEANS_K_KEY, new NumericParameter(KMEANS_K_KEY, 0, 5000, KMEANS_K));
+		parameters.put(KMEANS_MAX_ITERATION_KEY, new NumericParameter(KMEANS_MAX_ITERATION_KEY, 0, 200, KMEANS_MAX_ITERATION));
+		parameters.put(KERNEL_SIZE_KEY, new NumericParameter(KERNEL_SIZE_KEY, 0, 50, KERNEL_SIZE));
+		parameters.put(MIN_INSTANCES_PER_CLUSTER_KEY, new NumericParameter(MIN_INSTANCES_PER_CLUSTER_KEY, 0, 50, MIN_INSTANCES_PER_CLUSTER));
 	}
 
 	@Override
@@ -120,9 +135,13 @@ public class KMeansAlgorithm extends AbstractAlgorithm {
 		}
 
 		// init KMeans
+		int kmeans_k = (Integer) parameters.get(KMEANS_K_KEY).getValue();
+		int kmeans_max_iteration = (Integer) parameters.get(KMEANS_MAX_ITERATION_KEY).getValue();
+		int kernel_size = (Integer) parameters.get(KERNEL_SIZE_KEY).getValue();
+		int min_instances = (Integer) parameters.get(MIN_INSTANCES_PER_CLUSTER_KEY).getValue();
 
-		log.info("k=" + KMEANS_K + "; maxiterations=" + KMEANS_MAX_ITERATION);
-		KMeans kmeans = new KMeans(EuclideanDistanceFunction.STATIC, KMEANS_K, KMEANS_MAX_ITERATION);
+		log.info("k=" + kmeans_k + "; maxiterations=" + kmeans_max_iteration);
+		KMeans kmeans = new KMeans(EuclideanDistanceFunction.STATIC, kmeans_k, kmeans_max_iteration);
 
 		// do clustering
 		List<DoubleCluster> doubleClusters = new ArrayList<DoubleCluster>();
@@ -139,12 +158,12 @@ public class KMeansAlgorithm extends AbstractAlgorithm {
 			}
 
 			DoubleCluster newCluster = buildCluster(centroid, clusterVectors);
-			if (newCluster.getNumChildren() > MIN_INSTANCES_PER_CLUSTER) {
+			if (newCluster.getNumChildren() > min_instances) {
 				doubleClusters.add(newCluster);
 			}
 		}
 
-		log.info("Found " + doubleClusters.size() + " clusters with > " + MIN_INSTANCES_PER_CLUSTER + " members");
+		log.info("Found " + doubleClusters.size() + " clusters with > " + min_instances + " members");
 		return doubleClusters;
 	}
 

@@ -19,6 +19,15 @@ public class XMLParameterWrapper {
 	@XmlAttribute(name = "type")
 	private String type;
 	
+	@XmlAttribute(name = "embedded")
+	private Boolean embedded;
+	
+	@XmlAttribute
+	private String max;
+	
+	@XmlAttribute
+	private String min;
+	
 	public XMLParameterWrapper() {
 		this("","","");
 	}
@@ -59,13 +68,34 @@ public class XMLParameterWrapper {
 	public void setType(String type) {
 		this.type = type;
 	}
-
+	
+	public Boolean getEmbedded() {
+		return embedded;
+	}
+	
+	public void setEmbedded(Boolean embedded) {
+		this.embedded = embedded;
+	}
+	
 	@Override
 	public String toString() {
 		return "XMLParameterWrapper [key=" + key + ", value=" + value + ", type=" + type + "]";
 	}
-	
-	
 
+	public String getMax() {
+		return max;
+	}
+
+	public void setMax(String max) {
+		this.max = max;
+	}
+
+	public String getMin() {
+		return min;
+	}
+
+	public void setMin(String min) {
+		this.min = min;
+	}
 	
 }

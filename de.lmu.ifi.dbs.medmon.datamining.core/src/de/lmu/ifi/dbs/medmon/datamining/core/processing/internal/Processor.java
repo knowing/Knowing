@@ -10,6 +10,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
+import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
@@ -84,6 +85,10 @@ public class Processor {
 		for (XMLDataProcessor dp : processors) {
 			// Doesn't check anything - just fit the peaces together
 			IDataProcessor idp = FrameworkUtil.findDataProcessor(dp.getId());
+			Map<String, IProcessorParameter> parameters = dp.getParameters();
+			for (String key : parameters.keySet()) {
+				idp.getParameter(key).setValue(parameters.get(key).getValue());
+			}
 			iProcessors.add(idp);
 		}
 		return iProcessors.toArray(new IDataProcessor[iProcessors.size()]);

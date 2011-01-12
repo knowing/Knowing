@@ -94,6 +94,7 @@ public class CustomScale extends Composite {
 	
 	public void setSelection(int value) {
 		scale.setSelection(value);
+		this.value.setText(String.valueOf(value));
 	}
 
 	public Scale getScale() {
