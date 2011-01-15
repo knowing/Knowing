@@ -107,6 +107,11 @@
             id="de.lmu.ifi.dbs.medmon.developer.ui.LoadDPU"
             name="Load DPU">
       </command>
+      <command
+            defaultHandler="de.lmu.ifi.dbs.medmon.developer.ui.handler.ExportDPUHandler"
+            id="de.lmu.ifi.dbs.medmon.developer.ui.exportDPU"
+            name="Export DPU">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
@@ -215,6 +220,13 @@
             </input>
          </propertySection>
       </propertySections>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commandImages">
+      <image
+            commandId="de.lmu.ifi.dbs.medmon.developer.ui.exportDPU"
+            icon="icons/document-export_16.png">
+      </image>
    </extension>
 
 </plugin>

@@ -20,7 +20,6 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributo
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
-import de.lmu.ifi.dbs.medmon.developer.ui.pages.ProcessorUnitConfigurationPage;
 import de.lmu.ifi.dbs.medmon.developer.ui.pages.ProcessorUnitManagePage;
 import de.lmu.ifi.dbs.medmon.developer.ui.view.ProcessorView;
 
@@ -43,7 +42,7 @@ public class DPUFormEditor extends FormEditor implements ITabbedPropertySheetPag
 	protected void addPages() {
 		try {
 			addPage(new ProcessorUnitManagePage(this));
-			addPage(new ProcessorUnitConfigurationPage(this));
+			//addPage(new ProcessorUnitConfigurationPage(this));
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		}

@@ -22,6 +22,11 @@ public class ProcessorUnitEditorInput implements IEditorInput {
 	private DataProcessingUnit dpu;
 	private File dpuXML;
 
+	public ProcessorUnitEditorInput(DataProcessingUnit dpu, File dpuXML) {
+		this.dpu = dpu;
+		this.dpuXML = dpuXML;
+	}
+	
 	public ProcessorUnitEditorInput(DataProcessingUnit dpu) {
 		this.dpu = dpu;
 		init();
@@ -37,10 +42,15 @@ public class ProcessorUnitEditorInput implements IEditorInput {
 			dpuXML = new File(location.toOSString() + File.separator + getName() + ".xml");
 			JAXBContext context = JAXBContext.newInstance(DataProcessingUnit.class);
 			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			m.marshal(dpu, dpuXML);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public File getDpuXML() {
+		return dpuXML;
 	}
 
 	public DataProcessingUnit getDpu() {

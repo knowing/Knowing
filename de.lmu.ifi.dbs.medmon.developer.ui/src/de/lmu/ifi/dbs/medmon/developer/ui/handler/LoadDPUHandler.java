@@ -46,12 +46,12 @@ public class LoadDPUHandler extends AbstractHandler {
 			Unmarshaller um = context.createUnmarshaller();
 			File dpuFile = new File(dpuPath);
 			DataProcessingUnit dpu = (DataProcessingUnit) um.unmarshal(dpuFile);
-			ProcessorUnitEditorInput input = new ProcessorUnitEditorInput(dpu);
-			System.out.println("Opening Editor");
+			dpu.initParameterListener();
+			ProcessorUnitEditorInput input = new ProcessorUnitEditorInput(dpu, dpuFile);
+			//Opening Editor
 			IWorkbench workbench = PlatformUI.getWorkbench();
 			workbench.getActiveWorkbenchWindow().getActivePage().openEditor(input, DPUFormEditor.ID);
 			workbench.showPerspective(PerspectiveFactory.ID, workbench.getActiveWorkbenchWindow());
-			//PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(input, DPUEditor.ID);
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		} catch (JAXBException e) {

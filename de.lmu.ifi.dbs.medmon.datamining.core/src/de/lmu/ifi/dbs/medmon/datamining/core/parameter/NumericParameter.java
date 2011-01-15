@@ -9,9 +9,8 @@ import java.util.ArrayList;
  * @author Nepomuk Seiler
  * @version 1.1
  */
-public class NumericParameter implements IProcessorParameter<Integer> {
+public class NumericParameter extends AbstractProcessorParameter<Integer> {
 
-	private final String name;
 
 	private final ArrayList<Integer> values;
 	private final int minimum;
@@ -38,7 +37,7 @@ public class NumericParameter implements IProcessorParameter<Integer> {
 	}
 
 	public NumericParameter(String name, int minimum, int maximum, int value) {
-		this.name = name;
+		super(name, INT_TYPE);
 		this.minimum = minimum;
 		this.maximum = maximum;
 		this.value = value;
@@ -62,13 +61,24 @@ public class NumericParameter implements IProcessorParameter<Integer> {
 
 	@Override
 	public void setValue(Integer value) {
-		if(isValid(value))
+		if(isValid(value)) {
+			fireParameterChanged(getName(), getValue(), value);
 			this.value = value;
+		}
+			
 	}
 	
 	@Override
 	public void setValueAsString(String value) {
-		setValue(Integer.valueOf(value));		
+		try {
+			Integer integer = Integer.valueOf(value);
+			if(isValid(integer)) {
+				fireParameterChanged(getName(), this.value, integer);
+				setValue(integer);	
+			}
+		} catch (NumberFormatException e) {
+			throw e;
+		}			
 	}
 
 	@Override
@@ -81,10 +91,6 @@ public class NumericParameter implements IProcessorParameter<Integer> {
 		return values.toArray(new Integer[values.size()]);
 	}
 	
-	@Override
-	public String getName() {
-		return name;
-	}
 
 	@Override
 	public boolean isValid(Integer value) {
@@ -93,9 +99,5 @@ public class NumericParameter implements IProcessorParameter<Integer> {
 		return false;
 	}
 
-	@Override
-	public String getType() {
-		return INT_TYPE;
-	}
 
 }

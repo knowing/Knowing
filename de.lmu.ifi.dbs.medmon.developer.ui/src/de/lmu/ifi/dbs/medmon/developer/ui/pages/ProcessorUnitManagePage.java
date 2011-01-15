@@ -2,14 +2,24 @@ package de.lmu.ifi.dbs.medmon.developer.ui.pages;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.Map;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
@@ -21,6 +31,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
@@ -34,16 +45,19 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.handlers.IHandlerService;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DPUValidator;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.util.FrameworkUtil;
+import de.lmu.ifi.dbs.medmon.developer.ui.Activator;
 import de.lmu.ifi.dbs.medmon.developer.ui.dnd.ProcessorDragListener;
 import de.lmu.ifi.dbs.medmon.developer.ui.dnd.ProcessorDropListener;
 import de.lmu.ifi.dbs.medmon.developer.ui.dnd.ProcessorTransfer;
 import de.lmu.ifi.dbs.medmon.developer.ui.editor.ProcessorUnitEditorInput;
+import de.lmu.ifi.dbs.medmon.developer.ui.handler.ExportDPUHandler;
 import de.lmu.ifi.dbs.medmon.developer.ui.provider.DPUContentProvider;
 import de.lmu.ifi.dbs.medmon.developer.ui.provider.ProcessorsContentProvider;
 import de.lmu.ifi.dbs.medmon.developer.ui.provider.ProcessorsLabelProvider;
@@ -51,8 +65,6 @@ import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 
 public class ProcessorUnitManagePage extends FormPage {
-	private DataBindingContext m_bindingContext;
-
 	public static final String ID = "de.lmu.ifi.dbs.medmon.developer.ui.pages.UnitFormPage";
 
 	private Text fText;
@@ -68,8 +80,11 @@ public class ProcessorUnitManagePage extends FormPage {
 
 	private DataProcessingUnit dpu;
 	private DPUValidator validator;
+	private DPUController controller = new DPUController();
 
 	private IManagedForm managedForm;
+
+	private DataBindingContext m_bindingContext;
 
 	/**
 	 * Create the form page.
@@ -84,6 +99,7 @@ public class ProcessorUnitManagePage extends FormPage {
 	public ProcessorUnitManagePage(FormEditor editor) {
 		super(editor, ID, "Processing Unit");
 		dpu = ((ProcessorUnitEditorInput) editor.getEditorInput()).getDpu();
+		dpu.addPropertyChangeListener(controller);
 		validator = new DPUValidator(dpu);
 	}
 
@@ -106,7 +122,6 @@ public class ProcessorUnitManagePage extends FormPage {
 		Label lName = managedForm.getToolkit().createLabel(managedForm.getForm().getBody(), "Name", SWT.NONE);
 		lName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 
-		DPUController controller = new DPUController();
 		dpu.addPropertyChangeListener(controller);
 		tName = managedForm.getToolkit().createText(managedForm.getForm().getBody(), "New Text", SWT.NONE);
 		tName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -156,16 +171,25 @@ public class ProcessorUnitManagePage extends FormPage {
 		managedForm.getToolkit().paintBordersFor(runSection);
 		runSection.setText("Running the DPU");
 
-		Composite composite = managedForm.getToolkit().createComposite(runSection, SWT.NONE);
-		managedForm.getToolkit().paintBordersFor(composite);
-		runSection.setClient(composite);
-		composite.setLayout(new GridLayout(1, false));
+		Composite cRunSection = managedForm.getToolkit().createComposite(runSection, SWT.NONE);
+		managedForm.getToolkit().paintBordersFor(cRunSection);
+		runSection.setClient(cRunSection);
+		cRunSection.setLayout(new GridLayout(1, false));
 
-		ImageHyperlink linkRunDpu = managedForm.getToolkit().createImageHyperlink(composite, SWT.NONE);
-		managedForm.getToolkit().paintBordersFor(linkRunDpu);
+		ImageHyperlink linkRunDpu = managedForm.getToolkit().createImageHyperlink(cRunSection, SWT.NONE);
 		linkRunDpu.setText("Run DPU");
-		linkRunDpu.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_PLAY_24));
+		linkRunDpu.setImage(Activator.getImageDescriptor("icons/run_24.png").createImage());
+		linkRunDpu.setHref(dpu);
+		linkRunDpu.setEnabled(false);
 		linkRunDpu.addHyperlinkListener(controller);
+
+		ImageHyperlink linkExport = managedForm.getToolkit().createImageHyperlink(cRunSection, SWT.NONE);
+		linkExport.setText("Export");
+		linkExport.setImage(Activator.getImageDescriptor("icons/document-export_24.png").createImage());
+		linkExport.setHref(dpu);
+		linkExport.addHyperlinkListener(controller);
+		
+
 		new Label(managedForm.getForm().getBody(), SWT.NONE);
 
 		Section sDescription = managedForm.getToolkit().createSection(body, Section.TWISTIE | Section.TITLE_BAR);
@@ -194,7 +218,7 @@ public class ProcessorUnitManagePage extends FormPage {
 		//
 		return bindingContext;
 	}
-	
+
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		dirty = false;
@@ -211,10 +235,9 @@ public class ProcessorUnitManagePage extends FormPage {
 
 		@Override
 		public void handleEvent(Event event) {
-			if (event.type == SWT.Modify) {
-				dirty = true;
-				getEditor().editorDirtyStateChanged();
-			}
+			if (event.type == SWT.Modify)
+				update();
+
 			if (event.widget == bAdd) {
 				IStructuredSelection selection = (IStructuredSelection) processorsViewer.getSelection();
 				if (!selection.isEmpty()) {
@@ -239,19 +262,29 @@ public class ProcessorUnitManagePage extends FormPage {
 
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			validator.validate();
+			if (!evt.getPropertyName().startsWith("parameter."))
+				validator.validate();
 			managedForm.getMessageManager().removeAllMessages();
-			Map<String, String> errors = validator.getErrors();			
-			//Insert new errors
+			Map<String, String> errors = validator.getErrors();
+			// Insert new errors
 			for (String key : errors.keySet())
 				managedForm.getMessageManager().addMessage(key, errors.get(key), null, IMessageProvider.ERROR);
-				
+			update();
+
 		}
 
 		@Override
 		public void linkActivated(HyperlinkEvent event) {
-			System.out.println("Link activated");
-			/*
+			DataProcessingUnit dpu = (DataProcessingUnit) event.getHref();
+			IHandlerService handlerService = (IHandlerService) getEditorSite().getWorkbenchWindow().getWorkbench()
+					.getService(IHandlerService.class);
+			try {
+				handlerService.executeCommand(ExportDPUHandler.ID, null);
+			}  catch (Exception ex) {
+				throw new RuntimeException(ExportDPUHandler.ID, ex);
+			}
+			
+			/* Fuer LaunchConfiguration
 			 * 1) Ueberpruefen ob es schon eine LaunchConfiguration gibt 1a)
 			 * Diese ausführen 1b) Sonst LaunchConfiguration erstellen 2)
 			 * Datensatz abfragen (CSV Dialog) 3)
@@ -268,6 +301,12 @@ public class ProcessorUnitManagePage extends FormPage {
 
 		}
 
+		private void update() {
+			if (!dirty) {
+				dirty = true;
+				getEditor().editorDirtyStateChanged();
+			}
+		}
 	}
 
 }

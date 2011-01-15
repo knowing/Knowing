@@ -1,5 +1,7 @@
 package de.lmu.ifi.dbs.medmon.datamining.core.parameter;
 
+import java.beans.PropertyChangeListener;
+
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
@@ -49,7 +51,7 @@ public interface IProcessorParameter<E> {
 	
 	public E getValue();
 	
-	public void setValueAsString(String value);
+	public void setValueAsString(String value) throws Exception;
 	
 	/**
 	 * Check if a value is valid
@@ -58,5 +60,8 @@ public interface IProcessorParameter<E> {
 	 */
 	public boolean isValid(E value);
 	
+	public void addPropertyChangeListener(PropertyChangeListener listener);
+	
+	public void removePropertyChangeListener(PropertyChangeListener listener);
 		
 }

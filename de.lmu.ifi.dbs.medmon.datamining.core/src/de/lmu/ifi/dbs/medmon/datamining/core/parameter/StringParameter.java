@@ -6,16 +6,14 @@ package de.lmu.ifi.dbs.medmon.datamining.core.parameter;
  * @author Nepomuk Seiler
  * @version 1.0
  */
-public class StringParameter implements IProcessorParameter<String> {
-
-	private final String name;
+public class StringParameter extends AbstractProcessorParameter<String> {
 
 	private final String[] values;
 	
 	private String value;
 
 	public StringParameter(String name, String[] values) {
-		this.name = name;
+		super(name, STRING_TYPE);
 		this.values = values;
 	}
 
@@ -31,8 +29,11 @@ public class StringParameter implements IProcessorParameter<String> {
 
 	@Override
 	public void setValue(String value) {
-		if(isValid(value))
+		if(isValid(value)) {
+			fireParameterChanged(getName(), getValue(), value);
 			this.value = value;
+		}
+		
 	}
 	
 	@Override
@@ -43,17 +44,7 @@ public class StringParameter implements IProcessorParameter<String> {
 		}
 		return false;
 	}
-	
-	@Override
-	public String getName() {
-		return name;
-	}
-	
-	@Override
-	public String getType() {
-		return STRING_TYPE;
-	}
-	
+		
 	@Override
 	public void setValueAsString(String value) {
 		setValue(value);		

@@ -1,12 +1,11 @@
 package de.lmu.ifi.dbs.medmon.datamining.core.parameter;
 
-public class StaticParameter implements IProcessorParameter<String> {
+public class StaticParameter extends AbstractProcessorParameter<String> {
 
-	private final String name;
 	private final String value;
 
 	public StaticParameter(String name, String value) {
-		this.name = name;
+		super(name, STATIC_TYPE);
 		this.value = value;
 	}
 
@@ -23,11 +22,6 @@ public class StaticParameter implements IProcessorParameter<String> {
 	}
 
 	@Override
-	public String getType() {
-		return STATIC_TYPE;
-	}
-
-	@Override
 	public String[] getValues() {
 		return new String[] { value };
 	}
@@ -35,11 +29,6 @@ public class StaticParameter implements IProcessorParameter<String> {
 	@Override
 	public String getValue() {
 		return value;
-	}
-
-	@Override
-	public String getName() {
-		return name;
 	}
 	
 	@Override

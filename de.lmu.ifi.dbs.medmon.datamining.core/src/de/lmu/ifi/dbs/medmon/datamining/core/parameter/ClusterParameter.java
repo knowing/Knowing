@@ -10,9 +10,8 @@ import javax.xml.bind.Unmarshaller;
 import de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 
-public class ClusterParameter implements IProcessorParameter<ClusterUnit> {
+public class ClusterParameter extends AbstractProcessorParameter<ClusterUnit> {
 
-	private final String name;
 	private String filterPath = System.getProperty("user.home");
 	
 	private boolean embedded;
@@ -25,14 +24,10 @@ public class ClusterParameter implements IProcessorParameter<ClusterUnit> {
 	}
 	
 	public ClusterParameter(String name, String descriptor) {
-		this.name = name;
+		super(name, CLUSTER_TYPE);
 		this.descriptor = descriptor;
 	}
 
-	@Override
-	public String getName() {
-		return name ;
-	}
 
 	@Override
 	public ClusterUnit[] getValues() {
@@ -42,6 +37,7 @@ public class ClusterParameter implements IProcessorParameter<ClusterUnit> {
 	@Override
 	public void setValue(ClusterUnit value) {
 		if(isValid(value)) {
+			fireParameterChanged(getName(), embeddable, value);
 			embeddable = value;
 			embedded = true;
 		}
@@ -53,6 +49,7 @@ public class ClusterParameter implements IProcessorParameter<ClusterUnit> {
 	}
 	
 	public void setValueAsString(String key, boolean embedded) {
+		fireParameterChanged(getName(), descriptor, key);
 		this.descriptor = key;
 		this.embedded = embedded;
 	}
@@ -85,10 +82,6 @@ public class ClusterParameter implements IProcessorParameter<ClusterUnit> {
 		return true;
 	}
 	
-	@Override
-	public String getType() {
-		return CLUSTER_TYPE;
-	}
 	
 	public boolean isEmbedded() {
 		return embedded;

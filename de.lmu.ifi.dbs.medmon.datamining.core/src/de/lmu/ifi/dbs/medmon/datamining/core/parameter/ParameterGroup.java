@@ -2,16 +2,10 @@ package de.lmu.ifi.dbs.medmon.datamining.core.parameter;
 
 import java.util.List;
 
-public class ParameterGroup implements IProcessorParameter<List<IProcessorParameter>> {
+public class ParameterGroup extends AbstractProcessorParameter<List<IProcessorParameter>> {
 
-	@Override
-	public String getName() {
-		return null;
-	}
-
-	@Override
-	public String getType() {
-		return null;
+	public ParameterGroup(String name) {
+		super(name, null);
 	}
 
 	@Override

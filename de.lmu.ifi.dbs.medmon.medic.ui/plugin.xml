@@ -287,7 +287,7 @@
             name="Patient exportieren">
       </command>
       <command
-            category="de.lmu.ifi.dbs.medmon.medic.ui.commands.patient"
+            categoryId="de.lmu.ifi.dbs.medmon.medic.ui.commands.patient"
             defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.ArchivWizardHandler"
             id="de.lmu.ifi.dbs.medmon.medic.ui.archivwizard"
             name="Archiv-Assistent">
@@ -299,15 +299,22 @@
             name="Import Assistent">
       </command>
       <command
-            category="de.lmu.ifi.dbs.medmon.medic.ui.commands.patient"
+            categoryId="de.lmu.ifi.dbs.medmon.medic.ui.commands.data"
             defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.QuickAnalyseHandler"
             id="de.lmu.ifi.dbs.medmon.medic.ui.quickanalyse"
             name="Schnellanalyse">
       </command>
       <command
+            categoryId="de.lmu.ifi.dbs.medmon.medic.ui.commands.data"
             defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.ClusterWizardHandler"
             id="de.lmu.ifi.dbs.medmon.medic.ui.clusterwizard"
             name="Vergleichsdaten">
+      </command>
+      <command
+            categoryId="de.lmu.ifi.dbs.medmon.medic.ui.commands.data"
+            defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.ImportDPUHandler"
+            id="de.lmu.ifi.dbs.medmon.medic.ui.importDPU"
+            name="Analyseverfahren importieren">
       </command>
       <command
             categoryId="de.lmu.ifi.dbs.medmon.medic.ui.commands.patient"
@@ -374,6 +381,11 @@
             <command
                   commandId="de.lmu.ifi.dbs.medmon.medic.ui.quickanalyse"
                   label="Schnellanalyse"
+                  style="push">
+            </command>
+            <command
+                  commandId="de.lmu.ifi.dbs.medmon.medic.ui.importDPU"
+                  label="Verfahren importieren"
                   style="push">
             </command>
          </menu>
