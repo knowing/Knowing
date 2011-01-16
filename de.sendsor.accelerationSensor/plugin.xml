@@ -9,12 +9,6 @@
       </sensor>
    </extension>
    <extension
-         point="de.lmu.ifi.dbs.medmon.disease">
-      <disease
-            class="de.sendsor.accelerationSensor.therapy.DefaultDisease">
-      </disease>
-   </extension>
-   <extension
          point="de.lmu.ifi.dbs.medmon.dataminig.core.processor">
       <algorithm
             class="de.sendsor.accelerationSensor.algorithm.KMeansAlgorithm">

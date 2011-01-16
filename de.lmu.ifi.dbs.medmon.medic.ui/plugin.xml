@@ -440,6 +440,72 @@
                style="push">
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <menu
+               id="de.lmu.ifi.dbs.medmon.ui.file"
+               label="Programm">
+            <command
+                  commandId="org.eclipse.ui.newWizard"
+                  label="Assistent starten"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.window.preferences"
+                  label="Einstellungen"
+                  style="push">
+            </command>
+            <separator
+                  name="de.lmu.ifi.dbs.medmon.medic.ui.seperator.closingng"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.eclipse.ui.file.exit"
+                  label="Beenden"
+                  style="push">
+            </command>
+         </menu>
+         <menu
+               id="de.lmu.ifi.dbs.medmon.ui.view"
+               label="Ansicht">
+            <command
+                  commandId="org.eclipse.ui.perspectives.showPerspective"
+                  label="Perspektiven"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.views.showView"
+                  label="View oeffnen"
+                  style="push">
+            </command>
+         </menu>
+         <menu
+               id="de.lmu.ifi.dbs.medmon.ui.help"
+               label="Hilfe">
+            <command
+                  commandId="org.eclipse.equinox.p2.ui.sdk.install"
+                  icon="icons/update_16.png"
+                  label="Neue Funktionen installieren"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.equinox.p2.ui.sdk.update"
+                  icon="icons/16/stock_internet.png"
+                  label="Update"
+                  style="push">
+            </command>
+            <separator
+                  name="de.lmu.ifi.dbs.medmon.rcp.about"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.eclipse.ui.help.aboutAction"
+                  label="About Medmon"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
@@ -540,6 +606,14 @@
             commandId="de.lmu.ifi.dbs.medmon.medic.ui.loadDataFromDB"
             icon="icons/database_transfer_48.png">
       </image>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="de.lmu.ifi.dbs.medmon.medic.ui.preferences.ApplicationPreferencePage"
+            id="de.lmu.ifi.dbs.medmon.medic.ui.preferences.application"
+            name="Allgemein">
+      </page>
    </extension>
 
 </plugin>

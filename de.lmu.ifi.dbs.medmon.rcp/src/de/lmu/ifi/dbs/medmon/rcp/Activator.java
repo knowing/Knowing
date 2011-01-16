@@ -69,18 +69,6 @@ public class Activator extends AbstractUIPlugin {
 		// / We start the publisher which publishes logs every 3 seconds.
 		// logsPublisher.start();
 		
-		createFolders();
-
-	}
-
-	private void createFolders() {
-		File[] folder = new File[3];
-		folder[0] = new File(IMedmonConstants.DIR_CU);
-		folder[1] = new File(IMedmonConstants.DIR_DPU);
-		folder[2] = new File(IMedmonConstants.DIR_MPU);
-		for (File file : folder) 
-			if(!file.exists())
-				file.mkdirs();
 	}
 
 	/*

@@ -1,23 +1,13 @@
 package de.lmu.ifi.dbs.medmon.medic.core;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.io.File;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import org.osgi.util.tracker.ServiceTracker;
 
-import de.lmu.ifi.dbs.medmon.datamining.core.parameter.XMLParameterWrapper;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
-import de.lmu.ifi.dbs.medmon.medic.core.extensions.IDisease;
-import de.lmu.ifi.dbs.medmon.medic.core.unit.MedicProcessingUnit;
-import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
+import de.lmu.ifi.dbs.medmon.medic.core.preferences.IMedicPreferences;
+import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -25,16 +15,11 @@ import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "de.lmu.ifi.dbs.medmon.therapy.core"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "de.lmu.ifi.dbs.medmon.medic.core"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;
-	
-	//Tracks disease service
-	private static ServiceTracker diseaseTracker;
-	//Tracks patient service
-	private static ServiceTracker patientTracker;
-	
+		
 	/**
 	 * The constructor
 	 */
@@ -46,16 +31,10 @@ public class Activator extends AbstractUIPlugin {
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		
-		diseaseTracker = new ServiceTracker(context, IDisease.class.getName(), null);
-		diseaseTracker.open();
-		
-		patientTracker = new ServiceTracker(context, IPatientService.class.getName(), null);
-		patientTracker.open();
-		
+		super.start(context);			
 		plugin = this;
-		//testMPU();
+		
+		createApplicationFolders();
 	}
 
 	/*
@@ -64,8 +43,7 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
-		diseaseTracker.close();
-		patientTracker.close();
+
 		super.stop(context);
 	}
 
@@ -77,38 +55,39 @@ public class Activator extends AbstractUIPlugin {
 	public static Activator getDefault() {
 		return plugin;
 	}
+	
 
-	public static IDisease[] getIDiseaseServices() {
-		return (IDisease[]) diseaseTracker.getServices();
-	}
-	
-	public static IPatientService getPatientService() {
-		return (IPatientService) patientTracker.getService();
-	}
-	
-	private void testMPU() {
-		DataProcessingUnit dpu = new DataProcessingUnit();
-		List<XMLParameterWrapper> parameters = new ArrayList<XMLParameterWrapper>();
-		parameters.add(new XMLParameterWrapper("key1", "value1", "double"));
-		parameters.add(new XMLParameterWrapper("key2", "value2", "double"));
-		XMLDataProcessor p1 = new XMLDataProcessor("name1", "id1", "provider", parameters.toArray(new XMLParameterWrapper[parameters.size()]));
-		XMLDataProcessor p2 = new XMLDataProcessor("name1", "id1", "provider", parameters.toArray(new XMLParameterWrapper[parameters.size()]));
-		dpu.add(p1);
-		dpu.add(p2);
+	private void createApplicationFolders() {
+		IPreferenceStore store = plugin.getPreferenceStore();
 		
-		MedicProcessingUnit mpu = new MedicProcessingUnit();
-		mpu.setDpus(Collections.singletonList(dpu));
-		mpu.setName("MPU Name");
-		mpu.setDescription("The description");
+		String root_dir = store.getString(IMedicPreferences.DIR_MEDMON_ID);
+		String dpu_dir = store.getString(IMedicPreferences.DIR_DPU_ID);
+		String derby_dir = store.getString(IMedicPreferences.DIR_DERBY_ID);
+		String patient_dir = store.getString(IMedicPreferences.DIR_PATIENT_ID);
+		String cluster_dir = store.getString(IMedicPreferences.DIR_CU_ID);
 		
-		try {
-			JAXBContext context = JAXBContext.newInstance(MedicProcessingUnit.class);
-			Marshaller m = context.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			m.marshal(mpu, System.out);
-		} catch (JAXBException e) {
-			e.printStackTrace();
+		File root = new File(root_dir);
+		if(!root.exists()) {
+			root.mkdirs();
+			new File(dpu_dir).mkdir();
+			new File(derby_dir).mkdir();
+			new File(patient_dir).mkdir();
+			new File(cluster_dir).mkdir();		
+		} else {
+			File dpu = new File(dpu_dir);
+			if(!dpu.exists())
+				dpu.mkdir();
+			File derby = new File(derby_dir);
+			if(!derby.exists())
+				derby.mkdir();
+			File patient = new File(patient_dir);
+			if(!patient.exists())
+				patient.mkdir();
+			File cluster = new File(cluster_dir);
+			if(!cluster.exists())
+				cluster.mkdir();
 		}
 		
-	}
+	}	
+
 }
