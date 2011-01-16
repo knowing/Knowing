@@ -3,6 +3,7 @@ package de.lmu.ifi.dbs.medmon.medic.ui.pages;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeSelection;
@@ -10,7 +11,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
@@ -18,6 +21,7 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ColumnLayout;
+import org.eclipse.ui.forms.widgets.ColumnLayoutData;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.Section;
@@ -25,16 +29,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.ISharedImages;
-import de.lmu.ifi.dbs.medmon.medic.ui.views.MedicProcessingView;
-import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
-import de.lmu.ifi.dbs.medmon.rcp.platform.util.CommandUtil;
-import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
-
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.ui.forms.widgets.ColumnLayoutData;
-import org.eclipse.swt.widgets.Button;
 
 public class DataDetailPage implements IDetailsPage {
 	
@@ -132,7 +127,7 @@ public class DataDetailPage implements IDetailsPage {
 		sensorLink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent event) {
-				CommandUtil.openView(MedicProcessingView.ID);
+				
 			}
 		});
 		

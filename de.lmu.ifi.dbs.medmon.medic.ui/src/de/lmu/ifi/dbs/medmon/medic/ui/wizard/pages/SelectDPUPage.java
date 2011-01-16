@@ -6,16 +6,16 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.ManagedForm;
 
-import de.lmu.ifi.dbs.medmon.medic.ui.pages.MPUMasterBlock;
+import de.lmu.ifi.dbs.medmon.medic.ui.pages.DPUMasterBlock;
 
-public class SelectMPUPage extends WizardPage {
+public class SelectDPUPage extends WizardPage {
 
 	private ManagedForm managedForm;
 
 	/**
 	 * Create the wizard.
 	 */
-	public SelectMPUPage() {
+	public SelectDPUPage() {
 		super("selectMPUPage");
 		setTitle("Analyseverfahren auswaehlen");
 		setDescription("Wahlen sie ein Verfahren aus um die Daten zu analysieren");
@@ -27,7 +27,7 @@ public class SelectMPUPage extends WizardPage {
 	 */
 	public void createControl(Composite parent) {
 		managedForm = createManagedForm(parent);
-		MPUMasterBlock block = new MPUMasterBlock(SWT.HORIZONTAL);
+		DPUMasterBlock block = new DPUMasterBlock();
 		block.createContent(managedForm);
 		setControl(managedForm.getForm());
 		setPageComplete(true);

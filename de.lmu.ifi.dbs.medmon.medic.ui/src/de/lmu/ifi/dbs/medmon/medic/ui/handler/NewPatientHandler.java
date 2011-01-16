@@ -10,6 +10,8 @@ import de.lmu.ifi.dbs.medmon.medic.ui.wizard.CreatePatientWizard;
 
 public class NewPatientHandler extends AbstractHandler {
 
+	public static final String ID = "de.lmu.ifi.dbs.medmon.medic.createPatient";
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {		
 		CreatePatientWizard wizard = new CreatePatientWizard();

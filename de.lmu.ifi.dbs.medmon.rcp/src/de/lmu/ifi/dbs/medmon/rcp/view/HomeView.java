@@ -23,10 +23,6 @@ public class HomeView extends ViewPart {
 
 	private FormToolkit toolkit;
 
-	public HomeView() {
-		// TODO Auto-generated constructor stub
-	}
-
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
@@ -107,8 +103,7 @@ public class HomeView extends ViewPart {
 
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 }

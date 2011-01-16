@@ -34,4 +34,8 @@ public interface ISharedImages {
 	public static final String IMG_CLUSTER_48 = "icons/cluster_48.png";
 	public static final String IMG_CLUSTER_24 = "icons/cluster_24.png";
 	public static final String IMG_CLUSTER_16 = "icons/cluster_16.png";
+	
+	public static final String IMG_ADD_TAG_48 = "icons/tag-new_48.png";
+	public static final String IMG_ADD_TAG_24 = "icons/tag-new_24.png";
+	public static final String IMG_ADD_TAG_16 = "icons/tag-new_16.png";
 }

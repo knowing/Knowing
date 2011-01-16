@@ -87,14 +87,6 @@
       </view>
       <view
             category="de.lmu.ifi.dbs.medmon.medic.ui.medmon"
-            class="de.lmu.ifi.dbs.medmon.medic.ui.views.DataView"
-            icon="icons/sensor_16.png"
-            id="de.lmu.ifi.dbs.medmon.medic.ui.DataView"
-            name="Sensoren"
-            restorable="true">
-      </view>
-      <view
-            category="de.lmu.ifi.dbs.medmon.medic.ui.medmon"
             class="de.lmu.ifi.dbs.medmon.medic.ui.views.DataTreeView"
             icon="icons/tree_16.png"
             id="de.lmu.ifi.dbs.medmon.medic.ui.DataTreeView"
@@ -137,7 +129,7 @@
             class="de.lmu.ifi.dbs.medmon.medic.ui.perspective.DefaultPerspectiveFactory"
             icon="icons/visualize_16.png"
             id="de.lmu.ifi.dbs.medmon.medic.ui.default"
-            name="Medmon">
+            name="Analyse">
       </perspective>
       <perspective
             class="de.lmu.ifi.dbs.medmon.medic.ui.perspective.ManagementPerspective"
@@ -259,7 +251,7 @@
       <command
             categoryId="de.lmu.ifi.dbs.medmon.medic.ui.commands.patient"
             defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.NewPatientHandler"
-            id="de.lmu.ifi.dbs.medmon.medic.create"
+            id="de.lmu.ifi.dbs.medmon.medic.createPatient"
             name="Patient anlegen">
       </command>
       <command
@@ -314,7 +306,7 @@
             categoryId="de.lmu.ifi.dbs.medmon.medic.ui.commands.data"
             defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.ImportDPUHandler"
             id="de.lmu.ifi.dbs.medmon.medic.ui.importDPU"
-            name="Analyseverfahren importieren">
+            name="import.dpu">
       </command>
       <command
             categoryId="de.lmu.ifi.dbs.medmon.medic.ui.commands.patient"
@@ -345,7 +337,7 @@
                   style="push">
             </command>
             <command
-                  commandId="de.lmu.ifi.dbs.medmon.medic.create"
+                  commandId="de.lmu.ifi.dbs.medmon.medic.createPatient"
                   icon="icons/add-patient_16.png"
                   id="de.lmu.ifi.dbs.medmon.medic.ui.patientmenu.new"
                   label="Neuer Patient"
@@ -394,7 +386,7 @@
             allPopups="false"
             locationURI="toolbar:de.lmu.ifi.dbs.medmon.medic.ui.CommentView">
          <command
-               commandId="de.lmu.ifi.dbs.medmon.medic.create"
+               commandId="de.lmu.ifi.dbs.medmon.medic.createPatient"
                label="Patient erstellen"
                style="push">
          </command>
@@ -525,7 +517,7 @@
             icon="icons/open-patient_48.png">
       </image>
       <image
-            commandId="de.lmu.ifi.dbs.medmon.medic.create"
+            commandId="de.lmu.ifi.dbs.medmon.medic.createPatient"
             icon="icons/add-patient_48.png">
       </image>
       <image

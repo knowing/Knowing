@@ -12,7 +12,6 @@ public class ConvertCSVJob extends Job {
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	

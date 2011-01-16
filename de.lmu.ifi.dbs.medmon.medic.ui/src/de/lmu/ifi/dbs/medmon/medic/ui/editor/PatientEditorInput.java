@@ -12,7 +12,6 @@ public class PatientEditorInput implements IEditorInput {
 
 	
 	public PatientEditorInput() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	public PatientEditorInput(Patient patient) {
@@ -31,7 +30,6 @@ public class PatientEditorInput implements IEditorInput {
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

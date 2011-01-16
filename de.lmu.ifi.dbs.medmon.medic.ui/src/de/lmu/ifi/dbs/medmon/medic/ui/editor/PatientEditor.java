@@ -49,14 +49,12 @@ public class PatientEditor extends FormEditor {
 
 	@Override
 	public void doSaveAs() {
-		// TODO Auto-generated method stub
 		
 	}
 
 
 	@Override
 	public boolean isSaveAsAllowed() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

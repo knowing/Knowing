@@ -16,15 +16,21 @@ import de.lmu.ifi.dbs.medmon.datamining.core.parameter.XMLParameterWrapper;
 import de.lmu.ifi.dbs.medmon.datamining.core.util.FrameworkUtil;
 
 @XmlRootElement(name = "dataProcessor")
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "name", "id", "providedby", "parameters" })
 public class XMLDataProcessor  {
 
+	@XmlElement
 	private String name;
 
+	@XmlElement
 	private String id;
 
+	@XmlElement
 	private String providedby;
 
+	@XmlJavaTypeAdapter(ParameterAdapter.class)
+	@XmlElement(name = "parameters")
 	private Map<String, IProcessorParameter> parameters = new HashMap<String, IProcessorParameter>();
 
 	/**
@@ -89,8 +95,6 @@ public class XMLDataProcessor  {
 		this.providedby = providedby;
 	}
 
-	@XmlJavaTypeAdapter(ParameterAdapter.class)
-	@XmlElement(name = "parameters")
 	public Map<String, IProcessorParameter> getParameters() {
 		return parameters;
 	}

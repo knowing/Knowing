@@ -42,7 +42,7 @@ import de.lmu.ifi.dbs.medmon.datamining.core.processing.internal.DataConverter;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.internal.Processor;
 import de.lmu.ifi.dbs.medmon.datamining.core.util.ClusterUtils;
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
-import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SelectMPUPage;
+import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SelectDPUPage;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
 
@@ -50,7 +50,7 @@ public class TrainClusterWizard extends Wizard implements IWorkbenchWizard, IExe
 
 	private SelectDataSourcePage dataSourcePage;
 	private ClusterWizardPage clusterPage;
-	private SelectMPUPage mpuPage;
+	private SelectDPUPage mpuPage;
 
 	private String finalPerspectiveId;
 
@@ -62,7 +62,7 @@ public class TrainClusterWizard extends Wizard implements IWorkbenchWizard, IExe
 	public void addPages() {
 		addPage(dataSourcePage = new SelectDataSourcePage());
 		addPage(clusterPage = new ClusterWizardPage());
-		addPage(mpuPage = new SelectMPUPage());
+		addPage(mpuPage = new SelectDPUPage());
 	}
 
 	@Override

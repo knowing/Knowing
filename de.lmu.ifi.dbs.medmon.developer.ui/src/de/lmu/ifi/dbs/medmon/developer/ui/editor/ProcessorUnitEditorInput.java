@@ -40,6 +40,7 @@ public class ProcessorUnitEditorInput implements IEditorInput {
 
 		try {
 			dpuXML = new File(location.toOSString() + File.separator + getName() + ".xml");
+			dpu.setFile(dpuXML.getAbsolutePath());
 			JAXBContext context = JAXBContext.newInstance(DataProcessingUnit.class);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);

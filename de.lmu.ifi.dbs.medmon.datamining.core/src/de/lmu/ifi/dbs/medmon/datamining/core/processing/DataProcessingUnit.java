@@ -13,7 +13,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlValue;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
@@ -21,20 +20,36 @@ import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
 //This statement means that class "DataProcessingUnit.java" is the root-element 
 //(namespace = "de.lmu.ifi.dbs.medmon.datamining.core.processing")
 @XmlRootElement(name = "DataProcessingUnit")
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class DataProcessingUnit {
 
-	private String name = "default";
+	@XmlElement
+	private String name;
 
+	@XmlElement
 	private String description;
+
+	@XmlElement
+	private String tags;
+
+	@XmlElementWrapper(name = "dpu")
+	@XmlElement(name = "dataProcessor")
 	private List<XMLDataProcessor> processors;
 
+	@XmlElementWrapper(name = "clusters")
+	@XmlElement(name = "cluster")
 	private List<ClusterUnit> embeddedClusters;
 
 	private transient Map<String, ClusterUnit> clusters;
+	private transient String file;
 
 	public DataProcessingUnit() {
 		processors = new LinkedList<XMLDataProcessor>();
+	}
+	
+	public DataProcessingUnit(String file) {
+		this();
+		this.file = file;
 	}
 
 	public String getName() {
@@ -45,28 +60,6 @@ public class DataProcessingUnit {
 		this.name = name;
 	}
 
-	/**
-	 * For interacting with the list it's recommended to use the delegate
-	 * methods as they inform register PropertyChangeListener
-	 * 
-	 * @return processorsList
-	 */
-	@XmlElementWrapper(name = "dpu")
-	@XmlElement(name = "dataProcessor")
-	public List<XMLDataProcessor> getProcessors() {
-		return processors;
-	}
-
-	public void setProcessors(List<XMLDataProcessor> processors) {
-		firePropertyChanged(getProcessors(), processors);
-		for (XMLDataProcessor processor : getProcessors()) 
-			deregisterParameterListener(processor);
-		
-		for (XMLDataProcessor processor : processors) 
-			registerParameterListener(processor);	
-		this.processors = processors;
-	}
-
 	public String getDescription() {
 		return description;
 	}
@@ -75,8 +68,38 @@ public class DataProcessingUnit {
 		this.description = description;
 	}
 
-	@XmlElementWrapper(name = "clusters")
-	@XmlElement(name = "cluster")
+	public String getTags() {
+		return tags;
+	}
+	
+	public void setTags(String tags) {
+		this.tags = tags;
+	}
+	
+	public void addTag(String tag) {
+		tags += "," + tag;
+	}
+	
+	/**
+	 * For interacting with the list it's recommended to use the delegate
+	 * methods as they inform registered PropertyChangeListener
+	 * 
+	 * @return processorsList
+	 */
+	public List<XMLDataProcessor> getProcessors() {
+		return processors;
+	}
+
+	public void setProcessors(List<XMLDataProcessor> processors) {
+		firePropertyChanged(getProcessors(), processors);
+		for (XMLDataProcessor processor : getProcessors())
+			deregisterParameterListener(processor);
+
+		for (XMLDataProcessor processor : processors)
+			registerParameterListener(processor);
+		this.processors = processors;
+	}
+
 	public List<ClusterUnit> getEmbeddedClusters() {
 		return embeddedClusters;
 	}
@@ -106,16 +129,16 @@ public class DataProcessingUnit {
 		firePropertyChanged(old, clusters);
 		return true;
 	}
-	
+
 	public void removeCluster(String name) {
 		HashMap<String, ClusterUnit> old = new HashMap<String, ClusterUnit>(clusters);
 		clusters.remove(name);
 		firePropertyChanged(old, clusters);
 	}
-	
+
 	public void initParameterListener() {
-		for (XMLDataProcessor processor : processors) 
-			registerParameterListener(processor);	
+		for (XMLDataProcessor processor : processors)
+			registerParameterListener(processor);
 	}
 
 	/* Delegates for processor List */
@@ -139,7 +162,7 @@ public class DataProcessingUnit {
 
 	public boolean add(XMLDataProcessor e) {
 		boolean add = processors.add(e);
-		if(add) 
+		if (add)
 			registerParameterListener(e);
 		firePropertyChanged(null, e);
 		return add;
@@ -147,17 +170,17 @@ public class DataProcessingUnit {
 
 	public boolean remove(Object o) {
 		boolean remove = processors.remove(o);
-		if(remove) 
+		if (remove)
 			deregisterParameterListener((XMLDataProcessor) o);
-		
+
 		firePropertyChanged(o, null);
 		return remove;
 	}
 
 	public void clear() {
-		for (XMLDataProcessor processor : processors) 
+		for (XMLDataProcessor processor : processors)
 			deregisterParameterListener(processor);
-		
+
 		processors.clear();
 		firePropertyChanged(null, processors);
 	}
@@ -194,6 +217,14 @@ public class DataProcessingUnit {
 			firePropertyChanged(null, e);
 		return add;
 	}
+	
+	public String getFile() {
+		return file;
+	}
+	
+	public void setFile(String file) {
+		this.file = file;
+	}
 
 	@Override
 	public String toString() {
@@ -201,14 +232,14 @@ public class DataProcessingUnit {
 	}
 
 	/* Property Change Support */
-	
+
 	private final transient PropertyChangeSupport support = new PropertyChangeSupport(this);
-	
+
 	/**
 	 * This listener is registered on every {@link IProcessorParameter}
 	 */
 	private final transient PropertyChangeListener parameterListener = new PropertyChangeListener() {
-		
+
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			support.firePropertyChange(evt);
@@ -226,19 +257,17 @@ public class DataProcessingUnit {
 	protected void firePropertyChanged(Object oldValue, Object newValue) {
 		support.firePropertyChange("processors", oldValue, newValue);
 	}
-	
-	private void registerParameterListener(XMLDataProcessor processor) {
 
-		if(processor == null)
+	private void registerParameterListener(XMLDataProcessor processor) {
+		if (processor == null)
 			return;
 		for (IProcessorParameter parameter : processor.getParameters().values()) {
 			parameter.addPropertyChangeListener(parameterListener);
 		}
 	}
-	
+
 	private void deregisterParameterListener(XMLDataProcessor processor) {
-		System.out.println("Deregister ParameterListener:" + processor);
-		if(processor == null)
+		if (processor == null)
 			return;
 		for (IProcessorParameter parameter : processor.getParameters().values()) {
 			parameter.removePropertyChangeListener(parameterListener);

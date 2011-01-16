@@ -21,6 +21,11 @@ public class DPUFilter extends ViewerFilter {
 		DataProcessingUnit dpu = (DataProcessingUnit) element;
 		if(searchString == null || searchString.isEmpty())
 			return true;
+		String[] tags = dpu.getTags().split(",");
+		for (String tag : tags) {
+			if(tag.matches(searchString))
+				return true;
+		}
 		return dpu.getName().matches(searchString);
 	}
 

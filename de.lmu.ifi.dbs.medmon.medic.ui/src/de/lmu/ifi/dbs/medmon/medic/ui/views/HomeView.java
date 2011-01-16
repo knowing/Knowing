@@ -18,6 +18,7 @@ import org.eclipse.ui.part.ViewPart;
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
 import de.lmu.ifi.dbs.medmon.medic.ui.handler.ClusterWizardHandler;
 import de.lmu.ifi.dbs.medmon.medic.ui.handler.ImportWizardHandler;
+import de.lmu.ifi.dbs.medmon.medic.ui.handler.NewPatientHandler;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.ISharedImages;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.util.CommandUtil;
@@ -54,12 +55,18 @@ public class HomeView extends ViewPart {
 
 		ImageHyperlink patient = toolkit.createImageHyperlink(container, SWT.NONE);
 		patient.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		patient.setText("Patient verwalten");
-		patient.setImage(Activator.getImageDescriptor(ISharedImages.IMG_PATIENTS_48).createImage());
+		patient.setText("Neuer Patient");
+		patient.setImage(Activator.getImageDescriptor(ISharedImages.IMG_ADD_PATIENT_48).createImage());
 		patient.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				CommandUtil.openPerpsective(IMedmonConstants.MANAGEMENT_PERSPECTIVE);
+				IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(
+						IHandlerService.class);
+				try {
+					handlerService.executeCommand(NewPatientHandler.ID, null);
+				} catch (Exception ex) {
+					throw new RuntimeException(NewPatientHandler.ID, ex);
+				}
 			}
 		});
 

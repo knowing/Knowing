@@ -18,7 +18,7 @@ import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.internal.Processor;
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
 import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SelectDataPage;
-import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SelectMPUPage;
+import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SelectDPUPage;
 import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SensorPage;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
@@ -28,7 +28,7 @@ public class QuickAnalyseWizard extends Wizard implements INewWizard, IExecutabl
 
 	private SensorPage sourcePage = new SensorPage();
 	private SelectDataPage dataPage = new SelectDataPage();
-	private SelectMPUPage mpuPage;
+	private SelectDPUPage mpuPage;
 	
 	/* to prevent getNextPage setting input twice */
 	private boolean firstcall = true;
@@ -53,7 +53,7 @@ public class QuickAnalyseWizard extends Wizard implements INewWizard, IExecutabl
 		initSelections(service);
 		addPage(sourcePage);
 		addPage(dataPage);
-		addPage(mpuPage = new SelectMPUPage());
+		addPage(mpuPage = new SelectDPUPage());
 	}
 
 	@Override

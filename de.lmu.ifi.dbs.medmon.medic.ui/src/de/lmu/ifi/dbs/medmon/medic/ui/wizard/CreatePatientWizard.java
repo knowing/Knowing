@@ -6,7 +6,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
@@ -16,10 +15,6 @@ import org.eclipse.ui.WorkbenchException;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.database.util.JPAUtil;
 import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.CreatePatientPage;
-import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SelectDataPage;
-import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SelectMPUPage;
-import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SensorPage;
-import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
 
 public class CreatePatientWizard extends Wizard implements IWorkbenchWizard, IExecutableExtension {
 
