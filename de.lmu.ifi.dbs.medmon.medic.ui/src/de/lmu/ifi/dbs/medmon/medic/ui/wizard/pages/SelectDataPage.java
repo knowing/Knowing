@@ -66,7 +66,6 @@ public class SelectDataPage extends WizardPage {
 			public void selectionChanged(SelectionChangedEvent event) {
 				bImportAll.setSelection(false);
 				importAll = false;
-				System.out.println("Selection: " + event.getSelection());
 			}
 		});
 		/*if(initialSelection != null && !initialSelection.isEmpty())

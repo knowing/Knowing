@@ -151,8 +151,9 @@ public class SensorPage extends WizardPage {
 						throws InvocationTargetException, InterruptedException {
 					monitor.beginTask("Daten laden", 0);
 					try {
-						IConverter converter = getSensor().getConverter();
-						data = converter.convertToContainer(tSDRFile.getText(), ContainerType.WEEK, ContainerType.HOUR, null);
+						//IConverter converter = getSensor().getConverter();
+						//data = converter.convertToContainer(tSDRFile.getText(), ContainerType.WEEK, ContainerType.HOUR, null);
+						data = getSensor().getData(tSDRFile.getText());
 							
 					} catch (IOException e) {
 						e.printStackTrace();

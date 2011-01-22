@@ -74,7 +74,7 @@ public class DataSelectionWizard extends Wizard {
 			try {
 				ISensorDataContainer c = converter.convertToContainer(data.getFile(), ContainerType.WEEK, ContainerType.HOUR, null);
 				if(c instanceof RootSensorDataContainer) 
-					((RootSensorDataContainer)c).setName(data.getOriginalFile());
+					((RootSensorDataContainer)c).setName(data.getFile());
 				root.addChild(c);
 			} catch (IOException e) {
 				e.printStackTrace();

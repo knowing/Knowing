@@ -14,10 +14,12 @@ Require-Bundle: org.eclipse.ui,
  de.lmu.ifi.dbs.medmon.derby;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: de.lmu.ifi.dbs.medmon.base.ui.cluster,
+Export-Package: de.lmu.ifi.dbs.medmon.base.ui.adapter,
+ de.lmu.ifi.dbs.medmon.base.ui.cluster,
  de.lmu.ifi.dbs.medmon.base.ui.dialog,
  de.lmu.ifi.dbs.medmon.base.ui.filter,
  de.lmu.ifi.dbs.medmon.base.ui.provider,
+ de.lmu.ifi.dbs.medmon.base.ui.util,
  de.lmu.ifi.dbs.medmon.base.ui.validation,
  de.lmu.ifi.dbs.medmon.base.ui.viewer,
  de.lmu.ifi.dbs.medmon.base.ui.widgets,

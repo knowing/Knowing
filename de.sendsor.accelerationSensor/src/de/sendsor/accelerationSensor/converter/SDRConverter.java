@@ -13,7 +13,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import de.lmu.ifi.dbs.medmon.sensor.core.container.Block;
@@ -177,9 +178,10 @@ public class SDRConverter extends AbstractConverter<Data> {
 
 	@Override
 	public String openChooseInputDialog(Shell shell) {
-		FileDialog dialog = new FileDialog(shell);
-		dialog.setFilterExtensions(new String[] { "*.sdr", "*.csv" });
-		dialog.setFilterNames(new String[] { "SensorFile(*.sdr)", "CSV Table(*.csv)" });
+		DirectoryDialog dialog = new DirectoryDialog(shell, SWT.OPEN);
+		//FileDialog dialog = new FileDialog(shell);
+		//dialog.setFilterExtensions(new String[] { "*.sdr", "*.csv" });
+		//dialog.setFilterNames(new String[] { "SensorFile(*.sdr)", "CSV Table(*.csv)" });
 		return dialog.open();
 	}
 

@@ -1,5 +1,8 @@
 package de.lmu.ifi.dbs.medmon.sensor.core.sensor;
 
+import java.io.IOException;
+
+import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
 
 /**
@@ -22,7 +25,7 @@ public interface ISensor<E> {
 	
 	public int getType();
 	
-	public E[] getData();
+	public ISensorDataContainer<E> getData(String path) throws IOException;
 	
 	public IConverter<E> getConverter();
 	

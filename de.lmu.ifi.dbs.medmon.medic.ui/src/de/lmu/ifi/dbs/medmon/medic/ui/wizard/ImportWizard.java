@@ -93,8 +93,7 @@ public class ImportWizard extends Wizard {
 		File newFile = new File(returns);
 		try {
 			if(newFile.createNewFile())
-				if(oldFile.renameTo(newFile))
-					oldFile.delete();	
+				oldFile.renameTo(newFile);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
