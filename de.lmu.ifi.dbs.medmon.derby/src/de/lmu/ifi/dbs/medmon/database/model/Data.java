@@ -3,12 +3,12 @@ package de.lmu.ifi.dbs.medmon.database.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -16,7 +16,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import de.lmu.ifi.dbs.medmon.datamining.core.annotations.SensorData;
 import de.lmu.ifi.dbs.medmon.datamining.core.annotations.SensorDataClass;
 
 
@@ -28,91 +27,87 @@ import de.lmu.ifi.dbs.medmon.datamining.core.annotations.SensorDataClass;
 @Entity
 @Table(name="DATA")
 @NamedQueries({
-    @NamedQuery(name = "Data.findAll", query = "SELECT d FROM Data d ORDER BY d.id.record" )})
+    @NamedQuery(name = "Data.findAll", query = "SELECT d FROM Data d"),
+    @NamedQuery(name = "Data.findByPatient", query = "SELECT d FROM Data d WHERE d.patient = :patient")})
 public class Data implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@EmbeddedId
-	private DataPK id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private int id;
 
-	//@Column(name="imported", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable=false)
-	@Basic(optional = false)
-	@Column(name = "imported", insertable = false, updatable = false)
+	@Column(name = "BEGIN_DATE", nullable=false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date imported;
+	private Date from;
 	
-	@SensorData
-	@Column(nullable=false)
-	private double x;
-
-	@SensorData
-	@Column(nullable=false)
-	private double y;
-
-	@SensorData
-	@Column(nullable=false)
-	private double z;
+	@Column(name = "END_DATE", nullable=false, updatable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date to;
+	
+	@Column(name = "FILE")
+	private String file;
+	
+	@Column
+	private String originalFile;
+		
+	@ManyToOne
+	@JoinColumn(name="SENSOR_ID", nullable=false)
+	private Sensor sensor;
 
 	//bi-directional many-to-one association to Comment
     @ManyToOne
-    @JoinColumn(name="ARCHIV_ID", updatable=false, insertable=false)
+    @JoinColumn(name="ARCHIV_ID")
 	private Archiv archiv;
 
 	//bi-directional many-to-one association to Patient
+    //
     @ManyToOne
-	@JoinColumn(name="PATIENT_ID", nullable=false, insertable=false, updatable=false)
+	@JoinColumn(name="PATIENT_ID", nullable=false, updatable=false)
 	private Patient patient;
 
     public Data() {  }
   
-	public Data(DataPK id, int x, int y, int z) {
-		super();
-		this.id = id;
-		this.x = x;
-		this.y = y;
-		this.z = z;
+
+	public int getId() {
+		return id;
 	}
 
-	public DataPK getId() {
-		return this.id;
-	}
-
-	public void setId(DataPK id) {
+	public void setId(int id) {
 		this.id = id;
 	}
+		
+	public Date getFrom() {
+		return from;
+	}
+
+	public void setFrom(Date from) {
+		this.from = from;
+	}
+
+	public Date getTo() {
+		return to;
+	}
+
+	public void setTo(Date to) {
+		this.to = to;
+	}
 	
-	public Date getImported() {
-		return imported;
-	}
-
-	public void setImported(Date imported) {
-		this.imported = imported;
+	public String getFile() {
+		return file;
 	}
 	
-	public double getX() {
-		return this.x;
+	public void setFile(String file) {
+		this.file = file;
 	}
-
-	public void setX(double x) {
-		this.x = x;
+	
+	public String getOriginalFile() {
+		return originalFile;
 	}
-
-	public double getY() {
-		return this.y;
+	
+	public void setOriginalFile(String originalFile) {
+		this.originalFile = originalFile;
 	}
-
-	public void setY(double y) {
-		this.y = y;
-	}
-
-	public double getZ() {
-		return this.z;
-	}
-
-	public void setZ(double z) {
-		this.z = z;
-	}
-
+	
 	public Archiv getArchiv() {
 		return archiv;
 	}
@@ -129,40 +124,52 @@ public class Data implements Serializable {
 		this.patient = patient;
 	}
 	
+	public Sensor getSensor() {
+		return sensor;
+	}
+	
+	public void setSensor(Sensor sensor) {
+		this.sensor = sensor;
+	}
+
 	@Override
 	public String toString() {
-		return "Data [id=" + id + ", imported=" + imported + ", x=" + x
-				+ ", y=" + y + ", z=" + z + ", comment=" + archiv
-				+ ", patient=" + patient + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("Data [id=");
+		builder.append(id);
+		builder.append(", from=");
+		builder.append(from);
+		builder.append(", to=");
+		builder.append(to);
+		builder.append(", sensor=");
+		builder.append(sensor);
+		builder.append(", archiv=");
+		builder.append(archiv);
+		builder.append(", patient=");
+		builder.append(patient);
+		builder.append("]");
+		return builder.toString();
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + id;
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (obj == null) {
+		if (obj == null)
 			return false;
-		}
-		if (!(obj instanceof Data)) {
+		if (getClass() != obj.getClass())
 			return false;
-		}
 		Data other = (Data) obj;
-		if (id == null) {
-			if (other.id != null) {
-				return false;
-			}
-		} else if (!id.equals(other.id)) {
+		if (id != other.id)
 			return false;
-		}
 		return true;
 	}
 

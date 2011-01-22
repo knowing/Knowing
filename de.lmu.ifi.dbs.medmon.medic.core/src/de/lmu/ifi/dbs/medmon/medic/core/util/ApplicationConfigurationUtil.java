@@ -21,8 +21,17 @@ public class ApplicationConfigurationUtil {
 		sb.append("-");
 		sb.append(patient.getLastname());
 		sb.append(sep);
+		String folder = sb.toString();
 		
-		return sb.toString();
+		//Create if not exists
+		File patientFolder = new File(folder);
+		if(!patientFolder.exists() || !patientFolder.isDirectory()) {
+			patientFolder.delete();
+			patientFolder.mkdirs();
+			new File(patientFolder + sep + "data").mkdir();
+			new File(patientFolder + sep + "cluster").mkdir();
+		}
+		return folder;
 		
 	}
 	

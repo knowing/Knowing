@@ -1,6 +1,5 @@
 package de.lmu.ifi.dbs.medmon.database.install;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

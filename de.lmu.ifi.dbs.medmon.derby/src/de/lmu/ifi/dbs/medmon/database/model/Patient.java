@@ -60,7 +60,7 @@ public class Patient implements Serializable {
 	@OneToMany(mappedBy="patient")
 	private Set<Data> data;
 	
-	//bi-directional many-to-one association to Data
+	//bi-directional many-to-one association to Archives
 	@OneToMany(mappedBy="patient")
 	private Set<Archiv> archives;
 

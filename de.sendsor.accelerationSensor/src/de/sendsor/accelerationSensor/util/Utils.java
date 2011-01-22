@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.Assert;
 
-import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
 import de.sendsor.accelerationSensor.algorithm.Category;
 
@@ -20,19 +19,7 @@ public class Utils {
 
 	private static final Logger log = Logger.getLogger(Utils.class.getName());
 
-	public static List<LabeledDoubleFeature> readRawFeaturesFromData(Data[] data) {
-		final List<LabeledDoubleFeature> returns = new ArrayList<LabeledDoubleFeature>();
-		if (data == null)
-			return returns;
 
-		int index = 0;
-		for (Data each : data) {
-			double[] values = new double[] { each.getX(), each.getY(), each.getZ() };
-			LabeledDoubleFeature feature = new LabeledDoubleFeature(values, getLabel(index++));
-			returns.add(feature);
-		}
-		return returns;
-	}
 
 	public static List<LabeledDoubleFeature> readRawFeaturesFromData(RawData data) {
 		Assert.isTrue(data.dimension() == 3, "Dimension should be 3 instead: " + data.dimension()); 

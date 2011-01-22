@@ -73,5 +73,12 @@ public class BlockDescriptor {
 		setAttribute(STARTDATE, date);
 	}
 	
+	public Date getEndDate() {
+		Object date = getAttribute(ENDDATE);
+		if(date == null || !(date instanceof Date))
+			return null;
+		return (Date) date;
+	}
+	
 	
 }

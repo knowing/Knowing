@@ -16,13 +16,12 @@ import java.util.logging.Logger;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
-import de.lmu.ifi.dbs.medmon.database.model.Data;
-import de.lmu.ifi.dbs.medmon.database.model.DataPK;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.Block;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.BlockDescriptor;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.ContainerType;
 import de.lmu.ifi.dbs.medmon.sensor.core.converter.AbstractConverter;
 import de.lmu.ifi.dbs.medmon.sensor.core.util.TimeUtil;
+import de.sendsor.accelerationSensor.model.Data;
 
 /**
  * Class for converting SDR Files to {@link ISensorDataContainers}
@@ -165,9 +164,8 @@ public class SDRConverter extends AbstractConverter<Data> {
 				int z = daten[j + 2];
 
 				// Avoiding Call-by-Reference effect
-				DataPK id = new DataPK(0, timestamp.getTime());
 
-				datalist.add(new Data(id, x, y, z));
+				datalist.add(new Data(timestamp.getTimeInMillis(), x, y, z));
 				time += TIME_CORRECTION_AFTER;
 			}
 

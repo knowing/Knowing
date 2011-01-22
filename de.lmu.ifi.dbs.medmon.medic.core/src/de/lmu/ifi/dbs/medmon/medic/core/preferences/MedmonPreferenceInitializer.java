@@ -18,7 +18,7 @@ public class MedmonPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.put(IMedicPreferences.DIR_USER_HOME_ID, System.getProperty("user.home"));
 		node.put(IMedicPreferences.DIR_SEPERATOR_ID, System.getProperty("file.separator"));
 		
-		node.put(IMedicPreferences.DIR_MEDMON_ID, DIR_USER_HOME + DIR_SEPERATOR + ".medmon");
+		node.put(IMedicPreferences.DIR_MEDMON_ID, DIR_MEDMON);
 		node.put(IMedicPreferences.DIR_DERBY_ID, DIR_MEDMON + DIR_SEPERATOR + "db");
 		node.put(IMedicPreferences.DIR_DPU_ID, DIR_MEDMON + DIR_SEPERATOR + "dpu");
 		node.put(IMedicPreferences.DIR_CU_ID, DIR_MEDMON + DIR_SEPERATOR + "cluster");

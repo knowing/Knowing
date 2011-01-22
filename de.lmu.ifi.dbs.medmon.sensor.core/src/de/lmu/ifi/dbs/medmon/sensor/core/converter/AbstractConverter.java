@@ -31,7 +31,8 @@ public abstract class AbstractConverter<E> implements IConverter<E> {
 
 		// Recursion end
 		if (root == leaf) {
-			RootSensorDataContainer<E> returns = new RootSensorDataContainer<E>(
+			String name = file.substring(file.lastIndexOf(System.getProperty("file.separator")) + 1);
+			RootSensorDataContainer<E> returns = new RootSensorDataContainer<E>(name,
 					acc.toArray(new ISensorDataContainer[acc.size()]));
 			System.out.println("---Merge root---");
 			mergeChildren(returns);

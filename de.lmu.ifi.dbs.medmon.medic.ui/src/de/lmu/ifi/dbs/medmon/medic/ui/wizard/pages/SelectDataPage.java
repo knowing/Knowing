@@ -31,7 +31,7 @@ public class SelectDataPage extends WizardPage {
 	private Button bImportAll;	
 	
 	private boolean importAll = true;
-	private boolean persist = false;
+	private boolean persist = true;
 	private boolean deleteAfter = true;
 
 	private IStructuredSelection initialSelection;

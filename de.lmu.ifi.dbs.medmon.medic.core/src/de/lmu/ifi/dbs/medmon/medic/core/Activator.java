@@ -6,6 +6,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import de.lmu.ifi.dbs.medmon.medic.core.db.SensorConfigurator;
 import de.lmu.ifi.dbs.medmon.medic.core.preferences.IMedicPreferences;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 
@@ -35,6 +36,7 @@ public class Activator extends AbstractUIPlugin {
 		plugin = this;
 		
 		createApplicationFolders();
+		SensorConfigurator.initializeSensorDB();
 	}
 
 	/*
@@ -62,7 +64,6 @@ public class Activator extends AbstractUIPlugin {
 		
 		String root_dir = store.getString(IMedicPreferences.DIR_MEDMON_ID);
 		String dpu_dir = store.getString(IMedicPreferences.DIR_DPU_ID);
-		String derby_dir = store.getString(IMedicPreferences.DIR_DERBY_ID);
 		String patient_dir = store.getString(IMedicPreferences.DIR_PATIENT_ID);
 		String cluster_dir = store.getString(IMedicPreferences.DIR_CU_ID);
 		
@@ -70,16 +71,12 @@ public class Activator extends AbstractUIPlugin {
 		if(!root.exists()) {
 			root.mkdirs();
 			new File(dpu_dir).mkdir();
-			new File(derby_dir).mkdir();
 			new File(patient_dir).mkdir();
 			new File(cluster_dir).mkdir();		
 		} else {
 			File dpu = new File(dpu_dir);
 			if(!dpu.exists())
 				dpu.mkdir();
-			File derby = new File(derby_dir);
-			if(!derby.exists())
-				derby.mkdir();
 			File patient = new File(patient_dir);
 			if(!patient.exists())
 				patient.mkdir();

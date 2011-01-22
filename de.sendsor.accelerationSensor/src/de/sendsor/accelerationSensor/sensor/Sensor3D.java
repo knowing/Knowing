@@ -1,9 +1,9 @@
 package de.sendsor.accelerationSensor.sensor;
 
-import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
 import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
 import de.sendsor.accelerationSensor.converter.SDRConverter;
+import de.sendsor.accelerationSensor.model.Data;
 
 public class Sensor3D implements ISensor<Data> {
 

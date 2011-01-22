@@ -1,6 +1,7 @@
 package de.lmu.ifi.dbs.medmon.datamining.core.util;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.CoreException;
@@ -27,6 +28,7 @@ public class FrameworkUtil {
 	 * @return ISensorDataAlgorihtm[] containing all registered Extensions
 	 */
 	public static <E> E[] evaluateExtensions(String extensionID) {
+		//   public <T> T find(Class<T> entityClass, Object primaryKey); for instanceof check
 		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(extensionID);
 		final LinkedList<E> extensions = new LinkedList<E>();
 		try {
@@ -54,6 +56,42 @@ public class FrameworkUtil {
 		}
 		E[] returns = (E[]) new Object[extensions.size()];
 		return extensions.toArray(returns);
+	}
+	
+	/**
+	 * Provides all registered ISensorDataAlgorithm Extensions. No TypeCast
+	 * check is made!
+	 * 
+	 * @return ISensorDataAlgorihtm[] containing all registered Extensions
+	 */
+	public static <E> List<E> evaluateExtensionsAsList(String extensionID) {
+		//   public <T> T find(Class<T> entityClass, Object primaryKey); for instanceof check
+		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(extensionID);
+		final LinkedList<E> extensions = new LinkedList<E>();
+		try {
+			for (IConfigurationElement e : config) {
+				final Object o = e.createExecutableExtension("class");
+				// E castCheck = (E)o;
+
+				ISafeRunnable runnable = new ISafeRunnable() {
+					@Override
+					public void handleException(Throwable exception) {
+						logger.severe("Exception in client");
+					}
+
+					@Override
+					public void run() throws Exception {
+						extensions.add((E) o);
+					}
+				};
+				SafeRunner.run(runnable);
+
+			}
+		} catch (CoreException ex) {
+			ex.printStackTrace();
+			logger.severe(ex.getMessage());
+		}
+		return extensions;
 	}
 
 	public static <E> E[] evaluateService(String clazz) {
