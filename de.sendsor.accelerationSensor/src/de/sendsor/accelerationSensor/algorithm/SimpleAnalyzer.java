@@ -20,7 +20,7 @@ public class SimpleAnalyzer extends AbstractAlgorithm {
 	private static final String BAR_CHART = "Bar-Chart";
 		
 	public SimpleAnalyzer() {
-		super(NAME, INDEFINITE_DIMENSION);
+		super(NAME, INDEFINITE_DIMENSION, INDEFINITE_DIMENSION);
 		init();
 	}
 	

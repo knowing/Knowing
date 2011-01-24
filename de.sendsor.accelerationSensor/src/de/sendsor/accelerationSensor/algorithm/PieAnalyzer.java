@@ -14,7 +14,6 @@ import de.lmu.ifi.dbs.medmon.datamining.core.parameter.ClusterParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.AbstractAlgorithm;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
-import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.utilities.Arrays2;
 import de.lmu.ifi.dbs.utilities.Math2;
 import de.lmu.ifi.dbs.utilities.PriorityQueue;
@@ -37,7 +36,7 @@ public class PieAnalyzer extends AbstractAlgorithm {
 	private static final String PIE_CHART = "Pie Chart";
 
 	public PieAnalyzer() {
-		super(NAME, 3);
+		super(NAME, 3, INDEFINITE_DIMENSION);
 		init();
 	}
 

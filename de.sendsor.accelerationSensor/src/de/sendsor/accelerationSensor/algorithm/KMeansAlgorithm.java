@@ -55,7 +55,7 @@ public class KMeansAlgorithm extends AbstractAlgorithm {
 	private TableAnalyzedData tableAnalyzedData;
 
 	public KMeansAlgorithm() {
-		super("KMeans Algorithm", IAlgorithm.INDEFINITE_DIMENSION);
+		super("KMeans Algorithm", INDEFINITE_DIMENSION, INDEFINITE_DIMENSION);
 		init();
 	}
 	

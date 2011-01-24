@@ -41,9 +41,6 @@ public class SensorSourceWidget extends Composite {
 		setLayout(new GridLayout(2, false));
 		
 		sensorViewer = new SensorTableViewer(this, SWT.BORDER | SWT.SINGLE);
-		sensorViewer.setLabelProvider(new SensorLabelProvider());
-		sensorViewer.setContentProvider(new SensorContentProvider());
-		sensorViewer.setInput(this);
 		sensorViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 		sensorViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			

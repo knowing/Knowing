@@ -320,6 +320,11 @@
             id="de.lmu.ifi.dbs.medmon.medic.ui.loadDataFromDB"
             name="Daten aus Datenbank laden">
       </command>
+      <command
+            defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.SensorDaemonHandler"
+            id="de.lmu.ifi.dbs.medmon.medic.ui.sensorDaemon"
+            name="Start SensorDaemon">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -463,6 +468,11 @@
             <command
                   commandId="org.eclipse.ui.file.exit"
                   label="Beenden"
+                  style="push">
+            </command>
+            <command
+                  commandId="de.lmu.ifi.dbs.medmon.medic.ui.sensorDaemon"
+                  label="Sensor Daemon starten"
                   style="push">
             </command>
          </menu>

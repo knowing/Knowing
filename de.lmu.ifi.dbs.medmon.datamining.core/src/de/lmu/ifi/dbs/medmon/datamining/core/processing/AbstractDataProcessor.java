@@ -12,18 +12,20 @@ public abstract class AbstractDataProcessor implements IDataProcessor {
 	protected final HashMap<String, IAnalyzedData> analyzedData = new HashMap<String, IAnalyzedData>();
 	
 	private final String name;
-	private final int dimension;
+	private final int in;
+	private final int out;
 	
 	protected String description = "";
 	protected String version = "0.0";
 		
-	public AbstractDataProcessor(String name, int dimension) {
-		this(name, dimension, "", "");
+	public AbstractDataProcessor(String name, int inputDimension, int outputDimension) {
+		this(name, inputDimension, outputDimension, "", "");
 	}
 
-	public AbstractDataProcessor(String name, int dimension, String description, String version) {
+	public AbstractDataProcessor(String name, int inputDimension, int outputDimension, String description, String version) {
 		this.name = name;
-		this.dimension = dimension;
+		this.in = inputDimension;
+		this.out = outputDimension;
 		this.description = description;
 		this.version = version;
 	}
@@ -43,9 +45,21 @@ public abstract class AbstractDataProcessor implements IDataProcessor {
 		return parameters.put(key, parameter);
 	}
 	
+	/**
+	 * <p>The abstract implementation suggest that the parameter processor is
+	 * after this processor instance.</p>
+	 * 
+	 * <p>To check if the processors output AND input is compatible a validator
+	 * must perform two checks like this:</p>
+	 * 
+	 * <p>prevProcessor --check1-> processorToCheck --check2-> nextProcessor
+	 * </p>
+	 * @param processor - the processor to check with this one
+	 * @return compatible?
+	 */
 	@Override
 	public boolean isCompatible(IDataProcessor processor) {
-		return processor.dimension() == dimension() || dimension() == INDEFINITE_DIMENSION;
+		return processor.inputDimension() == outputDimension() || outputDimension() == INDEFINITE_DIMENSION;
 	}
 	
 	@Override
@@ -69,8 +83,13 @@ public abstract class AbstractDataProcessor implements IDataProcessor {
 	}
 	
 	@Override
-	public int dimension() {
-		return dimension;
+	public int inputDimension() {
+		return in;
+	}
+	
+	@Override
+	public int outputDimension() {
+		return out;
 	}
 
 }

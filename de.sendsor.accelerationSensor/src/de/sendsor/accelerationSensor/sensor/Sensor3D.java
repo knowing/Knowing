@@ -60,6 +60,18 @@ public class Sensor3D implements ISensor<Data> {
 	}
 	
 	@Override
+	public boolean isSensor(File dir) {
+		String[] files = dir.list(new FilenameFilter() {
+			
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.endsWith(".sdr");
+			}
+		});
+		return files.length > 0;
+	}
+	
+	@Override
 	public IConverter<Data> getConverter() {
 		return converter;
 	}

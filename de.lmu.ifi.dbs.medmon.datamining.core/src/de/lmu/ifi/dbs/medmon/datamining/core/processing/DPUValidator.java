@@ -94,21 +94,33 @@ public class DPUValidator {
 	 * @return
 	 */
 	private boolean checkCompatibilty(List<IDataProcessor> processors) {
-		if (processors.isEmpty())
+		if (processors.size() <= 1)
 			return true;
-		int dimension = processors.get(0).dimension();
-		for (IDataProcessor p : processors) {
-			if (!(dimension == IAlgorithm.INDEFINITE_DIMENSION || 
-					p.dimension() == IAlgorithm.INDEFINITE_DIMENSION || 
-					dimension == p.dimension())) {
-				String msg = "Processors incompatible: " + dimension + " != " + p.dimension();
-				errors.put(p.getId(), msg);
+		
+		int dimension = IAlgorithm.INDEFINITE_DIMENSION;
+		for (int i = 1; i < processors.size(); i++) {
+			IDataProcessor p = processors.get(i-1);
+			if(!isValid(p, dimension)) {
 				return false;
 			}
+			dimension = p.outputDimension();		
 		}
-		return true;
+		
+		//Last check
+		return isValid(processors.get(processors.size()-1), dimension);
 	}
-
+		
+	private boolean isValid(IDataProcessor p, int input) {
+		int requiredInput = p.inputDimension();
+		if(requiredInput == IAlgorithm.INDEFINITE_DIMENSION)
+			return true;
+		if(requiredInput == input)
+			return true;		
+		String msg = "Processors incompatible: /n" +  " Required (" + requiredInput + ") != input(" + input +")";
+		errors.put(p.getId(), msg);
+		return false;
+	}
+	
 	public DataProcessingUnit getDpu() {
 		return dpu;
 	}

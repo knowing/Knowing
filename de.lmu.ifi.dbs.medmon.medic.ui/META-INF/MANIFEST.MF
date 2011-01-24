@@ -30,6 +30,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.lmu.ifi.dbs.medmon.medic.ui.handler,
  de.lmu.ifi.dbs.medmon.medic.ui.perspective,
  de.lmu.ifi.dbs.medmon.medic.ui.views
-Import-Package: de.lmu.ifi.dbs.medmon.database.model,
- de.lmu.ifi.dbs.medmon.database.sample,
- de.lmu.ifi.dbs.medmon.patient.service
+Import-Package: de.lmu.ifi.dbs.medmon.patient.service

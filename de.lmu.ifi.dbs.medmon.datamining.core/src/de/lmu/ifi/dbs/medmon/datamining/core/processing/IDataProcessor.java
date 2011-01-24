@@ -25,7 +25,9 @@ public interface IDataProcessor {
 	 */
 	public boolean isCompatible(IDataProcessor processor);
 	
-	public int dimension();
+	public int inputDimension();
+	
+	public int outputDimension();
 		
 	/**
 	 * If the algorithm has parameters, it should be configured

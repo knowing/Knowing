@@ -13,7 +13,7 @@ import de.lmu.ifi.dbs.medmon.datamining.core.processing.IFilter;
 public class BypassFilter extends AbstractDataProcessor implements IFilter {
 
 	public BypassFilter() {
-		super("Bypass Filter", INDEFINITE_DIMENSION);
+		super("Bypass Filter", INDEFINITE_DIMENSION, INDEFINITE_DIMENSION);
 	}
 
 	@Override
