@@ -10,7 +10,8 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.0",
 Import-Package: de.lmu.ifi.dbs.medmon.database.model,
  de.lmu.ifi.dbs.medmon.datamining.core.processing,
  de.lmu.ifi.dbs.medmon.sensor.core.container,
- de.lmu.ifi.dbs.medmon.sensor.core.sensor
+ de.lmu.ifi.dbs.medmon.sensor.core.sensor,
+ de.lmu.ifi.dbs.medmon.sensor.core.util
 Export-Package: de.lmu.ifi.dbs.medmon.patient.service
 Service-Component: OSGI-INF/component.xml
 Bundle-ActivationPolicy: lazy

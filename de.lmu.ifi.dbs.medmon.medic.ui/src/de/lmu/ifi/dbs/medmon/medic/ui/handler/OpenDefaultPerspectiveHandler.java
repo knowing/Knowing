@@ -21,7 +21,7 @@ import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
-import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
+import de.lmu.ifi.dbs.medmon.sensor.core.util.SensorAdapter;
 
 public class OpenDefaultPerspectiveHandler extends AbstractHandler {
 
@@ -37,9 +37,9 @@ public class OpenDefaultPerspectiveHandler extends AbstractHandler {
 		Data[] sensorData = null;
 
 		ISensorDataContainer<Data> container = (ISensorDataContainer<Data>) service.getSelection(IPatientService.SENSOR_CONTAINER);
-		ISensor<Data> sensor = (ISensor<Data>) service.getSelection(IPatientService.SENSOR);
+		SensorAdapter sensor = (SensorAdapter) service.getSelection(IPatientService.SENSOR);
 		try {
-			sensorData = container.getSensorData(sensor.getConverter());
+			sensorData = container.getSensorData(sensor.getSensorExtension().getConverter());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

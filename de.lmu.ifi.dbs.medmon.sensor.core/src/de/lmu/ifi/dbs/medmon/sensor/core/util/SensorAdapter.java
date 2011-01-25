@@ -1,6 +1,10 @@
 package de.lmu.ifi.dbs.medmon.sensor.core.util;
 
+import java.io.IOException;
+
 import de.lmu.ifi.dbs.medmon.database.model.Sensor;
+import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
+import de.lmu.ifi.dbs.medmon.sensor.core.container.RootSensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
 
 public class SensorAdapter {
@@ -71,7 +75,13 @@ public class SensorAdapter {
 		sensorEntity.setDefaultpath(defaultpath);
 	}
 	
-	protected ISensor getSensorExtension() {
+	public ISensorDataContainer getData() throws IOException {
+		if(available)
+			return sensorExtension.getData(getDefaultPath());
+		return new RootSensorDataContainer();
+	}
+	
+	public ISensor getSensorExtension() {
 		return sensorExtension;
 	}
 	
@@ -79,7 +89,7 @@ public class SensorAdapter {
 		this.sensorExtension = sensorExtenion;
 	}
 
-	protected Sensor getSensorEntity() {
+	public Sensor getSensorEntity() {
 		return sensorEntity;
 	}
 	

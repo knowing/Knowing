@@ -38,6 +38,8 @@ public class PatientProposalProvider implements IContentProposalProvider {
 	public static Patient parsePatient(String patient) {
 		int left_index = patient.indexOf(LEFT);
 		int right_index = patient.indexOf(RIGHT);
+		if(right_index == -1 || left_index == -1) 
+			return null;
 		String idString = patient.substring(left_index+1, right_index);
 		int id = Integer.valueOf(idString);
 		EntityManager entityManager = JPAUtil.currentEntityManager();

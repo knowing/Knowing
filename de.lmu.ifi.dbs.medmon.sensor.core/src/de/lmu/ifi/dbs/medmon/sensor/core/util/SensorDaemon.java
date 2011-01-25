@@ -40,7 +40,7 @@ public class SensorDaemon {
 		sensorDaemon = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				while(true) {
+				while (true) {
 					singleton.checkSensorsAvailable();
 					try {
 						Thread.sleep(INTERVAL);
@@ -49,7 +49,7 @@ public class SensorDaemon {
 						return;
 					}
 				}
-				
+
 			}
 		});
 		support = new PropertyChangeSupport(singleton);
@@ -59,7 +59,7 @@ public class SensorDaemon {
 		initModel();
 		checkSensorsAvailable();
 	}
-	
+
 	public static SensorDaemon getInstance() {
 		return singleton;
 	}
@@ -73,13 +73,13 @@ public class SensorDaemon {
 		sensorDaemon.start();
 		return false;
 	}
-	
+
 	public static void restartDaemon() {
 		sensorDaemon.interrupt();
 		singleton.initModel();
 		singleton.checkSensorsAvailable();
 		sensorDaemon.start();
-		
+
 	}
 
 	private void initModel() {
@@ -197,7 +197,8 @@ public class SensorDaemon {
 	}
 
 	protected void fireModelChanged() {
-		support.firePropertyChange("model", null, model);
+		if (support != null)
+			support.firePropertyChange("model", null, model);
 	}
 
 }

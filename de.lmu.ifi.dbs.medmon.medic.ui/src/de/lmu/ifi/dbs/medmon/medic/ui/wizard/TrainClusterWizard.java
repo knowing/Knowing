@@ -50,7 +50,7 @@ public class TrainClusterWizard extends Wizard implements IWorkbenchWizard, IExe
 
 	private SelectDataSourcePage dataSourcePage;
 	private ClusterWizardPage clusterPage;
-	private SelectDPUPage mpuPage;
+	private SelectDPUPage dpuPage;
 
 	private String finalPerspectiveId;
 
@@ -62,7 +62,7 @@ public class TrainClusterWizard extends Wizard implements IWorkbenchWizard, IExe
 	public void addPages() {
 		addPage(dataSourcePage = new SelectDataSourcePage());
 		addPage(clusterPage = new ClusterWizardPage());
-		addPage(mpuPage = new SelectDPUPage());
+		addPage(dpuPage = new SelectDPUPage());
 	}
 
 	@Override
@@ -94,7 +94,7 @@ public class TrainClusterWizard extends Wizard implements IWorkbenchWizard, IExe
 			int index = 0;
 			for (ClusterTableItem<?> item : items)
 				container[index++] = (ClusterContainer) item;
-			cu = clusterSensor(dpu, processor, widget.getSensor(), container);
+			cu = clusterSensor(dpu, processor, widget.getSensor().getSensorExtension(), container);
 		}	
 		saveClusterUnit(cu);
 		return true;

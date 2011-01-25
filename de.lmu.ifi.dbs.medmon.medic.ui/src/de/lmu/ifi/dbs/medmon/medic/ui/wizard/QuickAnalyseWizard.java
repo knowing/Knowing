@@ -23,6 +23,7 @@ import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SensorPage;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
+import de.lmu.ifi.dbs.medmon.sensor.core.util.SensorAdapter;
 
 public class QuickAnalyseWizard extends Wizard implements INewWizard, IExecutableExtension {
 
@@ -36,7 +37,7 @@ public class QuickAnalyseWizard extends Wizard implements INewWizard, IExecutabl
 	private void initSelections(IPatientService service) {
 		/* Can skip sensorPage */
 		Patient patient = (Patient) service.getSelection(IPatientService.PATIENT);
-		ISensor sensor = (ISensor) service.getSelection(IPatientService.SENSOR);
+		SensorAdapter sensor = (SensorAdapter) service.getSelection(IPatientService.SENSOR);
 		if (patient != null && sensor != null) 
 			sourcePage = new SensorPage(patient, sensor);
 		
@@ -74,7 +75,7 @@ public class QuickAnalyseWizard extends Wizard implements INewWizard, IExecutabl
 		Processor processor = Processor.getInstance();
 		Map<String, IAnalyzedData> acc = null;
 		Patient patient = sourcePage.getPatient();
-		ISensor sensor = sourcePage.getSensor();
+		ISensor sensor = sourcePage.getSensor().getSensorExtension();
 		ISensorDataContainer[] selection = dataPage.getSelection();
 		for (ISensorDataContainer c : selection) {
 			//new ImportJob(c.getBlock(), sensor.getConverter()).schedule();

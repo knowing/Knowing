@@ -112,7 +112,7 @@ public class DataTreeView extends ViewPart implements PropertyChangeListener, IP
 			Activator.getPatientService().setSelection(event.getNewValue(), IPatientService.SENSOR);
 		} else if (event.getProperty().equals("file")) {
 			String file = (String) event.getNewValue();
-			ISensor sensor = sensorSource.getSensor();
+			ISensor sensor = sensorSource.getSensor().getSensorExtension();
 			try {
 				ISensorDataContainer c = sensor.getConverter().convertToContainer(file, ContainerType.WEEK, ContainerType.HOUR,
 						null);

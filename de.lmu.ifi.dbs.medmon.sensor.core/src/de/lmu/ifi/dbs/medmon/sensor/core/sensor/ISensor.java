@@ -10,7 +10,7 @@ import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
  * Representing a generic sensor
  * 
  * @author Nepomuk Seiler
- * @version 0.7
+ * @version 0.9
  */
 public interface ISensor<E> {
 
@@ -26,10 +26,22 @@ public interface ISensor<E> {
 	
 	public int getType();
 	
+	/**
+	 * 
+	 * 
+	 * @param path - should be the sensor directory.
+	 * @return ISensorDataContainer
+	 * @throws IOException
+	 */
 	public ISensorDataContainer<E> getData(String path) throws IOException;
 	
 	public IConverter<E> getConverter();
 	
+	/**
+	 * 
+	 * @param dir
+	 * @return
+	 */
 	public boolean isSensor(File dir);
 	
 }

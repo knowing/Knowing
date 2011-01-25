@@ -10,7 +10,7 @@ import org.eclipse.jface.viewers.ISelection;
  * the current selected Patient.
  * 
  * @author muki
- * @version 0.2b
+ * @version 0.3b
  */
 public interface IPatientService {
 	

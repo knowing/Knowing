@@ -1,6 +1,5 @@
 package de.lmu.ifi.dbs.medmon.patient.service.component;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
@@ -14,11 +13,10 @@ import org.osgi.service.component.ComponentContext;
 import de.lmu.ifi.dbs.medmon.database.model.Data;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
-import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
+import de.lmu.ifi.dbs.medmon.sensor.core.util.SensorAdapter;
 
 /**
  * PatientService declarative Service.
@@ -70,8 +68,8 @@ public class PatientService implements IPatientService {
 		} else if(first instanceof ISensorDataContainer) {
 			Object old = selections.put(SENSOR_CONTAINER, (ISensorDataContainer)first);
 			support.firePropertyChange(SENSOR_CONTAINER, old, first);
-		} else if(first instanceof ISensor) {
-			Object oldSensor = selections.put(SENSOR, (ISensor)first);
+		} else if(first instanceof SensorAdapter) {
+			Object oldSensor = selections.put(SENSOR, (SensorAdapter)first);
 			Object oldContainer = selections.put(SENSOR_CONTAINER, null);
 			support.firePropertyChange(SENSOR, oldSensor, first);
 			support.firePropertyChange(SENSOR_CONTAINER, oldContainer, null);

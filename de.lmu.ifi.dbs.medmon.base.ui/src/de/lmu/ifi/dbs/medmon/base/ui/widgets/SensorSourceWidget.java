@@ -16,10 +16,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
-import de.lmu.ifi.dbs.medmon.base.ui.provider.SensorContentProvider;
-import de.lmu.ifi.dbs.medmon.base.ui.provider.SensorLabelProvider;
 import de.lmu.ifi.dbs.medmon.base.ui.viewer.SensorTableViewer;
 import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
+import de.lmu.ifi.dbs.medmon.sensor.core.util.SensorAdapter;
 
 public class SensorSourceWidget extends Composite {
 	
@@ -29,7 +28,7 @@ public class SensorSourceWidget extends Composite {
 	private SensorTableViewer sensorViewer;
 
 	private String file;
-	protected ISensor sensor;
+	protected SensorAdapter sensor;
 
 	/**
 	 * Create the composite.
@@ -61,8 +60,8 @@ public class SensorSourceWidget extends Composite {
 				ISelection selection = sensorViewer.getSelection();
 				if(selection.isEmpty())
 					return;
-				sensor = (ISensor) ((IStructuredSelection)selection).getFirstElement();
-				file = sensor.getConverter().openChooseInputDialog(getShell());
+				sensor = (SensorAdapter) ((IStructuredSelection)selection).getFirstElement();
+				file = sensor.getSensorExtension().getConverter().openChooseInputDialog(getShell());
 				if(file != null) {
 					firePropertyChanged("file", tFile.getText(), file);
 					tFile.setText(file);
@@ -77,7 +76,7 @@ public class SensorSourceWidget extends Composite {
 		return file;
 	}
 	
-	public ISensor getSensor() {
+	public SensorAdapter getSensor() {
 		return sensor;
 	}
 

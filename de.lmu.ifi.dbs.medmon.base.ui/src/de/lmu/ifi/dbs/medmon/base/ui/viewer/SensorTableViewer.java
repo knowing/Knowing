@@ -10,6 +10,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 
 import de.lmu.ifi.dbs.medmon.base.ui.provider.WorkbenchTableLabelProvider;
@@ -82,6 +83,13 @@ public class SensorTableViewer extends TableViewer implements PropertyChangeList
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		System.out.println("Property Changed");
+		Display.getDefault().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				refresh();			
+			}
+		});
 	}
 
 }

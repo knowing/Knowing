@@ -56,7 +56,7 @@ public class ImportWizard extends Wizard {
 	@Override
 	public boolean performFinish() {
 		if (sensor == null)
-			sensor = sourcePage.getSensor();
+			sensor = sourcePage.getSensor().getSensorExtension();
 		if (patient == null)
 			patient = sourcePage.getPatient();
 		IConverter converter = sensor.getConverter();
