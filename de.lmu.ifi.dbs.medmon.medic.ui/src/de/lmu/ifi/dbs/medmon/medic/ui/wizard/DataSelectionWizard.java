@@ -40,12 +40,12 @@ public class DataSelectionWizard extends Wizard {
 
 	@Override
 	public boolean performFinish() {
-		EntityManager entityManager = JPAUtil.currentEntityManager();
+		EntityManager em = JPAUtil.createEntityManager();
 		Patient patient = page.getPatient();
 		// Select all days imported
-		List<Data> results = entityManager.createNamedQuery("Data.findByPatient", Data.class)
+		List<Data> results = em.createNamedQuery("Data.findByPatient", Data.class)
 				.setParameter("patient", patient).getResultList();
-
+		em.close();
 		if (results.isEmpty()) {
 			page.setErrorMessage("Keine Daten vom Patienten vorhanden");
 			return true;

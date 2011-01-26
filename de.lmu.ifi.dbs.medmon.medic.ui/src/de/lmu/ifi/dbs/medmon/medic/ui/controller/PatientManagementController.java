@@ -53,11 +53,12 @@ public class PatientManagementController implements Listener {
 
 		if (MessageDialog.openConfirm(viewer.getTable().getShell(),
 				"Patient eintragen", "Wollen sie " + patient + " speichern?")) {
-			EntityManager em = JPAUtil.currentEntityManager();
+			EntityManager em = JPAUtil.createEntityManager();
 			em.getTransaction().begin();
 			em.persist(patient);
 			em.getTransaction().commit();
 			viewer.refresh(patient);
+			em.close();
 		}
 	}
 
@@ -67,11 +68,12 @@ public class PatientManagementController implements Listener {
 			return false;
 		if (MessageDialog.openConfirm(viewer.getTable().getShell(),
 				"Patient entfernen", "Wollen sie " + patient + " entfernen?")) {
-			EntityManager em = JPAUtil.currentEntityManager();
+			EntityManager em = JPAUtil.createEntityManager();
 			em.getTransaction().begin();
 			em.remove(patient);
 			em.getTransaction().commit();
 			viewer.refresh(true);
+			em.close();
 		}
 
 		return true;

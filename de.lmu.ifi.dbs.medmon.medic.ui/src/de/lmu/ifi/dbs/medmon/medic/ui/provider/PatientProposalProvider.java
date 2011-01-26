@@ -20,8 +20,8 @@ public class PatientProposalProvider implements IContentProposalProvider {
 
 	@Override
 	public IContentProposal[] getProposals(String contents, int position) {
-		EntityManager entityManager = JPAUtil.currentEntityManager();
-		Query query = entityManager.createNamedQuery("Patient.likeName");
+		EntityManager em = JPAUtil.createEntityManager();
+		Query query = em.createNamedQuery("Patient.likeName");
 		query.setParameter("firstname", contents.toLowerCase() + "%");
 		query.setParameter("lastname", contents.toLowerCase() + "%");
 		List<Patient>results = query.getResultList();
@@ -32,6 +32,7 @@ public class PatientProposalProvider implements IContentProposalProvider {
 			String content = patient.toString() + "<" + patient.getId() + ">";
 			returns[index++] = new ContentProposal(content);
 		}
+		em.close();
 		return returns;
 	}
 	
@@ -42,8 +43,10 @@ public class PatientProposalProvider implements IContentProposalProvider {
 			return null;
 		String idString = patient.substring(left_index+1, right_index);
 		int id = Integer.valueOf(idString);
-		EntityManager entityManager = JPAUtil.currentEntityManager();
-		return entityManager.find(Patient.class, id);
+		EntityManager em = JPAUtil.createEntityManager();
+		Patient returns = em.find(Patient.class, id);
+		em.close();
+		return returns;
 	}
 	
 	public static String parseString(Patient patient) {

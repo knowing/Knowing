@@ -29,19 +29,30 @@ public class SensorDaemon {
 	private static final long INTERVAL = 1000;
 
 	private static final Thread sensorDaemon;
-	private static final SensorDaemon singleton;
+	private static SensorDaemon singleton;
+
+	private static volatile boolean initialized;
 
 	private static PropertyChangeSupport support;
 
 	private Map<String, SensorAdapter> model;
 
 	static {
-		singleton = new SensorDaemon();
 		sensorDaemon = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				while (true) {
-					singleton.checkSensorsAvailable();
+					if (!initialized && JPAUtil.isAvailable()) {
+						singleton = new SensorDaemon();
+						support = new PropertyChangeSupport(singleton);
+						initialized = true;
+						logger.info("Daemon initialized");
+						System.out.println("Daemon initialized");
+					} else if (initialized) {
+						singleton.checkSensorsAvailable();
+						logger.finest("Check Sensors");
+					} 
+
 					try {
 						Thread.sleep(INTERVAL);
 					} catch (InterruptedException e) {
@@ -52,10 +63,11 @@ public class SensorDaemon {
 
 			}
 		});
-		support = new PropertyChangeSupport(singleton);
+
 	}
 
 	private SensorDaemon() {
+		synchronize();
 		initModel();
 		checkSensorsAvailable();
 	}
@@ -134,6 +146,21 @@ public class SensorDaemon {
 		List<Sensor> resultList = em.createNamedQuery("Sensor.findAll", Sensor.class).getResultList();
 		em.close();
 		return resultList;
+	}
+	
+	private void synchronize() {
+		List<ISensor> sensors = getSensorExtensions();
+		EntityManager em = JPAUtil.createEntityManager();
+		em.getTransaction().begin();
+		for (ISensor<?> sensor : sensors) {
+			String id = sensor.getName() + ":" + sensor.getVersion();
+			Sensor dbsensor = em.find(Sensor.class , id );
+			if(dbsensor == null) {
+				em.persist(new Sensor(sensor.getName(), sensor.getVersion(), sensor.getType()));
+			}
+		}
+		em.getTransaction().commit();
+		em.close();
 	}
 
 	public void checkSensorsAvailable() {

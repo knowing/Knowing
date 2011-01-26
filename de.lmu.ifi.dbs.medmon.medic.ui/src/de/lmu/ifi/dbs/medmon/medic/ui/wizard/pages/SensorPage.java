@@ -199,11 +199,12 @@ public class SensorPage extends WizardPage {
 		}
 
 		private Patient[] loadPatients() {
-			EntityManager em = JPAUtil.currentEntityManager();
+			EntityManager em = JPAUtil.createEntityManager();
 			em.getTransaction().begin();
 			Query allPatients = em.createNamedQuery("Patient.findAll");
 			List<Patient> patients = allPatients.getResultList();
 			em.getTransaction().commit();
+			em.close();
 			return patients.toArray(new Patient[patients.size()]);
 		}
 

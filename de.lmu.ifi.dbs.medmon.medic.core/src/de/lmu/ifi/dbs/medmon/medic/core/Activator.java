@@ -6,9 +6,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import de.lmu.ifi.dbs.medmon.medic.core.db.SensorConfigurator;
 import de.lmu.ifi.dbs.medmon.medic.core.preferences.IMedicPreferences;
-import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -36,7 +34,6 @@ public class Activator extends AbstractUIPlugin {
 		plugin = this;
 		
 		createApplicationFolders();
-		SensorConfigurator.initializeSensorDB();
 	}
 
 	/*

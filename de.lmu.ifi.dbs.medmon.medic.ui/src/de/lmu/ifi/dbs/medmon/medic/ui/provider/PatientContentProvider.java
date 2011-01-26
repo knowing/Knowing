@@ -30,10 +30,10 @@ public class PatientContentProvider implements IStructuredContentProvider {
 	}
 	
 	private Patient[] getPatients() {
-		EntityManager em = JPAUtil.currentEntityManager();
+		EntityManager em = JPAUtil.createEntityManager();
 		Query allPatients = em.createNamedQuery("Patient.findAll");
 		List<Patient> patients = allPatients.getResultList();
-		
+		em.close();
 		if(patients.isEmpty())
 			return new Patient[0];
 		return patients.toArray(new Patient[patients.size()]);
