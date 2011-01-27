@@ -24,7 +24,7 @@ public class SensorAdapter {
 		this.sensorEntity = sensorEntity;
 		this.name = sensorExtension.getName();
 		this.version = sensorExtension.getVersion();
-		this.type = String.valueOf(sensorExtension.getType());
+		this.type = type(sensorExtension.getType());
 		
 		this.available = true;
 	}
@@ -33,7 +33,7 @@ public class SensorAdapter {
 		this.sensorExtension = sensorExtension;
 		this.name = sensorExtension.getName();
 		this.version = sensorExtension.getVersion();
-		this.type = String.valueOf(sensorExtension.getType());
+		this.type = type(sensorExtension.getType());
 		
 		this.available = false;
 	}
@@ -42,7 +42,7 @@ public class SensorAdapter {
 		this.sensorEntity = sensorEntity;
 		this.name = sensorEntity.getName();
 		this.version = sensorEntity.getVersion();
-		this.type = String.valueOf(sensorEntity.getType());
+		this.type = type(sensorEntity.getType());
 		
 		this.available = false;
 	}
@@ -95,6 +95,14 @@ public class SensorAdapter {
 	
 	protected void setSensorEntity(Sensor sensorEntity) {
 		this.sensorEntity = sensorEntity;
+	}
+	
+	private String type(int type) {
+		switch(type) {
+		case ISensor.MASTER: return "Master";
+		case ISensor.SLAVE: return "Slave";
+		default: return "unbekannt";
+		}	
 	}
 
 	@Override

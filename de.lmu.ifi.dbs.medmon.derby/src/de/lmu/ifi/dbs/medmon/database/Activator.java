@@ -37,7 +37,6 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		System.out.println("Start JPA Activator");
 		plugin = this;
 		database = new Database();
 		emfTracker = new ServiceTracker(context, EntityManagerFactory.class.getName(),

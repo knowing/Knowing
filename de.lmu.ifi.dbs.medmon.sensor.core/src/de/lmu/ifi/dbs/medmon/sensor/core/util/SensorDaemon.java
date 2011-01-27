@@ -47,7 +47,6 @@ public class SensorDaemon {
 						support = new PropertyChangeSupport(singleton);
 						initialized = true;
 						logger.info("Daemon initialized");
-						System.out.println("Daemon initialized");
 					} else if (initialized) {
 						singleton.checkSensorsAvailable();
 						logger.finest("Check Sensors");

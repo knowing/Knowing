@@ -19,10 +19,6 @@
             application="de.lmu.ifi.dbs.medmon.rcp.application"
             name="Medmon">
          <property
-               name="windowImages"
-               value="icons/alt_window_16.gif,icons/alt_window_32.gif">
-         </property>
-         <property
                name="appName"
                value="Medmon">
          </property>

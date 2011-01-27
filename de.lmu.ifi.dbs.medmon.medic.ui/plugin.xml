@@ -2,66 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
 
- <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            id="de.lmu.ifi.dbs.medmon.medic.actionSet"
-            label="Patientenverwaltung Action Set"
-            visible="false">
-         <menu
-               id="Patientenverwaltung"
-               label="Patientenverwaltung ">
-            <separator
-                  name="PatientenverwaltungGroup">
-            </separator>
-         </menu>
-         <action
-               definitionId="de.lmu.ifi.dbs.medmon.medic.import"
-               icon="icons/16/gtk-go-down.png"
-               id="de.lmu.ifi.dbs.medmon.medic.importAction"
-               label="Import Patient"
-               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
-               style="push"
-               toolbarPath="PatientenverwaltungGroup">
-         </action>
-         <action
-               definitionId="de.lmu.ifi.dbs.medmon.medic.export"
-               icon="icons/16/gtk-go-up.png"
-               id="de.lmu.ifi.dbs.medmon.medic.exportAction"
-               label="Export Patient"
-               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
-               style="push"
-               toolbarPath="PatientenverwaltungGroup">
-         </action>
-         <action
-               definitionId="de.lmu.ifi.dbs.medmon.medic.delete"
-               icon="icons/16/gtk-remove.png"
-               id="de.lmu.ifi.dbs.medmon.medic.deleteAction"
-               label="Patient entfernen"
-               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
-               style="push"
-               toolbarPath="PatientenverwaltungGroup">
-         </action>
-         <action
-               definitionId="de.lmu.ifi.dbs.medmon.medic.OpenPatientEditor"
-               icon="icons/16/gtk-edit.png"
-               id="de.lmu.ifi.dbs.medmon.medic.editAction"
-               label="Patient bearbeiten"
-               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
-               style="push"
-               toolbarPath="PatientenverwaltungGroup">
-         </action>
-         <action
-               definitionId="de.lmu.ifi.dbs.medmon.medic.create"
-               icon="icons/16/gtk-add.png"
-               id="de.lmu.ifi.dbs.medmon.medic.createAction"
-               label="Patient erstellen"
-               menubarPath="Patientenverwaltung/PatientenverwaltungGroup"
-               style="push"
-               toolbarPath="PatientenverwaltungGroup">
-         </action>
-      </actionSet>
-   </extension>
    <extension
          point="org.eclipse.ui.views">
       

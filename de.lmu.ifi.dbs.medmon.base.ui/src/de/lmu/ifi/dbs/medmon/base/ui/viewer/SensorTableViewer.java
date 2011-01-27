@@ -19,14 +19,9 @@ import de.lmu.ifi.dbs.medmon.sensor.core.util.SensorAdapter;
 import de.lmu.ifi.dbs.medmon.sensor.core.util.SensorDaemon;
 
 public class SensorTableViewer extends TableViewer implements PropertyChangeListener {
-
-	//TODO do not extend TableViewer, delegate!
-	public static final int COL_NAME 	= 0;
-	public static final int COL_VERSION = 1;
-	public static final int COL_TYPE 	= 2;
 	
-	private static final String[] columns = new String[] { "Name", "Version", "Typ", "Pfad", "<>" };
-	private static final int[] width = new int[] {120,70, 100,150, 50};
+	private static final String[] columns = new String[] { "Name", "Version", "Typ", "Pfad", "Status" };
+	private static final int[] width = new int[] {120,70, 60,150, 50};
 	
 	public SensorTableViewer(Composite parent, int style) {
 		super(parent, style);
@@ -82,7 +77,6 @@ public class SensorTableViewer extends TableViewer implements PropertyChangeList
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		System.out.println("Property Changed");
 		Display.getDefault().asyncExec(new Runnable() {
 			
 			@Override
