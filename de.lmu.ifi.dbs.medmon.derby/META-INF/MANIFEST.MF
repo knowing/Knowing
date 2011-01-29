@@ -16,3 +16,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.lmu.ifi.dbs.medmon.database.Activator
 JPA-PersistenceUnits: medmon
 Meta-Persistence: META-INF/persistence.xml
+Import-Package: org.osgi.service.jdbc;version="1.0.0"

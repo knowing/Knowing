@@ -10,8 +10,11 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.nebula.widgets.cdatetime.CDT;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
@@ -35,13 +38,17 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.ViewPart;
 
 import de.lmu.ifi.dbs.medmon.base.ui.dialog.DialogFactory;
+import de.lmu.ifi.dbs.medmon.base.ui.provider.WorkbenchTableLabelProvider;
+import de.lmu.ifi.dbs.medmon.base.ui.viewer.ClusterTableViewer;
 import de.lmu.ifi.dbs.medmon.database.model.Archiv;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.database.util.JPAUtil;
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.ArchivLabelProvider;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.ISharedImages;
+import de.lmu.ifi.dbs.medmon.medic.ui.util.MedicUtil;
 import de.lmu.ifi.dbs.medmon.medic.ui.wizard.CreatePatientWizard;
+import de.lmu.ifi.dbs.medmon.medic.ui.wizard.TrainClusterWizard;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 
 public class PatientView extends ViewPart implements PropertyChangeListener {
@@ -60,8 +67,6 @@ public class PatientView extends ViewPart implements PropertyChangeListener {
 	private Text tArchivSearch;
 	private Table archivTable;
 	private TableViewer archivViewer;
-
-	private Action createArchivAction;
 
 	/* Cluster Tab */
 	private TableViewer clusterViewer;
@@ -85,7 +90,22 @@ public class PatientView extends ViewPart implements PropertyChangeListener {
 
 		tabFolder = new TabFolder(container, SWT.BOTTOM);
 
-		/* Personal Data Tab */
+		createPersonalTab();
+		createArchivTab();		
+		createClusterTab();
+
+		createActions();
+		initializeToolBar();
+		initializeMenu();
+		update();
+	}
+
+	/**
+	 * 
+	 */
+	private void createPersonalTab() {
+		/****** Personal Data Tab *******/
+		/* 								*/
 		TabItem tPersonalData = new TabItem(tabFolder, SWT.NONE);
 		tPersonalData.setText("Persoenliche Daten");
 		tPersonalData.setImage(Activator.getImageDescriptor(ISharedImages.IMG_PATIENTS_16).createImage());
@@ -165,8 +185,13 @@ public class PatientView extends ViewPart implements PropertyChangeListener {
 
 		tComment = new Text(cPatient, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
 		tComment.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
+	}
 
-		/* Archiv Tab */
+	/**
+	 * 
+	 */
+	private void createArchivTab() {
+
 		TabItem tArchiv = new TabItem(tabFolder, SWT.NONE);
 		tArchiv.setText("Patienten Akte");
 		tArchiv.setImage(Activator.getImageDescriptor(ISharedImages.IMG_COMMENT_16).createImage());
@@ -192,7 +217,7 @@ public class PatientView extends ViewPart implements PropertyChangeListener {
 		bNewArchiv.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				createArchivAction.run();
+				
 			}
 		});
 
@@ -203,8 +228,12 @@ public class PatientView extends ViewPart implements PropertyChangeListener {
 		Button bRemoveArchiv = new Button(cArchivButtonBar, SWT.NONE);
 		bRemoveArchiv.setLayoutData(new RowData(100, SWT.DEFAULT));
 		bRemoveArchiv.setText("Eintrag entfernen");
+	}
 
-		/* Cluster Tab */
+	/**
+	 * 
+	 */
+	private void createClusterTab() {		 		 
 	    tabCluster = new TabItem(tabFolder, SWT.NONE);
 		tabCluster.setText("Trainingsdaten");
 		tabCluster.setImage(Activator.getImageDescriptor(ISharedImages.IMG_CLUSTER_16).createImage());
@@ -216,7 +245,7 @@ public class PatientView extends ViewPart implements PropertyChangeListener {
 		tClusterSearch = new Text(cCluster, SWT.BORDER);
 		tClusterSearch.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 
-		clusterViewer = createClusterViewer(cCluster);
+		clusterViewer = new ClusterTableViewer(cCluster);
 		clusterViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 
 		Composite cClusterButtonBar = new Composite(cCluster, SWT.NONE);
@@ -229,7 +258,11 @@ public class PatientView extends ViewPart implements PropertyChangeListener {
 		bNewCluster.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				createArchivAction.run();
+				IWizard wizard = new TrainClusterWizard();
+				WizardDialog dialog = new WizardDialog(clusterViewer.getTable().getShell(), wizard);
+				if(dialog.open() == Window.OK) {
+					
+				}
 			}
 		});
 
@@ -244,11 +277,6 @@ public class PatientView extends ViewPart implements PropertyChangeListener {
 		Button bClusterImport = new Button(cClusterButtonBar, SWT.NONE);
 		bClusterImport.setLayoutData(new RowData(100, SWT.DEFAULT));
 		bClusterImport.setText("Importieren");
-
-		createActions();
-		initializeToolBar();
-		initializeMenu();
-		update();
 	}
 
 	private TableViewer createArchivViewer(Composite parent) {
@@ -275,35 +303,6 @@ public class PatientView extends ViewPart implements PropertyChangeListener {
 		archivViewer.setLabelProvider(new ArchivLabelProvider());
 
 		return archivViewer;
-	}
-
-	private TableViewer createClusterViewer(Composite parent) {
-		TableViewer clusterViewer = new TableViewer(parent, SWT.BORDER | SWT.SINGLE);
-		clusterViewer.setContentProvider(new ArrayContentProvider());
-
-		// Set visible
-		clusterViewer.getTable().setHeaderVisible(true);
-		clusterViewer.getTable().setLinesVisible(true);
-
-		// Columns
-		TableViewerColumn viewerColumn = new TableViewerColumn(clusterViewer, SWT.LEAD);
-		viewerColumn.getColumn().setText("Name");
-		viewerColumn.getColumn().setWidth(120);
-
-		viewerColumn = new TableViewerColumn(clusterViewer, SWT.LEAD);
-		viewerColumn.getColumn().setText("Datei");
-		viewerColumn.getColumn().setWidth(300);
-
-		viewerColumn = new TableViewerColumn(clusterViewer, SWT.LEAD);
-		viewerColumn.getColumn().setText("Cluster");
-		viewerColumn.getColumn().setWidth(60);
-
-		archivViewer.setLabelProvider(new WorkbenchLabelProvider()); // TODO
-																		// AdaptableFactory
-																		// for
-																		// ClusterUnit
-
-		return clusterViewer;
 	}
 
 	/**
@@ -334,6 +333,8 @@ public class PatientView extends ViewPart implements PropertyChangeListener {
 		Patient patient = (Patient) Activator.getPatientService().getSelection(IPatientService.PATIENT);
 		if (patient == null)
 			return;
+		
+		//Update Personal Data
 		tFirstname.setText(patient.getFirstname());
 		tLastname.setText(patient.getLastname());
 		tGender.setText(String.valueOf(patient.getGender()));
@@ -341,10 +342,14 @@ public class PatientView extends ViewPart implements PropertyChangeListener {
 		if (patient.getComment() != null)
 			tComment.setText(patient.getComment());
 
+		//Update Archiv
 		EntityManager em = JPAUtil.createEntityManager();
 		List<Archiv> archives = em.createNamedQuery("Archiv.findByPatient", Archiv.class)
 				.setParameter("patientId", patient.getId()).getResultList();
 		archivViewer.setInput(archives);
+		
+		//Update Cluster
+		clusterViewer.setInput(MedicUtil.loadClusterUnits(patient));
 	}
 
 	@Override

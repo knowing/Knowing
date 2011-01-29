@@ -13,6 +13,26 @@
                type="de.lmu.ifi.dbs.medmon.base.ui.adapter.IWorkbenchColumnAdapter">
          </adapter>
       </factory>
+      <factory
+            adaptableType="de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterUnit"
+            class="de.lmu.ifi.dbs.medmon.base.ui.adapter.ClusterAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="de.lmu.ifi.dbs.medmon.base.ui.adapter.IWorkbenchColumnAdapter">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="de.lmu.ifi.dbs.medmon.base.ui.adapter.PatientClusterAdapter"
+            class="de.lmu.ifi.dbs.medmon.base.ui.adapter.ClusterAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="de.lmu.ifi.dbs.medmon.base.ui.adapter.IWorkbenchColumnAdapter">
+         </adapter>
+      </factory>
    </extension>
 
 </plugin>

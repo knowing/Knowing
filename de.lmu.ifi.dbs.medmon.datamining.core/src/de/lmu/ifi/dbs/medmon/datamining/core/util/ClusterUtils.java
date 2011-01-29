@@ -4,18 +4,22 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
 import de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
 import de.lmu.ifi.dbs.medmon.datamining.core.csv.io.CSVFileReader;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
-import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 import de.lmu.ifi.dbs.utilities.Arrays2;
 import de.lmu.ifi.dbs.utilities.Math2;
 
@@ -96,16 +100,6 @@ public class ClusterUtils {
 		return compact;
 	}
 
-	public static IDataProcessor parseProcessingUnit(DataProcessingUnit dpu) {
-		List<XMLDataProcessor> processors = dpu.getProcessors();
-		for (XMLDataProcessor dataProcessor : processors) {
-			String id = dataProcessor.getId();
-			IDataProcessor processor = FrameworkUtil.findDataProcessor(id);
-		}
-
-		return null;
-	}
-
 	/**
 	 * The CSVFileReader must be initialized with a CSVDescriptor Time
 	 * inefficient / Space efficient
@@ -148,26 +142,7 @@ public class ClusterUtils {
 			returns[i++] = d;
 		return returns;
 	}
-
-	public static String createClusterUnitFile(ClusterUnit cu, String lastname, int id) {
-		StringBuffer sb = new StringBuffer();
-		sb.append(IMedmonConstants.DIR_CU);
-		sb.append(IMedmonConstants.DIR_SEPERATOR);
-		sb.append(lastname);
-		sb.append("-");
-		sb.append(String.format("%011d", id));
-		File dir = new File(sb.toString());
-		if(dir.mkdirs()) {
-			if(!dir.isDirectory()) {
-				if(dir.delete())
-					dir.mkdirs();
-			}
-		}
-		sb.append(IMedmonConstants.DIR_SEPERATOR);
-		sb.append(cu.getName());	
-		sb.append(".xml");
-		return sb.toString();
-	}
+	
 
 
 }

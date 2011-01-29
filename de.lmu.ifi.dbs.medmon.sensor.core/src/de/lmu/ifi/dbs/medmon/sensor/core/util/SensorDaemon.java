@@ -108,6 +108,7 @@ public class SensorDaemon {
 			SensorAdapter adapter = model.get(key);
 			adapter.setSensorExtension(sensor);
 		}
+		fireModelChanged();
 	}
 
 	private List<ISensor> getSensorExtensions() {

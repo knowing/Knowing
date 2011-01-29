@@ -5,68 +5,69 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
 
-
 /**
  * The persistent class for the PATIENT database table.
  * 
  */
 @Entity
-@Table(name="PATIENT")
+@Table(name = "PATIENT")
 @NamedQueries({
-    @NamedQuery(name = "Patient.findAll", query = "SELECT p FROM Patient p"),
-    @NamedQuery(name = "Patient.findById", query = "SELECT p FROM Patient p WHERE p.id = :id"),
-    @NamedQuery(name = "Patient.findByFirstname", query = "SELECT p FROM Patient p WHERE p.firstname = :firstname"),
-    @NamedQuery(name = "Patient.findByLastname", query = "SELECT p FROM Patient p WHERE p.lastname = :lastname"),
-    @NamedQuery(name = "Patient.findByInsuranceId", query = "SELECT p FROM Patient p WHERE p.insuranceId = :insuranceId"),
-    @NamedQuery(name = "Patient.findIdentical", query = "SELECT p FROM Patient p WHERE p.firstname = :firstname AND p.lastname = :lastname AND p.birth = :birth"),
-    @NamedQuery(name = "Patient.likeName", query="SELECT p FROM Patient p WHERE lower(p.lastname) LIKE :lastname OR lower(p.firstname) LIKE :firstname")})
+		@NamedQuery(name = "Patient.findAll", query = "SELECT p FROM Patient p"),
+		@NamedQuery(name = "Patient.findById", query = "SELECT p FROM Patient p WHERE p.id = :id"),
+		@NamedQuery(name = "Patient.findByFirstname", query = "SELECT p FROM Patient p WHERE p.firstname = :firstname"),
+		@NamedQuery(name = "Patient.findByLastname", query = "SELECT p FROM Patient p WHERE p.lastname = :lastname"),
+		@NamedQuery(name = "Patient.findByInsuranceId", query = "SELECT p FROM Patient p WHERE p.insuranceId = :insuranceId"),
+		@NamedQuery(name = "Patient.findIdentical", query = "SELECT p FROM Patient p WHERE p.firstname = :firstname AND p.lastname = :lastname AND p.birth = :birth"),
+		@NamedQuery(name = "Patient.likeName", query = "SELECT p FROM Patient p WHERE lower(p.lastname) LIKE :lastname OR lower(p.firstname) LIKE :firstname") })
 public class Patient implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public static final short MALE = 0;
 	public static final short FEMALE = 1;
-	
+
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(nullable=false)
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(nullable = false)
 	private int id;
 
-	@Column(length=30)
+	@Column(length = 30)
 	private String firstname;
 
-	@Column(length=30)
+	@Column(length = 30)
 	private String lastname;
-	
+
 	@Column
 	private short gender;
-	
+
 	@Column(unique = true)
 	private String insuranceId;
-	
-    @Temporal( TemporalType.DATE)
+
+	@Temporal(TemporalType.DATE)
 	private Date birth;
 
-    @Lob()
+	@Lob
 	private String comment;
 
-    @Temporal( TemporalType.DATE)
+	@Column
+	private String cluster;
+
+	@Temporal(TemporalType.DATE)
 	private Date therapystart;
 
-	//bi-directional many-to-one association to Appointment
-	@OneToMany(mappedBy="patient")
+	// bi-directional many-to-one association to Appointment
+	@OneToMany(mappedBy = "patient")
 	private Set<Appointment> appointments;
 
-	//bi-directional many-to-one association to Data
-	@OneToMany(mappedBy="patient")
+	// bi-directional many-to-one association to Data
+	@OneToMany(mappedBy = "patient")
 	private Set<Data> data;
-	
-	//bi-directional many-to-one association to Archives
-	@OneToMany(mappedBy="patient")
+
+	// bi-directional many-to-one association to Archives
+	@OneToMany(mappedBy = "patient")
 	private Set<Archiv> archives;
 
-    public Patient() {
-    }
-    
+	public Patient() {
+	}
 
 	public Patient(String firstname, String lastname) {
 		super();
@@ -89,7 +90,7 @@ public class Patient implements Serializable {
 	public void setFirstname(String firstname) {
 		this.firstname = firstname;
 	}
-	
+
 	public String getLastname() {
 		return this.lastname;
 	}
@@ -97,11 +98,11 @@ public class Patient implements Serializable {
 	public void setLastname(String lastname) {
 		this.lastname = lastname;
 	}
-	
+
 	public String getInsuranceId() {
 		return insuranceId;
 	}
-	
+
 	public void setInsuranceId(String insuranceId) {
 		this.insuranceId = insuranceId;
 	}
@@ -113,7 +114,6 @@ public class Patient implements Serializable {
 	public void setGender(short gender) {
 		this.gender = gender;
 	}
-	
 
 	public Date getBirth() {
 		return this.birth;
@@ -131,6 +131,14 @@ public class Patient implements Serializable {
 		this.comment = comment;
 	}
 
+	public String getCluster() {
+		return cluster;
+	}
+
+	public void setCluster(String cluster) {
+		this.cluster = cluster;
+	}
+
 	public Date getTherapystart() {
 		return this.therapystart;
 	}
@@ -146,7 +154,7 @@ public class Patient implements Serializable {
 	public void setAppointments(Set<Appointment> appointments) {
 		this.appointments = appointments;
 	}
-	
+
 	public Set<Data> getData() {
 		return this.data;
 	}
@@ -154,18 +162,18 @@ public class Patient implements Serializable {
 	public void setData(Set<Data> data) {
 		this.data = data;
 	}
-	
+
 	public Set<Archiv> getArchives() {
 		return archives;
 	}
-	
+
 	public void setArchives(Set<Archiv> archives) {
 		this.archives = archives;
 	}
-	
+
 	@Override
 	public String toString() {
 		return firstname + " " + lastname;
 	}
-	
+
 }

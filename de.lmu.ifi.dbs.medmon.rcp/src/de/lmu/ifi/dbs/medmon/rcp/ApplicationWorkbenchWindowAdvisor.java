@@ -1,6 +1,13 @@
 package de.lmu.ifi.dbs.medmon.rcp;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Monitor;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -24,4 +31,11 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		configurer.setShowPerspectiveBar(true);
 		configurer.setShowProgressIndicator(true);
     }
+    
+    @Override
+    public void createWindowContents(Shell shell) {
+    	super.createWindowContents(shell);
+    	shell.setMaximized(true);
+    }
+    
 }

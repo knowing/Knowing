@@ -20,6 +20,9 @@ public class ClusterUnit {
 
 	@XmlAttribute(required = true)
 	private String name;
+	
+	@XmlElement
+	private String description;
 
 	public String getName() {
 		return name;
@@ -32,6 +35,14 @@ public class ClusterUnit {
 	public List<DoubleCluster> getClusterlist() {
 		return clusterlist;
 	}
+	
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
 	public void setClusterlist(List<DoubleCluster> clusterlist) {
 		this.clusterlist = clusterlist;
@@ -40,4 +51,6 @@ public class ClusterUnit {
 	public void addCluster(DoubleCluster cluster) {
 		clusterlist.add(cluster);
 	}
+
+
 }

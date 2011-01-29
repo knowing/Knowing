@@ -1,11 +1,14 @@
 package de.lmu.ifi.dbs.medmon.database;
 
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.spi.PersistenceProvider;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import de.lmu.ifi.dbs.medmon.database.install.Database;
 import de.lmu.ifi.dbs.medmon.database.osgi.JPAServiceTrackerCustomizer;
@@ -24,6 +27,8 @@ public class Activator extends AbstractUIPlugin {
 
 	private static ServiceTracker emfTracker;
 
+	private ServiceTracker providerTracker;
+
 	public Activator() {
 
 	}
@@ -35,13 +40,18 @@ public class Activator extends AbstractUIPlugin {
 	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
 	 * )
 	 */
-	public void start(BundleContext context) throws Exception {
+	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
 		database = new Database();
 		emfTracker = new ServiceTracker(context, EntityManagerFactory.class.getName(),
 				new JPAServiceTrackerCustomizer());
 		emfTracker.open();
+
+		providerTracker = new ServiceTracker(context, PersistenceProvider.class.getName(),
+				JPAUtil.getServiceTrackerCustomizer("medmon", database.getProperties()));
+		providerTracker.open();
+
 	}
 
 	/*
@@ -53,6 +63,7 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		emfTracker.close();
+		providerTracker.close();
 		plugin = null;
 		super.stop(context);
 	}
@@ -81,7 +92,7 @@ public class Activator extends AbstractUIPlugin {
 	public static Database getDatabase() {
 		return database;
 	}
-	
+
 	public static ServiceTracker getEmfTracker() {
 		return emfTracker;
 	}

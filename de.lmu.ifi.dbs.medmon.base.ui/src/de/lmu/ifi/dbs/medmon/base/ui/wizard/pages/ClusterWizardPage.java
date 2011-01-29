@@ -149,8 +149,7 @@ public class ClusterWizardPage extends WizardPage {
 							new WorkbenchLabelProvider(), new SensorContainerContentProvider());
 					SensorSourceWidget source = (SensorSourceWidget) prevPage.getConfiguration();
 					try {
-						ISensorDataContainer<?> input = source.getSensor().getSensorExtension().getConverter()
-								.convertToContainer(source.getFile(), ContainerType.WEEK, ContainerType.HOUR, null);
+						ISensorDataContainer<?> input = source.getSensor().getData();
 						dialog.setInput(input);
 						dialog.open();
 						Object[] result = dialog.getResult();

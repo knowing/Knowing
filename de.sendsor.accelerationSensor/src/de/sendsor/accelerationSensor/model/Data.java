@@ -9,38 +9,38 @@ public class Data {
 
 	@SensorDataTimestamp private long date;
 	
-	@SensorData	private int x;
-	@SensorData private int y;
-	@SensorData private int z;
+	@SensorData	private double x;
+	@SensorData private double y;
+	@SensorData private double z;
 	
-	public Data(long date, int x, int y, int z) {
+	public Data(long date, double x, double y, double z) {
 		this.date = date;
 		this.x = x;
 		this.y = y;
 		this.z = z;
 	}
 
-	public int getX() {
+	public double getX() {
 		return x;
 	}
 
-	public void setX(int x) {
+	public void setX(double x) {
 		this.x = x;
 	}
 
-	public int getY() {
+	public double getY() {
 		return y;
 	}
 
-	public void setY(int y) {
+	public void setY(double y) {
 		this.y = y;
 	}
 
-	public int getZ() {
+	public double getZ() {
 		return z;
 	}
 
-	public void setZ(int z) {
+	public void setZ(double z) {
 		this.z = z;
 	}
 	

@@ -16,21 +16,21 @@ public class JPAServiceTrackerCustomizer implements ServiceTrackerCustomizer {
 		BundleContext context = reference.getBundle().getBundleContext();
 		Object service = context.getService(reference);
 		String unitName = (String) reference.getProperty(EntityManagerFactoryBuilder.JPA_UNIT_NAME);
-		log.info("EntityManagerFactoryBuilder for " + unitName + " added");
+		log.info("EntityManagerFactory for " + unitName + " added");
 		return service;
 	}
 
 	@Override
 	public void modifiedService(ServiceReference reference, Object service) {
 		String unitName = (String) reference.getProperty(EntityManagerFactoryBuilder.JPA_UNIT_NAME);
-		log.info("EntityManagerFactoryBuilder for " + unitName + " modified");
+		log.info("EntityManagerFactory for " + unitName + " modified");
 
 	}
 
 	@Override
 	public void removedService(ServiceReference reference, Object service) {
 		String unitName = (String) reference.getProperty(EntityManagerFactoryBuilder.JPA_UNIT_NAME);
-		log.info("EntityManagerFactoryBuilder for " + unitName + " removed");
+		log.info("EntityManagerFactory for " + unitName + " removed");
 	}
 
 }

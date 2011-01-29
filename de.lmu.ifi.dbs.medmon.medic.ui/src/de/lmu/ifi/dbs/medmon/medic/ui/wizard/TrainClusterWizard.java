@@ -41,6 +41,7 @@ import de.lmu.ifi.dbs.medmon.datamining.core.processing.IClusterData;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.internal.DataConverter;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.internal.Processor;
 import de.lmu.ifi.dbs.medmon.datamining.core.util.ClusterUtils;
+import de.lmu.ifi.dbs.medmon.medic.core.util.ApplicationConfigurationUtil;
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
 import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SelectDPUPage;
 import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
@@ -165,7 +166,7 @@ public class TrainClusterWizard extends Wizard implements IWorkbenchWizard, IExe
 			if (patient == null)
 				return;
 			
-			String pathname = ClusterUtils.createClusterUnitFile(cu, patient.getLastname(), patient.getId());
+			String pathname = ApplicationConfigurationUtil.createClusterUnitFile(cu, patient);
 			File file = new File(pathname);
 			if (file.exists()) {
 				boolean confirm = MessageDialog.openConfirm(getShell(), "Bereits vorhanden", "Datei ueberschreiben?");
