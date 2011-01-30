@@ -71,11 +71,14 @@ public class SensorTableViewer extends TableViewer implements PropertyChangeList
 
 	private void initInput() {
 		SensorDaemon daemon = SensorDaemon.getInstance();
-		//TODO wait for daemon not blocking the GUI Thread
-		Map<String, SensorAdapter> model = daemon.getModel();
-		if (model != null)
+		if (daemon == null) {
+			new Thread(new WaitingForInput(this)).start();
+		} else {
+			Map<String, SensorAdapter> model = daemon.getModel();
 			setInput(model.values().toArray());
-		daemon.addPropertyChangeListener(this);
+			daemon.addPropertyChangeListener(this);
+		}
+
 	}
 
 	@Override
@@ -84,11 +87,47 @@ public class SensorTableViewer extends TableViewer implements PropertyChangeList
 
 			@Override
 			public void run() {
-				// TODO Refresh Input too
-				if(!getTable().isDisposed())
+				if (!getTable().isDisposed())
 					refresh();
 			}
 		});
+	}
+
+	private class WaitingForInput implements Runnable {
+
+		private final SensorTableViewer viewer;
+
+		public WaitingForInput(SensorTableViewer viewer) {
+			this.viewer = viewer;
+		}
+
+		@Override
+		public void run() {
+			SensorDaemon daemon = SensorDaemon.getInstance();
+			//Try getting the Daemon
+			while (daemon == null) {
+				daemon = SensorDaemon.getInstance();
+				try {
+					Thread.sleep(500L);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			final Map<String, SensorAdapter> model = daemon.getModel();
+			
+			//Access not from the UI Thread
+			Display.getDefault().asyncExec(new Runnable() {
+				
+				@Override
+				public void run() {
+					viewer.setInput(model.values().toArray());
+					viewer.refresh();					
+				}
+			});
+
+			daemon.addPropertyChangeListener(viewer);
+		}
+
 	}
 
 }

@@ -108,7 +108,6 @@ public class JPAUtil implements ServiceTrackerCustomizer {
 		BundleContext context = reference.getBundle().getBundleContext();
 		String unitName = (String) reference.getProperty(EntityManagerFactoryBuilder.JPA_UNIT_NAME);
 		emfBuilder = (EntityManagerFactoryBuilder) context.getService(reference);
-		System.err.println("EMF-Builder added for " + unitName);
 		if (!unitName.equals(punit))
 			return emfBuilder;
 

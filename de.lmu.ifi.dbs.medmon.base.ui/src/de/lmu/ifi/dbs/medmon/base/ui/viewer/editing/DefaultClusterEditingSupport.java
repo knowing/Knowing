@@ -52,7 +52,7 @@ public class DefaultClusterEditingSupport extends EditingSupport {
 		EntityManager em = JPAUtil.createEntityManager();
 		em.getTransaction().begin();
 		Patient entity = em.find(Patient.class, patient.getId());
-		if(!entity.getCluster().equals(cluster)) {
+		if(!cluster.equals(entity.getCluster())) {
 			entity.setCluster(cluster);
 		}
 		em.getTransaction().commit();
