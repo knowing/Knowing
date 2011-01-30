@@ -55,9 +55,9 @@ public class SensorTableViewer extends TableViewer implements PropertyChangeList
 			viewerColumn.getColumn().setText(columns[i]);
 			viewerColumn.getColumn().setWidth(width[i]);
 			// Spaltengroesse laesst sich zur Laufzeit aendern
-			viewerColumn.getColumn().setResizable(false);
+			viewerColumn.getColumn().setResizable(true);
 			// Spalten lassen sich untereinander verschieben
-			viewerColumn.getColumn().setMoveable(false);
+			viewerColumn.getColumn().setMoveable(true);
 			if (i == 3) {
 				viewerColumn.setEditingSupport(new SensorPathEditingSupport(this));
 			}

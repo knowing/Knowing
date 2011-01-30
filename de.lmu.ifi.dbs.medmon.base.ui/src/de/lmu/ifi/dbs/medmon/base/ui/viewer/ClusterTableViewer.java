@@ -7,7 +7,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 import de.lmu.ifi.dbs.medmon.base.ui.provider.WorkbenchTableLabelProvider;
-import de.lmu.ifi.dbs.medmon.base.ui.viewer.editing.SensorPathEditingSupport;
+import de.lmu.ifi.dbs.medmon.base.ui.viewer.editing.DefaultClusterEditingSupport;
 
 public class ClusterTableViewer extends TableViewer {
 
@@ -33,11 +33,11 @@ public class ClusterTableViewer extends TableViewer {
 			viewerColumn.getColumn().setText(columns[i]);
 			viewerColumn.getColumn().setWidth(width[i]);
 			// Spaltengroesse laesst sich zur Laufzeit aendern
-			viewerColumn.getColumn().setResizable(false);
+			viewerColumn.getColumn().setResizable(true);
 			// Spalten lassen sich untereinander verschieben
-			viewerColumn.getColumn().setMoveable(false);
-			if (i == 3) {
-				viewerColumn.setEditingSupport(new SensorPathEditingSupport(this));
+			viewerColumn.getColumn().setMoveable(true);
+			if (i == 2) {
+				viewerColumn.setEditingSupport(new DefaultClusterEditingSupport(this));
 			}
 		}
 	}

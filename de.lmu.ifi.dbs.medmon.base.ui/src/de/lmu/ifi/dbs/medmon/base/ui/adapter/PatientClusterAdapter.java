@@ -18,7 +18,7 @@ public class PatientClusterAdapter {
 		return patient;
 	}
 	
-	public ClusterUnit getUnit() {
+	public ClusterUnit getCluster() {
 		return unit;
 	}
 

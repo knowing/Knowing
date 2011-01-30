@@ -178,9 +178,9 @@
             name="Data">
       </category>
       <command
-            defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.OpenDefaultPerspectiveHandler"
-            id="de.lmu.ifi.dbs.medmon.medic.OpenDefaultPerspective"
-            name="Open default visualizer perspective">
+            defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.OpenAnalysePerspectiveHandler"
+            id="de.lmu.ifi.dbs.medmon.medic.OpenAnalysePerspective"
+            name="Analyse Perspective">
       </command>
       
        <command
@@ -260,11 +260,6 @@
             id="de.lmu.ifi.dbs.medmon.medic.ui.loadDataFromDB"
             name="Daten aus Datenbank laden">
       </command>
-      <command
-            defaultHandler="de.lmu.ifi.dbs.medmon.medic.ui.handler.SensorDaemonHandler"
-            id="de.lmu.ifi.dbs.medmon.medic.ui.sensorDaemon"
-            name="Start SensorDaemon">
-      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -310,7 +305,7 @@
          <menu
                label="Analyse">
             <command
-                  commandId="de.lmu.ifi.dbs.medmon.medic.OpenDefaultPerspective"
+                  commandId="de.lmu.ifi.dbs.medmon.medic.OpenAnalysePerspective"
                   icon="icons/visualize_16.png"
                   label="Analyse Ansicht"
                   style="push">
@@ -402,17 +397,16 @@
                   style="push">
             </command>
             <separator
-                  name="de.lmu.ifi.dbs.medmon.medic.ui.seperator.closingng"
+                  name="de.lmu.ifi.dbs.medmon.medic.ui.separator.additions"
+                  visible="true">
+            </separator>
+            <separator
+                  name="de.lmu.ifi.dbs.medmon.medic.ui.seperator.closing"
                   visible="true">
             </separator>
             <command
                   commandId="org.eclipse.ui.file.exit"
                   label="Beenden"
-                  style="push">
-            </command>
-            <command
-                  commandId="de.lmu.ifi.dbs.medmon.medic.ui.sensorDaemon"
-                  label="Sensor Daemon starten"
                   style="push">
             </command>
          </menu>

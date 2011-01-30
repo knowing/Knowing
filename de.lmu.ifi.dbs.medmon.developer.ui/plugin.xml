@@ -5,23 +5,12 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="menu:org.eclipse.ui.main.menu?after=de.lmu.ifi.dbs.medmon.ui.file">
-         <menu
-               label="Data Procesing">
-            <command
-                  commandId="org.eclipse.ui.newWizard"
-                  disabledIcon="IMG_TOOL_NEW_WIZARD_DISABLED"
-                  hoverIcon="IMG_TOOL_NEW_WIZARD_HOVER"
-                  icon="IMG_TOOL_NEW_WIZARD"
-                  label="Open Wizard"
-                  style="push">
-            </command>
-            <command
-                  commandId="de.lmu.ifi.dbs.medmon.developer.ui.LoadDPU"
-                  label="Load DPU"
-                  style="push">
-            </command>
-         </menu>
+            locationURI="menu:de.lmu.ifi.dbs.medmon.ui.file?after=de.lmu.ifi.dbs.medmon.medic.ui.separator.additions">
+         <command
+               commandId="de.lmu.ifi.dbs.medmon.developer.ui.LoadDPU"
+               label="Open DPU"
+               style="push">
+         </command>
       </menuContribution>
    </extension>
    <extension

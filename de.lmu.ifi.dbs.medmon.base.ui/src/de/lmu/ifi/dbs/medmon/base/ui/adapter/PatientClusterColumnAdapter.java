@@ -3,6 +3,8 @@ package de.lmu.ifi.dbs.medmon.base.ui.adapter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
+import de.lmu.ifi.dbs.medmon.base.ui.Activator;
+
 
 public class PatientClusterColumnAdapter implements IWorkbenchColumnAdapter {
 
@@ -32,7 +34,6 @@ public class PatientClusterColumnAdapter implements IWorkbenchColumnAdapter {
 		switch (columnIndex) {
 		case 0: return adapter.getName();
 		case 1: return adapter.getDescription();
-		case 2: return String.valueOf(adapter.isDefault());
 		default: return "";
 		}
 	}
@@ -41,6 +42,8 @@ public class PatientClusterColumnAdapter implements IWorkbenchColumnAdapter {
 	public Image getColumnImage(Object element, int columnIndex) {
 		if(columnIndex == 2) {
 			PatientClusterAdapter adapter = (PatientClusterAdapter) element;
+			if(adapter.isDefault()) 
+				return Activator.getImageDescriptor("icons/checked_16.png").createImage();
 			return null;
 		}
 			

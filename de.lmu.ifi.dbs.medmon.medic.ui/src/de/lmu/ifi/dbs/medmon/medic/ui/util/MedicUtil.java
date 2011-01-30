@@ -1,9 +1,10 @@
 package de.lmu.ifi.dbs.medmon.medic.ui.util;
 
-import static de.lmu.ifi.dbs.medmon.medic.core.util.ApplicationConfigurationUtil.getPatientFolder;
-import static de.lmu.ifi.dbs.medmon.medic.core.util.ApplicationConfigurationUtil.getPreferenceStore;
+import static de.lmu.ifi.dbs.medmon.medic.core.util.ApplicationConfigurationUtil.getClusterUnitFolder;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,14 +17,11 @@ import de.lmu.ifi.dbs.medmon.base.ui.adapter.PatientClusterAdapter;
 import de.lmu.ifi.dbs.medmon.base.ui.filter.XMLFileFilter;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterUnit;
-import de.lmu.ifi.dbs.medmon.medic.core.preferences.IMedicPreferences;
 
 public class MedicUtil {
 
 	public static List<PatientClusterAdapter> loadClusterUnits(Patient patient) {
-		String sep = getPreferenceStore().getString(IMedicPreferences.DIR_SEPERATOR_ID);
-		String patientFolder = getPatientFolder(patient);
-		List<ClusterUnit> units = loadClusterUnits(patientFolder + sep + "cluster");
+		List<ClusterUnit> units = loadClusterUnits(getClusterUnitFolder(patient));
 
 		List<PatientClusterAdapter> returns = new ArrayList<PatientClusterAdapter>();
 		for (ClusterUnit unit : units)
@@ -57,5 +55,28 @@ public class MedicUtil {
 			e.printStackTrace();
 		}
 		return returns;
+	}
+
+	public static ClusterUnit loadClusterUnit(Patient patient, final String cluster) {
+		String root = getClusterUnitFolder(patient);
+		File file = new File(root);
+		File[] files = file.listFiles(new FilenameFilter() {
+
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.equals(cluster + ".xml");
+			}
+
+		});
+		try {
+			JAXBContext context = JAXBContext.newInstance(ClusterUnit.class);
+			Unmarshaller um = context.createUnmarshaller();
+			return (ClusterUnit) um.unmarshal(files[0]);
+
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 }

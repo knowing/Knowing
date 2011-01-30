@@ -1,5 +1,8 @@
 package de.lmu.ifi.dbs.medmon.medic.core.util;
 
+import static de.lmu.ifi.dbs.medmon.medic.core.util.ApplicationConfigurationUtil.getPatientFolder;
+import static de.lmu.ifi.dbs.medmon.medic.core.util.ApplicationConfigurationUtil.getPreferenceStore;
+
 import java.io.File;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -62,6 +65,12 @@ public class ApplicationConfigurationUtil {
 		sb.append(cu.getName());	
 		sb.append(".xml");
 		return sb.toString();
+	}
+	
+	public static String getClusterUnitFolder(Patient patient) {
+		String sep = getPreferenceStore().getString(IMedicPreferences.DIR_SEPERATOR_ID);
+		String patientFolder = getPatientFolder(patient);
+		return patientFolder  + "cluster" + sep;
 	}
 		
 	public static IPreferenceStore getPreferenceStore() {

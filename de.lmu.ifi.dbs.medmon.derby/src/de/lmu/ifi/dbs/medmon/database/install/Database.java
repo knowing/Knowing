@@ -26,9 +26,9 @@ public class Database {
 		String dir = home + sep + ".medmon" + sep + "db";
 		String url = "jdbc:derby:" + dir + ";create=true";
 		properties.put(PersistenceUnitProperties.JDBC_URL, url);
+		properties.put(PersistenceUnitProperties.JDBC_DRIVER, "org.apache.derby.jdbc.EmbeddedDriver");
 		
-		//Create DB directory
-		//new File(dir).mkdirs();
+	
 	}
 
 

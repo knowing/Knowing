@@ -1,6 +1,7 @@
 package de.lmu.ifi.dbs.medmon.medic.ui.wizard;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -13,10 +14,15 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
+import de.lmu.ifi.dbs.medmon.datamining.core.parameter.ClusterParameter;
+import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.internal.Processor;
+import de.lmu.ifi.dbs.medmon.medic.core.util.ApplicationConfigurationUtil;
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
+import de.lmu.ifi.dbs.medmon.medic.ui.util.MedicUtil;
 import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SelectDataPage;
 import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SelectDPUPage;
 import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SensorPage;
@@ -30,7 +36,7 @@ public class QuickAnalyseWizard extends Wizard implements INewWizard, IExecutabl
 	private SensorPage sourcePage = new SensorPage();
 	private SelectDataPage dataPage = new SelectDataPage();
 	private SelectDPUPage mpuPage;
-	
+
 	/* to prevent getNextPage setting input twice */
 	private boolean firstcall = true;
 
@@ -38,14 +44,14 @@ public class QuickAnalyseWizard extends Wizard implements INewWizard, IExecutabl
 		/* Can skip sensorPage */
 		Patient patient = (Patient) service.getSelection(IPatientService.PATIENT);
 		SensorAdapter sensor = (SensorAdapter) service.getSelection(IPatientService.SENSOR);
-		if (patient != null && sensor != null) 
+		if (patient != null && sensor != null)
 			sourcePage = new SensorPage(patient, sensor);
-		
+
 		/* Can skip dataPage */
 		ISensorDataContainer c = (ISensorDataContainer) service.getSelection(IPatientService.SENSOR_CONTAINER);
-		if (c != null) 
+		if (c != null)
 			dataPage = new SelectDataPage(new ISensorDataContainer[] { c });
-		
+
 	}
 
 	@Override
@@ -60,7 +66,7 @@ public class QuickAnalyseWizard extends Wizard implements INewWizard, IExecutabl
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
 		if (page == dataPage) {
-			if(firstcall) 
+			if (firstcall)
 				dataPage.setViewerInput(sourcePage.importData());
 			firstcall = !firstcall;
 		}
@@ -70,15 +76,18 @@ public class QuickAnalyseWizard extends Wizard implements INewWizard, IExecutabl
 	@Override
 	public boolean performFinish() {
 		DataProcessingUnit dpu = (DataProcessingUnit) Activator.getPatientService().getSelection(IPatientService.DPU);
-		if(dpu == null)
+		if (dpu == null)
 			return false;
+		
+		Patient patient = sourcePage.getPatient();
+		setClusterParameter(dpu, patient);
+		
 		Processor processor = Processor.getInstance();
 		Map<String, IAnalyzedData> acc = null;
-		Patient patient = sourcePage.getPatient();
 		ISensor sensor = sourcePage.getSensor().getSensorExtension();
 		ISensorDataContainer[] selection = dataPage.getSelection();
 		for (ISensorDataContainer c : selection) {
-			//new ImportJob(c.getBlock(), sensor.getConverter()).schedule();
+			// new ImportJob(c.getBlock(), sensor.getConverter()).schedule();
 			try {
 				Object[] input = sensor.getConverter().readData(c);
 				acc = processor.run(dpu, input, acc);
@@ -88,6 +97,19 @@ public class QuickAnalyseWizard extends Wizard implements INewWizard, IExecutabl
 		}
 
 		return true;
+	}
+
+	private void setClusterParameter(DataProcessingUnit dpu, Patient patient) {
+		List<XMLDataProcessor> processors = dpu.getProcessors();
+		XMLDataProcessor processor = processors.get(processors.size() - 1);
+		Map<String, IProcessorParameter> parameters = processor.getParameters();
+		for (IProcessorParameter parameter : parameters.values()) {
+			if(parameter instanceof ClusterParameter) {
+				ClusterParameter p = (ClusterParameter) parameter;
+				//p.setValue(MedicUtil.loadClusterUnit(patient, patient.getCluster()));
+				p.setValueAsString(ApplicationConfigurationUtil.getClusterUnitFolder(patient) + patient.getCluster() + ".xml");
+			}
+		}
 	}
 
 	@Override

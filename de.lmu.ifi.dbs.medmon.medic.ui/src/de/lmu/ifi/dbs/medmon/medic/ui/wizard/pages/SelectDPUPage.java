@@ -1,5 +1,7 @@
 package de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages;
 
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -30,7 +32,14 @@ public class SelectDPUPage extends WizardPage {
 		DPUMasterBlock block = new DPUMasterBlock();
 		block.createContent(managedForm);
 		setControl(managedForm.getForm());
-		setPageComplete(true);
+		block.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				setPageComplete(!event.getSelection().isEmpty());
+			}
+		});
+		setPageComplete(false);
 	}
 	
 	protected ManagedForm createManagedForm(final Composite parent) {

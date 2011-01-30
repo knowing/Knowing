@@ -55,13 +55,15 @@ public class ClusterParameter extends AbstractProcessorParameter<ClusterUnit> {
 	}
 
 	@Override
-	public ClusterUnit getValue() {		
+	public ClusterUnit getValue() {	
+		if(embeddable != null)
+			return embeddable;
 		if(descriptor == null)
 			return null;
 		try {
 			JAXBContext context = JAXBContext.newInstance(ClusterUnit.class);
 			Unmarshaller um = context.createUnmarshaller();
-			return (ClusterUnit) um.unmarshal(new File(descriptor));
+			embeddable = (ClusterUnit) um.unmarshal(new File(descriptor));
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
