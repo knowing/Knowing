@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import de.lmu.ifi.dbs.medmon.base.ui.analyzed.PieAnalyzedData;
 import de.lmu.ifi.dbs.medmon.datamining.core.analyzed.TableAnalyzedData;
 import de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.cluster.DoubleCluster;
@@ -14,12 +15,12 @@ import de.lmu.ifi.dbs.medmon.datamining.core.parameter.ClusterParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.AbstractAlgorithm;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
+import de.lmu.ifi.dbs.medmon.datamining.core.util.ClusterUtils;
+import de.lmu.ifi.dbs.medmon.datamining.core.util.LabeledDoubleFeature;
 import de.lmu.ifi.dbs.utilities.Arrays2;
 import de.lmu.ifi.dbs.utilities.Math2;
 import de.lmu.ifi.dbs.utilities.PriorityQueue;
 import de.lmu.ifi.dbs.utilities.distances.EuclideanSquared;
-import de.sendsor.accelerationSensor.util.LabeledDoubleFeature;
-import de.sendsor.accelerationSensor.util.Utils;
 
 /**
  * Analyze the data via a simple clustering algorithm.
@@ -54,7 +55,7 @@ public class PieAnalyzer extends AbstractAlgorithm {
 	public Map<String, IAnalyzedData> process(RawData data) {
 
 		List<LabeledDoubleFeature> features = new ArrayList<LabeledDoubleFeature>();
-		List<LabeledDoubleFeature> rawVectors = Utils.readRawFeaturesFromData(data);
+		List<LabeledDoubleFeature> rawVectors = ClusterUtils.readRawFeaturesFromData(data);
 		List<LabeledDoubleFeature> converted = raw2Features(rawVectors);
 		log.info("read " + rawVectors.size() + ", compactified to " + converted.size());
 		features.addAll(converted);
@@ -148,7 +149,7 @@ public class PieAnalyzer extends AbstractAlgorithm {
 			confusionMatrix[classifiedAsIndex] += 1;
 		}
 		
-		PieAnalyzerData pieData = new PieAnalyzerData();
+		PieAnalyzedData pieData = new PieAnalyzedData();
 		TableAnalyzedData tableData = TableAnalyzedData.getInstance(new String[] { "Cluster", "Hit" });
 		StringBuffer sb = new StringBuffer();
 		double sum = Arrays2.sum(confusionMatrix);

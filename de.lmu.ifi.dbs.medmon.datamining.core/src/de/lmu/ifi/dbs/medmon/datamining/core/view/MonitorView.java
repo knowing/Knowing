@@ -16,20 +16,23 @@ import org.eclipse.ui.part.ViewPart;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.ProcessEvent;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.IProcessListener;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.internal.Processor;
 
-public class MonitorView extends ViewPart implements IPropertyChangeListener{
+public class MonitorView extends ViewPart implements IProcessListener {
 
 	public static final String ID = "de.lmu.ifi.dbs.medmon.datamining.core.view.MonitorView"; //$NON-NLS-1$
-	
+
 	private TabFolder tabFolder;
 
 	public MonitorView() {
-		Processor.addPropertyChangeListener(this);
+		Processor.addProcessListener(this);
 	}
 
 	/**
 	 * Create contents of the view part.
+	 * 
 	 * @param parent
 	 */
 	@Override
@@ -40,11 +43,11 @@ public class MonitorView extends ViewPart implements IPropertyChangeListener{
 		initializeToolBar();
 		initializeMenu();
 	}
-	
-	private void createTabItems(Map<String, IAnalyzedData> data, TabFolder tabFolder) {
-		Set<String> keys = data.keySet();
+
+	private void createTabItems(IAlgorithm algorithm, Map<String, IAnalyzedData> data, TabFolder tabFolder) {
+		String[] keys = algorithm.analyzedDataKeys();
 		for (String key : keys) {
-			if(key.equals(IAlgorithm.DEFAULT_DATA))
+			if (key.equals(IAlgorithm.DEFAULT_DATA))
 				continue;
 			TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
 			tabItem.setText(key);
@@ -67,7 +70,7 @@ public class MonitorView extends ViewPart implements IPropertyChangeListener{
 	 */
 	private void initializeToolBar() {
 		IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
-		
+
 	}
 
 	/**
@@ -81,29 +84,26 @@ public class MonitorView extends ViewPart implements IPropertyChangeListener{
 	public void setFocus() {
 		tabFolder.setFocus();
 	}
-	
+
 
 	@Override
-	public void propertyChange(final PropertyChangeEvent event) {
+	public void processChanged(final ProcessEvent event) {
 		tabFolder.getDisplay().syncExec(new Runnable() {
-			
+
 			@Override
 			public void run() {
-				System.out.println("TabFolder: " + tabFolder);
 				if (tabFolder == null)
 					return;
 
 				for (TabItem item : tabFolder.getItems())
 					item.dispose();
-				if (event.getNewValue() != null) {
-					Map<String, IAnalyzedData> data = (Map<String, IAnalyzedData>) event.getNewValue();
-					createTabItems(data, tabFolder);
+				if (event.getStatus() == ProcessEvent.FINISHED) {
+					createTabItems((IAlgorithm) event.getProcessor(), event.getResult(), tabFolder);
 				}
 				tabFolder.layout(true);
-				
+
 			}
 		});
-
 	}
 
 }

@@ -11,10 +11,12 @@ Require-Bundle: org.eclipse.ui,
  de.lmu.ifi.dbs.medmon.datamining.core;bundle-version="1.0.0",
  de.lmu.ifi.dbs.medmon.sensor.core;bundle-version="1.0.0",
  javax.persistence;bundle-version="2.0.1",
- de.lmu.ifi.dbs.medmon.derby;bundle-version="1.0.0"
+ de.lmu.ifi.dbs.medmon.derby;bundle-version="1.0.0",
+ de.lmu.ifi.dbs.medmon.jfreechart.libs;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.lmu.ifi.dbs.medmon.base.ui.adapter,
+ de.lmu.ifi.dbs.medmon.base.ui.analyzed,
  de.lmu.ifi.dbs.medmon.base.ui.cluster,
  de.lmu.ifi.dbs.medmon.base.ui.dialog,
  de.lmu.ifi.dbs.medmon.base.ui.filter,

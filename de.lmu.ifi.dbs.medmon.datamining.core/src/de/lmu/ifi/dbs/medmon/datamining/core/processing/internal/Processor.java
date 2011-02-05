@@ -12,6 +12,8 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.ProcessEvent;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.IProcessListener;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
@@ -25,7 +27,7 @@ public class Processor {
 	private static Processor instance;
 
 	// TODO find other way to register listeners
-	private static ListenerList listenerList = new ListenerList();
+	private static ListenerList processListener = new ListenerList();
 
 	private Processor() {
 
@@ -69,13 +71,14 @@ public class Processor {
 					acc = algorithm.process(rawData);
 				else
 					acc = algorithm.process(rawData, acc);
+				
 
 			} else {
 				rawData = (RawData) chain[i].process(rawData);
 			}
 
 		}
-		fireEvent(acc);
+		fireEvent(new ProcessEvent(chain[chain.length-1],ProcessEvent.FINISHED, acc));
 		return acc;
 	}
 
@@ -83,7 +86,7 @@ public class Processor {
 		List<XMLDataProcessor> processors = dpu.getProcessors();
 		List<IDataProcessor> iProcessors = new ArrayList<IDataProcessor>(processors.size() + 10);
 		for (XMLDataProcessor dp : processors) {
-			// Doesn't check anything - just fit the peaces together
+			// Doesn't check anything - just fit the pieces together
 			IDataProcessor idp = FrameworkUtil.findDataProcessor(dp.getId());
 			Map<String, IProcessorParameter> parameters = dp.getParameters();
 			for (String key : parameters.keySet()) {
@@ -98,20 +101,23 @@ public class Processor {
 		return DataConverter.convert(input);
 	}
 
-	private void fireEvent(Map<String, IAnalyzedData> value) {
-		Object[] listeners = listenerList.getListeners();
-		PropertyChangeEvent event = new PropertyChangeEvent(this, "data", null, value);
+	
+	private void fireEvent(ProcessEvent event) {
+		Object[] listeners = processListener.getListeners();
 		for (int i = 0; i < listeners.length; ++i) {
-			((IPropertyChangeListener) listeners[i]).propertyChange(event);
+			((IProcessListener) listeners[i]).processChanged(event);
 		}
 	}
+	
 
-	public static void addPropertyChangeListener(IPropertyChangeListener listener) {
-		listenerList.add(listener);
+	public static void addProcessListener(IProcessListener listener) {
+		processListener.add(listener);
 	}
 
-	public static void removePropertyChangeListener(IPropertyChangeListener listener) {
-		listenerList.remove(listener);
+	public static void removeProcessListener(IProcessListener listener) {
+		processListener.remove(listener);
 	}
+	
+	
 
 }

@@ -12,7 +12,8 @@ Require-Bundle: org.eclipse.ui,
  de.lmu.ifi.dbs.medmon.datamining.core;bundle-version="1.0.0",
  de.lmu.ifi.dbs.medmon.rcp;bundle-version="1.0.0",
  de.lmu.ifi.dbs.medmon.medic.core;bundle-version="1.0.0",
- javax.persistence;bundle-version="2.0.1"
+ javax.persistence;bundle-version="2.0.1",
+ de.lmu.ifi.dbs.medmon.base.ui;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.lmu.ifi.dbs.medmon.database.model
