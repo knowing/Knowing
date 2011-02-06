@@ -9,7 +9,10 @@ import java.util.Random;
 
 import org.jfree.chart.plot.MeterInterval;
 import org.jfree.data.Range;
+import org.jfree.data.time.Day;
 import org.jfree.data.time.Hour;
+import org.jfree.data.time.Second;
+import org.jfree.data.time.TimeSeries;
 import org.jfree.data.xy.XYSeries;
 
 import de.lmu.ifi.dbs.medmon.base.ui.analyzed.BubbleAnalyzedData;
@@ -18,6 +21,7 @@ import de.lmu.ifi.dbs.medmon.base.ui.analyzed.IntervalBarAnalyzedData;
 import de.lmu.ifi.dbs.medmon.base.ui.analyzed.MeterAnalyzedData;
 import de.lmu.ifi.dbs.medmon.base.ui.analyzed.PieAnalyzedData;
 import de.lmu.ifi.dbs.medmon.base.ui.analyzed.ScatterAnalyzedData;
+import de.lmu.ifi.dbs.medmon.base.ui.analyzed.XYAreaAnalyedData;
 import de.lmu.ifi.dbs.medmon.datamining.core.analyzed.EmptyAnalyzedData;
 import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.NumericParameter;
@@ -35,6 +39,7 @@ public class SimpleAnalyzer extends AbstractAlgorithm {
 	private static final String BUBBLE_CHART = "Bubble-Chart";
 	private static final String METER_CHART = "Meter-Chart";
 	private static final String SCATTER_CHART = "Scatter-Chart";
+	private static final String XY_AREA_CHART = "XY Line Chart";
 		
 	public SimpleAnalyzer() {
 		super(NAME, INDEFINITE_DIMENSION, INDEFINITE_DIMENSION);
@@ -82,6 +87,10 @@ public class SimpleAnalyzer extends AbstractAlgorithm {
 		
 		PieAnalyzedData pieData = new PieAnalyzedData();
 		createPiePlot(pieData);
+		
+		XYAreaAnalyedData xyareaData = new XYAreaAnalyedData();
+		createXYAreaPlot(xyareaData);
+		analyzedData.put(XY_AREA_CHART, xyareaData);
 
 		analyzedData.put(DEFAULT_DATA, meterData);
 	
@@ -101,7 +110,7 @@ public class SimpleAnalyzer extends AbstractAlgorithm {
 	
 	@Override
 	public String[] analyzedDataKeys() {
-		return new String[] { BAR_CHART, PIE_CHART, HIST_CHART, BUBBLE_CHART, METER_CHART, SCATTER_CHART };
+		return new String[] {XY_AREA_CHART, BAR_CHART, PIE_CHART, HIST_CHART, BUBBLE_CHART, METER_CHART, SCATTER_CHART };
 	}
 	
 	@Override
@@ -181,10 +190,27 @@ public class SimpleAnalyzer extends AbstractAlgorithm {
 		dataset.setNeedle(30.0);
 	}
 	
-	private static void createPiePlot(PieAnalyzedData data) {
-		data.setValue("Zuhause", 25.0);
-		data.setValue("Unterwegs", 60.0);
-		data.setValue("Arbeit", 15.0);
+	private static void createPiePlot(PieAnalyzedData dataset) {
+		dataset.setValue("Zuhause", 25.0);
+		dataset.setValue("Unterwegs", 60.0);
+		dataset.setValue("Arbeit", 15.0);
+	}
+	
+	private static void createXYAreaPlot(XYAreaAnalyedData dataset) {
+		TimeSeries series1 = new TimeSeries("Series1");
+		double value = 0.0;
+		Second sec = new Second();
+		for(int i=0; i < 200; i++) {
+			value = value + Math.random() - 0.5;
+			series1.add(sec, value);
+			sec = (Second) sec.next();
+		}
+		dataset.addSeries(series1);
+		
+		for(int i=0; i < 200; i++) {
+			value = value + Math.random() - 0.5;
+			dataset.addNextPeriod("Series1", value);
+		}
 	}
 
 }

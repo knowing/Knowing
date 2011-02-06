@@ -19,6 +19,9 @@
       <algorithm
             class="de.sendsor.accelerationSensor.algorithm.SimpleAnalyzer">
       </algorithm>
+      <algorithm
+            class="de.sendsor.accelerationSensor.algorithm.ActivityAnalyzer">
+      </algorithm>
    </extension>
 
 </plugin>

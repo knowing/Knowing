@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -104,13 +105,17 @@ public class ClusterUtils {
 	public static RawData convertFromCSV(CSVFileReader reader) throws NumberFormatException, IOException, ParseException {
 		Map<Integer, Class> fields = reader.getDescriptor().getFields();
 		List<Integer> positions = new ArrayList<Integer>();
+		int datePosition = -1;
 		for (Integer position : fields.keySet()) {
 			Class clazz = fields.get(position);
 			if (clazz == Double.class)
 				positions.add(position); // This is a double value
+			else if (clazz == Date.class) 
+				datePosition = position;
 		}
 
-		int dimension = 0;
+		int dimension = 0;	//Reading every dimension separately
+		int size = 0;		//For further reading
 		RawData rawData = new RawData(positions.size());
 		for (Integer position : positions) {
 			List<Double> list = new LinkedList<Double>();
@@ -121,8 +126,23 @@ public class ClusterUtils {
 			}
 			reader = reader.recreate(); // start from beginning
 			rawData.setDimension(dimension++, toArray(list));
+			size = list.size();
 		}
-
+		
+		//Read date fields
+		long[] timestamp = new long[size];
+		if(datePosition != -1) {
+			reader = reader.recreate(); // start from beginning
+			int index = 0;
+			Map<Integer, Object> line = reader.readFieldsToMap();
+			while(line != null && index < size) {
+				Date date = (Date) line.get(datePosition);
+				timestamp[index++] = date.getTime();
+				line = reader.readFieldsToMap();
+			}
+		}
+		rawData.setTimestamp(timestamp);
+		
 		return rawData;
 	}
 
