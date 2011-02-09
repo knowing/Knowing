@@ -1,5 +1,6 @@
 package de.lmu.ifi.dbs.medmon.base.ui.analyzed;
 
+import java.awt.Color;
 import java.awt.Font;
 
 import org.jfree.chart.ChartFactory;
@@ -39,15 +40,16 @@ public class PieAnalyzedData extends AbstractAnalyzedData {
 
 	@Override
 	protected void configurePlot(Plot plot) {
-		PiePlot3D Plot3D = (PiePlot3D) plot;
-		Plot3D.setLabelFont(new Font("SansSerif", Font.PLAIN, 12));
-		Plot3D.setNoDataMessage("No data available");
-		Plot3D.setCircular(false);
-		Plot3D.setLabelGap(0.02);
+		PiePlot3D plot3D = (PiePlot3D) plot;
+		plot3D.setLabelFont(new Font("SansSerif", Font.PLAIN, 12));
+		plot3D.setNoDataMessage("No data available");
+		plot3D.setCircular(false);
+		plot3D.setLabelGap(0.02);
 
-		Plot3D.setStartAngle(270);
-		Plot3D.setDirection(Rotation.ANTICLOCKWISE);
-		Plot3D.setForegroundAlpha(0.60f);
+		plot3D.setStartAngle(270);
+		plot3D.setDirection(Rotation.ANTICLOCKWISE);
+		plot3D.setForegroundAlpha(0.60f);
+		plot3D.setBackgroundPaint(Color.white);
 
 	}
 

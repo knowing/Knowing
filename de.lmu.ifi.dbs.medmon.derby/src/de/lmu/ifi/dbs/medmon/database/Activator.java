@@ -1,11 +1,12 @@
 package de.lmu.ifi.dbs.medmon.database;
 
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.spi.PersistenceProvider;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 import org.osgi.service.jpa.EntityManagerFactoryBuilder;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -50,7 +51,7 @@ public class Activator extends AbstractUIPlugin {
 		emfbTracker = new ServiceTracker(context, EntityManagerFactoryBuilder.class.getName(),
 				JPAUtil.getServiceTrackerCustomizer("medmon", database.getProperties()));
 		emfbTracker.open();
-		
+		startingDBBundles(context);
 	}
 
 	/*
@@ -94,6 +95,32 @@ public class Activator extends AbstractUIPlugin {
 
 	public static ServiceTracker getEmfTracker() {
 		return emfTracker;
+	}
+
+	private void startingDBBundles(BundleContext context) {
+		Bundle[] bundles = context.getBundles();
+		final String jpa = "org.eclipse.gemini.jpa";
+		for (final Bundle bundle : bundles) {
+			if (jpa.equals(bundle.getSymbolicName())) {
+				Runnable startJPA = new Runnable() {
+
+					@Override
+					public void run() {
+						try {
+							System.out.println("##### Trying to start " + jpa);
+							bundle.start();
+							System.out.println("##### Started!");
+						} catch (BundleException e) {
+							e.printStackTrace();
+						}
+					}
+				};
+				Thread thread = new Thread(startJPA);
+				thread.start();
+				
+			}
+		}
+
 	}
 
 }

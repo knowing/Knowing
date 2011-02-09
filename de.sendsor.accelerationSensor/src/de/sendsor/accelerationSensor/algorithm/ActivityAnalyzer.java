@@ -8,6 +8,8 @@ import org.eclipse.core.runtime.Assert;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 
+import de.lmu.ifi.dbs.medmon.base.ui.analyzed.ScatterAnalyzedData;
+import de.lmu.ifi.dbs.medmon.base.ui.analyzed.TimePeriodValuesAnalyzedData;
 import de.lmu.ifi.dbs.medmon.base.ui.analyzed.XYAreaAnalyedData;
 import de.lmu.ifi.dbs.medmon.datamining.core.analyzed.TableAnalyzedData;
 import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
@@ -25,6 +27,8 @@ public class ActivityAnalyzer extends AbstractAlgorithm {
 
 	public static final String NAME = "Activity Visualizer";
 	private static final String ACTIVITY_LEVEL_CHART = "Activity Level";
+	private static final String ACTIVITY_LEVEL_SCATTER = "Activity Scatter";
+	private static final String ACTIVITY_LEVEL_TIME = "Activity-Over-Time";
 
 	private final String X_PARAMETER = "Importance x";
 	private final String Y_PARAMETER = "Importance y";
@@ -42,9 +46,20 @@ public class ActivityAnalyzer extends AbstractAlgorithm {
 	}
 
 	private void init() {
+		//Area dataset
 		XYAreaAnalyedData dataset = new XYAreaAnalyedData();
 		dataset.addSeries(new TimeSeries("Level"));
 		analyzedData.put(ACTIVITY_LEVEL_CHART, dataset);
+		
+		//Scatter dataset
+		ScatterAnalyzedData scatterSet = new ScatterAnalyzedData(ScatterAnalyzedData.PLAIN_DOTS);
+		analyzedData.put(ACTIVITY_LEVEL_SCATTER, scatterSet);
+		
+		//Time dataset
+		TimePeriodValuesAnalyzedData timeSet = new TimePeriodValuesAnalyzedData();
+		analyzedData.put(ACTIVITY_LEVEL_TIME, timeSet);
+		
+		//Table dataset
 		String[] cols= new String[] {"Date", "x", "y", "z", "val", "factors"};
 		analyzedData.put(TABLE_DATA, TableAnalyzedData.getInstance(cols));
 
@@ -60,7 +75,9 @@ public class ActivityAnalyzer extends AbstractAlgorithm {
 	public Map<String, IAnalyzedData> process(RawData data) {
 		Assert.isTrue(data.dimension() == 3);
 		initBalances();
-		XYAreaAnalyedData dataset = (XYAreaAnalyedData) analyzedData.get(ACTIVITY_LEVEL_CHART);
+		XYAreaAnalyedData areaSet = (XYAreaAnalyedData) analyzedData.get(ACTIVITY_LEVEL_CHART);
+		ScatterAnalyzedData scatterSet = (ScatterAnalyzedData) analyzedData.get(ACTIVITY_LEVEL_SCATTER);
+		TimePeriodValuesAnalyzedData timeSet = (TimePeriodValuesAnalyzedData) analyzedData.get(ACTIVITY_LEVEL_TIME);
 		TableAnalyzedData table = (TableAnalyzedData) analyzedData.get(TABLE_DATA);
 		int size = data.getDimension(0).length;
 		int period = 0;
@@ -73,7 +90,16 @@ public class ActivityAnalyzer extends AbstractAlgorithm {
 			if (period == PERIOD_SIZE) {
 				long date = data.getTimestamp()[i];
 				Second second = new Second(new Date(date));
-				dataset.addPeriod("Level", getWeightedValue(x, y, z), second);
+				x /=  PERIOD_SIZE;
+				y /=  PERIOD_SIZE;
+				z /=  PERIOD_SIZE;
+				areaSet.addPeriod("Level", getWeightedValue(x, y, z), second);
+				scatterSet.add("xy", x, y);
+				scatterSet.add("xz", x, z);
+				scatterSet.add("yz", y, z);
+				timeSet.add("x", new Second(new Date(date)), x);
+				timeSet.add("y", new Second(new Date(date)), y);
+				timeSet.add("z", new Second(new Date(date)), z);
 				table.addRow(createRow(x, y, z, date));
 				x = 0;
 				y = 0;
@@ -102,7 +128,7 @@ public class ActivityAnalyzer extends AbstractAlgorithm {
 	}
 
 	private double getWeightedValue(double x, double y, double z) {
-		return (x*xBalance) + (y*yBalance) + (z*zBalance);
+		return (x*xBalance) + (y*yBalance) + (z*zBalance) ;
 	}
 
 	private void initBalances() {
@@ -166,7 +192,7 @@ public class ActivityAnalyzer extends AbstractAlgorithm {
 
 	@Override
 	public String[] analyzedDataKeys() {
-		return new String[] { ACTIVITY_LEVEL_CHART, TABLE_DATA };
+		return new String[] { ACTIVITY_LEVEL_CHART, ACTIVITY_LEVEL_SCATTER, ACTIVITY_LEVEL_TIME, TABLE_DATA };
 	}
 
 }

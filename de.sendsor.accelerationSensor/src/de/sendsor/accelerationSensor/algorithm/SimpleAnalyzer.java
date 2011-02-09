@@ -9,9 +9,9 @@ import java.util.Random;
 
 import org.jfree.chart.plot.MeterInterval;
 import org.jfree.data.Range;
-import org.jfree.data.time.Day;
 import org.jfree.data.time.Hour;
 import org.jfree.data.time.Second;
+import org.jfree.data.time.TimePeriodValues;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.xy.XYSeries;
 
@@ -21,6 +21,7 @@ import de.lmu.ifi.dbs.medmon.base.ui.analyzed.IntervalBarAnalyzedData;
 import de.lmu.ifi.dbs.medmon.base.ui.analyzed.MeterAnalyzedData;
 import de.lmu.ifi.dbs.medmon.base.ui.analyzed.PieAnalyzedData;
 import de.lmu.ifi.dbs.medmon.base.ui.analyzed.ScatterAnalyzedData;
+import de.lmu.ifi.dbs.medmon.base.ui.analyzed.TimePeriodValuesAnalyzedData;
 import de.lmu.ifi.dbs.medmon.base.ui.analyzed.XYAreaAnalyedData;
 import de.lmu.ifi.dbs.medmon.datamining.core.analyzed.EmptyAnalyzedData;
 import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
@@ -39,7 +40,9 @@ public class SimpleAnalyzer extends AbstractAlgorithm {
 	private static final String BUBBLE_CHART = "Bubble-Chart";
 	private static final String METER_CHART = "Meter-Chart";
 	private static final String SCATTER_CHART = "Scatter-Chart";
+	private static final String SCATTER_CHART2 = "Scatter-Chart2";
 	private static final String XY_AREA_CHART = "XY Line Chart";
+	private static final String TIME_SERIES_CHART = "Time Series";
 		
 	public SimpleAnalyzer() {
 		super(NAME, INDEFINITE_DIMENSION, INDEFINITE_DIMENSION);
@@ -82,15 +85,21 @@ public class SimpleAnalyzer extends AbstractAlgorithm {
 		MeterAnalyzedData meterData = new MeterAnalyzedData();
 		createMeterPlot(meterData);
 		
-		ScatterAnalyzedData scatterData = new ScatterAnalyzedData();
-		createScatterPlot(scatterData);
+		ScatterAnalyzedData scatterData1 = new ScatterAnalyzedData();
+		createScatterPlot(scatterData1);
+		
+		ScatterAnalyzedData scatterData2 = new ScatterAnalyzedData(ScatterAnalyzedData.PLAIN_DOTS);
+		createScatterPlot(scatterData2);
 		
 		PieAnalyzedData pieData = new PieAnalyzedData();
 		createPiePlot(pieData);
 		
 		XYAreaAnalyedData xyareaData = new XYAreaAnalyedData();
 		createXYAreaPlot(xyareaData);
-		analyzedData.put(XY_AREA_CHART, xyareaData);
+		
+		TimePeriodValuesAnalyzedData timeSet = new TimePeriodValuesAnalyzedData();
+		createTimeSeriesPlot(timeSet);
+		
 
 		analyzedData.put(DEFAULT_DATA, meterData);
 	
@@ -98,11 +107,16 @@ public class SimpleAnalyzer extends AbstractAlgorithm {
 		analyzedData.put(HIST_CHART, histData);
 		analyzedData.put(BUBBLE_CHART, bubbleData);
 		analyzedData.put(METER_CHART, meterData);
-		analyzedData.put(SCATTER_CHART, scatterData);
+		analyzedData.put(SCATTER_CHART, scatterData1);
+		analyzedData.put(SCATTER_CHART2, scatterData2);
 		analyzedData.put(PIE_CHART, pieData);
+		analyzedData.put(XY_AREA_CHART, xyareaData);
+		analyzedData.put(TIME_SERIES_CHART, timeSet);
+		
 		return analyzedData;
 	}
-	
+
+
 	@Override
 	public Map<String, IAnalyzedData> process(RawData data, Map<String, IAnalyzedData> analyzedData) {
 		return analyzedData;
@@ -110,7 +124,7 @@ public class SimpleAnalyzer extends AbstractAlgorithm {
 	
 	@Override
 	public String[] analyzedDataKeys() {
-		return new String[] {XY_AREA_CHART, BAR_CHART, PIE_CHART, HIST_CHART, BUBBLE_CHART, METER_CHART, SCATTER_CHART };
+		return new String[] {XY_AREA_CHART, BAR_CHART, PIE_CHART, HIST_CHART, BUBBLE_CHART, METER_CHART, SCATTER_CHART, SCATTER_CHART2, TIME_SERIES_CHART};
 	}
 	
 	@Override
@@ -211,6 +225,28 @@ public class SimpleAnalyzer extends AbstractAlgorithm {
 			value = value + Math.random() - 0.5;
 			dataset.addNextPeriod("Series1", value);
 		}
+	}
+	
+	
+	private static void createTimeSeriesPlot(TimePeriodValuesAnalyzedData timeSet) {
+		TimePeriodValues series1 = new TimePeriodValues("V1");
+		double value = 0.0;
+		Second sec1 = new Second();
+		Second sec2 = new Second();
+		for(int i=0; i < 200; i++) {
+			value = value + Math.random() - 0.5;
+			series1.add(sec1, value);
+			sec1 = (Second) sec1.next();
+		}
+		TimePeriodValues series2 = new TimePeriodValues("V2");
+		
+		for(int i=0; i < 200; i++) {
+			value = value + Math.random() - 0.5;
+			series2.add(sec2, value);
+			sec2 = (Second) sec2.next();
+		}
+		timeSet.addSeries(series1);
+		timeSet.addSeries(series2);
 	}
 
 }

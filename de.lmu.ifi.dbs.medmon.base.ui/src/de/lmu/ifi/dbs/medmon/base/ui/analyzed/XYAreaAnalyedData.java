@@ -1,5 +1,6 @@
 package de.lmu.ifi.dbs.medmon.base.ui.analyzed;
 
+import java.awt.Color;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
@@ -73,6 +74,9 @@ public class XYAreaAnalyedData extends AbstractXYAnalyzedData {
 		domainAxis.setUpperMargin(0.0);
 		plotXY.setDomainAxis(domainAxis);
 		plotXY.setForegroundAlpha(0.5f);
+		plotXY.setBackgroundPaint(Color.white);
+		plotXY.setDomainGridlinePaint(Color.lightGray);
+		plotXY.setRangeGridlinePaint(Color.lightGray);
 
 		XYItemRenderer renderer = plotXY.getRenderer();
 		renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator(

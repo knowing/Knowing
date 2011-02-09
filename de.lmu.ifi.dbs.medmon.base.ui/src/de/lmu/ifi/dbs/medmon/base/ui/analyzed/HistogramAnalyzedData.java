@@ -1,5 +1,7 @@
 package de.lmu.ifi.dbs.medmon.base.ui.analyzed;
 
+import java.awt.Color;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.Plot;
@@ -55,6 +57,9 @@ public class HistogramAnalyzedData extends AbstractXYAnalyzedData {
 		
 		plotXY.setForegroundAlpha(0.85f);
 		plotXY.setOrientation(PlotOrientation.VERTICAL);
+		plotXY.setBackgroundPaint(Color.white);
+		plotXY.setDomainGridlinePaint(Color.lightGray);
+		plotXY.setRangeGridlinePaint(Color.lightGray);
 
 	}
 

@@ -66,6 +66,9 @@ public class BubbleAnalyzedData extends AbstractXYAnalyzedData {
 		
 		plotXY.setForegroundAlpha(0.65f);
 		plotXY.setOrientation(PlotOrientation.HORIZONTAL);
+		plotXY.setBackgroundPaint(Color.white);
+		plotXY.setDomainGridlinePaint(Color.lightGray);
+		plotXY.setRangeGridlinePaint(Color.lightGray);
 
 	}
 
