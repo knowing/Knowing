@@ -46,21 +46,21 @@ public class ActivityAnalyzer extends AbstractAlgorithm {
 	}
 
 	private void init() {
-		//Area dataset
+		// Area dataset
 		XYAreaAnalyedData dataset = new XYAreaAnalyedData();
 		dataset.addSeries(new TimeSeries("Level"));
 		analyzedData.put(ACTIVITY_LEVEL_CHART, dataset);
-		
-		//Scatter dataset
+
+		// Scatter dataset
 		ScatterAnalyzedData scatterSet = new ScatterAnalyzedData(ScatterAnalyzedData.PLAIN_DOTS);
 		analyzedData.put(ACTIVITY_LEVEL_SCATTER, scatterSet);
-		
-		//Time dataset
+
+		// Time dataset
 		TimePeriodValuesAnalyzedData timeSet = new TimePeriodValuesAnalyzedData();
 		analyzedData.put(ACTIVITY_LEVEL_TIME, timeSet);
-		
-		//Table dataset
-		String[] cols= new String[] {"Date", "x", "y", "z", "val", "factors"};
+
+		// Table dataset
+		String[] cols = new String[] { "Date", "x", "y", "z", "val", "factors" };
 		analyzedData.put(TABLE_DATA, TableAnalyzedData.getInstance(cols));
 
 		parameters.put(X_PARAMETER, new NumericParameter(X_PARAMETER, 0, 100, 100));
@@ -82,6 +82,8 @@ public class ActivityAnalyzer extends AbstractAlgorithm {
 		int size = data.getDimension(0).length;
 		int period = 0;
 
+		//Values
+		long lastTimestamp = data.getTimestamp()[0];
 		int x = 0;
 		int y = 0;
 		int z = 0;
@@ -89,18 +91,15 @@ public class ActivityAnalyzer extends AbstractAlgorithm {
 		for (int i = 0; i < size; i++) {
 			if (period == PERIOD_SIZE) {
 				long date = data.getTimestamp()[i];
-				Second second = new Second(new Date(date));
-				x /=  PERIOD_SIZE;
-				y /=  PERIOD_SIZE;
-				z /=  PERIOD_SIZE;
-				areaSet.addPeriod("Level", getWeightedValue(x, y, z), second);
-				scatterSet.add("xy", x, y);
-				scatterSet.add("xz", x, z);
-				scatterSet.add("yz", y, z);
-				timeSet.add("x", new Second(new Date(date)), x);
-				timeSet.add("y", new Second(new Date(date)), y);
-				timeSet.add("z", new Second(new Date(date)), z);
-				table.addRow(createRow(x, y, z, date));
+				if(Math.abs(date - lastTimestamp) > 2000) {
+					add(0, 0, 0, lastTimestamp + 1000);
+					add(0, 0, 0, date-1000);
+				}
+				lastTimestamp = date;
+				x /= PERIOD_SIZE;
+				y /= PERIOD_SIZE;
+				z /= PERIOD_SIZE;
+				add(x, y, z, date);
 				x = 0;
 				y = 0;
 				z = 0;
@@ -115,9 +114,25 @@ public class ActivityAnalyzer extends AbstractAlgorithm {
 		return analyzedData;
 	}
 	
+	private void add(double x, double y, double z, long date) {
+		XYAreaAnalyedData areaSet = (XYAreaAnalyedData) analyzedData.get(ACTIVITY_LEVEL_CHART);
+		ScatterAnalyzedData scatterSet = (ScatterAnalyzedData) analyzedData.get(ACTIVITY_LEVEL_SCATTER);
+		TimePeriodValuesAnalyzedData timeSet = (TimePeriodValuesAnalyzedData) analyzedData.get(ACTIVITY_LEVEL_TIME);
+		TableAnalyzedData table = (TableAnalyzedData) analyzedData.get(TABLE_DATA);
+		Second second = new Second(new Date(date));
+		areaSet.addPeriod("Level", getWeightedValue(x, y, z), second);
+		scatterSet.add("xy", x, y);
+		scatterSet.add("xz", x, z);
+		scatterSet.add("yz", y, z);
+		timeSet.add("x", second, x);
+		timeSet.add("y", second, y);
+		timeSet.add("z", second, z);
+		table.addRow(createRow(x, y, z, date));
+	}
+
 	private String[] createRow(double x, double y, double z, long date) {
 		String[] row = new String[6];
-		DateFormat df = DateFormat.getTimeInstance(DateFormat.SHORT);
+		DateFormat df = DateFormat.getTimeInstance(DateFormat.MEDIUM);
 		row[0] = df.format(new Date(date));
 		row[1] = String.valueOf(x);
 		row[2] = String.valueOf(y);
@@ -128,7 +143,7 @@ public class ActivityAnalyzer extends AbstractAlgorithm {
 	}
 
 	private double getWeightedValue(double x, double y, double z) {
-		return (x*xBalance) + (y*yBalance) + (z*zBalance) ;
+		return (x * xBalance) + (y * yBalance) + (z * zBalance);
 	}
 
 	private void initBalances() {
@@ -140,43 +155,43 @@ public class ActivityAnalyzer extends AbstractAlgorithm {
 		if (xWeight + yWeight + zWeight == 300)
 			return;
 
-		//z reduced
-		if (zWeight < 100 && yWeight == 100 && xWeight == 100) { 
-			//z reduced
+		// z reduced
+		if (zWeight < 100 && yWeight == 100 && xWeight == 100) {
+			// z reduced
 			zBalance = ((double) zWeight) / 100.0;
 			double diff = (100.0 - zWeight) / 2.0;
 			yBalance = (yWeight + diff) / 100.0;
 			xBalance = (xWeight + diff) / 100.0;
 		} else if (yWeight < 100 && zWeight == 100 && xWeight == 100) {
-			//y reduced
+			// y reduced
 			yBalance = ((double) yWeight) / 100.0;
 			double diff = (100.0 - yWeight) / 2.0;
 			zBalance = (zWeight + diff) / 100.0;
 			xBalance = (xWeight + diff) / 100.0;
 		} else if (xWeight < 100 && zWeight == 100 && yWeight == 100) {
-			//x reduced
+			// x reduced
 			xBalance = ((double) xWeight) / 100.0;
 			double diff = (100.0 - xWeight) / 2.0;
 			zBalance = (zWeight + diff) / 100.0;
 			yBalance = (yWeight + diff) / 100.0;
-		}  else if (xWeight < 100 && yWeight < 100 && zWeight == 100) {
-			//x,y reduced
+		} else if (xWeight < 100 && yWeight < 100 && zWeight == 100) {
+			// x,y reduced
 			xBalance = ((double) xWeight) / 100.0;
 			yBalance = ((double) yWeight) / 100.0;
 			double diff = (100.0 - xWeight) + ((100.0 - yWeight));
-			zBalance = (zWeight + diff) / 100.0;		
-		}  else if (xWeight < 100 && yWeight < 100 && zWeight == 100) {
-			//x,z reduced
+			zBalance = (zWeight + diff) / 100.0;
+		} else if (xWeight < 100 && yWeight < 100 && zWeight == 100) {
+			// x,z reduced
 			xBalance = ((double) xWeight) / 100.0;
 			zBalance = ((double) zWeight) / 100.0;
 			double diff = (100.0 - xWeight) + ((100.0 - zWeight));
-			yBalance = (yWeight + diff) / 100.0;		
-		}  else if (xWeight < 100 && yWeight < 100 && zWeight == 100) {
-			//y,z reduced
+			yBalance = (yWeight + diff) / 100.0;
+		} else if (xWeight < 100 && yWeight < 100 && zWeight == 100) {
+			// y,z reduced
 			yBalance = ((double) yWeight) / 100.0;
 			zBalance = ((double) zWeight) / 100.0;
 			double diff = (100.0 - zWeight) + ((100.0 - yWeight));
-			yBalance = (yWeight + diff) / 100.0;		
+			yBalance = (yWeight + diff) / 100.0;
 		}
 	}
 

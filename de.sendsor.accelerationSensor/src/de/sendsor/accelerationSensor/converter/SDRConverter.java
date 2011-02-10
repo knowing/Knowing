@@ -51,7 +51,7 @@ public class SDRConverter extends AbstractConverter<Data> {
 
 		// Initialize data handling
 		RandomAccessFile in = new RandomAccessFile(file, "r");
-		List<Block> blocklist = new LinkedList<Block>();
+		LinkedList<Block> blocklist = new LinkedList<Block>();
 
 		// Initialize position handling
 		int begin = 0;
@@ -92,6 +92,12 @@ public class SDRConverter extends AbstractConverter<Data> {
 			if (startDate.get(calendarConstant) != endDate.get(calendarConstant)) {
 				log.fine("-----------------------------");
 				log.fine("Start: " + startDate.getTime() + " End: " + compareDate.getTime());
+				if(blocklist.size() > 1) {
+					Block lastBlock = blocklist.getLast();
+					if(lastBlock.getEnd() > startDate.getTimeInMillis())
+						break;
+				}
+	
 				Block block = new Block(file, blockBegin, blockOffset, startDate.getTime(), compareDate.getTime());
 				blocklist.add(block);
 				blockBegin = blockOffset + 1;

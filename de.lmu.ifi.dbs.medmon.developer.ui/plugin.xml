@@ -11,6 +11,11 @@
                label="Open DPU"
                style="push">
          </command>
+         <command
+               commandId="org.eclipse.ui.file.import"
+               label="Import"
+               style="push">
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -216,6 +221,14 @@
             commandId="de.lmu.ifi.dbs.medmon.developer.ui.exportDPU"
             icon="icons/document-export_16.png">
       </image>
+   </extension>
+   <extension
+         point="org.eclipse.ui.importWizards">
+      <wizard
+            class="de.lmu.ifi.dbs.medmon.developer.ui.wizard.ImportCSVWizard"
+            id="de.lmu.ifi.dbs.medmon.developer.ui.csv.import"
+            name="CSV Import">
+      </wizard>
    </extension>
 
 </plugin>
