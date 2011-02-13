@@ -35,14 +35,13 @@ import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.util.FrameworkUtil;
+import de.lmu.ifi.dbs.medmon.developer.ui.Activator;
 import de.lmu.ifi.dbs.medmon.developer.ui.dnd.ProcessorDragListener;
 import de.lmu.ifi.dbs.medmon.developer.ui.dnd.ProcessorDropListener;
 import de.lmu.ifi.dbs.medmon.developer.ui.dnd.ProcessorTransfer;
 import de.lmu.ifi.dbs.medmon.developer.ui.provider.DPUContentProvider;
 import de.lmu.ifi.dbs.medmon.developer.ui.provider.ProcessorsContentProvider;
 import de.lmu.ifi.dbs.medmon.developer.ui.provider.ProcessorsLabelProvider;
-import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
-import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 
 public class DPUEditor extends EditorPart {
 
@@ -141,7 +140,7 @@ public class DPUEditor extends EditorPart {
 		ImageHyperlink linkRunDpu = toolkit.createImageHyperlink(composite, SWT.NONE);
 		toolkit.paintBordersFor(linkRunDpu);
 		linkRunDpu.setText("Run DPU");
-		linkRunDpu.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_PLAY_24));
+		linkRunDpu.setImage(Activator.getImageDescriptor("icons/run_24.png").createImage());
 		linkRunDpu.addHyperlinkListener(controller);
 		new Label(body, SWT.NONE);
 

@@ -1,10 +1,6 @@
 package de.lmu.ifi.dbs.medmon.developer.ui.wizard;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -15,11 +11,7 @@ import org.eclipse.ui.IWorkbench;
 
 import de.lmu.ifi.dbs.medmon.base.ui.widgets.SensorSourceWidget;
 import de.lmu.ifi.dbs.medmon.base.ui.wizard.pages.SelectDataSourcePage;
-import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
 import de.lmu.ifi.dbs.medmon.datamining.core.csv.io.CSVFileWriter;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.internal.DataConverter;
-import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
-import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
 
 public class ImportCSVWizard extends Wizard implements IImportWizard {
 
@@ -47,7 +39,7 @@ public class ImportCSVWizard extends Wizard implements IImportWizard {
 			CSVFileWriter writer = new CSVFileWriter(path);
 			
 
-			ISensorDataContainer container = cfg.getSensor().getData();
+/*			ISensorDataContainer container = cfg.getSensor().getData();
 			IConverter converter = cfg.getSensor().getSensorExtension().getConverter();
 			DateFormat df = DateFormat.getDateTimeInstance();
 			for (ISensorDataContainer c : container.getChildren()) {
@@ -66,7 +58,7 @@ public class ImportCSVWizard extends Wizard implements IImportWizard {
 						writer.writeFields(list);
 					}
 				}
-			}
+			}*/
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();

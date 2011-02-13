@@ -19,7 +19,6 @@ import de.lmu.ifi.dbs.medmon.datamining.core.cluster.ClusterUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.cluster.DoubleCluster;
 import de.lmu.ifi.dbs.medmon.datamining.core.clustering.TrainCluster;
 import de.lmu.ifi.dbs.medmon.developer.ui.wizard.pages.ClusterWizardPage;
-import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 
 public class ClusterWizard extends Wizard implements IWorkbenchWizard {
 
@@ -62,8 +61,8 @@ public class ClusterWizard extends Wizard implements IWorkbenchWizard {
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			m.marshal(clusterUnit, System.out);
-
-			File clusterUnitXML = new File(IMedmonConstants.DIR_CU + File.separator	+ clusterUnit.getName() + ".xml");
+			String user = System.getProperty("user.home");
+			File clusterUnitXML = new File(user+ File.separator	+ clusterUnit.getName() + ".xml");
 			clusterUnitXML.createNewFile();
 			m.marshal(clusterUnit, clusterUnitXML);
 		} catch (JAXBException e) {

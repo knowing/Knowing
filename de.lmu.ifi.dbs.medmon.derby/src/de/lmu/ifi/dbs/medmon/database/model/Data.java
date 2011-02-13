@@ -16,14 +16,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import de.lmu.ifi.dbs.medmon.datamining.core.annotations.SensorDataClass;
-
 
 /**
  * The persistent class for the DATA database table.
  * 
  */
-@SensorDataClass(dimension = 3)
 @Entity
 @Table(name="DATA")
 @NamedQueries({

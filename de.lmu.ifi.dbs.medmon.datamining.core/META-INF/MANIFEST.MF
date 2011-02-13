@@ -9,10 +9,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.debug.core;bundle-version="3.6.0",
  org.eclipse.jface;bundle-version="3.6.1",
  org.eclipse.swt;bundle-version="3.6.1",
- de.lmu.ifi.dbs.medmon.rcp;bundle-version="1.0.0",
- de.lmu.ifi.dbs.elki.libs;bundle-version="1.0.0",
  org.eclipse.ui;bundle-version="3.6.1",
- org.eclipse.ui.views.properties.tabbed;bundle-version="3.5.100"
+ org.eclipse.ui.views.properties.tabbed;bundle-version="3.5.100",
+ de.lmu.ifi.dbs.elki.libs;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.lmu.ifi.dbs.medmon.datamining.core.analyzed,
