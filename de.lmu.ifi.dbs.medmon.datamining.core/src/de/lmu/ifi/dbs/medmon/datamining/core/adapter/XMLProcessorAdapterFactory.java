@@ -3,7 +3,6 @@ package de.lmu.ifi.dbs.medmon.datamining.core.adapter;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.views.properties.IPropertySource;
-import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.property.DataProcessorElement;

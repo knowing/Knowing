@@ -15,7 +15,8 @@ public class ParameterAdapter extends XmlAdapter<XMLParameterWrapper[], Map<Stri
 	@Override
 	public Map<String, IProcessorParameter> unmarshal(XMLParameterWrapper[] v) throws Exception {
 		Map<String, IProcessorParameter> returns = new HashMap<String, IProcessorParameter>();
-		
+		if(v == null)
+			return returns;
 		for (XMLParameterWrapper wrapper : v) {
 			String type = wrapper.getType();
 			if(type.equals(IProcessorParameter.INT_TYPE)) {
@@ -43,6 +44,8 @@ public class ParameterAdapter extends XmlAdapter<XMLParameterWrapper[], Map<Stri
 
 	@Override
 	public XMLParameterWrapper[] marshal(Map<String, IProcessorParameter> v) throws Exception {
+		if(v == null || v.isEmpty())
+			return new XMLParameterWrapper[0];
 		XMLParameterWrapper[] returns = new XMLParameterWrapper[v.keySet().size()];
 		int index = 0;
 		for (String key : v.keySet()) {
