@@ -2,6 +2,7 @@ package de.lmu.ifi.dbs.medmon.datamining.core.util;
 
 import de.lmu.ifi.dbs.utilities.Arrays2;
 import java.util.List;
+import java.util.Locale;
 
 public class LabeledDoubleFeature {
 
@@ -44,6 +45,6 @@ public class LabeledDoubleFeature {
 
     @Override
     public String toString() {
-        return "{" + "values=" + Arrays2.join(values, ",", "%.2f") + ", label=" + label + '}';
+        return "{" + "values=" + Arrays2.join(values, ",", "%.2f",Locale.US) + ", label=" + label + '}';
     }
 }
