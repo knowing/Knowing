@@ -1,22 +1,17 @@
-package de.lmu.ifi.dbs.medmon.datamining.core.adapter;
+package de.lmu.ifi.dbs.medmon.developer.ui.adapter;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-import de.lmu.ifi.dbs.medmon.datamining.core.Activator;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
+import de.lmu.ifi.dbs.medmon.developer.ui.graph.Edges;
 
-public class DPUAdapterFactory implements IAdapterFactory {
+public class EdgesAdapterFactory implements IAdapterFactory {
 
-	private static final Class[] types = new Class[] { IWorkbenchAdapter.class };
-
+	private static final Class[] clazz = new Class[] { IWorkbenchAdapter.class };
+	
 	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		if(!(adaptableObject instanceof DataProcessingUnit)) 
-			return null;
-		
-		DataProcessingUnit dpu = (DataProcessingUnit) adaptableObject;
 		if(adapterType.equals(IWorkbenchAdapter.class)) {
 			return new IWorkbenchAdapter() {
 				
@@ -27,27 +22,26 @@ public class DPUAdapterFactory implements IAdapterFactory {
 				
 				@Override
 				public String getLabel(Object o) {
-					return ((DataProcessingUnit) o).getName();
+					return o.toString();
 				}
 				
 				@Override
 				public ImageDescriptor getImageDescriptor(Object object) {
-					return Activator.getImageDescriptor("icons/dpu_16.png");
+					return null;
 				}
 				
 				@Override
 				public Object[] getChildren(Object o) {
-					return new Object[0];
+					return ((Edges)o).toArray();
 				}
 			};
 		}
-		
 		return null;
 	}
 
 	@Override
 	public Class[] getAdapterList() {
-		return types ;
+		return clazz;
 	}
 
 }

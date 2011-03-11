@@ -14,7 +14,14 @@ public class ProcessEvent {
 	private int status;
 	
 	private Map<String, IAnalyzedData> result;
-		
+	
+	private Object source;
+			
+	public ProcessEvent(Object source, int status) {
+		this.status = status;
+		this.source = source;
+	}
+
 	public ProcessEvent(IDataProcessor processor, int status, Map<String, IAnalyzedData> result) {
 		this.processor = processor;
 		this.status = status;
@@ -36,4 +43,23 @@ public class ProcessEvent {
 	public Map<String, IAnalyzedData> getResult() {
 		return result;
 	}
+	
+	public Object getSource() {
+		if(source == null)
+			return processor;
+		return source;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ProcessEvent [processor=");
+		builder.append(processor);
+		builder.append(", status=");
+		builder.append(status);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 }

@@ -1,36 +1,46 @@
 package de.lmu.ifi.dbs.medmon.datamining.core.processing.graph;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
+import org.eclipse.core.runtime.ListenerList;
+
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.IProcessListener;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.ProcessEvent;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProcessorNode {
+public class ProcessorNode extends Node implements IProcessListener {
 
-	private transient List<Edge> edgesIn = new ArrayList<Edge>();
-	private transient List<Edge> edgesOut = new ArrayList<Edge>();
+	private transient IDataProcessor iProcessor;
+
+	private final transient ListenerList listeners = new ListenerList();
 
 	@XmlElement
 	private XMLDataProcessor processor;
 
-	@XmlAttribute
-	private String nodeId;
-
-	private transient int id;
 
 	protected ProcessorNode() {
 	}
 
-	public ProcessorNode(XMLDataProcessor processor, int id) {
+	public ProcessorNode(XMLDataProcessor processor) {
 		this.processor = processor;
-		this.id = id;
-		this.nodeId = processor.getId() + id;
+		this.setNodeId(processor.getId());
+	}
+
+	
+	@Override
+	public String getName() {
+		return processor.getName();
+	}
+
+	@Override
+	public Object getData() {
+		return processor;
 	}
 
 	public List<Edge> getEdgesIn() {
@@ -55,37 +65,71 @@ public class ProcessorNode {
 
 	public void setProcessor(XMLDataProcessor processor) {
 		this.processor = processor;
-		nodeId = processor.getId() + id;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+
+	/* ================ */
+	/* == Processing == */
+	/* ================ */
+
+	public void process() {
+		System.out.println("ProcessorNode.process(): " );
+		// Map<String, IAnalyzedData> result = event.getResult();
+		// IProcessor.setLoader(result);
+		// if(iProcessor.isReady)
+		iProcessor = processor.loadProcessor();
+		if (!iProcessor.isReady())
+			return;
+		iProcessor.addProcessListener(this);
+		
+		//Others can prepare to get data
+		fireProcessEvent(ProcessEvent.RUNNING);
+		new Thread(iProcessor).start();
 	}
 
-	public int getId() {
-		return id;
+	@Override
+	public void processChanged(ProcessEvent event) {
+		//System.out.println("ProcessorNode.processChanged() in " + id + " :" + event);
+		if (event.getSource().equals(iProcessor)) {
+			fireProcessEvent(ProcessEvent.FINISHED);
+			iProcessor.removeProcessListener(this);
+			iProcessor = null;
+		} else if(event.getSource() instanceof ProcessorNode) {
+			
+			switch (event.getStatus()) {
+			case ProcessEvent.FINISHED:
+				System.out.println("Started by " + ((ProcessorNode)event.getSource()));
+				process();
+				break;
+			case ProcessEvent.RUNNING:
+				break;
+			case ProcessEvent.WAITING:
+				break;
+			}
+		}
+
+	}
+	
+	
+	public void addProcessListener(IProcessListener listener) {
+		listeners.add(listener);
 	}
 
-	public String getNodeId() {
-		return nodeId;
+	public void removeProcessListener(IProcessListener listener) {
+		listeners.remove(listener);
+	}
+
+	protected void fireProcessEvent(int status) {
+		ProcessEvent event = new ProcessEvent(this, status);
+		for (Object l : listeners.getListeners()) {
+			((IProcessListener) l).processChanged(event);
+		}
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("ProcessorNode ");
-		builder.append("[nodeId=");
-		builder.append(nodeId);
-		builder.append(", \n edgesIn=");
-		builder.append(edgesIn);
-		builder.append(", \n edgesOut=");
-		builder.append(edgesOut);
-		builder.append("]");
-		return builder.toString();
+		return getNodeId() + "@" + hashCode();
 	}
-	
-	
-	
-	
+
 
 }

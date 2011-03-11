@@ -1,12 +1,16 @@
 package de.lmu.ifi.dbs.medmon.datamining.core.processing;
 
 import java.util.Map;
+import java.util.Properties;
 
+import weka.core.Capabilities;
+import weka.core.Instances;
+import weka.core.converters.Loader;
 import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
 
 
-public interface IDataProcessor {
+public interface IDataProcessor extends Runnable {
 	
 	public static final String PROCESSOR_ID = "de.lmu.ifi.dbs.medmon.dataminig.core.processor";
 	public static final int INDEFINITE_DIMENSION = -1;
@@ -55,5 +59,26 @@ public interface IDataProcessor {
 	public String getVersion();
 	
 	public String getId();
+	
+	/* ==================== */
+	/* == XDataProcessor == */
+	/* ==================== */
+	
+	public IDataProcessor getInstance(Properties properties);
+	
+	public Capabilities getCapabilities();
+	
+	public void addProcessListener(IProcessListener listener);
+	
+	public void removeProcessListener(IProcessListener listener);
+	
+	public boolean isReady();
+	
+	public boolean isFinished();
+	
+	public void setLoader(Loader loader);
+	
+	public Instances getResult();
+	
 	
 }

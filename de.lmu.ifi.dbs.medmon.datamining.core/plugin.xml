@@ -58,6 +58,20 @@
                type="org.eclipse.ui.model.IWorkbenchAdapter">
          </adapter>
       </factory>
+      <factory
+            adaptableType="de.lmu.ifi.dbs.medmon.datamining.core.processing.graph.ProcessorNode"
+            class="de.lmu.ifi.dbs.medmon.datamining.core.adapter.NodeAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="de.lmu.ifi.dbs.medmon.datamining.core.processing.graph.Edge"
+            class="de.lmu.ifi.dbs.medmon.datamining.core.adapter.EdgeAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+      </factory>
    </extension>
 
 

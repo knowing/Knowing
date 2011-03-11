@@ -26,9 +26,13 @@ public class XDataProcessingUnit {
 	@XmlElement
 	private String tags;
 
-	@XmlJavaTypeAdapter(NodeAdapter.class)
+	@XmlJavaTypeAdapter(ProcessorNodeAdapter.class)
 	@XmlElement(name = "processorNode")
 	private Map<String, ProcessorNode> nodes;
+	
+	@XmlJavaTypeAdapter(InputNodeAdapter.class)
+	@XmlElement(name = "inputNode")
+	private Map<String, InputNode> inputNodes;
 
 	@XmlElementWrapper(name = "edges")
 	@XmlElement(name = "edge")
@@ -36,6 +40,7 @@ public class XDataProcessingUnit {
 
 	public XDataProcessingUnit() {
 		nodes = new HashMap<String, ProcessorNode>();
+		inputNodes = new HashMap<String, InputNode>();
 		edges = new ArrayList<Edge>();
 	}
 
@@ -46,39 +51,7 @@ public class XDataProcessingUnit {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	public Map<String, ProcessorNode> getNodes() {
-		return nodes;
-	}
-
-	protected void setNodes(Map<String, ProcessorNode> nodes) {
-		this.nodes = nodes;
-	}
-
-	public List<Edge> getEdges() {
-		return edges;
-	}
-
-	public ProcessorNode addNode(ProcessorNode node) {
-		int id = node.getId();
-		ProcessorNode n = nodes.get(node.getNodeId());
-		while (n != null) {
-			node.setId(id++);
-			n = nodes.get(node.getNodeId());
-		}
-		node.setId(id++);
-		return nodes.put(node.getNodeId(), node);
-	}
-
-	public void addNodes(List<ProcessorNode> nodes) {
-		for (ProcessorNode node : nodes)
-			addNode(node);
-	}
-
-	public void setEdges(List<Edge> edges) {
-		this.edges = edges;
-	}
-
+	
 	public String getDescription() {
 		return description;
 	}
@@ -98,6 +71,59 @@ public class XDataProcessingUnit {
 	public void addTag(String tag) {
 		tags += "," + tag;
 	}
+	
+	/* ==================== */
+	/* ======= Edges ====== */
+	/* ==================== */
+	
+
+	public List<Edge> getEdges() {
+		return edges;
+	}
+	
+	public void setEdges(List<Edge> edges) {
+		this.edges = edges;
+	}
+
+	/* ==================== */
+	/* == ProcessorNodes == */
+	/* ==================== */
+	
+	public Map<String, ProcessorNode> getNodes() {
+		return nodes;
+	}
+
+	protected void setNodes(Map<String, ProcessorNode> nodes) {
+		this.nodes = nodes;
+	}
+	
+	public Node addNode(Node node) {
+		String nodeId = node.getNodeId();
+		Node n = nodes.get(node.getNodeId());
+		int i = 1;
+		while (n != null) {
+			node.setNodeId(nodeId + i++);
+			n = nodes.get(node.getNodeId());
+		}
+		if(node instanceof InputNode)
+			return inputNodes.put(node.getNodeId(), (InputNode) node);
+		else if(node instanceof ProcessorNode)
+			return nodes.put(node.getNodeId(), (ProcessorNode) node);
+		return null;
+	}
+	
+	/* ===================== */
+	/* ==== Input Nodes ==== */
+	/* ===================== */
+	
+	public void setInputNodes(Map<String, InputNode> inputNodes) {
+		this.inputNodes = inputNodes;
+	}
+
+	public Map<String, InputNode> getInputNodes() {
+		return inputNodes;
+	}
+
 
 	/* ====================== */
 	/* == Processing Graph == */
@@ -105,24 +131,22 @@ public class XDataProcessingUnit {
 
 	public void buildGraph() {
 		//TODO buildGraph() remove unused nodes
-		//Go through all nodes
-		for (ProcessorNode node : nodes.values()) {
-			String id = node.getNodeId();
-			//Go through all edges
-			for (Edge edge : edges) {
-				if (edge.getSourceID().equals(id)) {
-					//Connect Node and outgoing edge
-					node.getEdgesOut().add(edge);
-					edge.setSource(node);
-				} else if (edge.getTargetID().equals(id)) {
-					//Connect Node and incoming edge
-					node.getEdgesIn().add(edge);
-					edge.setTarget(node);
-				}				
-			}
-		}
-		
-		System.out.println("Graph builded");
+		//Link all Nodes	
+/*		for (Edge edge : edges) {
+			String sourceID = edge.getSourceID();
+			String targetID = edge.getTargetID();
+			ProcessorNode sourceNode = nodes.get(sourceID);
+			ProcessorNode targetNode = nodes.get(targetID);
+			
+			edge.setSource(sourceNode);
+			edge.setTarget(targetNode);
+			
+			sourceNode.getEdgesOut().add(edge);
+			targetNode.getEdgesIn().add(edge);
+			
+			//targetNode.addProcessListener(sourceNode);
+			sourceNode.addProcessListener(targetNode);
+		}*/
 
 	}
 	
@@ -133,7 +157,7 @@ public class XDataProcessingUnit {
 		sb.append(name);
 		sb.append("\n");
 		
-		for (ProcessorNode node : nodes.values()) {
+		for (Node node : nodes.values()) {
 			sb.append("[node: ");
 			sb.append(node);
 			sb.append("\n");
@@ -141,4 +165,5 @@ public class XDataProcessingUnit {
 		
 		return sb.toString();
 	}
+
 }

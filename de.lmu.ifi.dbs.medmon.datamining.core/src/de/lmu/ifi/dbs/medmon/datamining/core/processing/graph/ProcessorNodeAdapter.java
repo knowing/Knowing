@@ -5,11 +5,10 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-public class NodeAdapter extends XmlAdapter<ProcessorNode[], Map<String, ProcessorNode>> {
+public class ProcessorNodeAdapter extends XmlAdapter<ProcessorNode[], Map<String, ProcessorNode>> {
 
 	@Override
 	public Map<String, ProcessorNode> unmarshal(ProcessorNode[] v) throws Exception {
-		System.out.println("NodeAdapter.unmarshal()");
 		Map<String, ProcessorNode> returns = new HashMap<String, ProcessorNode>();
 		if(v == null || v.length == 0)
 			return returns;
@@ -21,17 +20,10 @@ public class NodeAdapter extends XmlAdapter<ProcessorNode[], Map<String, Process
 
 	@Override
 	public ProcessorNode[] marshal(Map<String, ProcessorNode> v) throws Exception {
-		System.out.println("NodeAdapter.marshal()");
-		System.out.println("Map: " + v); 
 		if(v == null || v.isEmpty())
 			return new ProcessorNode[0];
 		
-		ProcessorNode[] returns = new ProcessorNode[v.keySet().size()];
-		int index = 0;
-		for (String key : v.keySet()) 
-			returns[index++] = v.get(key);
-		
-		return returns;
+		return v.values().toArray(new ProcessorNode[v.values().size()]);
 	}
 
 }

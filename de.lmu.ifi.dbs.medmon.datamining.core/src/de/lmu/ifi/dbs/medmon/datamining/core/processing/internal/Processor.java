@@ -1,23 +1,25 @@
 package de.lmu.ifi.dbs.medmon.datamining.core.processing.internal;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
 import de.lmu.ifi.dbs.medmon.datamining.core.parameter.IProcessorParameter;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.ProcessEvent;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.IProcessListener;
-import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAlgorithm;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IDataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.IProcessListener;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.ProcessEvent;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.XMLDataProcessor;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.graph.Node;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.graph.ProcessorNode;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.graph.XDataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.util.FrameworkUtil;
 
 public class Processor {
@@ -118,6 +120,19 @@ public class Processor {
 		processListener.remove(listener);
 	}
 	
+	/* ==================== */
+	/* == XDataProcessor == */
+	/* ==================== */
 	
+	public void run(XDataProcessingUnit dpu) {
+		dpu.buildGraph();
+		Collection<ProcessorNode> startNodes = dpu.getNodes().values();
+		for (ProcessorNode node : startNodes) {
+			System.out.println("Node: " + node.getEdgesIn());
+			if(node.getEdgesIn().isEmpty());
+				node.process();
+		}
+		
+	}
 
 }

@@ -36,8 +36,7 @@ public class ProcessorWorkbenchAdapater implements IWorkbenchAdapter {
 	
 	@Override
 	public Object[] getChildren(Object o) {
-		//TODO return ParameterList
-		return null;
+		return new Object[0];
 	}
 
 }

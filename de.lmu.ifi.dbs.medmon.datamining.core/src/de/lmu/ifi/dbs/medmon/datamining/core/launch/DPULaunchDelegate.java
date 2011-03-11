@@ -20,10 +20,12 @@ import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
+import de.lmu.ifi.dbs.medmon.datamining.core.container.RawData;
 import de.lmu.ifi.dbs.medmon.datamining.core.csv.io.CSVDescriptor;
 import de.lmu.ifi.dbs.medmon.datamining.core.csv.io.CSVFileReader;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.IAnalyzedData;
+import de.lmu.ifi.dbs.medmon.datamining.core.processing.graph.XDataProcessingUnit;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.internal.Processor;
 import de.lmu.ifi.dbs.medmon.datamining.core.util.ClusterUtils;
 
@@ -61,14 +63,22 @@ public class DPULaunchDelegate extends LaunchConfigurationDelegate {
 		try {
 			CSVFileReader reader = new CSVFileReader(csvFile, descriptor);
 			monitor.worked(1);
+			
 			JAXBContext context = JAXBContext.newInstance(DataProcessingUnit.class);
 			Unmarshaller unmarshaller = context.createUnmarshaller();
 			DataProcessingUnit dpu = (DataProcessingUnit) unmarshaller.unmarshal(new File(dpuFile));
-			context.createMarshaller().marshal(dpu, System.out);
+			
+			//JAXBContext context = JAXBContext.newInstance(XDataProcessingUnit.class);
+			//Unmarshaller unmarshaller = context.createUnmarshaller();
+			//XDataProcessingUnit dpu = (XDataProcessingUnit) unmarshaller.unmarshal(new File(dpuFile));
+			
 			monitor.worked(1);
 			
 			Processor processor = Processor.getInstance();
 			Map<String, IAnalyzedData> output = processor.run(dpu, ClusterUtils.convertFromCSV(reader));
+			
+			//RawData rawData = ClusterUtils.convertFromCSV(reader);
+			//processor.run(dpu);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (JAXBException e) {

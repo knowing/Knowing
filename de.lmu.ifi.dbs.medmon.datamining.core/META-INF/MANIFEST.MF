@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.swt;bundle-version="3.6.1",
  org.eclipse.ui;bundle-version="3.6.1",
  org.eclipse.ui.views.properties.tabbed;bundle-version="3.5.100",
- de.lmu.ifi.dbs.elki.libs;bundle-version="1.0.0"
+ de.lmu.ifi.dbs.elki.libs;bundle-version="1.0.0",
+ nz.ac.waikato.cs.weka;bundle-version="3.7.3"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.lmu.ifi.dbs.medmon.datamining.core.analyzed,
@@ -25,6 +26,7 @@ Export-Package: de.lmu.ifi.dbs.medmon.datamining.core.analyzed,
  de.lmu.ifi.dbs.medmon.datamining.core.launch,
  de.lmu.ifi.dbs.medmon.datamining.core.parameter,
  de.lmu.ifi.dbs.medmon.datamining.core.processing,
+ de.lmu.ifi.dbs.medmon.datamining.core.processing.graph,
  de.lmu.ifi.dbs.medmon.datamining.core.processing.internal,
  de.lmu.ifi.dbs.medmon.datamining.core.property,
  de.lmu.ifi.dbs.medmon.datamining.core.util
