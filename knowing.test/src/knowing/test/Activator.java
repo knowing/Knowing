@@ -1,5 +1,13 @@
 package knowing.test;
 
+import java.io.File;
+import java.util.Properties;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+
 import knowing.test.factory.ARFFLoaderFactory;
 import knowing.test.factory.CSVLoaderFactory;
 import knowing.test.factory.ExampleProcessorFactory;
@@ -12,6 +20,7 @@ import de.lmu.ifi.dbs.knowing.core.graph.Edge;
 import de.lmu.ifi.dbs.knowing.core.graph.GraphSupervisor;
 import de.lmu.ifi.dbs.knowing.core.graph.InputNode;
 import de.lmu.ifi.dbs.knowing.core.graph.ProcessorNode;
+import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit;
 import de.lmu.ifi.dbs.knowing.core.util.FactoryUtil;
 
 public class Activator implements BundleActivator {
@@ -34,8 +43,9 @@ public class Activator implements BundleActivator {
 		FactoryUtil.registerProcesorFactory(new KMeansFactory(), null);
 		FactoryUtil.registerLoaderFactory(new ARFFLoaderFactory(), null);
 		FactoryUtil.registerLoaderFactory(new CSVLoaderFactory(), null);
-		//Start little test
-		kmeansTest();
+		//Start little tests
+		//kmeansTest();
+		dpuTest();
 	}
 
 	/*
@@ -81,6 +91,79 @@ public class Activator implements BundleActivator {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/* ========== DPU TEST WITH KMEANS =========== */
+	
+	private void dpuTest() {
+		DataProcessingUnit dpu = new DataProcessingUnit();
+		dpu.setName("Sample DPU");
+		dpu.setDescription("A Description is here");
+		dpu.setTags("Tag1, Tag2, Tag3");
+		
+		InputNode inputNode = new InputNode(ARFFLoaderFactory.ID, "Input");
+		inputNode.setProperties(sampleProperties());
+		ProcessorNode kmeansNode = new ProcessorNode("KMeans", KMeansFactory.ID, "KMeans");
+		kmeansNode.setProperties(sampleProperties());
+		ProcessorNode sampleNode = new ProcessorNode("ExampleProcessor", ExampleProcessorFactory.ID, "Example");
+		sampleNode.setProperties(sampleProperties());
+		
+		Edge e1 = new Edge("e1", "Input", "KMeans");
+		Edge e2 = new Edge("e2", "Input", "Example");
+		Edge e3 = new Edge("e3", "KMeans", "Example");
+		
+		dpu.add(inputNode);
+		dpu.add(kmeansNode);
+		dpu.add(sampleNode);
+		
+		dpu.addEdge(e1);
+		dpu.addEdge(e2);
+		dpu.addEdge(e3);
+		
+		/* == Persist DPU == */
+		String path = System.getProperty("user.home") + System.getProperty("file.separator") + "dpu.xml";
+		File dpufile = new File(path);
+		JAXBContext context = null;
+		try {
+			context = JAXBContext.newInstance(DataProcessingUnit.class);
+			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			m.marshal(dpu, dpufile);
+			m.marshal(dpu, System.out);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+		
+		/* == Load DPU == */
+		try {
+			Unmarshaller um = context.createUnmarshaller();
+			dpu = (DataProcessingUnit) um.unmarshal(dpufile);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+		
+		GraphSupervisor supervisor = new GraphSupervisor(dpu);
+		supervisor.connectNodes();
+		try {
+			supervisor.evaluate();
+		} catch (Exception e) {
+			//Something bad happend during initialization
+			e.printStackTrace();
+		}
+		
+		try {
+			Thread.sleep(2000);
+			supervisor.printHistory(System.err);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private Properties sampleProperties() {
+		Properties properties = new Properties();
+		properties.setProperty("key1", "val1");
+		properties.setProperty("key2", "val2");
+		return properties;
 	}
 
 }
