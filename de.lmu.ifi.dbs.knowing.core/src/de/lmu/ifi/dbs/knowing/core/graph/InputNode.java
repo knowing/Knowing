@@ -6,9 +6,12 @@ import de.lmu.ifi.dbs.knowing.core.factory.ILoaderFactory;
 import de.lmu.ifi.dbs.knowing.core.processing.ILoader;
 import de.lmu.ifi.dbs.knowing.core.util.FactoryUtil;
 
+/**
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.2
+ */
 public class InputNode extends Node {
-
-	private Properties properties;
 		
 	private ILoader loader;
 	
@@ -45,6 +48,11 @@ public class InputNode extends Node {
 	@Override
 	public String toString() {
 		return getNodeId() + "[" + loader + "]";
+	}
+	
+	@Override
+	public INode clone() {
+		return new InputNode(getName(), getFactoryId(), getNodeId());
 	}
 		
 }

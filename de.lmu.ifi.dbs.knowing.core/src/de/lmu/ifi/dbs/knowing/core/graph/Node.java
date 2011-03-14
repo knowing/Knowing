@@ -1,10 +1,6 @@
 package de.lmu.ifi.dbs.knowing.core.graph;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.eclipse.core.runtime.ListenerList;
 
@@ -37,6 +33,7 @@ public abstract class Node implements INode {
 		return nodeId;
 	}
 	
+	@Override
 	public String getFactoryId() {
 		return factoryId;
 	}
@@ -69,17 +66,23 @@ public abstract class Node implements INode {
 		}
 	}
 	
+	
 	@Override
-	public void loadProperties(InputStream in) throws IOException {
-		Properties newProperties = new Properties();
-		newProperties.load(in);
-		if(validate(newProperties))
-			properties = newProperties;
-		initialize();
-		
+	public Properties getProperties() {
+		return properties;
 	}
 	
+	@Override
+	public void setProperties(Properties properties) {
+		if(validate(properties)) {
+			this.properties = properties;
+			initialize();
+		}
+		
+	}
+		
 	abstract protected boolean validate(Properties properties);
 	
+	abstract public INode clone();
 	
 }

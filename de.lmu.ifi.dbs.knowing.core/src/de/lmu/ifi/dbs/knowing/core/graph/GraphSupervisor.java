@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit;
 import de.lmu.ifi.dbs.knowing.core.processing.IProcessor;
 
 /**
@@ -19,7 +20,7 @@ import de.lmu.ifi.dbs.knowing.core.processing.IProcessor;
  * </p>
  * 
  * @author Nepomuk Seiler
- * @version 0.1
+ * @version 0.3
  */
 public class GraphSupervisor implements INodeListener {
 
@@ -36,6 +37,19 @@ public class GraphSupervisor implements INodeListener {
 
 	public GraphSupervisor() {
 		executor = Executors.newCachedThreadPool();
+	}
+	
+	/**
+	 * Clones nodes and edges and adds them to his internal lists.
+	 * @param dpu
+	 */
+	public GraphSupervisor(DataProcessingUnit dpu) {
+		this();
+		for (INode node : dpu.getNodes()) 
+			nodes.put(node.getNodeId(), node.clone());
+		for (Edge edge : dpu.getEdges()) 
+			edges.add(edge.clone());
+		
 	}
 
 	public void connectNodes() {

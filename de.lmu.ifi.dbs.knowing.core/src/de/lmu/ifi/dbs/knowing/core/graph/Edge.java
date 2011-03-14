@@ -1,15 +1,32 @@
 package de.lmu.ifi.dbs.knowing.core.graph;
 
-public class Edge {
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
-	private final String id;
-	private INode source;
-	private INode target;
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+public class Edge {
 	
+	private transient INode source;
+	private transient INode target;
+	
+	@XmlAttribute
+	private String id;
+	
+	@XmlAttribute
 	private String sourceId;
+	
+	@XmlAttribute
 	private String targetId;
 	
+	@XmlAttribute
 	private int weight;
+	
+	protected Edge() {
+		this.id = String.valueOf(System.currentTimeMillis());
+	}
 	
 	public Edge(String id,INode source, INode target) {
 		this(id,source, target, 1);
@@ -77,6 +94,14 @@ public class Edge {
 
 	public void setWeight(int weight) {
 		this.weight = weight;
+	}
+	
+	@Override
+	public Edge clone() {
+		if(source == null || target == null)
+			return new Edge(id, sourceId, targetId, weight);
+		else
+			return new Edge(id, source.clone(), target.clone());
 	}
 
 	@Override

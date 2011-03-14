@@ -90,5 +90,10 @@ public class ProcessorNode extends Node {
 	public String toString() {
 		return getNodeId() + "[" + processor + "]";
 	}
+	
+	@Override
+	public INode clone() {
+		return new ProcessorNode(getName(), getFactoryId(), getNodeId());
+	}
 
 }

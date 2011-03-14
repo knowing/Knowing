@@ -2,6 +2,7 @@ package de.lmu.ifi.dbs.knowing.core.graph;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Properties;
 
 import de.lmu.ifi.dbs.knowing.core.factory.IFactory;
 
@@ -39,20 +40,7 @@ public interface INode extends INodeListener {
 	 * @param supervisor
 	 */
 	void setSupervisor(GraphSupervisor supervisor);
-	
-	
-	/**
-	 * Loading parameters from an external source.<br>
-	 * This method should call initialize after finishing. 
-	 * @param in - the properties source
-	 */
-	void loadProperties(InputStream in) throws IOException;
-	
-	
-	void addNodeListener(INodeListener listener);
-	
-	void removeNodeListener(INodeListener listener);
-		
+				
 	
 	/**
 	 * Human readable name
@@ -67,6 +55,29 @@ public interface INode extends INodeListener {
 	 * @return
 	 */
 	String getNodeId();
+
+	/**
+	 * The serviceFactory this node represents
+	 * @return
+	 */
+	String getFactoryId();
 	
+	/**
+	 * 
+	 * @return
+	 */
+	Properties getProperties();
 	
+	/**
+	 * Loading parameters from an external source.<br>
+	 * This method should call initialize after finishing. 
+	 * @param in - the properties source
+	 */
+	void setProperties(Properties properties);
+		
+	void addNodeListener(INodeListener listener);
+	
+	void removeNodeListener(INodeListener listener);
+	
+	INode clone();
 }
