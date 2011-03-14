@@ -8,8 +8,10 @@ Require-Bundle: org.eclipse.core.runtime,
  nz.ac.waikato.cs.weka;bundle-version="3.7.3"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: de.lmu.ifi.dbs.knowing.core.factory,
+Export-Package: de.lmu.ifi.dbs.knowing.core.annotations,
+ de.lmu.ifi.dbs.knowing.core.factory,
  de.lmu.ifi.dbs.knowing.core.graph,
+ de.lmu.ifi.dbs.knowing.core.graph.xml,
  de.lmu.ifi.dbs.knowing.core.processing,
  de.lmu.ifi.dbs.knowing.core.query,
  de.lmu.ifi.dbs.knowing.core.util
