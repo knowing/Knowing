@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.util.concurrent.BlockingQueue;
 
 import weka.clusterers.SimpleKMeans;
+import weka.core.Capabilities;
 import weka.core.Instance;
 import weka.core.Instances;
 import de.lmu.ifi.dbs.knowing.core.processing.ILoader;
@@ -41,7 +42,8 @@ public class SimpleKMeansProcessor extends Processor {
 
 	@Override
 	public void resetModel() {
-
+		kmeans = new SimpleKMeans();
+		ready = false;
 	}
 
 	@Override
@@ -121,9 +123,7 @@ public class SimpleKMeansProcessor extends Processor {
 	}
 
 	@Override
-	public Instances[] resultFormat(Instances query) {
-		// predicted value & distanceDistribution & cluster
-		return null;
+	public Capabilities getCapabilities() {
+		return kmeans.getCapabilities();
 	}
-
 }

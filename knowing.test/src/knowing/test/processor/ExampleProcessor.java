@@ -129,9 +129,4 @@ public class ExampleProcessor extends Processor {
 		return supported;
 	}
 
-	@Override
-	public Instances[] resultFormat(Instances query) {
-		return new Instances[0];
-	}
-
 }

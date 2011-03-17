@@ -6,6 +6,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import weka.classifiers.AbstractClassifier;
+import weka.core.Capabilities;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -99,6 +101,18 @@ public abstract class Processor implements IProcessor {
 			loader.getStructure(ticket);
 		else
 			loader.getDataSet(ticket);
+	}
+	
+	/**
+	 * @return {@link Capabilities}
+	 * @see Capabilities
+	 * @see AbstractClassifier
+	 */
+	@Override
+	public Capabilities getCapabilities() {
+		Capabilities result = new Capabilities(this);
+		result.enableAll();
+		return result;
 	}
 	
 	/**

@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
+import weka.core.CapabilitiesHandler;
 import weka.core.Instances;
 import de.lmu.ifi.dbs.knowing.core.query.IQueryListener;
 import de.lmu.ifi.dbs.knowing.core.query.QueryResult;
@@ -18,9 +19,9 @@ import de.lmu.ifi.dbs.knowing.core.query.QueryTicket;
  * Queries a executed and answered asynchronous.
  * 
  * @author Nepomuk Seiler
- * @version 0.1c
+ * @version 0.3
  */
-public interface IProcessor extends IQueryListener {
+public interface IProcessor extends IQueryListener, CapabilitiesHandler {
 	
 	/**
 	 * <p>This method build the internal model which is used<br>
@@ -93,8 +94,6 @@ public interface IProcessor extends IQueryListener {
 	void query(QueryTicket ticket) throws InterruptedException;
 	
 	Instances[] supportedQueries();
-	
-	Instances[] resultFormat(Instances query);
 	
 	
 	/* ======================= */
