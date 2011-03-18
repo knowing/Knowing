@@ -9,6 +9,7 @@ import weka.clusterers.SimpleKMeans;
 import weka.core.Capabilities;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.converters.ArffSaver;
 import de.lmu.ifi.dbs.knowing.core.processing.ILoader;
 import de.lmu.ifi.dbs.knowing.core.processing.IProcessor;
 import de.lmu.ifi.dbs.knowing.core.processing.Processor;
@@ -108,12 +109,21 @@ public class SimpleKMeansProcessor extends Processor {
 
 	@Override
 	public void persistModel(OutputStream out) {
-
+		ArffSaver saver = new ArffSaver();
+		System.out.println("Model to persist:");
+		System.out.println(kmeans.getClusterCentroids());
+		try {
+			saver.setDestination(out);
+			saver.setInstances(kmeans.getClusterCentroids());
+			saver.writeBatch();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void loadModel(InputStream in) {
-
+		
 	}
 
 	@Override

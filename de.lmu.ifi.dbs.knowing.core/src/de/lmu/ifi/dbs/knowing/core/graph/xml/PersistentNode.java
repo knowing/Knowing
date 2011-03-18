@@ -82,12 +82,12 @@ public class PersistentNode implements INode {
 	}
 
 	/**
-	 * This method calls the update method before returning <br>
-	 * an INode Object.  
-	 * @return new INode instance
+	 * To get a fresh node, call #update and then getNode.
+	 * @return
 	 */
 	public INode getNode() {
-		update();
+		if(node == null)
+			update();
 		return node;
 	}
 	

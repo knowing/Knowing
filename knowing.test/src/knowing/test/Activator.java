@@ -1,6 +1,9 @@
 package knowing.test;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 
 import javax.xml.bind.JAXBContext;
@@ -143,6 +146,7 @@ public class Activator implements BundleActivator {
 		}
 		
 		GraphSupervisor supervisor = new GraphSupervisor(dpu);
+		
 		supervisor.connectNodes();
 		try {
 			supervisor.evaluate();
@@ -154,7 +158,13 @@ public class Activator implements BundleActivator {
 		try {
 			Thread.sleep(2000);
 			supervisor.printHistory(System.err);
+			
+			System.out.println("Trying to persists kmeans model");
+			supervisor.persistNode("KMeans", sampleOutput());
+			System.out.println("Persisted!");
 		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
@@ -164,6 +174,11 @@ public class Activator implements BundleActivator {
 		properties.setProperty("key1", "val1");
 		properties.setProperty("key2", "val2");
 		return properties;
+	}
+	
+	private OutputStream sampleOutput() throws FileNotFoundException {
+		String pathname = System.getProperty("user.home") + "/" + "kmeans.model";
+		return new FileOutputStream(pathname);
 	}
 
 }

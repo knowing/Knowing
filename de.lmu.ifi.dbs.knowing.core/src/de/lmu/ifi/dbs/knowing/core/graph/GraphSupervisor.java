@@ -1,5 +1,6 @@
 package de.lmu.ifi.dbs.knowing.core.graph;
 
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit;
+import de.lmu.ifi.dbs.knowing.core.graph.xml.PersistentNode;
 import de.lmu.ifi.dbs.knowing.core.processing.IProcessor;
 
 /**
@@ -38,18 +40,19 @@ public class GraphSupervisor implements INodeListener {
 	public GraphSupervisor() {
 		executor = Executors.newCachedThreadPool();
 	}
-	
+
 	/**
 	 * Clones nodes and edges and adds them to his internal lists.
+	 * 
 	 * @param dpu
 	 */
 	public GraphSupervisor(DataProcessingUnit dpu) {
 		this();
-		for (INode node : dpu.getNodes()) 
+		for (INode node : dpu.getNodes())
 			nodes.put(node.getNodeId(), node.clone());
-		for (Edge edge : dpu.getEdges()) 
+		for (Edge edge : dpu.getEdges())
 			edges.add(edge.clone());
-		
+
 	}
 
 	public void connectNodes() {
@@ -79,14 +82,30 @@ public class GraphSupervisor implements INodeListener {
 	 * Starting every node. Normally this means, the {@link InputNode}s trying<br>
 	 * to get their data and sending {@link NodeEvent}s to their listeners.<br>
 	 * However {@link IProcessor}s can doing some initializing stuff too in this
-	 * time.</p>
+	 * time.
+	 * </p>
 	 * 
 	 * 
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void evaluate() throws Exception {
 		for (INode node : nodes.values())
 			node.run();
+
+	}
+
+	public void persistAll(OutputStream out) {
+
+	}
+
+	public void persistNode(String nodeId, OutputStream out) {
+		INode node = nodes.get(nodeId);
+		if (node instanceof PersistentNode) {
+			PersistentNode pNode = (PersistentNode) node;
+			((ProcessorNode) pNode.getNode()).getProcessor().persistModel(out);
+		} else if (node instanceof ProcessorNode) {
+			((ProcessorNode) nodes.get(nodeId)).getProcessor().persistModel(out);
+		}
 
 	}
 

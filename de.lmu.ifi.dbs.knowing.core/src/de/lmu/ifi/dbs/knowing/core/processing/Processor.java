@@ -131,7 +131,7 @@ public abstract class Processor implements IProcessor {
 	
 	@Override
 	public String toString() {
-		return getClass().getSimpleName();
+		return getClass().getSimpleName() + "@" + hashCode();
 	}
 
 }
