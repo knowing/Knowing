@@ -27,11 +27,9 @@ public class ProcessorNode extends Node {
 	@Override
 	public void initialize() {
 		processor = FactoryUtil.getProcessorService(getFactoryId(), properties);
-		System.out.println("-------------- Initialize ProcessorNode: " + processor);
 	}
 
 	public IProcessor getProcessor() {
-		System.out.println("-------------- GetProcessor: " + processor);
 		return processor;
 	}
 
@@ -95,7 +93,9 @@ public class ProcessorNode extends Node {
 	
 	@Override
 	public INode clone() {
-		return new ProcessorNode(getName(), getFactoryId(), getNodeId());
+		ProcessorNode clone = new ProcessorNode(getName(), getFactoryId(), getNodeId());
+		clone.setProperties(properties);
+		return clone;
 	}
 
 }

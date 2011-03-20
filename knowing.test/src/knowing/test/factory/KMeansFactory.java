@@ -11,7 +11,12 @@ public class KMeansFactory implements IProcessorFactory {
 
 	public static final String ID = "weka.clusterers.SimpleKMeans";
 	
-	private Properties properties = new Properties();
+	private final Properties properties = new Properties();
+	
+	public KMeansFactory() {
+		properties.setProperty(SimpleKMeansProcessor.PROP_MAX_ITERATIONS, "20");
+		properties.setProperty(SimpleKMeansProcessor.PROP_NUM_CLUSTERS, "5");
+	}
 	
 	@Override
 	public String getId() {
@@ -30,7 +35,7 @@ public class KMeansFactory implements IProcessorFactory {
 
 	@Override
 	public IProcessor getInstance(Properties properties) {
-		return new SimpleKMeansProcessor();
+		return new SimpleKMeansProcessor(properties);
 	}
 
 }

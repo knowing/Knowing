@@ -19,11 +19,11 @@ import de.lmu.ifi.dbs.knowing.core.query.QueryTicket;
  * service will be generated.</p>
  * 
  * @author Nepomuk Seiler
- * @version 0.3
+ * @version 0.4
  */
 public abstract class Processor implements IProcessor {
 
-	protected Properties properties = new Properties();
+	protected final Properties properties = new Properties();
 
 	protected final BlockingQueue<QueryResult> results = new LinkedBlockingQueue<QueryResult>();
 	
@@ -33,6 +33,11 @@ public abstract class Processor implements IProcessor {
 	public Properties getProperties() {
 		return properties;
 	}
+	
+	@Override
+	public String getProperty(String key) {
+		return properties.getProperty(key);
+	}
 
 	@Override
 	public void setProperty(String key, String value) {
@@ -40,11 +45,6 @@ public abstract class Processor implements IProcessor {
 		String[] validate = validate();
 		if(validate != null && validate.length > 0)
 			properties.setProperty(key, oldValue);
-	}
-
-	@Override
-	public String getProperty(String key) {
-		return properties.getProperty(key);
 	}
 
 	@Override

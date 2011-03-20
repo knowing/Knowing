@@ -52,7 +52,9 @@ public class InputNode extends Node {
 	
 	@Override
 	public INode clone() {
-		return new InputNode(getName(), getFactoryId(), getNodeId());
+		InputNode clone = new InputNode(getName(), getFactoryId(), getNodeId());
+		clone.setProperties(properties);
+		return clone;
 	}
 		
 }

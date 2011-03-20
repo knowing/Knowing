@@ -15,6 +15,7 @@ import knowing.test.factory.ARFFLoaderFactory;
 import knowing.test.factory.CSVLoaderFactory;
 import knowing.test.factory.ExampleProcessorFactory;
 import knowing.test.factory.KMeansFactory;
+import knowing.test.processor.SimpleKMeansProcessor;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -132,7 +133,7 @@ public class Activator implements BundleActivator {
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			m.marshal(dpu, dpufile);
-			m.marshal(dpu, System.out);
+			//m.marshal(dpu, System.out);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
@@ -144,9 +145,7 @@ public class Activator implements BundleActivator {
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
-		
 		GraphSupervisor supervisor = new GraphSupervisor(dpu);
-		
 		supervisor.connectNodes();
 		try {
 			supervisor.evaluate();
@@ -171,8 +170,8 @@ public class Activator implements BundleActivator {
 	
 	private Properties sampleProperties() {
 		Properties properties = new Properties();
-		properties.setProperty("key1", "val1");
-		properties.setProperty("key2", "val2");
+		properties.setProperty(SimpleKMeansProcessor.PROP_MAX_ITERATIONS, "20");
+		properties.setProperty(SimpleKMeansProcessor.PROP_NUM_CLUSTERS, "3");
 		return properties;
 	}
 	
