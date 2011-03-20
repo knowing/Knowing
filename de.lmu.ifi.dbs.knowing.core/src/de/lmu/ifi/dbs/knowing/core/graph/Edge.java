@@ -106,6 +106,8 @@ public class Edge {
 
 	@Override
 	public String toString() {
+		if(source == null && target == null)
+			return sourceId + " to (" + weight + ")" + targetId;
 		return source + " to (" + weight + ")" + target;
 	}
 	
