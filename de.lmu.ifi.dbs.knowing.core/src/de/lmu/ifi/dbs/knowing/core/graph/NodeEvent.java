@@ -1,8 +1,11 @@
 package de.lmu.ifi.dbs.knowing.core.graph;
 
-import java.sql.Date;
-import java.text.DateFormat;
-
+/**
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.5
+ * @since 12.03.2011
+ */
 public class NodeEvent {
 
 	public static final int LOADER_READY = 0;

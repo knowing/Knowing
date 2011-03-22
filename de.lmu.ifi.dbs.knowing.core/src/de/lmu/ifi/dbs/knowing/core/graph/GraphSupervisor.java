@@ -73,7 +73,6 @@ public class GraphSupervisor implements INodeListener {
 			// Try it for both,so nothing is left out
 			source.setSupervisor(this);
 			target.setSupervisor(this);
-
 		}
 	}
 
@@ -112,10 +111,32 @@ public class GraphSupervisor implements INodeListener {
 	public void execute(Runnable command) {
 		executor.execute(command);
 	}
+	
+	/**
+	 * Prints history to the out PrintStream. * @param out
+	 */
+	public void printHistory(PrintStream out) {
+		for (NodeEvent event : history) {
+			out.println(event);
+		}
+	}
 
 	@Override
 	public void nodeChanged(NodeEvent event) {
 		history.add(event);
+	}
+	
+	public List<PresenterNode> getPresenterNodes() {
+		ArrayList<PresenterNode> returns = new ArrayList<PresenterNode>();
+		for (INode node : nodes.values()) {
+			if(node instanceof PresenterNode)
+				returns.add((PresenterNode) node);
+			else if(node instanceof PersistentNode) {
+				if(((PersistentNode) node).getNode() instanceof PresenterNode)
+					returns.add((PresenterNode) ((PersistentNode) node).getNode());
+			}
+		}
+		return returns;
 	}
 
 	public INode getNode(Object key) {
@@ -144,15 +165,6 @@ public class GraphSupervisor implements INodeListener {
 
 	public void clearEdges() {
 		edges.clear();
-	}
-
-	/**
-	 * Prints history to the out PrintStream. * @param out
-	 */
-	public void printHistory(PrintStream out) {
-		for (NodeEvent event : history) {
-			out.println(event);
-		}
 	}
 
 }

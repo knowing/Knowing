@@ -41,11 +41,6 @@ public class InputNode extends Node {
 	}
 	
 	@Override
-	public void nodeChanged(NodeEvent event) {
-		
-	}
-	
-	@Override
 	public String toString() {
 		return getNodeId() + "[" + loader + "]";
 	}
@@ -54,6 +49,7 @@ public class InputNode extends Node {
 	public INode clone() {
 		InputNode clone = new InputNode(getName(), getFactoryId(), getNodeId());
 		clone.setProperties(properties);
+		clone.setSupervisor(supervisor);
 		return clone;
 	}
 		

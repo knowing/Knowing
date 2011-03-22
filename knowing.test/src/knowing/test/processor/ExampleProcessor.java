@@ -5,11 +5,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import weka.core.Instance;
 import weka.core.Instances;
 import de.lmu.ifi.dbs.knowing.core.processing.ILoader;
 import de.lmu.ifi.dbs.knowing.core.processing.IProcessor;
+import de.lmu.ifi.dbs.knowing.core.processing.IResultProcessor;
 import de.lmu.ifi.dbs.knowing.core.processing.Processor;
 import de.lmu.ifi.dbs.knowing.core.query.Queries;
 import de.lmu.ifi.dbs.knowing.core.query.QueryResult;
@@ -26,13 +28,15 @@ import de.lmu.ifi.dbs.knowing.core.query.QueryTicket;
  * @version 1.0
  *
  */
-public class ExampleProcessor extends Processor {
+public class ExampleProcessor extends Processor implements IResultProcessor {
 
 	private static final Instances[] supported = new Instances[] { Queries.arrayNumericQuery(),
 			Queries.singleNumericQuery() };
 
 	private BlockingQueue<Instance> sampleQueries = new ArrayBlockingQueue<Instance>(10, true);
 	private volatile boolean ready;
+
+	private Instances resultSet;
 
 	@Override
 	public synchronized void buildModel(ILoader loader) {
@@ -46,7 +50,7 @@ public class ExampleProcessor extends Processor {
 	@Override
 	public synchronized void buildModel(IProcessor processor) {
 		try {
-			Instance input = sampleQueries.poll();
+			Instance input = sampleQueries.poll(10, TimeUnit.SECONDS);
 			while (input != null) {
 				System.out.println(">>>> Input: " + input);
 				fireQuery("sample.query", input, processor);
@@ -59,34 +63,13 @@ public class ExampleProcessor extends Processor {
 	}
 
 	@Override
-	public void resetModel() {
-		sampleQueries.clear();
-	}
-
-	@Override
-	public boolean isReady() {
-		return ready;
-	}
-
-	@Override
-	public String[] validate() {
-		return new String[0];
-	}
-
-	@Override
-	protected void query(BlockingQueue<QueryTicket> tickets) {
-		tickets.clear(); //Throw them away, we don't answer queries
-	}
-
-	@Override
 	protected void result(BlockingQueue<QueryResult> results) {
 		QueryResult result = results.poll();
 		while (result != null) {
 			QueryTicket ticket = result.getTicket();
 			// Build sample Queries from the loader
-			if (!ready && ticket.getName().equals("model.loader")) {
+			if (ticket.getName().equals("model.loader")) {
 				buildSampleQueries(result);
-				ready = true;
 			} else {
 				// Print the results from the queryed IProcessor
 				System.out.println(" ### Clustered Instance ###");
@@ -94,7 +77,10 @@ public class ExampleProcessor extends Processor {
 				for (Instances res : result.getResults()) {
 					System.out.println("Result Nr. " + index++);
 					System.out.println(res);
+					this.resultSet = res;
 				}
+				ready = true;
+				fireProcessorStateChanged();
 				System.out.println(" ### ================== ###");
 			}
 			result = results.poll();
@@ -113,6 +99,37 @@ public class ExampleProcessor extends Processor {
 			}
 		}
 	}
+	
+	@Override
+	protected void query(BlockingQueue<QueryTicket> tickets) {
+		tickets.clear(); //Throw them away, we don't answer queries
+	}
+
+	@Override
+	public Instances getResult() {
+		return resultSet;
+	}
+	
+	@Override
+	public void resetModel() {
+		sampleQueries.clear();
+	}
+
+	@Override
+	public boolean isReady() {
+		return ready;
+	}
+
+	@Override
+	public String[] validate() {
+		return new String[0];
+	}
+	
+	
+	@Override
+	public Instances[] supportedQueries() {
+		return supported;
+	}
 
 	@Override
 	public void persistModel(OutputStream out) {
@@ -122,11 +139,6 @@ public class ExampleProcessor extends Processor {
 	@Override
 	public void loadModel(InputStream in) {
 
-	}
-
-	@Override
-	public Instances[] supportedQueries() {
-		return supported;
 	}
 
 }

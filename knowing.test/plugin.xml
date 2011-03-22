@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="id1"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            cardinality="singleton-global"
+            thread="main"
+            visible="true">
+         <run
+               class="knowing.test.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="knowing.test.product"
+            name="Knowing SWT Test">
+         <property
+               name="appName"
+               value="Knowing Test">
+         </property>
+      </product>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="knowing.test.PerspectiveFactory"
+            id="knowing.test.perspective"
+            name="Perspective">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="*">
+         <view
+               id="de.lmu.ifi.dbs.knowing.core.swt.presenterView"
+               minimized="false"
+               relationship="top"
+               relative="org.eclipse.ui.editorss">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <command
+               commandId="org.eclipse.ui.views.showView"
+               label="Views"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.ui.file.exit"
+               label="Exit"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>

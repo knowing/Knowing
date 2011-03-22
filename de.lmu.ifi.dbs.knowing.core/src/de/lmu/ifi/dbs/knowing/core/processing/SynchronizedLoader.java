@@ -106,6 +106,8 @@ public class SynchronizedLoader implements ILoader {
 		builder.append("SynchronizedLoader [loader=");
 		builder.append(loader.getClass().getSimpleName());
 		builder.append("]");
+		builder.append("@");
+		builder.append(hashCode());
 		return builder.toString();
 	}
 

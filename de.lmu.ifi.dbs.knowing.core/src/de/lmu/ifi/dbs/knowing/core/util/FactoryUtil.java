@@ -9,9 +9,11 @@ import org.osgi.framework.ServiceRegistration;
 
 import de.lmu.ifi.dbs.knowing.core.factory.IFactory;
 import de.lmu.ifi.dbs.knowing.core.factory.ILoaderFactory;
+import de.lmu.ifi.dbs.knowing.core.factory.IPresenterFactory;
 import de.lmu.ifi.dbs.knowing.core.factory.IProcessorFactory;
 import de.lmu.ifi.dbs.knowing.core.internal.Activator;
 import de.lmu.ifi.dbs.knowing.core.processing.ILoader;
+import de.lmu.ifi.dbs.knowing.core.processing.IPresenter;
 import de.lmu.ifi.dbs.knowing.core.processing.IProcessor;
 
 /**
@@ -19,7 +21,7 @@ import de.lmu.ifi.dbs.knowing.core.processing.IProcessor;
  * 
  * @author Nepomuk Seiler
  * @version 0.5
- *
+ * 
  */
 public class FactoryUtil {
 
@@ -72,6 +74,43 @@ public class FactoryUtil {
 		return null;
 	}
 	
+	/**
+	 * 
+	 * @param factoryId - the Id which the ServiceFactory declares via {@link IFactory#getId()}
+	 * @param properties - must contain {@link IPresenterFactory#PROP_UI_CLASS}
+	 * @return null if no factory for factoryId exists
+	 */
+	public static <T> IPresenter<T> getPresenterService(String factoryId, Properties properties) {
+		BundleContext context = Activator.getContext();
+		ServiceReference[] references = null;
+		try {
+			references = context.getServiceReferences(IPresenterFactory.class.getName(), null);
+		} catch (InvalidSyntaxException e) {
+			e.printStackTrace();
+		}
+		if(references == null || references.length == 0) 
+			return null;
+		String className = properties.getProperty(IPresenterFactory.PROP_UI_CLASS);
+	/*	try {
+			if(className != null)
+				Class.forName(className);
+		} catch (ClassNotFoundException e) {
+			//System is unable to handle UI component
+			//TODO getPresenterService -> Handle ClassNotFoundException more proper
+			e.printStackTrace();
+		}*/
+		for (ServiceReference reference : references) {
+			IPresenterFactory presenterFactory = (IPresenterFactory) context.getService(reference);
+			if(presenterFactory != null && presenterFactory.getId().equals(factoryId)) {
+				IPresenter presenter = presenterFactory.getInstance(properties);
+				if(presenter.getContainerClass().equals(className))
+					return presenterFactory.getInstance(properties);
+			}
+		
+		}
+		return null;
+	}
+	
 
 	public static <E extends IFactory> E getFactory(String factoryId, Class<E> factoryClass) {
 		BundleContext context = Activator.getContext();
@@ -113,5 +152,17 @@ public class FactoryUtil {
 	public static ServiceRegistration registerProcesorFactory(IProcessorFactory factory, Properties properties)  {
 		BundleContext context = Activator.getContext();
 		return context.registerService(IProcessorFactory.class.getName(), factory, properties);
+	}
+	
+	/**
+	 * Trys to register a service via the Knowing-Bundle. 
+	 * 
+	 * @param factory
+	 * @param properties
+	 * @return
+	 */
+	public static ServiceRegistration registerPresenterFactory(IProcessorFactory factory, Properties properties)  {
+		BundleContext context = Activator.getContext();
+		return context.registerService(IPresenterFactory.class.getName(), factory, properties);
 	}
 }

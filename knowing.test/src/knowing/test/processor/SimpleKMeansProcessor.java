@@ -28,7 +28,7 @@ public class SimpleKMeansProcessor extends Processor {
 
 	public SimpleKMeansProcessor() {
 		kmeans = new SimpleKMeans();
-		properties.clear();
+		getProperties().clear();
 		setProperty(PROP_MAX_ITERATIONS, "20");
 		setProperty(PROP_NUM_CLUSTERS, "5");
 	}
@@ -126,6 +126,7 @@ public class SimpleKMeansProcessor extends Processor {
 					System.out.println(kmeans.getClusterCentroids());
 					System.out.println(" ### ====================== ###");
 					ready = true;
+					fireProcessorStateChanged();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -144,6 +145,8 @@ public class SimpleKMeansProcessor extends Processor {
 		ArffSaver saver = new ArffSaver();
 		System.out.println("Model to persist:");
 		System.out.println(kmeans.getClusterCentroids());
+		if(kmeans.getClusterCentroids() == null)
+			return;
 		try {
 			saver.setDestination(out);
 			saver.setInstances(kmeans.getClusterCentroids());

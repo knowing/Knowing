@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import weka.core.CapabilitiesHandler;
 import weka.core.Instances;
+import de.lmu.ifi.dbs.knowing.core.graph.IProcessorListener;
 import de.lmu.ifi.dbs.knowing.core.query.IQueryListener;
 import de.lmu.ifi.dbs.knowing.core.query.QueryResult;
 import de.lmu.ifi.dbs.knowing.core.query.QueryTicket;
@@ -66,6 +67,13 @@ public interface IProcessor extends IQueryListener, CapabilitiesHandler {
 	 */
 	boolean isReady();
 	
+	/**
+	 * <p>A listener listening to the current state of the processor.<br>
+	 * This is used for processing graphs. </p>
+	 * @param listener
+	 */
+	void setProcessorListener(IProcessorListener listener);
+	
 	
 	/* ======================= */
 	/* ===== Persistence ===== */
@@ -118,10 +126,5 @@ public interface IProcessor extends IQueryListener, CapabilitiesHandler {
 	 * @return Array of error messages
 	 */
 	String[] validate();
-	
-	/**
-	 * @return is this processor (Thread) still alive
-	 */
-	boolean isAlive();
 	
 }

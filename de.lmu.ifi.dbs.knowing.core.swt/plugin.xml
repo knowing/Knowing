@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="de.lmu.ifi.dbs.knowing.core.swt.view.PresenterView"
+            id="de.lmu.ifi.dbs.knowing.core.swt.presenterView"
+            name="Presenter"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.lmu.ifi.dbs.knowing.core.swt.handler.EvaluateHandler"
+            id="de.lmu.ifi.dbs.knowing.core.swt.EvaluateDPU"
+            name="Evaluate DPU">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.lmu.ifi.dbs.knowing.core.swt.presenterView">
+         <command
+               commandId="de.lmu.ifi.dbs.knowing.core.swt.EvaluateDPU"
+               label="Evaluate DPU"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+</plugin>

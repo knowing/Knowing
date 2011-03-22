@@ -13,7 +13,7 @@ public abstract class Node implements INode {
 	private final ListenerList nodeListeners = new ListenerList();
 		
 	protected boolean ready;
-	protected Properties properties;
+	protected Properties properties = new Properties();
 	protected GraphSupervisor supervisor;
 		
 	public Node(String factoryName, String factoryId, String nodeId) {
@@ -46,7 +46,8 @@ public abstract class Node implements INode {
 	@Override
 	public void setSupervisor(GraphSupervisor supervisor) {
 		this.supervisor = supervisor;
-		nodeListeners.add(supervisor);
+		if(supervisor != null)
+			addNodeListener(supervisor);
 	}
 	
 	@Override
@@ -79,6 +80,16 @@ public abstract class Node implements INode {
 			initialize();
 		}
 		
+	}
+	
+	@Override
+	public void run() throws Exception {
+		//Does nothing
+	}
+	
+	@Override
+	public void nodeChanged(NodeEvent event) {
+		//Does nothing
 	}
 		
 	abstract protected boolean validate(Properties properties);

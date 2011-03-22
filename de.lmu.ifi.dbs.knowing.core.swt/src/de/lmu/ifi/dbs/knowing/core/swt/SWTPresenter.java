@@ -1,0 +1,66 @@
+/**
+ * 
+ */
+package de.lmu.ifi.dbs.knowing.core.swt;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+
+import weka.core.Instances;
+import de.lmu.ifi.dbs.knowing.core.processing.Presenter;
+
+/**
+ * @author Nepomuk Seiler
+ * @version 0.1
+ * @since 21.03.2011
+ */
+public abstract class SWTPresenter extends Presenter<Composite> {
+
+	private Composite composite;
+
+	@Override
+	public Object createContainer(Composite parent) {
+		if (composite != null && !composite.isDisposed())
+			dispose();
+		composite = new Composite(parent, SWT.NONE);
+		createControl(composite);
+		return composite;
+	}
+
+	public void dispose() {
+		composite.dispose();
+	}
+
+	@Override
+	protected void createPresentation(final Instances dataset) {
+		composite.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				//Avoid invalid thread access
+				createContent(dataset);
+			}
+		});
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.lmu.ifi.dbs.knowing.core.view.IPresenter#getContainerClass()
+	 */
+	@Override
+	public String getContainerClass() {
+		return Composite.class.getName();
+	}
+
+	/**
+	 * 
+	 * @param parent
+	 */
+	abstract protected void createControl(Composite parent);
+
+	/**
+	 * 
+	 * @param dataset
+	 */
+	abstract protected void createContent(Instances dataset);
+}

@@ -1,10 +1,6 @@
 package de.lmu.ifi.dbs.knowing.core.graph;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
-
-import de.lmu.ifi.dbs.knowing.core.factory.IFactory;
 
 
 /**

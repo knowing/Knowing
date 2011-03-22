@@ -15,6 +15,7 @@ import de.lmu.ifi.dbs.knowing.core.graph.INode;
 import de.lmu.ifi.dbs.knowing.core.graph.INodeListener;
 import de.lmu.ifi.dbs.knowing.core.graph.InputNode;
 import de.lmu.ifi.dbs.knowing.core.graph.NodeEvent;
+import de.lmu.ifi.dbs.knowing.core.graph.PresenterNode;
 import de.lmu.ifi.dbs.knowing.core.graph.ProcessorNode;
 
 @XmlRootElement
@@ -23,6 +24,7 @@ public class PersistentNode implements INode {
 
 	public static final String INPUT_NODE = "input";
 	public static final String PROCESSOR_NODE = "processor";
+	public static final String PRESENTER_NODE = "presenter";
 		
 	@XmlAttribute
 	private String name;
@@ -78,6 +80,9 @@ public class PersistentNode implements INode {
 		} else if (type.equals(INPUT_NODE)) {
 			node = new InputNode(name, factoryId, nodeId);
 			node.setProperties(properties);
+		} else if (type.equals(PRESENTER_NODE)) {
+			node = new PresenterNode(name, factoryId, nodeId);
+			node.setProperties(properties);
 		}
 	}
 
@@ -96,6 +101,8 @@ public class PersistentNode implements INode {
 			return PROCESSOR_NODE;
 		else if (node instanceof InputNode)
 			return INPUT_NODE;
+		else if (node instanceof PresenterNode)
+			return PRESENTER_NODE;
 		else
 			return "unkown";
 	}

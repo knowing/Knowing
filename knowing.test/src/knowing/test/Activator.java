@@ -1,5 +1,6 @@
 package knowing.test;
 
+import java.awt.Composite;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -20,11 +21,14 @@ import knowing.test.processor.SimpleKMeansProcessor;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.lmu.ifi.dbs.knowing.core.factory.IPresenterFactory;
 import de.lmu.ifi.dbs.knowing.core.graph.Edge;
 import de.lmu.ifi.dbs.knowing.core.graph.GraphSupervisor;
 import de.lmu.ifi.dbs.knowing.core.graph.InputNode;
+import de.lmu.ifi.dbs.knowing.core.graph.PresenterNode;
 import de.lmu.ifi.dbs.knowing.core.graph.ProcessorNode;
 import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit;
+import de.lmu.ifi.dbs.knowing.core.swt.TablePresenterFactory;
 import de.lmu.ifi.dbs.knowing.core.util.FactoryUtil;
 
 public class Activator implements BundleActivator {
@@ -49,7 +53,7 @@ public class Activator implements BundleActivator {
 		FactoryUtil.registerLoaderFactory(new CSVLoaderFactory(), null);
 		//Start little tests
 		//kmeansTest();
-		dpuTest();
+		//dpuTest();
 	}
 
 	/*
@@ -91,7 +95,7 @@ public class Activator implements BundleActivator {
 		
 		try {
 			Thread.sleep(2000);
-			supervisor.printHistory(System.err);
+			supervisor.printHistory(System.out);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -111,18 +115,23 @@ public class Activator implements BundleActivator {
 		kmeansNode.setProperties(sampleProperties());
 		ProcessorNode sampleNode = new ProcessorNode("ExampleProcessor", ExampleProcessorFactory.ID, "Example");
 		sampleNode.setProperties(sampleProperties());
+		PresenterNode presenterNode = new PresenterNode(TablePresenterFactory.ID, "Presenter");
+		presenterNode.setProperties(presenterProperties());
 		
 		Edge e1 = new Edge("e1", "Input", "KMeans");
 		Edge e2 = new Edge("e2", "Input", "Example");
 		Edge e3 = new Edge("e3", "KMeans", "Example");
+		Edge e4 = new Edge("e4", "Example", "Presenter");
 		
 		dpu.add(inputNode);
 		dpu.add(kmeansNode);
 		dpu.add(sampleNode);
+		dpu.add(presenterNode);
 		
 		dpu.addEdge(e1);
 		dpu.addEdge(e2);
 		dpu.addEdge(e3);
+		dpu.addEdge(e4);
 		
 		/* == Persist DPU == */
 		String path = System.getProperty("user.home") + System.getProperty("file.separator") + "dpu.xml";
@@ -156,9 +165,9 @@ public class Activator implements BundleActivator {
 		
 		try {
 			Thread.sleep(2000);
-			supervisor.printHistory(System.err);
+			supervisor.printHistory(System.out);
 			
-			System.out.println("Trying to persists kmeans model");
+			System.out.println("### ==== Trying to persists kmeans model ==== ###");
 			supervisor.persistNode("KMeans", sampleOutput());
 			System.out.println("Persisted!");
 		} catch (InterruptedException e) {
@@ -172,6 +181,12 @@ public class Activator implements BundleActivator {
 		Properties properties = new Properties();
 		properties.setProperty(SimpleKMeansProcessor.PROP_MAX_ITERATIONS, "20");
 		properties.setProperty(SimpleKMeansProcessor.PROP_NUM_CLUSTERS, "3");
+		return properties;
+	}
+	
+	private Properties presenterProperties() {
+		Properties properties = new Properties();
+		properties.setProperty(IPresenterFactory.PROP_UI_CLASS, "org.eclipse.swt.widgets.Composite");
 		return properties;
 	}
 	

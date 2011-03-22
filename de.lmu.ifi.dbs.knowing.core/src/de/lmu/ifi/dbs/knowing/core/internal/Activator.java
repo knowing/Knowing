@@ -1,16 +1,7 @@
 package de.lmu.ifi.dbs.knowing.core.internal;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-
-import de.lmu.ifi.dbs.knowing.core.graph.Edge;
-import de.lmu.ifi.dbs.knowing.core.graph.GraphSupervisor;
-import de.lmu.ifi.dbs.knowing.core.graph.INode;
-import de.lmu.ifi.dbs.knowing.core.graph.InputNode;
-import de.lmu.ifi.dbs.knowing.core.graph.ProcessorNode;
 
 public class Activator implements BundleActivator {
 

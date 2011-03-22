@@ -11,6 +11,7 @@ import weka.core.Capabilities;
 import weka.core.Instance;
 import weka.core.Instances;
 
+import de.lmu.ifi.dbs.knowing.core.graph.IProcessorListener;
 import de.lmu.ifi.dbs.knowing.core.query.QueryResult;
 import de.lmu.ifi.dbs.knowing.core.query.QueryTicket;
 
@@ -19,15 +20,16 @@ import de.lmu.ifi.dbs.knowing.core.query.QueryTicket;
  * service will be generated.</p>
  * 
  * @author Nepomuk Seiler
- * @version 0.4
+ * @version 0.5
  */
 public abstract class Processor implements IProcessor {
 
-	protected final Properties properties = new Properties();
+	private final Properties properties = new Properties();
 
-	protected final BlockingQueue<QueryResult> results = new LinkedBlockingQueue<QueryResult>();
-	
-	protected final BlockingQueue<QueryTicket> tickets = new ArrayBlockingQueue<QueryTicket>(1000, true);
+	private final BlockingQueue<QueryResult> results = new LinkedBlockingQueue<QueryResult>();
+	private final BlockingQueue<QueryTicket> tickets = new ArrayBlockingQueue<QueryTicket>(1000, true);
+
+	private IProcessorListener listener;
 	
 	@Override
 	public Properties getProperties() {
@@ -45,11 +47,6 @@ public abstract class Processor implements IProcessor {
 		String[] validate = validate();
 		if(validate != null && validate.length > 0)
 			properties.setProperty(key, oldValue);
-	}
-
-	@Override
-	public boolean isAlive() {
-		return true;
 	}
 	
 	@Override
@@ -101,6 +98,16 @@ public abstract class Processor implements IProcessor {
 			loader.getStructure(ticket);
 		else
 			loader.getDataSet(ticket);
+	}
+	
+	protected void fireProcessorStateChanged() {
+		if(listener != null)
+			listener.processorChanged(this);
+	}
+	
+	@Override
+	public void setProcessorListener(IProcessorListener listener) {
+		this.listener = listener;		
 	}
 	
 	/**
