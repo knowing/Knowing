@@ -1,0 +1,18 @@
+# generic files to ignore
+# backup files (*~) and MacOS dir file (.DS_Store)
+*~
+*.lock
+*.DS_Store
+*.out
+
+#IDE files to ignore (Netbeans, Eclipse)
+#Source directory should be ignored too
+.classpath
+.project
+.settings
+
+#ignore generated .class files
+*.class
+
+#except this file
+!.gitignore
