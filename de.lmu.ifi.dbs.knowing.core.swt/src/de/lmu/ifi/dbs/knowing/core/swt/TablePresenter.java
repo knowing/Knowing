@@ -3,22 +3,22 @@
  */
 package de.lmu.ifi.dbs.knowing.core.swt;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 import weka.core.Attribute;
-import weka.core.Instance;
 import weka.core.Instances;
 
 
 /**
  * @author Nepomuk Seiler
- * @version 0.2
+ * @version 0.3
  * @since 21.03.2011
  */
 public class TablePresenter extends SWTPresenter {
@@ -37,9 +37,7 @@ public class TablePresenter extends SWTPresenter {
 	@Override
 	protected void createContent(Instances dataset) {
 		createColumns(dataset.enumerateAttributes());
-		Enumeration<Instance> eInst = dataset.enumerateInstances();
-		while(eInst.hasMoreElements())
-			viewer.add(eInst.nextElement());
+		viewer.setInput(dataset);
 		viewer.refresh();
 	}
 
@@ -51,6 +49,14 @@ public class TablePresenter extends SWTPresenter {
 			return;
 		viewer.getTable().setHeaderVisible(true);
 		viewer.getTable().setLinesVisible(true);
+//		ArrayList<Attribute> attributes = Collections.list(eAttr);
+//		for (Attribute a : attributes) {
+//			TableViewerColumn viewerColumn = new TableViewerColumn(viewer, SWT.LEAD);
+//			viewerColumn.getColumn().setText(a.name());
+//			viewerColumn.getColumn().setWidth(70);
+//			viewerColumn.getColumn().setResizable(true);
+//			viewerColumn.getColumn().setMoveable(true);
+//		}
 		while(eAttr.hasMoreElements()) {
 			Attribute a = eAttr.nextElement();
 			TableViewerColumn viewerColumn = new TableViewerColumn(viewer, SWT.LEAD);
@@ -60,7 +66,7 @@ public class TablePresenter extends SWTPresenter {
 			viewerColumn.getColumn().setMoveable(true);
 		}
 		viewer.setLabelProvider(new InstanceLabelProvider());
-		viewer.setContentProvider(new ArrayContentProvider());
+		viewer.setContentProvider(new InstanceContentProvider(true));
 		columnsInit = true;
 	}
 

@@ -5,11 +5,9 @@ package de.lmu.ifi.dbs.knowing.core.processing;
 
 import java.io.IOException;
 
-import weka.core.Instances;
-
 /**
- * @author muki
- * @version 0.1
+ * @author Nepomuk Seiler
+ * @version 0.2
  * @since 21.03.2011
  */
 public interface IPresenter<T> {
@@ -39,8 +37,9 @@ public interface IPresenter<T> {
 	/**
 	 * 
 	 * @param processor
+	 * @throws InterruptedException 
 	 */
-	void buildPresentation(IResultProcessor processor);
+	void buildPresentation(IResultProcessor processor) throws InterruptedException;
 	
 	/**
 	 * <p>This method is used for determining if the<br>

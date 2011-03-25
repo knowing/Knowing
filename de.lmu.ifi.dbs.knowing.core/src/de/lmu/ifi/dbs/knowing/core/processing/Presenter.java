@@ -4,33 +4,41 @@
 package de.lmu.ifi.dbs.knowing.core.processing;
 
 import java.io.IOException;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
-import weka.core.Instances;
 import de.lmu.ifi.dbs.knowing.core.query.IQueryListener;
 import de.lmu.ifi.dbs.knowing.core.query.QueryResult;
 import de.lmu.ifi.dbs.knowing.core.query.QueryTicket;
 
 /**
  * @author Nepomuk Seiler
- * @version 0.1
+ * @version 0.3
  * @since 21.03.2011
  */
 public abstract class Presenter<T> implements IPresenter<T>,IQueryListener {
 
+	private final BlockingQueue<QueryResult> results = new LinkedBlockingQueue<QueryResult>();
+	
 	@Override
 	public void buildPresentation(ILoader loader) throws IOException {
 		loader.getDataSet(new QueryTicket(this, null, getName()));
 	}
 	
 	@Override
-	public void buildPresentation(IResultProcessor processor) {
-		createPresentation(processor.getResult());
+	public void buildPresentation(IResultProcessor processor) throws InterruptedException {
+		processor.queryResults(new QueryTicket(this, null, getName()));
 	}
 	
 	@Override
 	public void result(QueryResult result) throws InterruptedException {
-		createPresentation(result.getTicket().getResultSet());
+		results.put(result);
+		createPresentation(results);
 	}
 	
-	abstract protected void createPresentation(Instances dataset);
+	/**
+	 * 
+	 * @param results
+	 */
+	abstract protected void createPresentation(BlockingQueue<QueryResult> results);
 }

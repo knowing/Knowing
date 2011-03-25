@@ -3,6 +3,8 @@ package knowing.test.processor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -11,8 +13,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import de.lmu.ifi.dbs.knowing.core.processing.ILoader;
 import de.lmu.ifi.dbs.knowing.core.processing.IProcessor;
-import de.lmu.ifi.dbs.knowing.core.processing.IResultProcessor;
-import de.lmu.ifi.dbs.knowing.core.processing.Processor;
+import de.lmu.ifi.dbs.knowing.core.processing.ResultProcessor;
 import de.lmu.ifi.dbs.knowing.core.query.Queries;
 import de.lmu.ifi.dbs.knowing.core.query.QueryResult;
 import de.lmu.ifi.dbs.knowing.core.query.QueryTicket;
@@ -28,7 +29,7 @@ import de.lmu.ifi.dbs.knowing.core.query.QueryTicket;
  * @version 1.0
  *
  */
-public class ExampleProcessor extends Processor implements IResultProcessor {
+public class ExampleProcessor extends ResultProcessor {
 
 	private static final Instances[] supported = new Instances[] { Queries.arrayNumericQuery(),
 			Queries.singleNumericQuery() };
@@ -36,7 +37,8 @@ public class ExampleProcessor extends Processor implements IResultProcessor {
 	private BlockingQueue<Instance> sampleQueries = new ArrayBlockingQueue<Instance>(10, true);
 	private volatile boolean ready;
 
-	private Instances resultSet;
+	private Instances[] results = new Instances[0];
+	private Map<String, Instances> resultsMap = new HashMap<String, Instances>();
 
 	@Override
 	public synchronized void buildModel(ILoader loader) {
@@ -73,18 +75,68 @@ public class ExampleProcessor extends Processor implements IResultProcessor {
 			} else {
 				// Print the results from the queryed IProcessor
 				System.out.println(" ### Clustered Instance ###");
-				int index = 0;
+				int i = 1;
 				for (Instances res : result.getResults()) {
-					System.out.println("Result Nr. " + index++);
-					System.out.println(res);
-					this.resultSet = res;
+					System.out.println("Result Nr. " + i++);
+//					System.out.println(res);
+					addResults(res);
 				}
 				ready = true;
-				fireProcessorStateChanged();
 				System.out.println(" ### ================== ###");
 			}
 			result = results.poll();
 		}
+		if(ready) 
+			generateResults();
+		
+			
+	}
+	
+	@Override
+	protected void query(BlockingQueue<QueryTicket> tickets) {
+		tickets.clear(); //Throw them away, we don't answer queries
+	}
+	
+	@Override
+	protected void queryResults(BlockingQueue<QueryTicket> resultTickets) {
+		QueryTicket ticket = resultTickets.poll();
+		while(ticket != null) {
+			try {
+				ticket.fireResult(results);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			ticket = resultTickets.poll();
+		}
+	}
+	
+	/**
+	 * @param res
+	 */
+	private void addResults(Instances res) {
+		String key = res.relationName();
+//		if(resultsMap.containsKey(key)){
+//			Instances oldInst = resultsMap.get(key);
+//			if(oldInst.equalHeaders(res))
+//				resultsMap.put(key, Instances.mergeInstances(oldInst, res));
+//			else
+//				resultsMap.put(key, res);
+//		} else {
+//			resultsMap.put(key, res);
+//		}
+		resultsMap.put(key, res);
+	}
+
+	/**
+	 * 
+	 */
+	private void generateResults() {
+		System.err.println("Generate Results!!");
+		results = new Instances[resultsMap.size()];
+		int i = 0;
+		for (Instances res : resultsMap.values()) 
+			results[i++] = res;
+		fireProcessorStateChanged();
 	}
 
 	private void buildSampleQueries(QueryResult result) {
@@ -98,16 +150,6 @@ public class ExampleProcessor extends Processor implements IResultProcessor {
 				e.printStackTrace();
 			}
 		}
-	}
-	
-	@Override
-	protected void query(BlockingQueue<QueryTicket> tickets) {
-		tickets.clear(); //Throw them away, we don't answer queries
-	}
-
-	@Override
-	public Instances getResult() {
-		return resultSet;
 	}
 	
 	@Override

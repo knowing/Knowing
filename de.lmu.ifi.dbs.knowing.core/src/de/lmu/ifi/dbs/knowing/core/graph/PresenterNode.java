@@ -97,7 +97,11 @@ public class PresenterNode extends Node {
 
 			@Override
 			public void run() {
-				presenter.buildPresentation(processor);
+				try {
+					presenter.buildPresentation(processor);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		};
 		supervisor.execute(buildTask);

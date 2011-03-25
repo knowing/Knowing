@@ -1,50 +1,66 @@
-/**
- * 
- */
 package de.lmu.ifi.dbs.knowing.core.swt.internal;
 
-import org.osgi.framework.BundleActivator;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
 import de.lmu.ifi.dbs.knowing.core.factory.IPresenterFactory;
+import de.lmu.ifi.dbs.knowing.core.swt.MultiTablePresenterFactory;
 import de.lmu.ifi.dbs.knowing.core.swt.TablePresenterFactory;
 
 /**
- * @author muki
- * @version 0.1
- * @since 21.03.2011
+ * The activator class controls the plug-in life cycle
  */
-public class Activator implements BundleActivator {
+public class Activator extends AbstractUIPlugin {
 
-	private static BundleContext context;
+	// The plug-in ID
+	public static final String PLUGIN_ID = "de.lmu.ifi.dbs.knowing.core.swt"; //$NON-NLS-1$
+
+	// The shared instance
+	private static Activator plugin;
+	
+	//
 	private ServiceRegistration tablePresenterService;
-
-	public static BundleContext getContext() {
-		return context;
+	private ServiceRegistration multiTablePresenterService;
+	
+	/**
+	 * The constructor
+	 */
+	public Activator() {
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
-	 * )
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
-	public void start(BundleContext bundleContext) throws Exception {
-		Activator.context = bundleContext;
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		plugin = this;
+		
 		tablePresenterService = context.registerService(IPresenterFactory.class.getName(), new TablePresenterFactory(),
+				null);
+		multiTablePresenterService = context.registerService(IPresenterFactory.class.getName(), new MultiTablePresenterFactory(),
 				null);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
-	public void stop(BundleContext bundleContext) throws Exception {
+	public void stop(BundleContext context) throws Exception {
+		plugin = null;
+		super.stop(context);
 		tablePresenterService.unregister();
-		Activator.context = null;
+		multiTablePresenterService.unregister();
 	}
+
+	/**
+	 * Returns the shared instance
+	 *
+	 * @return the shared instance
+	 */
+	public static Activator getDefault() {
+		return plugin;
+	}
+
 }

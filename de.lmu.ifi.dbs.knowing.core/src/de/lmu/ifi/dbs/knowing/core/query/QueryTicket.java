@@ -26,19 +26,19 @@ public class QueryTicket {
 	private final Instance query;
 	private final String name;
 	
-	private Instances resultSet;
+	private Instances[] headers;
 	
 	
-	public QueryTicket(IQueryListener inquirer, Instance query, Instances resultSet, String name) {
+	public QueryTicket(IQueryListener inquirer, Instance query, Instances[] headers, String name) {
 		this.timestamp = System.currentTimeMillis();
 		this.inquirer = inquirer;
 		this.query = query;
-		this.resultSet = resultSet;
+		this.headers = headers;
 		this.name = name;
 	}
 
 	public QueryTicket(IQueryListener inquirer, Instance query, String name) {
-		this(inquirer, query, null, name);
+		this(inquirer, query, new Instances[0], name);
 	}
 	
 	public void fireResult(Instances[] results) throws InterruptedException {
@@ -61,8 +61,8 @@ public class QueryTicket {
 		return query;
 	}
 	
-	public Instances getResultSet() {
-		return resultSet;
+	public Instances[] getHeaders() {
+		return headers;
 	}
 
 	public String getName() {

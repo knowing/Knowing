@@ -1,6 +1,5 @@
 package knowing.test;
 
-import java.awt.Composite;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -28,7 +27,7 @@ import de.lmu.ifi.dbs.knowing.core.graph.InputNode;
 import de.lmu.ifi.dbs.knowing.core.graph.PresenterNode;
 import de.lmu.ifi.dbs.knowing.core.graph.ProcessorNode;
 import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit;
-import de.lmu.ifi.dbs.knowing.core.swt.TablePresenterFactory;
+import de.lmu.ifi.dbs.knowing.core.swt.MultiTablePresenterFactory;
 import de.lmu.ifi.dbs.knowing.core.util.FactoryUtil;
 
 public class Activator implements BundleActivator {
@@ -52,7 +51,6 @@ public class Activator implements BundleActivator {
 		FactoryUtil.registerLoaderFactory(new ARFFLoaderFactory(), null);
 		FactoryUtil.registerLoaderFactory(new CSVLoaderFactory(), null);
 		//Start little tests
-		//kmeansTest();
 		//dpuTest();
 	}
 
@@ -64,42 +62,6 @@ public class Activator implements BundleActivator {
 		Activator.context = null;
 	}
 		
-	/* ========== SIMPLE KMEANS TEST =========== */
-	
-	private void kmeansTest() {
-		GraphSupervisor supervisor = new GraphSupervisor();
-		InputNode inputNode = new InputNode(ARFFLoaderFactory.ID, "Input");
-		ProcessorNode kmeansNode = new ProcessorNode("KMeans", KMeansFactory.ID, "KMeans");
-		ProcessorNode sampleNode = new ProcessorNode("ExampleProcessor", ExampleProcessorFactory.ID, "Example");
-		
-		Edge e1 = new Edge("e1", "Input", "KMeans");
-		Edge e2 = new Edge("e2", "Input", "Example");
-		Edge e3 = new Edge("e3", "KMeans", "Example");
-		
-		
-		supervisor.putNode(inputNode);
-		supervisor.putNode(kmeansNode);
-		supervisor.putNode(sampleNode);
-		
-		supervisor.addEdge(e1);
-		supervisor.addEdge(e2);
-		supervisor.addEdge(e3);
-		
-		supervisor.connectNodes();
-		try {
-			supervisor.evaluate();
-		} catch (Exception e) {
-			//Something bad happend during initialization
-			e.printStackTrace();
-		}
-		
-		try {
-			Thread.sleep(2000);
-			supervisor.printHistory(System.out);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
 	
 	/* ========== DPU TEST WITH KMEANS =========== */
 	
@@ -115,7 +77,7 @@ public class Activator implements BundleActivator {
 		kmeansNode.setProperties(sampleProperties());
 		ProcessorNode sampleNode = new ProcessorNode("ExampleProcessor", ExampleProcessorFactory.ID, "Example");
 		sampleNode.setProperties(sampleProperties());
-		PresenterNode presenterNode = new PresenterNode(TablePresenterFactory.ID, "Presenter");
+		PresenterNode presenterNode = new PresenterNode(MultiTablePresenterFactory.ID, "Presenter");
 		presenterNode.setProperties(presenterProperties());
 		
 		Edge e1 = new Edge("e1", "Input", "KMeans");
@@ -142,7 +104,7 @@ public class Activator implements BundleActivator {
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			m.marshal(dpu, dpufile);
-			//m.marshal(dpu, System.out);
+//			m.marshal(dpu, System.out);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}

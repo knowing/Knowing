@@ -10,7 +10,6 @@ import weka.classifiers.AbstractClassifier;
 import weka.core.Capabilities;
 import weka.core.Instance;
 import weka.core.Instances;
-
 import de.lmu.ifi.dbs.knowing.core.graph.IProcessorListener;
 import de.lmu.ifi.dbs.knowing.core.query.QueryResult;
 import de.lmu.ifi.dbs.knowing.core.query.QueryTicket;
@@ -77,11 +76,11 @@ public abstract class Processor implements IProcessor {
 	 * @param name
 	 * @param input
 	 * @param processor
-	 * @param resultSet
+	 * @param headers
 	 * @throws InterruptedException
 	 */
-	protected void fireQuery(String name, Instance input, IProcessor processor, Instances resultSet) throws InterruptedException {
-		QueryTicket ticket = new QueryTicket(this, input, resultSet, name);
+	protected void fireQuery(String name, Instance input, IProcessor processor, Instances[] headers) throws InterruptedException {
+		QueryTicket ticket = new QueryTicket(this, input, headers, name);
 		processor.query(ticket);
 	}
 	
@@ -92,7 +91,7 @@ public abstract class Processor implements IProcessor {
 	 * @param structureOnly
 	 * @throws IOException
 	 */
-	protected void fireQuery(String name,ILoader loader, boolean structureOnly) throws IOException {
+	protected void fireQuery(String name, ILoader loader, boolean structureOnly) throws IOException {
 		QueryTicket ticket = new QueryTicket(this, null, name);
 		if(structureOnly)
 			loader.getStructure(ticket);

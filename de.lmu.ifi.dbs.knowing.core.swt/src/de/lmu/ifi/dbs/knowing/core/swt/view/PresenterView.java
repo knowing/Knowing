@@ -37,7 +37,7 @@ public class PresenterView extends ViewPart {
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
 		tabItem.setText(name);
 		Composite composite = new Composite(tabFolder, SWT.NONE);
-		composite.setLayout(new FillLayout(SWT.HORIZONTAL));
+		composite.setLayout(new FillLayout());
 		tabItem.setControl(composite);
 		return composite;
 	}
