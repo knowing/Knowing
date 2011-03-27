@@ -2,6 +2,8 @@ package de.lmu.ifi.dbs.knowing.core.graph;
 
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 import de.lmu.ifi.dbs.knowing.core.factory.ILoaderFactory;
 import de.lmu.ifi.dbs.knowing.core.processing.ILoader;
 import de.lmu.ifi.dbs.knowing.core.util.FactoryUtil;
@@ -15,6 +17,8 @@ public class InputNode extends Node {
 		
 	private ILoader loader;
 	
+	private static final Logger log = Logger.getLogger(InputNode.class);
+	
 	public InputNode(String factoryName, String factoryId, String nodeId) {
 		super(factoryName, factoryId, nodeId);
 	}
@@ -27,11 +31,12 @@ public class InputNode extends Node {
 	public void initialize() {
 		loader = FactoryUtil.getLoaderService(getFactoryId(), properties);
 		ready = true;
+		log.info("Loader[" + loader + "] initialized");
 	}
 	
 	@Override
 	public void run() throws Exception {
-		System.out.println("=== [RUN/BUILD]: " + this);
+		log.debug("=== [RUN/BUILD]: " + this);
 		fireNodeEvent(NodeEvent.LOADER_READY, loader);
 	}
 

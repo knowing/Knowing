@@ -6,6 +6,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.log4j.Logger;
+
 import weka.classifiers.AbstractClassifier;
 import weka.core.Capabilities;
 import weka.core.Instance;
@@ -18,8 +20,15 @@ import de.lmu.ifi.dbs.knowing.core.query.QueryTicket;
  * <p>Implements some query methods and synchronizes them, so a robust and reliable<br>
  * service will be generated.</p>
  * 
+ * <p>To use the provided Logger put or add these dependencies to your Manifest.MF in your bundle:<br>
+ * <code>
+ * Import-Package: org.apache.log4j; version="[1.2,1.3)"; provider=paxlogging,
+ * org.apache.commons.logging; version="[1.0,1.1)"; provider=paxlogging
+ * </code>
+ * </p>
+ * 
  * @author Nepomuk Seiler
- * @version 0.5
+ * @version 0.6
  */
 public abstract class Processor implements IProcessor {
 
@@ -29,6 +38,9 @@ public abstract class Processor implements IProcessor {
 	private final BlockingQueue<QueryTicket> tickets = new ArrayBlockingQueue<QueryTicket>(1000, true);
 
 	private IProcessorListener listener;
+	
+	/** You have to import org.apache.log4j via the pax-logging bundle to use this logger */
+	protected static final Logger log = Logger.getLogger(IProcessor.class);
 	
 	@Override
 	public Properties getProperties() {

@@ -34,17 +34,15 @@ public class MultiTablePresenter extends SWTPresenter {
 	}
 
 	@Override
-	protected synchronized void createContent(Instances dataset) {
+	protected void createContent(Instances dataset) {
 		TablePresenter presenter = null;
 		if(!tables.containsKey(dataset.relationName())) {
 			//Create new container
 			presenter = new TablePresenter();
 			presenter.createContainer(createTab(dataset.relationName()));
 			tables.put(dataset.relationName(), presenter);
-			System.err.println("Created new container: " + dataset.relationName());
 		} else {
 			presenter = tables.get(dataset.relationName());
-			System.err.println("Got old container: " + dataset.relationName());
 		}
 		//finally add data
 		presenter.createContent(dataset);
@@ -57,7 +55,7 @@ public class MultiTablePresenter extends SWTPresenter {
 	 * @param name - name of the tab
 	 * @return tab content composite
 	 */
-	public synchronized Composite createTab(String name) {
+	public Composite createTab(String name) {
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
 		tabItem.setText(name);
 		Composite composite = new Composite(tabFolder, SWT.NONE);

@@ -26,7 +26,7 @@ import de.lmu.ifi.dbs.knowing.core.query.QueryTicket;
  * <p>Actually it is designed for usage with clusterers</p>
  * 
  * @author Nepomuk Seiler
- * @version 1.0
+ * @version 1.2
  *
  */
 public class ExampleProcessor extends ResultProcessor {
@@ -45,7 +45,7 @@ public class ExampleProcessor extends ResultProcessor {
 		try {
 			fireQuery("model.loader", loader, false);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("IOError while building model from " + loader, e);
 		}
 	}
 
@@ -54,13 +54,13 @@ public class ExampleProcessor extends ResultProcessor {
 		try {
 			Instance input = sampleQueries.poll(10, TimeUnit.SECONDS);
 			while (input != null) {
-				System.out.println(">>>> Input: " + input);
+				log.debug(">>>> Input: " + input);
 				fireQuery("sample.query", input, processor);
 				input = sampleQueries.poll();
 				
 			}
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			log.error("InterruptedError while building model from " + processor, e);
 		}
 	}
 
@@ -74,15 +74,15 @@ public class ExampleProcessor extends ResultProcessor {
 				buildSampleQueries(result);
 			} else {
 				// Print the results from the queryed IProcessor
-				System.out.println(" ### Clustered Instance ###");
+				log.debug(" ### Clustered Instance ###");
 				int i = 1;
 				for (Instances res : result.getResults()) {
-					System.out.println("Result Nr. " + i++);
-//					System.out.println(res);
+					log.debug("Result Nr. " + i++);
+					//System.out.println(res);
 					addResults(res);
 				}
 				ready = true;
-				System.out.println(" ### ================== ###");
+				log.debug(" ### ================== ###");
 			}
 			result = results.poll();
 		}
@@ -115,15 +115,6 @@ public class ExampleProcessor extends ResultProcessor {
 	 */
 	private void addResults(Instances res) {
 		String key = res.relationName();
-//		if(resultsMap.containsKey(key)){
-//			Instances oldInst = resultsMap.get(key);
-//			if(oldInst.equalHeaders(res))
-//				resultsMap.put(key, Instances.mergeInstances(oldInst, res));
-//			else
-//				resultsMap.put(key, res);
-//		} else {
-//			resultsMap.put(key, res);
-//		}
 		resultsMap.put(key, res);
 	}
 
@@ -131,7 +122,6 @@ public class ExampleProcessor extends ResultProcessor {
 	 * 
 	 */
 	private void generateResults() {
-		System.err.println("Generate Results!!");
 		results = new Instances[resultsMap.size()];
 		int i = 0;
 		for (Instances res : resultsMap.values()) 
@@ -147,7 +137,7 @@ public class ExampleProcessor extends ResultProcessor {
 			try {
 				sampleQueries.put(samples.get(index));
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				log.error("InterruptedError while building sampleQueries", e);
 			}
 		}
 	}
@@ -155,6 +145,7 @@ public class ExampleProcessor extends ResultProcessor {
 	@Override
 	public void resetModel() {
 		sampleQueries.clear();
+		log.debug("Reset model");
 	}
 
 	@Override

@@ -27,7 +27,7 @@ import de.lmu.ifi.dbs.knowing.core.graph.InputNode;
 import de.lmu.ifi.dbs.knowing.core.graph.PresenterNode;
 import de.lmu.ifi.dbs.knowing.core.graph.ProcessorNode;
 import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit;
-import de.lmu.ifi.dbs.knowing.core.swt.MultiTablePresenterFactory;
+import de.lmu.ifi.dbs.knowing.core.swt.factory.MultiTablePresenterFactory;
 import de.lmu.ifi.dbs.knowing.core.util.FactoryUtil;
 
 public class Activator implements BundleActivator {

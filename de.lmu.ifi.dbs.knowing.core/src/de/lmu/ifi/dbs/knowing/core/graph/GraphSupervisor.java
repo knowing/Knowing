@@ -11,6 +11,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.log4j.Logger;
+
 import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit;
 import de.lmu.ifi.dbs.knowing.core.graph.xml.PersistentNode;
 import de.lmu.ifi.dbs.knowing.core.processing.IProcessor;
@@ -36,6 +38,9 @@ public class GraphSupervisor implements INodeListener {
 	/* == Local history of events == */
 	// TODO GraphSupervisor: Option to turn off history for memory reasons
 	private final BlockingQueue<NodeEvent> history = new LinkedBlockingQueue<NodeEvent>();
+	
+	/* == Logger == */
+	private static final Logger log = Logger.getLogger(GraphSupervisor.class);
 
 	public GraphSupervisor() {
 		executor = Executors.newCachedThreadPool();
@@ -56,6 +61,7 @@ public class GraphSupervisor implements INodeListener {
 	}
 
 	public void connectNodes() {
+		log.info("Connecting Nodes");
 		for (Edge edge : edges) {
 			String sourceId = edge.getSourceId();
 			String targetId = edge.getTargetId();
@@ -73,6 +79,7 @@ public class GraphSupervisor implements INodeListener {
 			// Try it for both,so nothing is left out
 			source.setSupervisor(this);
 			target.setSupervisor(this);
+			log.debug(target + " listens to " + source);
 		}
 	}
 
@@ -88,6 +95,7 @@ public class GraphSupervisor implements INodeListener {
 	 * @throws Exception
 	 */
 	public void evaluate() throws Exception {
+		log.info("Start evaluation");
 		for (INode node : nodes.values())
 			node.run();
 

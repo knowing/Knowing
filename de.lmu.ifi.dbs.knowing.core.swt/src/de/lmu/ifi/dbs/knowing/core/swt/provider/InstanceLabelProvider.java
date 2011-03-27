@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.lmu.ifi.dbs.knowing.core.swt;
+package de.lmu.ifi.dbs.knowing.core.swt.provider;
 
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;

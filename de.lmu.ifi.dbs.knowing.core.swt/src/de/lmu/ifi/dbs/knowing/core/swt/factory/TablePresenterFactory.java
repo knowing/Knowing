@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.lmu.ifi.dbs.knowing.core.swt;
+package de.lmu.ifi.dbs.knowing.core.swt.factory;
 
 import java.util.Properties;
 
@@ -9,15 +9,16 @@ import org.eclipse.swt.widgets.Composite;
 
 import de.lmu.ifi.dbs.knowing.core.factory.IPresenterFactory;
 import de.lmu.ifi.dbs.knowing.core.processing.IPresenter;
+import de.lmu.ifi.dbs.knowing.core.swt.TablePresenter;
 
 /**
  * @author Nepomuk Seiler
- * @version 0.4
- * @since 23.03.2011
+ * @version 0.2
+ * @since 21.03.2011
  */
-public class MultiTablePresenterFactory implements IPresenterFactory {
+public class TablePresenterFactory implements IPresenterFactory {
 
-	public static final String ID = "de.lmu.ifi.dbs.knowing.core.swt.MultiTablePresenter";
+	public static final String ID = "de.lmu.ifi.dbs.knowing.core.swt.TablePresenter";
 	
 	private static final Properties properties = new Properties();
 	
@@ -28,7 +29,7 @@ public class MultiTablePresenterFactory implements IPresenterFactory {
 
 	@Override
 	public String getName() {
-		return "Multi Table Presenter";
+		return "Table Presenter";
 	}
 
 	@Override
@@ -38,7 +39,7 @@ public class MultiTablePresenterFactory implements IPresenterFactory {
 
 	@Override
 	public IPresenter<Composite> getInstance(Properties properties) {
-		return new MultiTablePresenter();
+		return new TablePresenter();
 	}
 
 }

@@ -42,8 +42,11 @@ public class SimpleKMeansProcessor extends Processor {
 
 				kmeans.setMaxIterations(iter);
 				setProperty(PROP_MAX_ITERATIONS, iter.toString());
+				log.debug("Set KMeans property " + PROP_MAX_ITERATIONS + " to " + iter);
+				
 				kmeans.setNumClusters(clus);
 				setProperty(PROP_NUM_CLUSTERS, clus.toString());
+				log.debug("Set KMeans property " + PROP_NUM_CLUSTERS + " to " + clus);
 
 			} else {
 				Integer iter = Integer.valueOf(getProperties().getProperty(PROP_MAX_ITERATIONS));
@@ -54,18 +57,18 @@ public class SimpleKMeansProcessor extends Processor {
 				setProperty(PROP_NUM_CLUSTERS, clus.toString());
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Not able to set properties for " + kmeans, e);
 		}
 
 	}
 
 	@Override
 	public synchronized void buildModel(ILoader loader) {
-		System.out.println(" ### KMeansProcessor: Build Model from Loader ###");
+		log.debug(" ### KMeansProcessor: Build Model from Loader ###");
 		try {
 			fireQuery("model.loader", loader, false);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("IO Error while building model from " + loader, e);
 		}
 	}
 
@@ -76,6 +79,7 @@ public class SimpleKMeansProcessor extends Processor {
 
 	@Override
 	public void resetModel() {
+		log.debug("Reset model for " + kmeans);
 		kmeans = new SimpleKMeans();
 		ready = false;
 	}
@@ -89,6 +93,7 @@ public class SimpleKMeansProcessor extends Processor {
 	protected void query(BlockingQueue<QueryTicket> tickets) {
 		QueryTicket ticket = tickets.poll();
 		while (ticket != null) {
+			log.trace(this + " answering ticket [" + ticket + "]");
 			Instance input = ticket.getQuery();
 			int clusterInstance;
 			try {
@@ -107,7 +112,7 @@ public class SimpleKMeansProcessor extends Processor {
 				ticket = tickets.poll();
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error("Error while querying kmeans", e);
 			}
 		}
 
@@ -122,9 +127,9 @@ public class SimpleKMeansProcessor extends Processor {
 			if (ticket.getName().equals("model.loader")) {
 				try {
 					kmeans.buildClusterer(queryResults[0]);
-					System.out.println(" ### Cluster build finished ### ");
-					System.out.println(kmeans.getClusterCentroids());
-					System.out.println(" ### ====================== ###");
+					log.info(" ### Cluster build finished ### ");
+					log.debug(kmeans.getClusterCentroids());
+					log.debug(" ### ====================== ###");
 					ready = true;
 					fireProcessorStateChanged();
 				} catch (Exception e) {
@@ -143,8 +148,8 @@ public class SimpleKMeansProcessor extends Processor {
 	@Override
 	public void persistModel(OutputStream out) {
 		ArffSaver saver = new ArffSaver();
-		System.out.println("Model to persist:");
-		System.out.println(kmeans.getClusterCentroids());
+		log.info("Persisting KMeans model");
+		log.debug(kmeans.getClusterCentroids());
 		if(kmeans.getClusterCentroids() == null)
 			return;
 		try {

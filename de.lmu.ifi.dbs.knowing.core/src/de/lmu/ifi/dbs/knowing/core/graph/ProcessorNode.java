@@ -2,14 +2,24 @@ package de.lmu.ifi.dbs.knowing.core.graph;
 
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 import de.lmu.ifi.dbs.knowing.core.factory.IProcessorFactory;
 import de.lmu.ifi.dbs.knowing.core.processing.ILoader;
 import de.lmu.ifi.dbs.knowing.core.processing.IProcessor;
 import de.lmu.ifi.dbs.knowing.core.util.FactoryUtil;
 
+/**
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.2
+ * @since 11.03.2011
+ */
 public class ProcessorNode extends Node implements IProcessorListener {
 
 	private IProcessor processor;
+	
+	private static final Logger log = Logger.getLogger(ProcessorNode.class);
 
 	public ProcessorNode(String factoryName, String factoryId, String nodeId) {
 		super(factoryName, factoryId, nodeId);
@@ -23,6 +33,7 @@ public class ProcessorNode extends Node implements IProcessorListener {
 	public void initialize() {
 		processor = FactoryUtil.getProcessorService(getFactoryId(), properties);
 		processor.setProcessorListener(this);
+		log.info("Processor ["+ processor + "] initialized");
 	}
 
 	public IProcessor getProcessor() {
@@ -36,7 +47,7 @@ public class ProcessorNode extends Node implements IProcessorListener {
 
 	@Override
 	public void nodeChanged(NodeEvent event) {
-		System.out.println("!!! [NodeEvent]: " + event.getSource() + " -> " + this);
+		log.debug("!!! [NodeEvent]: " + event.getSource() + " -> " + this);
 		Object so = event.getServiceObject();
 		switch (event.getType()) {
 		case NodeEvent.LOADER_READY:
@@ -63,7 +74,7 @@ public class ProcessorNode extends Node implements IProcessorListener {
 	 * @param loader
 	 */
 	private void buildModel(final ILoader loader) {
-		System.out.println("=== [RUN/BUILD]: " + processor + " with " + loader);
+		log.debug("=== [RUN/BUILD]: " + processor + " with " + loader);
 		Runnable buildTask = new Runnable() {
 
 			@Override

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.lmu.ifi.dbs.knowing.core.swt;
+package de.lmu.ifi.dbs.knowing.core.swt.provider;
 
 import java.util.ArrayList;
 import java.util.Collections;

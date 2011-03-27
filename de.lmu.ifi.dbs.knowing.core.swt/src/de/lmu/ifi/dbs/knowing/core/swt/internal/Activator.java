@@ -5,8 +5,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
 import de.lmu.ifi.dbs.knowing.core.factory.IPresenterFactory;
-import de.lmu.ifi.dbs.knowing.core.swt.MultiTablePresenterFactory;
-import de.lmu.ifi.dbs.knowing.core.swt.TablePresenterFactory;
+import de.lmu.ifi.dbs.knowing.core.swt.factory.MultiTablePresenterFactory;
+import de.lmu.ifi.dbs.knowing.core.swt.factory.TablePresenterFactory;
 
 /**
  * The activator class controls the plug-in life cycle

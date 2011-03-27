@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 
+import org.apache.log4j.Logger;
+
 import weka.core.Instances;
 import weka.core.converters.Loader;
 import weka.core.converters.URLSourcedLoader;
@@ -20,6 +22,8 @@ import de.lmu.ifi.dbs.knowing.core.query.QueryTicket;
  */
 public class SynchronizedLoader implements ILoader {
 
+	protected static final Logger log = Logger.getLogger(ILoader.class);
+	
 	private final Loader loader;
 	private Instances dataset;
 	private Instances structure;
@@ -43,7 +47,7 @@ public class SynchronizedLoader implements ILoader {
 		try {
 			ticket.fireResult(structure);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			log.error("Cannot get structure", e);
 			// TODO listener.result(new QueryResult(dataset, null, listener));
 			// try more than once
 		}
@@ -60,7 +64,7 @@ public class SynchronizedLoader implements ILoader {
 		try {
 			ticket.fireResult(dataset);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			log.error("Cannot get DataSet", e);
 			// TODO listener.result(new QueryResult(dataset, null, listener));
 			// try more than once
 		}
@@ -77,7 +81,7 @@ public class SynchronizedLoader implements ILoader {
 		try {
 			reset();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Problem setting source via InputStream " + input, e);
 		}
 	}
 
@@ -87,7 +91,7 @@ public class SynchronizedLoader implements ILoader {
 		try {
 			reset();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Problem setting source via File " + file, e);
 		}
 	}
 

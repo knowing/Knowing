@@ -12,6 +12,9 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
+import de.lmu.ifi.dbs.knowing.core.swt.provider.InstanceContentProvider;
+import de.lmu.ifi.dbs.knowing.core.swt.provider.InstanceLabelProvider;
+
 import weka.core.Attribute;
 import weka.core.Instances;
 
@@ -49,16 +52,8 @@ public class TablePresenter extends SWTPresenter {
 			return;
 		viewer.getTable().setHeaderVisible(true);
 		viewer.getTable().setLinesVisible(true);
-//		ArrayList<Attribute> attributes = Collections.list(eAttr);
-//		for (Attribute a : attributes) {
-//			TableViewerColumn viewerColumn = new TableViewerColumn(viewer, SWT.LEAD);
-//			viewerColumn.getColumn().setText(a.name());
-//			viewerColumn.getColumn().setWidth(70);
-//			viewerColumn.getColumn().setResizable(true);
-//			viewerColumn.getColumn().setMoveable(true);
-//		}
-		while(eAttr.hasMoreElements()) {
-			Attribute a = eAttr.nextElement();
+		ArrayList<Attribute> attributes = Collections.list(eAttr);
+		for (Attribute a : attributes) {
 			TableViewerColumn viewerColumn = new TableViewerColumn(viewer, SWT.LEAD);
 			viewerColumn.getColumn().setText(a.name());
 			viewerColumn.getColumn().setWidth(70);

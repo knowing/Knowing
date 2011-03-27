@@ -6,6 +6,8 @@ package de.lmu.ifi.dbs.knowing.core.graph;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 import de.lmu.ifi.dbs.knowing.core.factory.IPresenterFactory;
 import de.lmu.ifi.dbs.knowing.core.processing.ILoader;
 import de.lmu.ifi.dbs.knowing.core.processing.IPresenter;
@@ -14,12 +16,14 @@ import de.lmu.ifi.dbs.knowing.core.util.FactoryUtil;
 
 /**
  * @author Nepomuk Seiler
- * @version 0.1
+ * @version 0.2
  * @since 21.03.2011
  */
 public class PresenterNode extends Node {
 
 	private IPresenter presenter;
+	
+	private static final Logger log = Logger.getLogger(PresenterNode.class);
 
 	/**
 	 * @param factoryName
@@ -39,11 +43,6 @@ public class PresenterNode extends Node {
 	}
 
 	@Override
-	public void run() throws Exception {
-
-	}
-
-	@Override
 	public void initialize() {
 		presenter = FactoryUtil.getPresenterService(getFactoryId(), properties);
 	}
@@ -56,7 +55,7 @@ public class PresenterNode extends Node {
 
 	@Override
 	public void nodeChanged(NodeEvent event) {
-		System.out.println("!!! [NodeEvent]: " + event.getSource() + " -> " + this);
+		log.debug("[NodeEvent]: " + event.getSource() + " -> " + this);
 		Object so = event.getServiceObject();
 		switch (event.getType()) {
 		case NodeEvent.LOADER_READY:
@@ -72,7 +71,7 @@ public class PresenterNode extends Node {
 	 * @param loader
 	 */
 	private void createPresentation(final ILoader loader) {
-		System.out.println("=== [RUN/BUILD]: " + presenter + " with " + loader);
+		log.debug("=== [RUN/BUILD]: " + presenter + " with " + loader);
 		Runnable buildTask = new Runnable() {
 
 			@Override
@@ -81,7 +80,7 @@ public class PresenterNode extends Node {
 					presenter.buildPresentation(loader);
 				} catch (IOException e) {
 					// TODO createPresentation -> Handle Exception
-					e.printStackTrace();
+					log.error("IO Error building " + this, e);
 				}
 			}
 		};
@@ -92,7 +91,7 @@ public class PresenterNode extends Node {
 	 * @param processor
 	 */
 	private void createPresentation(final IResultProcessor processor) {
-		System.out.println("=== [RUN/BUILD]: " + presenter + " with " + processor);
+		log.debug("=== [RUN/BUILD]: " + presenter + " with " + processor);
 		Runnable buildTask = new Runnable() {
 
 			@Override
