@@ -11,8 +11,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.progress.IProgressConstants;
 
-import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
-import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.Block;
 import de.lmu.ifi.dbs.medmon.sensor.core.converter.IConverter;
 
@@ -27,8 +25,8 @@ public class ImportJob extends Job {
 		this.block = block;
 		this.converter = converter;
 		setUser(true);
-		setProperty(IProgressConstants.ICON_PROPERTY,
-				ResourceManager.getPluginImageDescriptor(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_REFRESH_24));
+//		setProperty(IProgressConstants.ICON_PROPERTY,
+//				ResourceManager.getPluginImageDescriptor(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_REFRESH_24));
 	}
 
 	@Override

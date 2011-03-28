@@ -10,7 +10,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.window.Window;
@@ -34,22 +33,18 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.ViewPart;
 
-import de.lmu.ifi.dbs.medmon.base.ui.dialog.DialogFactory;
-import de.lmu.ifi.dbs.medmon.base.ui.provider.WorkbenchTableLabelProvider;
 import de.lmu.ifi.dbs.medmon.base.ui.viewer.ClusterTableViewer;
 import de.lmu.ifi.dbs.medmon.database.model.Archiv;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.database.util.JPAUtil;
+import de.lmu.ifi.dbs.medmon.medic.core.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.ArchivLabelProvider;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.ISharedImages;
 import de.lmu.ifi.dbs.medmon.medic.ui.util.MedicUtil;
-import de.lmu.ifi.dbs.medmon.medic.ui.wizard.CreatePatientWizard;
 import de.lmu.ifi.dbs.medmon.medic.ui.wizard.TrainClusterWizard;
-import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 
 public class PatientView extends ViewPart implements PropertyChangeListener {
 

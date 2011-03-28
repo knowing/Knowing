@@ -5,6 +5,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -20,8 +21,6 @@ import de.lmu.ifi.dbs.medmon.medic.ui.handler.ClusterWizardHandler;
 import de.lmu.ifi.dbs.medmon.medic.ui.handler.ImportWizardHandler;
 import de.lmu.ifi.dbs.medmon.medic.ui.handler.NewPatientHandler;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.ISharedImages;
-import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
-import de.lmu.ifi.dbs.medmon.rcp.platform.util.CommandUtil;
 
 public class HomeView extends ViewPart {
 
@@ -77,7 +76,12 @@ public class HomeView extends ViewPart {
 		analyse.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				CommandUtil.openPerpsective("de.lmu.ifi.dbs.medmon.medic.ui.default");
+				try {
+					IWorkbench workbench = PlatformUI.getWorkbench();
+					workbench.showPerspective("de.lmu.ifi.dbs.medmon.medic.ui.default",workbench.getActiveWorkbenchWindow());
+				} catch (WorkbenchException e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 

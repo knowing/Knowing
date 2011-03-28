@@ -4,13 +4,13 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 
-import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
-import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
+import de.lmu.ifi.dbs.medmon.base.ui.util.ResourceManager;
+import de.lmu.ifi.dbs.medmon.medic.core.util.IMedmonConstants;
 
 public class SaveCommentAction extends Action implements IWorkbenchAction {
 
 	public SaveCommentAction(String name) {
-		super(name, ResourceManager.getPluginImageDescriptor(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_SAVE_AS_16));
+		super(name, ResourceManager.getPluginImageDescriptor(IMedmonConstants.BASE_UI_PLUGIN, IMedmonConstants.IMG_SAVE_AS_16));
 	}
 	
 	@Override

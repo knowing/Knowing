@@ -13,9 +13,9 @@ import org.eclipse.ui.IWorkbenchWizard;
 import de.lmu.ifi.dbs.medmon.database.model.Archiv;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.database.util.JPAUtil;
+import de.lmu.ifi.dbs.medmon.medic.core.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
 import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.CreateArchivPage;
-import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 
 public class ArchivWizard extends Wizard implements IWorkbenchWizard, IExecutableExtension {
 

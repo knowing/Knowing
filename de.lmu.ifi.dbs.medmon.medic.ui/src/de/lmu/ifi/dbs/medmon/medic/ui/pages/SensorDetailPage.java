@@ -19,9 +19,9 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
+import de.lmu.ifi.dbs.medmon.base.ui.util.ResourceManager;
+import de.lmu.ifi.dbs.medmon.medic.core.util.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.medic.ui.controller.SensorManagementController;
-import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
-import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
 
 public class SensorDetailPage implements IDetailsPage {
@@ -95,7 +95,7 @@ public class SensorDetailPage implements IDetailsPage {
 		Label lStatus = toolkit.createLabel(sensorComposite, "Status:", SWT.NONE);
 		
 		Label lStatusImage = toolkit.createLabel(sensorComposite, "", SWT.NONE);
-		lStatusImage.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_APPLY_24));
+		lStatusImage.setImage(ResourceManager.getPluginImage(IMedmonConstants.BASE_UI_PLUGIN, IMedmonConstants.IMG_APPLY_24));
 		lStatusImage.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
 		
 		Group gDescription = new Group(sensorComposite, SWT.NONE);
@@ -118,16 +118,16 @@ public class SensorDetailPage implements IDetailsPage {
 		toolkit.paintBordersFor(buttonComposite);
 		
 		Button bPreview = toolkit.createButton(buttonComposite, "Vorschau", SWT.NONE);
-		bPreview.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_IMAGE_16));
+		bPreview.setImage(ResourceManager.getPluginImage(IMedmonConstants.BASE_UI_PLUGIN, IMedmonConstants.IMG_IMAGE_16));
 		bPreview.addListener(SWT.Selection, SensorMasterBlock.controller);
 		bPreview.setData(SensorManagementController.IMPORT);
 		
 		Button bImportAll = toolkit.createButton(buttonComposite, "Alles importieren", SWT.NONE);
-		bImportAll.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_ARROW_DOWN_16));
+		bImportAll.setImage(ResourceManager.getPluginImage(IMedmonConstants.BASE_UI_PLUGIN, IMedmonConstants.IMG_ARROW_DOWN_16));
 		bImportAll.setEnabled(false);
 				
 		Button bFormatSensor = toolkit.createButton(buttonComposite, "Formatieren", SWT.NONE);
-		bFormatSensor.setImage(ResourceManager.getPluginImage(IMedmonConstants.RCP_PLUGIN, IMedmonConstants.IMG_REMOVE_16));
+		bFormatSensor.setImage(ResourceManager.getPluginImage(IMedmonConstants.BASE_UI_PLUGIN, IMedmonConstants.IMG_REMOVE_16));
 		bFormatSensor.setEnabled(false);
 		
 	}

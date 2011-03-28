@@ -1,9 +1,21 @@
-package de.lmu.ifi.dbs.medmon.rcp.platform;
+/**
+ * 
+ */
+package de.lmu.ifi.dbs.medmon.medic.core.util;
 
+/**
+ * @author Nepomuk Seiler
+ * @version 0.1
+ * @since 28.03.2011
+ */
 public interface IMedmonConstants {
+
+	public static final String BASE_UI_PLUGIN = "de.lmu.ifi.dbs.medmon.base.ui";
 	
-	//TODO put this in the preference store
-	//Application Directories
+	/* ==================== */
+	/* ====== Folders ===== */
+	/* ==================== */
+	
 	public static final String DIR_USER_HOME = System.getProperty("user.home");
 	public static final String DIR_SEPERATOR = System.getProperty("file.separator");
 	public static final String DIR_MEDMON = DIR_USER_HOME + DIR_SEPERATOR + ".medmon";
@@ -11,41 +23,9 @@ public interface IMedmonConstants {
 	public static final String DIR_DPU = DIR_MEDMON + DIR_SEPERATOR + "dpu";
 	public static final String DIR_CU = DIR_MEDMON + DIR_SEPERATOR + "cluster";
 	
-	
-	//Plugin ID
-	public static final String RCP_PLUGIN = "de.lmu.ifi.dbs.medmon.rcp";
-
-	//Perspectives
-	public static final String MANAGEMENT_PERSPECTIVE = "de.lmu.ifi.dbs.medmon.medic.ManagementPerspective";
-	public static final String PATIENT_PERSPECTIVE = "de.lmu.ifi.dbs.medmon.medic.PatientManagement";
-	public static final String VISUALIZE_PERSPECTIVE_DEFAULT = "de.lmu.ifi.dbs.medmon.medic.ui.default";
-	
-	
-	//Views
-	public static final String ALGORITHM_VIEW = "de.lmu.ifi.dbs.medmon.algorithm.views.AlgorithmView";
-	public static final String ALGORITHM_MANAGEMENT_VIEW = "de.lmu.ifi.dbs.medmon.algorithm.Management";
-	public static final String PATIENT_LIST_VIEW = "de.lmu.ifi.dbs.medmon.medic.ui.PatientListView";
-	public static final String THERAPY_MANAGEMENT_VIEW = "de.lmu.ifi.dbs.medmon.medic.ui.TherapyManagement";
-	public static final String SENSOR_DATA_VIEW = "de.lmu.ifi.dbs.medmon.medic.ui.DataView";
-	public static final String SENSOR_DATA_TREE_VIEW = "de.lmu.ifi.dbs.medmon.medic.ui.DataTreeView";
-	public static final String SENSOR_MANAGEMENT_VIEW = "de.lmu.ifi.dbs.medmon.medic.ui.DataManagement";
-
-	
-	
-	//Editors
-	public static final String ALGORITHM_EDITOR = "de.lmu.ifi.dbs.medmon.algorithm.AlgorithmEditor";
-	public static final String PATIENT_EDITOR = "de.lmu.ifi.dbs.medmon.medic.PatientEditor";
-	public static final String DPU_FORM_EDITOR = "de.lmu.ifi.dbs.medmon.developer.ui.editor.DPUFormEditor";
-	
-	//Commands
-	public static final String CALL_PATIENT_EDITOR = "de.lmu.ifi.dbs.medmon.medic.OpenPatientEditor";
-	public static final String CALL_IMPORT_WIZARD = "de.lmu.ifi.dbs.medmon.sensor.CallImportWizard";
-	public static final String OPEN_DEFAULT_VISUALIZE_PERSPECTIVE = "de.lmu.ifi.dbs.medmon.medic.OpenDefaultPerspective";
-	
-	//Actionsets
-	public static final String PATIENT_ACTIONSET = "de.lmu.ifi.dbs.medmon.medic.actionSet";
-	
-	//TODO Add all Images
+	/* ==================== */
+	/* ====== Images ====== */
+	/* ==================== */
 	
 	//Images 16x16
 	public static final String IMG_ADD_16 = "icons/16/gtk-add.png";

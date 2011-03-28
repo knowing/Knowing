@@ -34,8 +34,6 @@ import org.eclipse.ui.forms.widgets.Section;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.ISharedImages;
-import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
-import de.lmu.ifi.dbs.medmon.rcp.platform.util.CommandUtil;
 
 public class PatientDetailsPage implements IDetailsPage {
 
@@ -145,7 +143,8 @@ public class PatientDetailsPage implements IDetailsPage {
 		sensorLink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent event) {
-				CommandUtil.openView(IMedmonConstants.SENSOR_MANAGEMENT_VIEW);
+//				CommandUtil.openView(IMedmonConstants.SENSOR_MANAGEMENT_VIEW);
+				System.err.println("SENSOR MANAGEMENT VIEW SHOULD BE OPENING");
 			}
 		});
 		

@@ -31,7 +31,10 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
+import de.lmu.ifi.dbs.medmon.base.ui.util.ResourceManager;
 import de.lmu.ifi.dbs.medmon.base.ui.viewer.SensorTableViewer;
+import de.lmu.ifi.dbs.medmon.medic.core.service.IPatientService;
+import de.lmu.ifi.dbs.medmon.medic.core.util.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
 import de.lmu.ifi.dbs.medmon.medic.ui.controller.SensorManagementController;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.SensorContainerContentProvider;
@@ -39,9 +42,6 @@ import de.lmu.ifi.dbs.medmon.medic.ui.provider.SensorContainerLabelProvider;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.SensorDetailPageProvider;
 import de.lmu.ifi.dbs.medmon.medic.ui.wizard.DataSelectionWizard;
 import de.lmu.ifi.dbs.medmon.medic.ui.wizard.ImportWizard;
-import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
-import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
-import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 
 public class SensorMasterBlock extends MasterDetailsBlock {
 
@@ -210,7 +210,7 @@ public class SensorMasterBlock extends MasterDetailsBlock {
 			}
 		};
 		haction.setToolTipText("Help"); //$NON-NLS-1$
-		haction.setImageDescriptor(ResourceManager.getPluginImageDescriptor(IMedmonConstants.RCP_PLUGIN,
+		haction.setImageDescriptor(ResourceManager.getPluginImageDescriptor(IMedmonConstants.BASE_UI_PLUGIN,
 				IMedmonConstants.IMG_HELP_16));
 
 		form.getToolBarManager().add(haction);

@@ -8,8 +8,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.lmu.ifi.dbs.medmon.base.ui.dialog.DialogFactory;
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
+import de.lmu.ifi.dbs.medmon.medic.core.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
-import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 
 public class OpenPatientHandler extends AbstractHandler implements IHandler {
 

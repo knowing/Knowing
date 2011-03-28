@@ -23,7 +23,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DPUValidator;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
-import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
+import de.lmu.ifi.dbs.medmon.medic.core.util.IMedmonConstants;
 
 public class ImportDPUHandler extends AbstractHandler implements IHandler {
 

@@ -14,12 +14,12 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 
 import de.lmu.ifi.dbs.medmon.database.model.Patient;
-import de.lmu.ifi.dbs.medmon.jobs.persistence.PersistJob;
+import de.lmu.ifi.dbs.medmon.medic.core.job.PersistJob;
+import de.lmu.ifi.dbs.medmon.medic.core.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.medic.core.util.ApplicationConfigurationUtil;
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
 import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SelectDataPage;
 import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SensorPage;
-import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.BlockDescriptor;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.RootSensorDataContainer;

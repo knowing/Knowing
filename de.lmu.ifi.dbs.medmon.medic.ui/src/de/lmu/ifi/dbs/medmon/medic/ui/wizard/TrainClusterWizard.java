@@ -7,7 +7,6 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -41,10 +40,10 @@ import de.lmu.ifi.dbs.medmon.datamining.core.processing.IClusterData;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.internal.DataConverter;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.internal.Processor;
 import de.lmu.ifi.dbs.medmon.datamining.core.util.ClusterUtils;
+import de.lmu.ifi.dbs.medmon.medic.core.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.medic.core.util.ApplicationConfigurationUtil;
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
 import de.lmu.ifi.dbs.medmon.medic.ui.wizard.pages.SelectDPUPage;
-import de.lmu.ifi.dbs.medmon.patient.service.IPatientService;
 import de.lmu.ifi.dbs.medmon.sensor.core.sensor.ISensor;
 
 public class TrainClusterWizard extends Wizard implements IWorkbenchWizard, IExecutableExtension {

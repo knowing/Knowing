@@ -1,6 +1,5 @@
 package de.lmu.ifi.dbs.medmon.rcp;
 
-import java.io.File;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.SimpleFormatter;
 
@@ -12,7 +11,6 @@ import org.osgi.service.log.LogEntry;
 import org.osgi.service.log.LogListener;
 import org.osgi.service.log.LogReaderService;
 
-import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.rcp.platform.logging.JdkLogForwarder;
 import de.lmu.ifi.dbs.medmon.rcp.platform.logging.LogsPublisher;
 

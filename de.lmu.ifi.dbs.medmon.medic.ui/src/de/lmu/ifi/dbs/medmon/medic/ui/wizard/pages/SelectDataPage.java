@@ -18,9 +18,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 
+import de.lmu.ifi.dbs.medmon.base.ui.util.ResourceManager;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.SensorContainerContentProvider;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.SensorContainerLabelProvider;
-import de.lmu.ifi.dbs.medmon.rcp.platform.util.ResourceManager;
 import de.lmu.ifi.dbs.medmon.sensor.core.container.ISensorDataContainer;
 
 public class SelectDataPage extends WizardPage {

@@ -37,10 +37,10 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import de.lmu.ifi.dbs.medmon.base.ui.filter.ClusterDPUFilter;
 import de.lmu.ifi.dbs.medmon.base.ui.filter.DPUFilter;
 import de.lmu.ifi.dbs.medmon.datamining.core.processing.DataProcessingUnit;
+import de.lmu.ifi.dbs.medmon.medic.core.util.IMedmonConstants;
 import de.lmu.ifi.dbs.medmon.medic.ui.Activator;
 import de.lmu.ifi.dbs.medmon.medic.ui.handler.ImportDPUHandler;
 import de.lmu.ifi.dbs.medmon.medic.ui.provider.DPUContentProvider;
-import de.lmu.ifi.dbs.medmon.rcp.platform.IMedmonConstants;
 
 public class DPUMasterBlock extends MasterDetailsBlock {
 
