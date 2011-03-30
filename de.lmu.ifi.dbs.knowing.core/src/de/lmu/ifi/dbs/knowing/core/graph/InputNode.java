@@ -31,7 +31,7 @@ public class InputNode extends Node {
 	public void initialize() {
 		loader = FactoryUtil.getLoaderService(getFactoryId(), properties);
 		ready = true;
-		log.info("Loader[" + loader + "] initialized");
+		log.info("Loader[" + loader + "] initialized with " + properties);
 	}
 	
 	@Override

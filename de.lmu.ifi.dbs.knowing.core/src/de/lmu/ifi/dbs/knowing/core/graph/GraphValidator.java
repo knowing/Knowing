@@ -1,8 +1,12 @@
 package de.lmu.ifi.dbs.knowing.core.graph;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit;
 
 /**
  * 
@@ -14,16 +18,29 @@ public class GraphValidator {
 	private final List<Edge> edges;
 	private final List<INode> nodes;
 	
+	private final Map<String, String> errors = new HashMap<String, String>();
+	
 	public GraphValidator(List<Edge> edges, List<INode> nodes) {
 		this.edges = edges;
 		this.nodes = nodes;
 	}
 	
-	public static boolean validate(List<Edge> edges, List<INode> nodes ) {
-		GraphValidator validator = new GraphValidator(edges, nodes);
-		return validator.validEdges() && !validator.hasCircle();
+	public GraphValidator(DataProcessingUnit dpu) {
+		this.nodes = null; // dpu.getNodes();
+		this.edges = dpu.getEdges();
 	}
 	
+	public boolean validate() {
+		//TODO GraphValidator -> validate()
+		System.err.println("validate - NOT IMPLEMENTED YET");
+		return validate(edges, nodes);
+	}
+	
+	public Map<String, String> getErrors() {
+		//TODO GraphValidator -> errors
+		System.err.println("errors - NOT IMPLEMENTED YET");
+		return errors;
+	}
 	/**
 	 * Test if all InputNodes are roots
 	 * @return
@@ -87,6 +104,17 @@ public class GraphValidator {
 		else if(edge.equals(start))
 			return hasCircle(edgesLeft, edge, size);
 		return hasCircle(edgesLeft, start, edgesLeft.size());
+	}
+	
+	public static boolean validate(List<Edge> edges, List<INode> nodes ) {
+		GraphValidator validator = new GraphValidator(edges, nodes);
+		return validator.validEdges() && !validator.hasCircle();
+	}
+	
+	public static boolean validate(DataProcessingUnit dpu) {
+		//TODO GraphValidator -> validate(DPU)
+		System.err.println("validate DPU - NOT IMPLEMENTED YET");
+		return true;
 	}
 	
 }

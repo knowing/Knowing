@@ -59,6 +59,10 @@ public class DataProcessingUnit {
 	public void setTags(String tags) {
 		this.tags = tags;
 	}
+	
+	public void addTag(String tag) {
+		tags += "," + tag;
+	}
 
 	public List<PersistentNode> getNodes() {
 		return nodes;

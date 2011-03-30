@@ -72,7 +72,7 @@ public class Activator implements BundleActivator {
 		dpu.setTags("Tag1, Tag2, Tag3");
 		
 		InputNode inputNode = new InputNode(ARFFLoaderFactory.ID, "Input");
-		inputNode.setProperties(sampleProperties());
+		inputNode.setProperties(loaderProperties());
 		ProcessorNode kmeansNode = new ProcessorNode("KMeans", KMeansFactory.ID, "KMeans");
 		kmeansNode.setProperties(sampleProperties());
 		ProcessorNode sampleNode = new ProcessorNode("ExampleProcessor", ExampleProcessorFactory.ID, "Example");
@@ -143,6 +143,12 @@ public class Activator implements BundleActivator {
 		Properties properties = new Properties();
 		properties.setProperty(SimpleKMeansProcessor.PROP_MAX_ITERATIONS, "20");
 		properties.setProperty(SimpleKMeansProcessor.PROP_NUM_CLUSTERS, "3");
+		return properties;
+	}
+	
+	private Properties loaderProperties() {
+		Properties properties = new Properties();
+		properties.setProperty(ARFFLoaderFactory.FILE, "/home/muki/iris.arff");
 		return properties;
 	}
 	

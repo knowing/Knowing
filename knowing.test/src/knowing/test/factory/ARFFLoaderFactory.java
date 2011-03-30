@@ -20,7 +20,6 @@ public class ARFFLoaderFactory implements ILoaderFactory {
 	public ARFFLoaderFactory() {
 		properties.setProperty(URL, "http://dtai.cs.kuleuven.be/DataMiningInPractice11/DATASET/iris.arff");
 		properties.setProperty(FILE, "/home/muki/iris.arff");
-		//properties.setProperty(FILE, "/home/muki/result.arff");
 	}
 	
 	@Override
@@ -40,7 +39,7 @@ public class ARFFLoaderFactory implements ILoaderFactory {
 
 	@Override
 	public ILoader getInstance(Properties properties) {
-		String pathname = (String) this.properties.get(FILE);
+		String pathname = properties.getProperty(FILE, "/home/muki/class_prop.arff");
 		ArffLoader loader = new ArffLoader();		
 		try {
 			FileInputStream in = new FileInputStream(pathname);

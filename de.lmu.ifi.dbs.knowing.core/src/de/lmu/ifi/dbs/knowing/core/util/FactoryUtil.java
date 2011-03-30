@@ -138,7 +138,18 @@ public class FactoryUtil {
 	 * @return
 	 */
 	public static ServiceRegistration registerLoaderFactory(ILoaderFactory factory, Properties properties)  {
-		BundleContext context = Activator.getContext();
+		return registerLoaderFactory(factory, properties, Activator.getContext());
+	}
+	
+	/**
+	 * Trys to register a service via the given context. 
+	 * 
+	 * @param factory
+	 * @param properties
+	 * @param context
+	 * @return
+	 */
+	public static ServiceRegistration registerLoaderFactory(ILoaderFactory factory, Properties properties, BundleContext context)  {
 		return context.registerService(ILoaderFactory.class.getName(), factory, properties);
 	}
 	
@@ -150,7 +161,18 @@ public class FactoryUtil {
 	 * @return
 	 */
 	public static ServiceRegistration registerProcesorFactory(IProcessorFactory factory, Properties properties)  {
-		BundleContext context = Activator.getContext();
+		return registerProcesorFactory(factory, properties, Activator.getContext());
+	}
+	
+	/**
+	 * Trys to register a service via the the given context. 
+	 * 
+	 * @param factory
+	 * @param properties
+	 * @param context
+	 * @return
+	 */
+	public static ServiceRegistration registerProcesorFactory(IProcessorFactory factory, Properties properties, BundleContext context)  {
 		return context.registerService(IProcessorFactory.class.getName(), factory, properties);
 	}
 	
@@ -161,8 +183,19 @@ public class FactoryUtil {
 	 * @param properties
 	 * @return
 	 */
-	public static ServiceRegistration registerPresenterFactory(IProcessorFactory factory, Properties properties)  {
-		BundleContext context = Activator.getContext();
+	public static ServiceRegistration registerPresenterFactory(IPresenterFactory factory, Properties properties)  {
+		return registerPresenterFactory(factory, properties, Activator.getContext());
+	}
+	
+	/**
+	 * Trys to register a service via the given bundleContext
+	 * 
+	 * @param factory
+	 * @param properties
+	 * @param context
+	 * @return
+	 */
+	public static ServiceRegistration registerPresenterFactory(IPresenterFactory factory, Properties properties, BundleContext context) {
 		return context.registerService(IPresenterFactory.class.getName(), factory, properties);
 	}
 }

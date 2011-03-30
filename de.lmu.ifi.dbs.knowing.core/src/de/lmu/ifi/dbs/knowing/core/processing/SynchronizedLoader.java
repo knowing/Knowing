@@ -55,7 +55,6 @@ public class SynchronizedLoader implements ILoader {
 
 	@Override
 	public synchronized void getDataSet(QueryTicket ticket) throws IOException {
-
 		if (dataset == null) {
 			structure = loader.getStructure();
 			dataset = loader.getDataSet();
