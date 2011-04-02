@@ -3,7 +3,9 @@ package knowing.test.processor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -17,6 +19,7 @@ import de.lmu.ifi.dbs.knowing.core.processing.ResultProcessor;
 import de.lmu.ifi.dbs.knowing.core.query.Queries;
 import de.lmu.ifi.dbs.knowing.core.query.QueryResult;
 import de.lmu.ifi.dbs.knowing.core.query.QueryTicket;
+import de.lmu.ifi.dbs.knowing.core.query.Results;
 
 /**
  * <p>Example processor. Builds a sample queries from a ILoader.<br>
@@ -35,10 +38,17 @@ public class ExampleProcessor extends ResultProcessor {
 			Queries.singleNumericQuery() };
 
 	private BlockingQueue<Instance> sampleQueries = new ArrayBlockingQueue<Instance>(10, true);
-	private volatile boolean ready;
 
+	@Deprecated
 	private Instances[] results = new Instances[0];
-	private Map<String, Instances> resultsMap = new HashMap<String, Instances>();
+	
+	/** This map contains the raw results, requested via {@link #result(BlockingQueue)} */
+	private final Map<String, Instances> rawResults = new HashMap<String, Instances>();
+	
+	/** This map contains the transformed results, request via {@link #queryResults(BlockingQueue)} */
+	private final Map<String, Instances> mappedResults = new HashMap<String, Instances>();
+	
+	private final List<String> labels = new ArrayList<String>();
 
 	@Override
 	public synchronized void buildModel(ILoader loader) {
@@ -74,27 +84,23 @@ public class ExampleProcessor extends ResultProcessor {
 				buildSampleQueries(result);
 			} else {
 				// Print the results from the queryed IProcessor
-				log.debug(" ### Clustered Instance ###");
+				log.debug(" ### Clustered/Classified Instance ###");
 				int i = 1;
 				for (Instances res : result.getResults()) {
 					log.debug("Result Nr. " + i++);
-					//System.out.println(res);
+					log.trace(res);
 					addResults(res);
 				}
-				ready = true;
-				log.debug(" ### ================== ###");
+				setReady(true);
 			}
 			result = results.poll();
 		}
-		if(ready) 
-			generateResults();
 		
+		if(isReady()) {
+			generateResults();
+			fireProcessorStateChanged();
+		}
 			
-	}
-	
-	@Override
-	protected void query(BlockingQueue<QueryTicket> tickets) {
-		tickets.clear(); //Throw them away, we don't answer queries
 	}
 	
 	@Override
@@ -102,9 +108,12 @@ public class ExampleProcessor extends ResultProcessor {
 		QueryTicket ticket = resultTickets.poll();
 		while(ticket != null) {
 			try {
+				//TODO transform results to a in the header specified format
+				// Instances[] headers = ticket.getHeaders();
+				// transform(headers): rawResults -> mappedResults
 				ticket.fireResult(results);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				log.error("Failed to fire results", e);	
 			}
 			ticket = resultTickets.poll();
 		}
@@ -115,18 +124,17 @@ public class ExampleProcessor extends ResultProcessor {
 	 */
 	private void addResults(Instances res) {
 		String key = res.relationName();
-		resultsMap.put(key, res);
+		rawResults.put(key, res);
 	}
 
 	/**
 	 * 
 	 */
 	private void generateResults() {
-		results = new Instances[resultsMap.size()];
+		results = new Instances[rawResults.size()];
 		int i = 0;
-		for (Instances res : resultsMap.values()) 
+		for (Instances res : rawResults.values()) 
 			results[i++] = res;
-		fireProcessorStateChanged();
 	}
 
 	private void buildSampleQueries(QueryResult result) {
@@ -143,15 +151,16 @@ public class ExampleProcessor extends ResultProcessor {
 	}
 	
 	@Override
+	public List<String> getClassLabels() {
+		return labels;
+	}
+	
+	@Override
 	public void resetModel() {
 		sampleQueries.clear();
 		log.debug("Reset model");
 	}
 
-	@Override
-	public boolean isReady() {
-		return ready;
-	}
 
 	@Override
 	public String[] validate() {

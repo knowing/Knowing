@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jfree.chart.ChartFactory;
@@ -15,6 +16,8 @@ import org.jfree.data.general.Dataset;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
 import org.jfree.util.Rotation;
+
+import de.lmu.ifi.dbs.knowing.core.query.Results;
 
 import weka.core.Attribute;
 import weka.core.Instance;
@@ -42,11 +45,13 @@ import weka.core.Instances;
 public class PiePresenter extends AbstractChartPresenter {
 
 	/** label -> probability || label -> count */
-	private final Map<String, Double> model = new HashMap<String, Double>();
-	private final Map<String, Integer> labelCount = new HashMap<String, Integer>();
+	private final Map<String, Double> internal_model = new HashMap<String, Double>();
+	
+	private Instances model;
 
 	private int num_instances = 0;
 
+	//TODO PiePresenter -> mode property
 	private int mode = -1;
 
 	private static final int MODE_LABEL_ONLY = 0;
@@ -64,7 +69,7 @@ public class PiePresenter extends AbstractChartPresenter {
 	@Override
 	protected void createContent(Instances dataset) {
 		int classIndex = -1;
-		if (model.isEmpty())
+		if (internal_model.isEmpty())
 			classIndex = initModel(dataset);
 
 		if (dataset.numAttributes() == 1)
@@ -72,10 +77,11 @@ public class PiePresenter extends AbstractChartPresenter {
 		else if (dataset.numAttributes() == 2)
 			updateModelClassProbability(dataset, classIndex);
 		else
-			;
+			; //TODO PiePresenter -> Implement label_distribution input format
 
 		updateDataset();
 		updateChart();
+		redraw();
 
 	}
 
@@ -85,10 +91,10 @@ public class PiePresenter extends AbstractChartPresenter {
 	 * @param dataset
 	 */
 	private void updateModelClassOnly(Instances dataset) {
-//		if (mode != -1 || MODE_LABEL_ONLY != mode) {
-//			initModel(dataset);
-//			mode = MODE_LABEL_ONLY;
-//		}
+		if (mode != -1 || MODE_LABEL_ONLY != mode) {
+			initModel(dataset);
+			mode = MODE_LABEL_ONLY;
+		}
 
 		ArrayList<Instance> instances = Collections.list(dataset.enumerateInstances());
 		Attribute attribute = dataset.attribute(0);
@@ -96,8 +102,9 @@ public class PiePresenter extends AbstractChartPresenter {
 			num_instances++;
 			int index = (int) instance.value(0);
 			String label = attribute.value(index);
-			double count = model.get(label);
-			model.put(label, count++);
+			double count = internal_model.get(label);
+			count++;
+			internal_model.put(label, count);
 		}
 
 	}
@@ -110,50 +117,28 @@ public class PiePresenter extends AbstractChartPresenter {
 	 * @param classIndex
 	 */
 	private void updateModelClassProbability(Instances dataset, int classIndex) {
-//		if (mode != -1 || MODE_LABEL_PROBABILITY != mode) {
-//			classIndex = initModel(dataset);
-//			mode = MODE_LABEL_PROBABILITY;
-//		}
+		if (mode != -1 || MODE_LABEL_PROBABILITY != mode) {
+			classIndex = initModel(dataset);
+			mode = MODE_LABEL_PROBABILITY;
+		}
 
 		int valIndex = findValueIndex(dataset);
 		ArrayList<Instance> instances = Collections.list(dataset.enumerateInstances());
 		for (Instance instance : instances) {
 			String label = instance.stringValue(classIndex);
 			double value = instance.value(valIndex);
-			double oldValue = model.get(label);
+			double oldValue = internal_model.get(label);
 			// assumes that probabilities always sum up to 100%
 			double newValue = (value + oldValue);
-			model.put(label, newValue);
-			
-			//Increase the label account
-			Integer count = labelCount.get(label);
-			labelCount.put(label, count++);
+			internal_model.put(label, newValue);
 		}
-		
-		//Find maximum count
-		int maxCount = 1;
-		for (Integer each : labelCount.values()) {
-			if(each > maxCount)
-				maxCount = each;
-		}
-		//Reset labelCount
-		for (String key : labelCount.keySet())
-			labelCount.put(key, 0);
-		
-		//Normalize values
-		for (String key : model.keySet()) {
-			double value = model.get(key);
-			double normalized = value / maxCount;
-			model.put(key, normalized);
-		}
-
 	}
 
 	private void updateDataset() {
 		DefaultPieDataset pieset = ((DefaultPieDataset) dataset);
 		pieset.clear();
-		for (String key : model.keySet()) {
-			Double propability = model.get(key);
+		for (String key : internal_model.keySet()) {
+			Double propability = internal_model.get(key);
 			pieset.setValue(key, propability);
 		}
 	}
@@ -171,18 +156,6 @@ public class PiePresenter extends AbstractChartPresenter {
 		return -1;
 	}
 
-	/**
-	 * @param dataset
-	 * @return the first found nominal attribute index
-	 */
-	private int guessClassIndex(Instances dataset) {
-		ArrayList<Attribute> attributes = Collections.list(dataset.enumerateAttributes());
-		for (Attribute attribute : attributes) {
-			if (attribute.isNominal())
-				return attribute.index();
-		}
-		return -1;
-	}
 
 	/**
 	 * <p>
@@ -193,18 +166,15 @@ public class PiePresenter extends AbstractChartPresenter {
 	 * @param classAttribute - must be nominal
 	 */
 	private int initModel(Instances dataset) {
-		int classIndex = dataset.classIndex();
-		if (classIndex < 0 && model.isEmpty())
-			classIndex = guessClassIndex(dataset);
+		internal_model.clear();
+		int classIndex = Results.guessClassIndex(dataset);
 		Attribute classAttribute = dataset.attribute(classIndex);
 		if (!classAttribute.isNominal())
 			return classIndex;
 		
 		ArrayList<String> labels = Collections.list(classAttribute.enumerateValues());
-		for (String label : labels) {
-			model.put(label, 0.0);
-			labelCount.put(label, 0);
-		}
+		for (String label : labels) 
+			internal_model.put(label, 0.0);
 
 		num_instances = 0;
 		return classIndex;
@@ -238,6 +208,15 @@ public class PiePresenter extends AbstractChartPresenter {
 		plot3D.setDirection(Rotation.ANTICLOCKWISE);
 		plot3D.setForegroundAlpha(0.60f);
 		plot3D.setBackgroundPaint(Color.white);
+	}
+	
+	@Override
+	public Instances getModel(List<String> labels) {
+		if(model == null) {
+			//TODO PiePresenter -> create model on mode
+			model = Results.classAndProbabilityResult(labels);
+		}
+		return model;
 	}
 
 }

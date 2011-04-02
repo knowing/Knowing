@@ -15,6 +15,8 @@ import knowing.test.factory.ARFFLoaderFactory;
 import knowing.test.factory.CSVLoaderFactory;
 import knowing.test.factory.ExampleProcessorFactory;
 import knowing.test.factory.KMeansFactory;
+import knowing.test.loader.SDRLoader;
+import knowing.test.processor.NaiveBayesProcessor;
 import knowing.test.processor.SimpleKMeansProcessor;
 
 import org.osgi.framework.BundleActivator;
@@ -46,10 +48,12 @@ public class Activator implements BundleActivator {
 		Activator.context = bundleContext;
 		
 		//Registering all factories
-		FactoryUtil.registerProcesorFactory(new ExampleProcessorFactory(), null);
-		FactoryUtil.registerProcesorFactory(new KMeansFactory(), null);
-		FactoryUtil.registerLoaderFactory(new ARFFLoaderFactory(), null);
-		FactoryUtil.registerLoaderFactory(new CSVLoaderFactory(), null);
+		FactoryUtil.registerProcesorFactory(new ExampleProcessorFactory(), null, bundleContext);
+		FactoryUtil.registerProcesorFactory(new KMeansFactory(), null, bundleContext);
+		FactoryUtil.registerProcesorFactory(new NaiveBayesProcessor(), null, bundleContext);
+		FactoryUtil.registerLoaderFactory(new ARFFLoaderFactory(), null, bundleContext);
+		FactoryUtil.registerLoaderFactory(new CSVLoaderFactory(), null, bundleContext);
+		FactoryUtil.registerLoaderFactory(new SDRLoader(), null, context);
 		//Start little tests
 		//dpuTest();
 	}

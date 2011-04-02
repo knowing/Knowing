@@ -15,7 +15,7 @@ import de.lmu.ifi.dbs.knowing.core.query.QueryResult;
 
 /**
  * @author Nepomuk Seiler
- * @version 0.2
+ * @version 0.3
  * @since 21.03.2011
  */
 public abstract class SWTPresenter extends Presenter<Composite> {
@@ -35,6 +35,10 @@ public abstract class SWTPresenter extends Presenter<Composite> {
 
 	public void dispose() {
 		composite.dispose();
+	}
+	
+	public void redraw() {
+		composite.redraw();
 	}
 
 	@Override

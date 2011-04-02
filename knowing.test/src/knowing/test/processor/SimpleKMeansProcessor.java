@@ -3,10 +3,14 @@ package knowing.test.processor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 
 import weka.clusterers.SimpleKMeans;
+import weka.core.Attribute;
 import weka.core.Capabilities;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -17,6 +21,7 @@ import de.lmu.ifi.dbs.knowing.core.processing.Processor;
 import de.lmu.ifi.dbs.knowing.core.query.Queries;
 import de.lmu.ifi.dbs.knowing.core.query.QueryResult;
 import de.lmu.ifi.dbs.knowing.core.query.QueryTicket;
+import de.lmu.ifi.dbs.knowing.core.query.Results;
 
 public class SimpleKMeansProcessor extends Processor {
 
@@ -25,6 +30,7 @@ public class SimpleKMeansProcessor extends Processor {
 
 	private SimpleKMeans kmeans;
 	private volatile boolean ready;
+	
 
 	public SimpleKMeansProcessor() {
 		kmeans = new SimpleKMeans();
@@ -126,14 +132,15 @@ public class SimpleKMeansProcessor extends Processor {
 			Instances[] queryResults = result.getResults();
 			if (ticket.getName().equals("model.loader")) {
 				try {
-					kmeans.buildClusterer(queryResults[0]);
+					Instances dataset = queryResults[0];
+					generateClassLabels(dataset);
+					kmeans.buildClusterer(dataset);
 					log.info(" ### Cluster build finished ### ");
 					log.debug(kmeans.getClusterCentroids());
-					log.debug(" ### ====================== ###");
 					ready = true;
 					fireProcessorStateChanged();
 				} catch (Exception e) {
-					e.printStackTrace();
+					log.error("Error while building kmeans cluster", e);
 				}
 			}
 			result = results.poll();
@@ -142,7 +149,7 @@ public class SimpleKMeansProcessor extends Processor {
 
 	@Override
 	public String[] validate() {
-		return null;
+		return new String[0];
 	}
 
 	@Override
@@ -176,4 +183,5 @@ public class SimpleKMeansProcessor extends Processor {
 	public Capabilities getCapabilities() {
 		return kmeans.getCapabilities();
 	}
+
 }

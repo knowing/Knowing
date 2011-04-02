@@ -38,6 +38,7 @@ public class PiePresenterFactory implements IPresenterFactory {
 
 	@Override
 	public IPresenter<Composite> getInstance(Properties properties) {
+		//TODO PiePresenterFactory -> use properties
 		return new PiePresenter();
 	}
 

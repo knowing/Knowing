@@ -4,6 +4,7 @@
 package de.lmu.ifi.dbs.knowing.core.swt;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
@@ -67,6 +68,11 @@ public class MultiTablePresenter extends SWTPresenter {
 	@Override
 	public String getName() {
 		return "Multi Table";
+	}
+
+	@Override
+	public Instances getModel(List<String> labels) {
+		return null;
 	}
 
 }

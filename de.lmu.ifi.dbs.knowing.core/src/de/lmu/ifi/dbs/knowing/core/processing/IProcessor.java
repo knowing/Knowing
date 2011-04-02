@@ -2,6 +2,7 @@ package de.lmu.ifi.dbs.knowing.core.processing;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Properties;
 
 import weka.core.CapabilitiesHandler;
@@ -73,6 +74,15 @@ public interface IProcessor extends IQueryListener, CapabilitiesHandler {
 	 * @param listener
 	 */
 	void setProcessorListener(IProcessorListener listener);
+	
+	/**
+	 * <p>The presenter connected to this {@link IResultProcessor} calls this<br>
+	 * method to generate his initial presentation model. After that the<br> 
+	 * presenter starts querying the processor.</p>
+	 * 
+	 * @return - class labels
+	 */
+	List<String> getClassLabels();
 	
 	
 	/* ======================= */

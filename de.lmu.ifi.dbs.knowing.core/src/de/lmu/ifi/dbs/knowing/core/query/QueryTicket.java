@@ -36,6 +36,14 @@ public class QueryTicket {
 		this.headers = headers;
 		this.name = name;
 	}
+	
+	public QueryTicket(IQueryListener inquirer, Instance query, Instances header, String name) {
+		this.timestamp = System.currentTimeMillis();
+		this.inquirer = inquirer;
+		this.query = query;
+		this.headers = new Instances[] { header };
+		this.name = name;
+	}
 
 	public QueryTicket(IQueryListener inquirer, Instance query, String name) {
 		this(inquirer, query, new Instances[0], name);

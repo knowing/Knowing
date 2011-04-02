@@ -4,6 +4,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.lmu.ifi.dbs.knowing.core.swt.charts.PiePresenterFactory;
+import de.lmu.ifi.dbs.knowing.core.swt.charts.TimePeriodValuesPresenter;
 import de.lmu.ifi.dbs.knowing.core.util.FactoryUtil;
 
 public class Activator implements BundleActivator {
@@ -23,6 +24,7 @@ public class Activator implements BundleActivator {
 		
 		//Registering all factories
 		FactoryUtil.registerPresenterFactory(new PiePresenterFactory(), null, bundleContext);
+		FactoryUtil.registerPresenterFactory(new TimePeriodValuesPresenter(), null, bundleContext);
 	}
 
 	/*

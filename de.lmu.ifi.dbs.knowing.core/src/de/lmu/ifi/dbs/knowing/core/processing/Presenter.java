@@ -4,8 +4,11 @@
 package de.lmu.ifi.dbs.knowing.core.processing;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import weka.core.Instances;
 
 import de.lmu.ifi.dbs.knowing.core.query.IQueryListener;
 import de.lmu.ifi.dbs.knowing.core.query.QueryResult;
@@ -27,7 +30,9 @@ public abstract class Presenter<T> implements IPresenter<T>,IQueryListener {
 	
 	@Override
 	public void buildPresentation(IResultProcessor processor) throws InterruptedException {
-		processor.queryResults(new QueryTicket(this, null, getName()));
+		List<String> classLabels = processor.getClassLabels();
+		Instances model = getModel(classLabels);
+		processor.queryResults(new QueryTicket(this, null, model, getName()));
 	}
 	
 	@Override

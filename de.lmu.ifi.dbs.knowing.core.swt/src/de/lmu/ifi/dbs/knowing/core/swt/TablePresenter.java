@@ -6,6 +6,7 @@ package de.lmu.ifi.dbs.knowing.core.swt;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -69,6 +70,11 @@ public class TablePresenter extends SWTPresenter {
 	@Override
 	public String getName() {
 		return "Table Presenter";
+	}
+
+	@Override
+	public Instances getModel(List<String> labels) {
+		return null;
 	}
 
 }

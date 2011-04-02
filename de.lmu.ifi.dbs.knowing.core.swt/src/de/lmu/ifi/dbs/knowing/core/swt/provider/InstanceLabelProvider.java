@@ -33,11 +33,11 @@ public class InstanceLabelProvider extends LabelProvider implements ITableLabelP
 		Instance inst = (Instance) element;
 		Attribute attribute = inst.attribute(columnIndex);
 		double value = inst.value(columnIndex);
+		if(attribute.isDate())
+			return attribute.formatDate(value);
 		if(attribute.isNumeric())
 			return String.valueOf(value);
-		if(attribute.isDate() || attribute.isDate())
-			return inst.stringValue(columnIndex);
-		return "?";
+		return inst.stringValue(columnIndex);
 	}
 
 }

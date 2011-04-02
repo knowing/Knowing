@@ -16,7 +16,7 @@ import de.lmu.ifi.dbs.knowing.core.util.FactoryUtil;
 
 /**
  * @author Nepomuk Seiler
- * @version 0.2
+ * @version 0.3
  * @since 21.03.2011
  */
 public class PresenterNode extends Node {
@@ -99,7 +99,7 @@ public class PresenterNode extends Node {
 				try {
 					presenter.buildPresentation(processor);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					log.error("Interruption while creating presentation with " + processor, e);
 				}
 			}
 		};

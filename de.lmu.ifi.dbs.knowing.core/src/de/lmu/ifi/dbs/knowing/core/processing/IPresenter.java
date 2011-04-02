@@ -4,6 +4,12 @@
 package de.lmu.ifi.dbs.knowing.core.processing;
 
 import java.io.IOException;
+import java.util.List;
+
+import de.lmu.ifi.dbs.knowing.core.query.Queries;
+import de.lmu.ifi.dbs.knowing.core.query.Results;
+
+import weka.core.Instances;
 
 /**
  * @author Nepomuk Seiler
@@ -40,6 +46,19 @@ public interface IPresenter<T> {
 	 * @throws InterruptedException 
 	 */
 	void buildPresentation(IResultProcessor processor) throws InterruptedException;
+	
+	/**
+	 * <p>This method is used by the {@link IResultProcessor}s to add<br>
+	 * their content. The model can differ depending on the presenter configuration.</p>
+	 * 
+	 * <p>It's very recommended to use {@link Queries} or {@link Results} methods to generate the<br>
+	 * initial model as they guarantee specific naming schemes and a wide range<br>
+	 * of general purpose datasets.</p>
+	 * 
+	 * @param labels - the class labels 
+	 * @return the internal model
+	 */
+	Instances getModel(List<String> labels);
 	
 	/**
 	 * <p>This method is used for determining if the<br>

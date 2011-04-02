@@ -11,6 +11,7 @@ import weka.core.Instances;
  * Queries for general purpose.
  * 
  * @author Nepomuk Seiler
+ * @version 0.3
  *
  */
 public class Queries {
