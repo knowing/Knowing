@@ -9,8 +9,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.apache.log4j.Logger;
-
 import weka.classifiers.AbstractClassifier;
 import weka.core.Attribute;
 import weka.core.Capabilities;
@@ -52,7 +50,7 @@ public abstract class Processor implements IProcessor {
 	private boolean ready;
 	
 	/** You have to import org.apache.log4j via the pax-logging bundle to use this logger */
-	protected static final Logger log = Logger.getLogger(IProcessor.class);
+//	protected static final Logger log = Logger.getLogger(IProcessor.class);
 	
 	@Override
 	public Properties getProperties() {

@@ -5,9 +5,10 @@ Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.lmu.ifi.dbs.knowing.core.internal.Activator
 Require-Bundle: org.eclipse.core.runtime,
- nz.ac.waikato.cs.weka;bundle-version="3.7.3";visibility:=reexport
-Import-Package: org.apache.log4j; version="[1.2,1.3)"; provider=paxlogging,
- org.apache.commons.logging; version="[1.0,1.1)"; provider=paxlogging
+ nz.ac.waikato.cs.weka;bundle-version="3.7.3";visibility:=reexport,
+ se.scalablesolutions.akka.actor;bundle-version="1.0.0",
+ se.scalablesolutions.akka.stm;bundle-version="1.0.0",
+ se.scalablesolutions.akka.typed.actor;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.lmu.ifi.dbs.knowing.core.annotations,
@@ -17,4 +18,37 @@ Export-Package: de.lmu.ifi.dbs.knowing.core.annotations,
  de.lmu.ifi.dbs.knowing.core.processing,
  de.lmu.ifi.dbs.knowing.core.query,
  de.lmu.ifi.dbs.knowing.core.util
- 
+Bundle-ClassPath: .
+Import-Package: scala;version="2.8.1.final",
+ scala.collection;version="2.8.1.final",
+ scala.collection.generic;version="2.8.1.final",
+ scala.collection.immutable;version="2.8.1.final",
+ scala.collection.interfaces;version="2.8.1.final",
+ scala.collection.mutable;version="2.8.1.final",
+ scala.compat;version="2.8.1.final",
+ scala.concurrent;version="2.8.1.final",
+ scala.concurrent.forkjoin;version="2.8.1.final",
+ scala.io;version="2.8.1.final",
+ scala.math;version="2.8.1.final",
+ scala.mobile;version="2.8.1.final",
+ scala.ref;version="2.8.1.final",
+ scala.reflect;version="2.8.1.final",
+ scala.reflect.generic;version="2.8.1.final",
+ scala.runtime;version="2.8.1.final",
+ scala.text;version="2.8.1.final",
+ scala.util;version="2.8.1.final",
+ scala.util.automata;version="2.8.1.final",
+ scala.util.continuations;version="2.8.1.final",
+ scala.util.control;version="2.8.1.final",
+ scala.util.grammar;version="2.8.1.final",
+ scala.util.matching;version="2.8.1.final",
+ scala.util.parsing.ast;version="2.8.1.final",
+ scala.util.parsing.combinator;version="2.8.1.final",
+ scala.util.parsing.combinator.lexical;version="2.8.1.final",
+ scala.util.parsing.combinator.syntactical;version="2.8.1.final",
+ scala.util.parsing.combinator.testing;version="2.8.1.final",
+ scala.util.parsing.combinator.token;version="2.8.1.final",
+ scala.util.parsing.input;version="2.8.1.final",
+ scala.util.parsing.json;version="2.8.1.final",
+ scala.util.parsing.syntax;version="2.8.1.final",
+ scala.util.regexp;version="2.8.1.final"
