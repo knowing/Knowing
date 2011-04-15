@@ -19,8 +19,21 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		Tester tester = new Tester();
-		tester.test();
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				System.out.println("Thread started");
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				System.out.println("Thread woke up");
+				Tester tester = new Tester();
+				tester.test();
+			}
+		}).start();
 	}
 
 	/*
