@@ -2,15 +2,13 @@ package de.lmu.ifi.dbs.knowing.core.graph;
 
 import java.util.Properties;
 
-import org.eclipse.core.runtime.ListenerList;
-
 public abstract class Node implements INode {
 
 	private final String factoryName;
 	private final String factoryId;
 	private final String nodeId;
 	
-	private final ListenerList nodeListeners = new ListenerList();
+//	private final ListenerList nodeListeners = new ListenerList();
 		
 	protected boolean ready;
 	protected Properties properties = new Properties();
@@ -52,19 +50,19 @@ public abstract class Node implements INode {
 	
 	@Override
 	public void addNodeListener(INodeListener listener) {
-		nodeListeners.add(listener);
+//		nodeListeners.add(listener);
 	}
 	
 	@Override
 	public void removeNodeListener(INodeListener listener) {
-		nodeListeners.remove(listener);
+//		nodeListeners.remove(listener);
 	}
 	
 	public void fireNodeEvent(int type, Object serviceObject) {
-		Object[] listeners = nodeListeners.getListeners();
-		for (Object listener : listeners) {
-			((INodeListener)listener).nodeChanged(new NodeEvent(type, this, serviceObject));			
-		}
+//		Object[] listeners = nodeListeners.getListeners();
+//		for (Object listener : listeners) {
+//			((INodeListener)listener).nodeChanged(new NodeEvent(type, this, serviceObject));			
+//		}
 	}
 	
 	

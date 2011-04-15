@@ -3,9 +3,7 @@ package de.lmu.ifi.dbs.knowing.core.internal;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import akka.actor.ActorRef;
-import akka.actor.Actors;
-import de.lmu.ifi.dbs.knowing.core.test.MyActor;
+import de.lmu.ifi.dbs.knowing.core.test.Tester;
 
 public class Activator implements BundleActivator {
 
@@ -21,8 +19,8 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		ActorRef actor = Actors.actorOf(MyActor.class).start();
-		actor.sendOneWay("Hello You");
+		Tester tester = new Tester();
+		tester.test();
 	}
 
 	/*
