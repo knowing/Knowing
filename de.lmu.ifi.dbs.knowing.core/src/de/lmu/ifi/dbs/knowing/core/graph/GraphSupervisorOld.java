@@ -24,10 +24,10 @@ import de.lmu.ifi.dbs.knowing.core.processing.IProcessor;
  * @author Nepomuk Seiler
  * @version 0.3
  */
-public class GraphSupervisor implements INodeListener {
+public class GraphSupervisorOld {
 
 	/* == Describing the Graph == */
-	private final Map<String, INode> nodes = new HashMap<String, INode>();
+	private final Map<String, Node> nodes = new HashMap<String, Node>();
 	private final List<Edge> edges = new ArrayList<Edge>();
 
 	/* == Managing threads == */
@@ -35,12 +35,12 @@ public class GraphSupervisor implements INodeListener {
 
 	/* == Local history of events == */
 	// TODO GraphSupervisor: Option to turn off history for memory reasons
-	private final BlockingQueue<NodeEvent> history = new LinkedBlockingQueue<NodeEvent>();
+//	private final BlockingQueue<NodeEvent> history = new LinkedBlockingQueue<NodeEvent>();
 	
 	/* == Logger == */
 //	private static final Logger log = Logger.getLogger(GraphSupervisor.class);
 
-	public GraphSupervisor() {
+	public GraphSupervisorOld() {
 		executor = Executors.newCachedThreadPool();
 	}
 
@@ -49,12 +49,12 @@ public class GraphSupervisor implements INodeListener {
 	 * 
 	 * @param dpu
 	 */
-	public GraphSupervisor(DataProcessingUnit dpu) {
+	public GraphSupervisorOld(DataProcessingUnit dpu) {
 		this();
-		for (INode node : dpu.getNodes())
-			nodes.put(node.getNodeId(), node.clone());
-		for (Edge edge : dpu.getEdges())
-			edges.add(edge.clone());
+//		for (Node node : dpu.getNodes())
+//			nodes.put(node.getNodeId(), node.clone());
+//		for (Edge edge : dpu.getEdges())
+//			edges.add(edge.clone());
 
 	}
 
@@ -65,18 +65,18 @@ public class GraphSupervisor implements INodeListener {
 			String targetId = edge.getTargetId();
 
 			// get nodes from node map
-			INode target = nodes.get(targetId);
-			INode source = nodes.get(sourceId);
+			Node target = nodes.get(targetId);
+			Node source = nodes.get(sourceId);
 
 			// Set references
 			edge.setSource(source);
 			edge.setTarget(target);
 
 			// Set listeners
-			source.addNodeListener(target);
+//			source.addNodeListener(target);
 			// Try it for both,so nothing is left out
-			source.setSupervisor(this);
-			target.setSupervisor(this);
+//			source.setSupervisor(this);
+//			target.setSupervisor(this);
 //			log.debug(target + " listens to " + source);
 		}
 	}
@@ -94,8 +94,8 @@ public class GraphSupervisor implements INodeListener {
 	 */
 	public void evaluate() throws Exception {
 //		log.info("Start evaluation");
-		for (INode node : nodes.values())
-			node.run();
+//		for (INode node : nodes.values())
+//			node.run();
 
 	}
 
@@ -104,13 +104,13 @@ public class GraphSupervisor implements INodeListener {
 	}
 
 	public void persistNode(String nodeId, OutputStream out) {
-		INode node = nodes.get(nodeId);
-		if (node instanceof PersistentNode) {
-			PersistentNode pNode = (PersistentNode) node;
-			((ProcessorNode) pNode.getNode()).getProcessor().persistModel(out);
-		} else if (node instanceof ProcessorNode) {
-			((ProcessorNode) nodes.get(nodeId)).getProcessor().persistModel(out);
-		}
+//		INode node = nodes.get(nodeId);
+//		if (node instanceof PersistentNode) {
+//			PersistentNode pNode = (PersistentNode) node;
+//			((ProcessorNode) pNode.getNode()).getProcessor().persistModel(out);
+//		} else if (node instanceof ProcessorNode) {
+//			((ProcessorNode) nodes.get(nodeId)).getProcessor().persistModel(out);
+//		}
 
 	}
 
@@ -122,40 +122,11 @@ public class GraphSupervisor implements INodeListener {
 	 * Prints history to the out PrintStream. * @param out
 	 */
 	public void printHistory(PrintStream out) {
-		for (NodeEvent event : history) {
-			out.println(event);
-		}
+//		for (NodeEvent event : history) {
+//			out.println(event);
+//		}
 	}
 
-	@Override
-	public void nodeChanged(NodeEvent event) {
-		history.add(event);
-	}
-	
-	public List<PresenterNode> getPresenterNodes() {
-		ArrayList<PresenterNode> returns = new ArrayList<PresenterNode>();
-		for (INode node : nodes.values()) {
-			if(node instanceof PresenterNode)
-				returns.add((PresenterNode) node);
-			else if(node instanceof PersistentNode) {
-				if(((PersistentNode) node).getNode() instanceof PresenterNode)
-					returns.add((PresenterNode) ((PersistentNode) node).getNode());
-			}
-		}
-		return returns;
-	}
-
-	public INode getNode(Object key) {
-		return nodes.get(key);
-	}
-
-	public INode putNode(INode value) {
-		return nodes.put(value.getNodeId(), value);
-	}
-
-	public INode removeNode(String key) {
-		return nodes.remove(key);
-	}
 
 	public void clearNodes() {
 		nodes.clear();

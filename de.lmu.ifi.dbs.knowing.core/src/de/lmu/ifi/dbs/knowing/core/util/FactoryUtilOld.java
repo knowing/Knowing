@@ -23,7 +23,7 @@ import de.lmu.ifi.dbs.knowing.core.processing.IProcessor;
  * @version 0.5
  * 
  */
-public class FactoryUtil {
+public class FactoryUtilOld {
 
 	/**
 	 * 
@@ -113,10 +113,14 @@ public class FactoryUtil {
 	
 
 	public static <E extends IFactory> E getFactory(String factoryId, Class<E> factoryClass) {
+		return getFactory(factoryId, factoryClass.getName());
+	}
+	
+	public static <E extends IFactory> E getFactory(String factoryId, String clazz) {
 		BundleContext context = Activator.getContext();
 		ServiceReference[] references = null;
 		try {
-			references = context.getServiceReferences(factoryClass.getName(), null);
+			references = context.getServiceReferences(clazz, null);
 		} catch (InvalidSyntaxException e) {
 			e.printStackTrace();
 		}

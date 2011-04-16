@@ -9,8 +9,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Edge {
 	
-	private transient INode source;
-	private transient INode target;
+	private transient Node source;
+	private transient Node target;
 	
 	@XmlAttribute
 	private String id;
@@ -28,7 +28,7 @@ public class Edge {
 		this.id = String.valueOf(System.currentTimeMillis());
 	}
 	
-	public Edge(String id,INode source, INode target) {
+	public Edge(String id,Node source, Node target) {
 		this(id,source, target, 1);
 	}
 	
@@ -36,7 +36,7 @@ public class Edge {
 		this(id,sourceId, targetId, 1);
 	}
 	
-	public Edge(String id, INode source, INode target, int weight) {
+	public Edge(String id, Node source, Node target, int weight) {
 		this.id = id;
 		this.source = source;
 		this.target = target;
@@ -54,19 +54,19 @@ public class Edge {
 		return id;
 	}
 	
-	public INode getSource() {
+	public Node getSource() {
 		return source;
 	}
 
-	public void setSource(INode source) {
+	public void setSource(Node source) {
 		this.source = source;
 	}
 
-	public INode getTarget() {
+	public Node getTarget() {
 		return target;
 	}
 
-	public void setTarget(INode target) {
+	public void setTarget(Node target) {
 		this.target = target;
 	}
 
@@ -98,10 +98,11 @@ public class Edge {
 	
 	@Override
 	public Edge clone() {
-		if(source == null || target == null)
-			return new Edge(id, sourceId, targetId, weight);
-		else
-			return new Edge(id, source.clone(), target.clone());
+//		if(source == null || target == null)
+//			return new Edge(id, sourceId, targetId, weight);
+//		else
+//			return new Edge(id, source.clone(), target.clone());
+		return new Edge(id, sourceId, targetId, weight);
 	}
 
 	@Override

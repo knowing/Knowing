@@ -1,6 +1,5 @@
 package de.lmu.ifi.dbs.knowing.core.graph;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,11 +15,11 @@ import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit;
 public class GraphValidator {
 
 	private final List<Edge> edges;
-	private final List<INode> nodes;
+	private final List<Node> nodes;
 	
 	private final Map<String, String> errors = new HashMap<String, String>();
 	
-	public GraphValidator(List<Edge> edges, List<INode> nodes) {
+	public GraphValidator(List<Edge> edges, List<Node> nodes) {
 		this.edges = edges;
 		this.nodes = nodes;
 	}
@@ -46,19 +45,19 @@ public class GraphValidator {
 	 * @return
 	 */
 	public boolean validEdges() {
-		List<InputNode> inputNodes = new ArrayList<InputNode>();
-		//Input Nodes
-		for (INode n : nodes) 
-			if(n instanceof InputNode)
-				inputNodes.add((InputNode) n);
-		
-		for (Edge e : edges) {
-			String targetId = e.getTargetId();
-			for (InputNode n : inputNodes) {
-				if(n.getNodeId().equals(targetId))
-					return false;
-			}
-		}
+//		List<InputNode> inputNodes = new ArrayList<InputNode>();
+//		//Input Nodes
+//		for (INode n : nodes) 
+//			if(n instanceof InputNode)
+//				inputNodes.add((InputNode) n);
+//		
+//		for (Edge e : edges) {
+//			String targetId = e.getTargetId();
+//			for (InputNode n : inputNodes) {
+//				if(n.getNodeId().equals(targetId))
+//					return false;
+//			}
+//		}
 		return true;
 	}
 
@@ -106,7 +105,7 @@ public class GraphValidator {
 		return hasCircle(edgesLeft, start, edgesLeft.size());
 	}
 	
-	public static boolean validate(List<Edge> edges, List<INode> nodes ) {
+	public static boolean validate(List<Edge> edges, List<Node> nodes ) {
 		GraphValidator validator = new GraphValidator(edges, nodes);
 		return validator.validEdges() && !validator.hasCircle();
 	}

@@ -14,7 +14,6 @@ import weka.core.Attribute;
 import weka.core.Capabilities;
 import weka.core.Instance;
 import weka.core.Instances;
-import de.lmu.ifi.dbs.knowing.core.graph.IProcessorListener;
 import de.lmu.ifi.dbs.knowing.core.query.QueryResult;
 import de.lmu.ifi.dbs.knowing.core.query.QueryTicket;
 import de.lmu.ifi.dbs.knowing.core.query.Results;
@@ -45,8 +44,6 @@ public abstract class Processor implements IProcessor {
 	
 	private List<String> labels = new ArrayList<String>();
 
-	private IProcessorListener listener;
-	
 	private boolean ready;
 	
 	/** You have to import org.apache.log4j via the pax-logging bundle to use this logger */
@@ -124,12 +121,7 @@ public abstract class Processor implements IProcessor {
 		else
 			loader.getDataSet(ticket);
 	}
-	
-	protected void fireProcessorStateChanged() {
-		if(listener != null)
-			listener.processorChanged(this);
-	}
-	
+		
 	protected void generateClassLabels(Instances dataset) {
 		int classIndex = Results.guessClassIndex(dataset);
 		if(classIndex >= 0) {
@@ -166,10 +158,6 @@ public abstract class Processor implements IProcessor {
 	/* == standard operations == */
 	/* ========================= */
 	
-	@Override
-	public void setProcessorListener(IProcessorListener listener) {
-		this.listener = listener;		
-	}
 	
 	@Override
 	public List<String> getClassLabels() {

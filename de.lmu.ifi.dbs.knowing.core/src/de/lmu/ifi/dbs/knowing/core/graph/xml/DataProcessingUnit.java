@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import de.lmu.ifi.dbs.knowing.core.graph.Edge;
-import de.lmu.ifi.dbs.knowing.core.graph.INode;
+import de.lmu.ifi.dbs.knowing.core.graph.Node;
 
 @XmlRootElement(name = "DataProcessingUnit")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -84,11 +84,12 @@ public class DataProcessingUnit {
 		return edges.add(e);
 	}
 
-	public boolean add(INode node) {
-		if(node instanceof PersistentNode)
-			return nodes.add((PersistentNode) node);
-		else
-			return nodes.add(new PersistentNode(node));
+	public boolean add(Node node) {
+//		if(node instanceof PersistentNode)
+//			return nodes.add((PersistentNode) node);
+//		else
+//			return nodes.add(new PersistentNode(node));
+		return false;
 	}
 	
 	
