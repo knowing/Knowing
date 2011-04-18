@@ -1,10 +1,9 @@
 package de.lmu.ifi.dbs.knowing.core.graph
 
-import de.lmu.ifi.dbs.knowing.core.factory.TLoaderFactory
+import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import de.lmu.ifi.dbs.knowing.core.util._
-import de.lmu.ifi.dbs.knowing.core.processing.IPresenter
+import de.lmu.ifi.dbs.knowing.core.processing.{IPresenter, TSender}
 import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit
-import de.lmu.ifi.dbs.knowing.core.processing.TSender
 import de.lmu.ifi.dbs.knowing.core.events._
 import akka.actor.{ Actor, ActorRef }
 import akka.actor.Actor.actorOf
@@ -35,10 +34,10 @@ class GraphSupervisor(val dpu: DataProcessingUnit) extends Actor with TSender {
     for (i <- 0 to nodes.size) {
       val node = nodes.get(i)
       val id = node.getFactoryId
-      val loader = Util.getLoaderService("Loader id", null)
+      val loader = Util.getFactoryService("Loader id", null)
       loader match {
         case None => log.error("Loader id" + "loader not found")
-        case Some(l) => actorOf(l) :: actors
+        case Some(l) => l.getInstance :: actors
       }
     }
   }

@@ -10,9 +10,11 @@ trait TLoader extends Actor with TSender {
 
   def receive = {
     case Start(p) =>
+      log debug("Loader Started")
       configure(p)
       val dataset = getDataSet
       sendEvent(new Results(dataset))
+    case Configure(p) => configure(p)
     case Reset => reset
     case Register => addListener(self)
     case msg => log.info("Unkown message: " + msg)

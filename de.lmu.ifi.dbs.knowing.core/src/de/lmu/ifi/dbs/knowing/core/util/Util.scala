@@ -1,6 +1,6 @@
 package de.lmu.ifi.dbs.knowing.core.util
 
-import de.lmu.ifi.dbs.knowing.core.factory.TLoaderFactory
+import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import de.lmu.ifi.dbs.knowing.core.processing.TLoader
 import de.lmu.ifi.dbs.knowing.core.internal.Activator
 
@@ -10,16 +10,19 @@ import java.util.Properties
 
 object Util {
 
-  def getLoaderService(id: String, properties: Properties): Option[TLoader] = {
+  def getFactoryService(id: String, properties: Properties): Option[TFactory] = {
     val context = Activator.getContext()
     try {
-      val references = context.getServiceReferences(classOf[TLoaderFactory].getName, null)
+      val references = context.getServiceReferences(classOf[TFactory].getName, null)
       if (references != null) {
         //Get some type safety in here for shorter code
         val services = references map (r => context.getService(r))
-        val loader = services filter (s => s.asInstanceOf[TLoaderFactory].id.equals(id))
-        //should be: loader.headOption
-        Some(loader.apply(0).asInstanceOf[TLoader])
+        val loaders = services filter (s => s.asInstanceOf[TFactory].id.equals(id))
+        val loader = loaders.headOption
+        loader match {
+          case Some(loader) => Some(loader.asInstanceOf[TFactory])
+          case None => None
+        }
       } else {
         None
       }
