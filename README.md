@@ -6,7 +6,7 @@ The **Knowing** framework is designed for modular, data mining applications whic
 * Data mining-process structure
 * Distributed / Parallel execution
 
-Further information at [Knowing Wiki](https://github.com/knowing/eclipse_medmon/wiki/)
+Further information at [Knowing Wiki](https://github.com/knowing/knowing/wiki/)
 
 ## Usage
 
