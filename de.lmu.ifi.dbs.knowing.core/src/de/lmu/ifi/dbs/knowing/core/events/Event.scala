@@ -10,6 +10,7 @@ sealed trait Event
 case class Results(instances: Instances) extends Event
 case class ModelResults(results: Instances) extends Event
 case class Query(query: Instance) extends Event
+case class UIContainer(container: AnyRef) extends Event
 
 case class Configure(properties:Properties) extends Event
 case class Start(properties: Properties) extends Event

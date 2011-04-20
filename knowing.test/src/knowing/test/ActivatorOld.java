@@ -1,38 +1,16 @@
 package knowing.test;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-
-import knowing.test.factory.ARFFLoaderFactory;
-import knowing.test.factory.CSVLoaderFactory;
-import knowing.test.factory.ExampleProcessorFactory;
-import knowing.test.factory.KMeansFactory;
-import knowing.test.loader.SDRLoader;
-import knowing.test.processor.NaiveBayesProcessor;
-import knowing.test.processor.SimpleKMeansProcessor;
-
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.lmu.ifi.dbs.knowing.core.factory.IPresenterFactory;
-import de.lmu.ifi.dbs.knowing.core.graph.Edge;
-import de.lmu.ifi.dbs.knowing.core.graph.GraphSupervisor;
-import de.lmu.ifi.dbs.knowing.core.graph.InputNode;
-import de.lmu.ifi.dbs.knowing.core.graph.PresenterNode;
-import de.lmu.ifi.dbs.knowing.core.graph.ProcessorNode;
-import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit;
-import de.lmu.ifi.dbs.knowing.core.swt.factory.MultiTablePresenterFactory;
-import de.lmu.ifi.dbs.knowing.core.util.FactoryUtil;
 
-public class Activator implements BundleActivator {
+public class ActivatorOld implements BundleActivator {
 
 	private static BundleContext context;
 
@@ -45,15 +23,16 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
-		Activator.context = bundleContext;
+//		Activator.context = bundleContext;
+		
 		
 		//Registering all factories
-		FactoryUtil.registerProcesorFactory(new ExampleProcessorFactory(), null, bundleContext);
-		FactoryUtil.registerProcesorFactory(new KMeansFactory(), null, bundleContext);
-		FactoryUtil.registerProcesorFactory(new NaiveBayesProcessor(), null, bundleContext);
-		FactoryUtil.registerLoaderFactory(new ARFFLoaderFactory(), null, bundleContext);
-		FactoryUtil.registerLoaderFactory(new CSVLoaderFactory(), null, bundleContext);
-		FactoryUtil.registerLoaderFactory(new SDRLoader(), null, context);
+//		FactoryUtil.registerProcesorFactory(new ExampleProcessorFactory(), null, bundleContext);
+//		FactoryUtil.registerProcesorFactory(new KMeansFactory(), null, bundleContext);
+//		FactoryUtil.registerProcesorFactory(new NaiveBayesProcessor(), null, bundleContext);
+//		FactoryUtil.registerLoaderFactory(new ARFFLoaderFactory(), null, bundleContext);
+//		FactoryUtil.registerLoaderFactory(new CSVLoaderFactory(), null, bundleContext);
+//		FactoryUtil.registerLoaderFactory(new SDRLoader(), null, context);
 		//Start little tests
 		//dpuTest();
 	}
@@ -63,13 +42,13 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext bundleContext) throws Exception {
-		Activator.context = null;
+//		Activator.context = null;
 	}
 		
 	
 	/* ========== DPU TEST WITH KMEANS =========== */
 	
-	private void dpuTest() {
+/*	private void dpuTest() {
 		DataProcessingUnit dpu = new DataProcessingUnit();
 		dpu.setName("Sample DPU");
 		dpu.setDescription("A Description is here");
@@ -99,7 +78,7 @@ public class Activator implements BundleActivator {
 		dpu.addEdge(e3);
 		dpu.addEdge(e4);
 		
-		/* == Persist DPU == */
+		 == Persist DPU == 
 		String path = System.getProperty("user.home") + System.getProperty("file.separator") + "dpu.xml";
 		File dpufile = new File(path);
 		JAXBContext context = null;
@@ -113,7 +92,7 @@ public class Activator implements BundleActivator {
 			e.printStackTrace();
 		}
 		
-		/* == Load DPU == */
+		 == Load DPU == 
 		try {
 			Unmarshaller um = context.createUnmarshaller();
 			dpu = (DataProcessingUnit) um.unmarshal(dpufile);
@@ -141,18 +120,18 @@ public class Activator implements BundleActivator {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
 	private Properties sampleProperties() {
 		Properties properties = new Properties();
-		properties.setProperty(SimpleKMeansProcessor.PROP_MAX_ITERATIONS, "20");
-		properties.setProperty(SimpleKMeansProcessor.PROP_NUM_CLUSTERS, "3");
+//		properties.setProperty(SimpleKMeansProcessor.PROP_MAX_ITERATIONS, "20");
+//		properties.setProperty(SimpleKMeansProcessor.PROP_NUM_CLUSTERS, "3");
 		return properties;
 	}
 	
 	private Properties loaderProperties() {
 		Properties properties = new Properties();
-		properties.setProperty(ARFFLoaderFactory.FILE, "/home/muki/iris.arff");
+//		properties.setProperty(ARFFLoaderFactory.FILE, "/home/muki/iris.arff");
 		return properties;
 	}
 	

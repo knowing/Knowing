@@ -4,12 +4,26 @@ Bundle-Name: Test
 Bundle-SymbolicName: knowing.test;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: knowing.test.Activator
-Import-Package: org.apache.log4j; version="[1.2,1.3)"; provider=paxlogging,
- org.apache.commons.logging; version="[1.0,1.1)"; provider=paxlogging
+Import-Package: akka.actor;version="1.0.0",
+ org.apache.commons.logging;provider=paxlogging;version="[1.0,1.1)",
+ org.apache.log4j;provider=paxlogging;version="[1.2,1.3)",
+ scala.collection;version="2.8.1",
+ scala.collection.generic;version="2.8.1",
+ scala.collection.immutable;version="2.8.1",
+ scala.collection.mutable;version="2.8.1",
+ scala.io;version="2.8.1",
+ scala.math;version="2.8.1",
+ scala.ref;version="2.8.1",
+ scala.reflect;version="2.8.1",
+ scala.reflect.generic;version="2.8.1",
+ scala.runtime;version="2.8.1",
+ scala.text;version="2.8.1"
 Require-Bundle: org.eclipse.ui;bundle-version="3.6.0",
  org.eclipse.core.runtime,
  de.lmu.ifi.dbs.knowing.core;bundle-version="1.0.0",
  nz.ac.waikato.cs.weka;bundle-version="3.7.3",
- de.lmu.ifi.dbs.knowing.core.swt;bundle-version="1.0.0"
+ de.lmu.ifi.dbs.knowing.core.swt;bundle-version="1.0.0",
+ org.scala-ide.scala.library,
+ se.scalablesolutions.akka.osgi.dependencies.bundle;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

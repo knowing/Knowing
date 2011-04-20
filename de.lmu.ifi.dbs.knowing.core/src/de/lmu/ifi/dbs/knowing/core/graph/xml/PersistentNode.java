@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import de.lmu.ifi.dbs.knowing.core.factory.ILoaderFactory;
 import de.lmu.ifi.dbs.knowing.core.factory.IProcessorFactory;
@@ -32,7 +31,7 @@ public class PersistentNode {
 	@XmlElement
 	private String factoryId;
 		
-	@XmlJavaTypeAdapter(PropertiesAdapter.class)
+//	@XmlJavaTypeAdapter(PropertiesAdapter.class)
 	private Properties properties;
 	
 	

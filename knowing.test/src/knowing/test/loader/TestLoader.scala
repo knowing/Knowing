@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.knowing.core.test
+package knowing.test.loader
 
 import de.lmu.ifi.dbs.knowing.core.processing.TLoader
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
@@ -14,7 +14,10 @@ class TestLoader extends TLoader {
   val name: String = TestLoaderFactory.name
   val id: String = TestLoaderFactory.id
 
-  def getDataSet(): Instances = { null }
+  def getDataSet(): Instances =  {
+    println("TestLoader: getDataSet")
+    null
+  }
 
   def configure(properties: Properties) = {}
 

@@ -30,10 +30,10 @@ class GraphSupervisor(val dpu: DataProcessingUnit) extends Actor with TSender {
   }
 
   def initialize() = {
-    val nodes = dpu.getNodes
+    val nodes = dpu.nodes
     for (i <- 0 to nodes.size) {
-      val node = nodes.get(i)
-      val id = node.getFactoryId
+      val node = nodes(i)
+      val id = node.id
       val loader = Util.getFactoryService("Loader id", null)
       loader match {
         case None => log.error("Loader id" + "loader not found")

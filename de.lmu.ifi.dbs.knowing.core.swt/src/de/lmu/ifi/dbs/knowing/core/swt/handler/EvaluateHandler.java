@@ -15,6 +15,8 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import scala.collection.immutable.List;
+
 import de.lmu.ifi.dbs.knowing.core.graph.GraphSupervisor;
 import de.lmu.ifi.dbs.knowing.core.graph.PresenterNode;
 import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit;
@@ -38,15 +40,16 @@ public class EvaluateHandler extends AbstractHandler {
 			IViewPart view = HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(PresenterView.ID);
 			PresenterView pView = (PresenterView) view;
 			pView.clearTabs();
-			for (PresenterNode node : supervisor.getPresenterNodes()) {
-				createPresenterContainer(pView, node);
-			}
+			List actors = supervisor.getPresenterActors();
+//			for (IPresenter presenter : supervisor.getPresenterActors()) {
+//				createPresenterContainer(pView, presenter);
+//			}
 			
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		}
 		
-		supervisor.connectNodes();
+		supervisor.initialize();
 		try {
 			supervisor.evaluate();
 		} catch (Exception e) {
@@ -57,14 +60,14 @@ public class EvaluateHandler extends AbstractHandler {
 
 	/**
 	 * @param pView
-	 * @param node
+	 * @param presenter
 	 */
-	private void createPresenterContainer(PresenterView pView, PresenterNode node) {
-		String clazz = node.getPresenter().getContainerClass();
+	private void createPresenterContainer(PresenterView pView, IPresenter presenter) {
+		String clazz = presenter.getContainerClass();
 		if(Composite.class.getName().equals(clazz)) {
-			IPresenter<Composite> presenter = node.getPresenter();
-			Composite control = pView.createTab(presenter.getName());
-			presenter.createContainer(control);
+			IPresenter<Composite> swtPresenter = presenter;
+			Composite control = pView.createTab(swtPresenter.getName());
+			swtPresenter.createContainer(control);
 		}
 	}
 

@@ -8,7 +8,22 @@ Require-Bundle: nz.ac.waikato.cs.weka;bundle-version="3.7.3";visibility:=reexpor
  se.scalablesolutions.akka.osgi.dependencies.bundle;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: de.lmu.ifi.dbs.knowing.core.annotations,
+Export-Package: akka;version="1.0.0",
+ akka.actor;version="1.0.0",
+ akka.agent;version="1.0.0",
+ akka.config;version="1.0.0",
+ akka.dataflow;version="1.0.0",
+ akka.dispatch;version="1.0.0",
+ akka.japi;version="1.0.0",
+ akka.remoteinterface;version="1.0.0",
+ akka.routing;version="1.0.0",
+ akka.stm;version="1.0.0",
+ akka.transactor;version="1.0.0",
+ akka.transactor.annotation;version="1.0.0",
+ akka.util;version="1.0.0",
+ akka.util.duration;version="1.0.0",
+ de.lmu.ifi.dbs.knowing.core.annotations,
+ de.lmu.ifi.dbs.knowing.core.events,
  de.lmu.ifi.dbs.knowing.core.factory,
  de.lmu.ifi.dbs.knowing.core.graph,
  de.lmu.ifi.dbs.knowing.core.graph.xml,
