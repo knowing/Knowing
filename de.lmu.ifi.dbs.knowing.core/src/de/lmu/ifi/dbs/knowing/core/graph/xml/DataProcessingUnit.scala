@@ -6,6 +6,7 @@ import de.lmu.ifi.dbs.knowing.core.graph._
 import scala.annotation.target.field
 import javax.xml.bind.annotation._
 
+//TODO DataProcessingUnit -> @XmlElementWrapperField / @XmlElementField(name ="")
 
 @XmlRootElement(name = "DataProcessingUnit")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -1,16 +1,19 @@
 package de.lmu.ifi.dbs.knowing.core.weka
 
+import java.net.URL
+import de.lmu.ifi.dbs.knowing.core.factory._
+import de.lmu.ifi.dbs.knowing.core.processing.TLoader
+
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
 
-import de.lmu.ifi.dbs.knowing.core.factory.TFactory
-import de.lmu.ifi.dbs.knowing.core.processing.TLoader
-
-import java.io.FileInputStream
+import java.io.{ FileInputStream, File }
 import java.util.Properties
 
 import weka.core.converters.ArffLoader
 import weka.core.Instances
+
+import WekaArffLoader._
 
 class WekaArffLoader extends TLoader {
 
@@ -43,6 +46,31 @@ class WekaArffLoaderFactory extends TFactory {
 
   def getInstance(): ActorRef = {
     actorOf[WekaArffLoader]
+  }
+
+  def configurator: Configurator = {
+    new Configurator(properties, values, description) {
+      def validate(properties: Properties): Array[String] = {
+        Array()
+      }
+    }
+  }
+
+  def createDefaultProperties: Properties = {
+    val returns = new Properties
+    returns setProperty (PROP_FILE, System.getProperty("user.home"))
+    returns setProperty (PROP_URL, "file://" + System.getProperty("user.home"))
+    returns
+  }
+
+  def createPropertyValues: Map[String, Array[Any]] = {
+    Map(PROP_FILE -> Array(new File(System.getProperty("user.home"))),
+      PROP_URL -> Array(new URL("file", "", System.getProperty("user.home"))))
+  }
+
+  def createPropertyDescription: Map[String, String] = {
+    Map(PROP_FILE -> "ARFF file destination",
+      PROP_URL -> "ARFF file URL")
   }
 }
 
