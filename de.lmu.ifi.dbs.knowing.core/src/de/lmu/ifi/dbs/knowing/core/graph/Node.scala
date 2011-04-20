@@ -10,11 +10,18 @@ import de.lmu.ifi.dbs.knowing.core.graph.xml.PropertiesAdapter
 sealed trait Node {
   var id: String
   var factoryId: String
+  var nodeType: String
 }
 
-case class LoaderNode(var id: String, var factoryId: String, properties: Properties) extends Node
-case class PresenterNode(var id: String, var factoryId: String, properties: Properties) extends Node
-case class ProcessorNode(var id: String, var factoryId: String, properties: Properties) extends Node
+case class LoaderNode(var id: String, var factoryId: String, properties: Properties) extends Node {
+  var nodeType = Node.LOADER
+}
+case class PresenterNode(var id: String, var factoryId: String, properties: Properties) extends Node {
+   var nodeType = Node.PROCESSOR
+}
+case class ProcessorNode(var id: String, var factoryId: String, properties: Properties) extends Node {
+   var nodeType = Node.PRESENTER
+}
 
 @XmlAccessorType(XmlAccessType.FIELD)
 case class PersistentNode(@(XmlAttribute @field) var id: String, 
@@ -22,8 +29,15 @@ case class PersistentNode(@(XmlAttribute @field) var id: String,
     @(XmlAttribute @field) var nodeType: String) extends Node {
   
   @XmlJavaTypeAdapter(classOf[PropertiesAdapter]) 
-  var properties: Properties = _
+  var properties: Properties = new Properties
   
   def this() = this("", "", "")
+  
+  def this(node:Node) = this(node.id, node.factoryId, node.nodeType)
 }
-    
+
+object Node {
+  val LOADER = "loader"
+  val PROCESSOR = "processor"
+  val PRESENTER = "presenter"
+}

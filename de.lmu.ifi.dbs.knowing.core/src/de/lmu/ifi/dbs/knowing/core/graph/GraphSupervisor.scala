@@ -2,7 +2,7 @@ package de.lmu.ifi.dbs.knowing.core.graph
 
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import de.lmu.ifi.dbs.knowing.core.util._
-import de.lmu.ifi.dbs.knowing.core.processing.{IPresenter, TSender}
+import de.lmu.ifi.dbs.knowing.core.processing.{TPresenter, TSender}
 import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit
 import de.lmu.ifi.dbs.knowing.core.events._
 import akka.actor.{ Actor, ActorRef }
@@ -42,7 +42,7 @@ class GraphSupervisor(val dpu: DataProcessingUnit) extends Actor with TSender {
     }
   }
 
-  def getPresenterActors(): List[IPresenter[Unit]] = {
+  def getPresenterActors(): List[TPresenter[Unit]] = {
     Nil
   }
 

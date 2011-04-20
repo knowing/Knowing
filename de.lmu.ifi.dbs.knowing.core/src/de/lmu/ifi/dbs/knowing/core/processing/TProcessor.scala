@@ -54,4 +54,13 @@ trait TProcessor extends Actor {
    * @return Instances - Query result
    */
   def query(query: Instance)
+
+  /**
+   * <p>The presenter connected to this {@link IResultProcessor} calls this<br>
+   * method to generate his initial presentation model. After that the<br>
+   * presenter starts querying the processor.</p>
+   *
+   * @return - class labels
+   */
+  def getClassLabels: Array[String]
 }

@@ -12,5 +12,7 @@ class Edge(@(XmlAttribute @field) var id: String,
   def this(id:String, sourceId:String, targetId:String) = this(id, sourceId, targetId, 1)
   
   def this() = this("","","",0)
+  
+  override def toString() = id + "[" + sourceId + " -> " + targetId + "]"
 
 }

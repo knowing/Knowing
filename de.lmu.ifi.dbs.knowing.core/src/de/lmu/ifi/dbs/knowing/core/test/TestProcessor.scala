@@ -10,4 +10,6 @@ class TestProcessor extends TProcessor {
 	def build(instances: Instances) = log.info("Instances: " + instances)
 	
 	def query(q: Instance) = log.info("Query: " + q)
+	
+	def getClassLabels = new Array(0)
 }
