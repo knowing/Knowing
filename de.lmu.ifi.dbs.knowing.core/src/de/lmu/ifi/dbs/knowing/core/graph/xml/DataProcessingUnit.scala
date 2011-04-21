@@ -6,27 +6,35 @@ import de.lmu.ifi.dbs.knowing.core.graph._
 import scala.annotation.target.field
 import javax.xml.bind.annotation._
 
-//TODO DataProcessingUnit -> @XmlElementWrapperField / @XmlElementField(name ="")
-
 @XmlRootElement(name = "DataProcessingUnit")
 @XmlAccessorType(XmlAccessType.FIELD)
 class DataProcessingUnit(@XmlAttributeField var name: String,
-    @XmlElementField var description: String,
-    @XmlElementField var tags: String,
-    @XmlElementWrapperField var nodes: Array[PersistentNode],
-    @XmlElementWrapperField var edges: Array[Edge]) {
+  @XmlElementField var description: String,
+  @XmlElementField var tags: String) {
 
-	def this() = this("","","", new Array(0), new Array(0))
-	def this(name:String) = this(name, "","", new Array(0), new Array(0))
-	
-	def addTag(tag:String) = tags += "," + tag
-	
-	def addNode(node: Node) = Unit
-  
+  @XmlElementWrapper(name = "nodes")
+  @XmlElement(name = "node")
+  var nodes: Array[PersistentNode] = Array()
+
+  @XmlElementWrapper(name = "edges")
+  @XmlElement(name = "edge")
+  var edges: Array[Edge] = Array()
+
+  def this() = this("", "", "")
+
+  def this(name: String) = this(name, "", "")
+
+  def addTag(tag: String) = tags += "," + tag
+
+  def addNode(node: Node) = {
+    var list = nodes.toList
+    list = new PersistentNode(node) :: list
+    nodes = list.toArray
+  }
+
 }
 
 object DataProcessingUnit {
   type XmlAttributeField = XmlAttribute @field
   type XmlElementField = XmlElement @field
-  type XmlElementWrapperField = XmlElementWrapper @field
 }

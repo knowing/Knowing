@@ -28,7 +28,7 @@ trait TFactory {
   /* === Configuration === */
   /* ===================== */
   
-  def configurator:Configurator 
+  def configurator:Configurator = new Configurator(properties, values, description) 
   
   def createDefaultProperties: Properties
   

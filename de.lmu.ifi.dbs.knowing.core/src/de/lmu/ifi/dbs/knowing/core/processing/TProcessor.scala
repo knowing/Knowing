@@ -1,8 +1,11 @@
 package de.lmu.ifi.dbs.knowing.core.processing
 
-import akka.actor.Actor
+import java.util.Properties
+import weka.core.Attribute
 import weka.core.Instances
 import weka.core.Instance
+import akka.actor.Actor
+import scala.collection.JavaConversions._
 
 import de.lmu.ifi.dbs.knowing.core.events._
 
@@ -18,12 +21,14 @@ import de.lmu.ifi.dbs.knowing.core.events._
  * @version 0.3
  * @since 2011-04-15
  */
-trait TProcessor extends Actor {
+trait TProcessor extends Actor with TSender {
 
   def receive = {
-    case Results(instances) => build(instances)
+    case Register(actor) => addListener(actor)
+    case Configure(p) => configure(p)
+    case Start => log.info("Running")
     case Query(q) => query(q)
-    case Start(p) => log.info("Running with properties: " + p)
+    case Results(instances) => build(instances)
     case msg => log.info("Unkown message: " + msg)
   }
 
@@ -63,4 +68,56 @@ trait TProcessor extends Actor {
    * @return - class labels
    */
   def getClassLabels: Array[String]
+
+  /**
+   * Configure this processor. URL, password, file-extension
+   * @param properties
+   */
+  def configure(properties: Properties)
+
+  /**
+   *  <p>Checks the dataset for class attribute in this order
+   *  <li> {@link Instances#classIndex()} -> if >= 0 returns index</li>
+   *  <li> returns index of the attribute named "class" if exists</li>
+   *  <li> returns index of the first nominal attribute</li>
+   *  </p>
+   *
+   * @param dataset
+   * @return class attribute index or -1
+   */
+  def guessAndSetClassLabel(dataset: Instances): Int = {
+    val index = dataset.classIndex
+    index match {
+      case -1 =>
+        val cIndex = guessClassLabel(dataset)
+        dataset.setClassIndex(cIndex)
+        cIndex
+      case x => x
+    }
+  }
+
+  private def guessClassLabel(dataset: Instances): Int = {
+    val classAttribute = dataset.attribute("class")
+    if (classAttribute != null)
+      return classAttribute.index
+
+    //Maybe this is not the feastes way to do
+    val attributes = dataset.enumerateAttributes().toList
+    val nominal = attributes filter (a => a.asInstanceOf[Attribute].isNominal)
+    nominal.headOption match {
+      case Some(x) => x.asInstanceOf[Int]
+      case None => -1
+
+    }
+  }
+
+  def classLables(attribute: Attribute): Array[String] = {
+    val enum = attribute.enumerateValues()
+    val labels = Nil
+    while (enum.hasMoreElements) {
+      val label = enum.nextElement().asInstanceOf[String]
+      labels + label
+    }
+    labels.toArray
+  }
 }

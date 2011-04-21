@@ -1,22 +1,22 @@
 package de.lmu.ifi.dbs.knowing.core.processing
 
 import java.io.IOException
-import weka.core.Instances
 import java.util.Properties
+import weka.core.Instances
 import de.lmu.ifi.dbs.knowing.core.events._
 import akka.actor.Actor
 
 trait TLoader extends Actor with TSender {
 
   def receive = {
-    case Start(p) =>
-      log debug("Loader Started")
-      configure(p)
+    case Register(actor) => addListener(actor)
+    case Configure(p) => configure(p)
+    case Start =>
+      log debug ("Loader " + getClass().getSimpleName + " started...")
       val dataset = getDataSet
       sendEvent(new Results(dataset))
-    case Configure(p) => configure(p)
+      log debug ("... successful")
     case Reset => reset
-    case Register => addListener(self)
     case msg => log.info("Unkown message: " + msg)
   }
 

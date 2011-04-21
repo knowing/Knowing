@@ -1,7 +1,7 @@
 package de.lmu.ifi.dbs.knowing.core.graph.xml
 
 import scala.annotation.target.field
-import javax.xml.bind.annotation.{ XmlAccessorType, XmlAccessType, XmlAttribute }
+import javax.xml.bind.annotation.{ XmlAccessorType, XmlAccessType, XmlAttribute , XmlRootElement}
 
 @XmlAccessorType(XmlAccessType.FIELD)
 class Property(@(XmlAttribute @field) var key: String,

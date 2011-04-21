@@ -1,5 +1,6 @@
 package de.lmu.ifi.dbs.knowing.core.test
 
+import java.util.Properties
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 
 import weka.core.Instances
@@ -12,4 +13,6 @@ class TestProcessor extends TProcessor {
 	def query(q: Instance) = log.info("Query: " + q)
 	
 	def getClassLabels = new Array(0)
+	
+	def configure(properties:Properties) = {}
 }

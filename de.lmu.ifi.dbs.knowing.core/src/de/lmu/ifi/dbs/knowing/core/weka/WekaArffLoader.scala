@@ -44,17 +44,7 @@ class WekaArffLoaderFactory extends TFactory {
   val name: String = WekaArffLoaderFactory.name
   val id: String = WekaArffLoaderFactory.id
 
-  def getInstance(): ActorRef = {
-    actorOf[WekaArffLoader]
-  }
-
-  def configurator: Configurator = {
-    new Configurator(properties, values, description) {
-      def validate(properties: Properties): Array[String] = {
-        Array()
-      }
-    }
-  }
+  def getInstance: ActorRef =  actorOf[WekaArffLoader]
 
   def createDefaultProperties: Properties = {
     val returns = new Properties

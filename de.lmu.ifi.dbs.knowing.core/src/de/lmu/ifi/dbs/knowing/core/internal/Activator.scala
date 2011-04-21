@@ -17,15 +17,15 @@ import akka.actor.Actor
 import org.osgi.framework.{ BundleActivator, BundleContext }
 
 class Activator extends BundleActivator {
-   //with Logging
+  //with Logging
 
   def start(context: BundleContext) = {
     Activator.context = context
     println("Activator started")
-//    logger info "Activator started"
+    //    logger info "Activator started"
     registerServices
-    loadServices
-    //    testActors
+    //    loadServices
+    testActors
   }
 
   def stop(context: BundleContext) = {
@@ -33,28 +33,43 @@ class Activator extends BundleActivator {
   }
 
   private def testActors {
-    val tester = Actor.actorOf(classOf[Tester]).start
-    tester ! "do something"
+    new Thread(new Runnable() {
+      def run = {
+        Thread.sleep(2000)
+        val tester = Actor.actorOf(classOf[Tester]).start
+        tester ! "do something"
+      }
+    }).start;
   }
 
   private def registerServices {
     val arff = new WekaArffLoaderFactory()
-//        Activator.context createService arff
+    val naiveBayes = new NaiveBayesFactory()
+    val oneR = new OneRFactory()
+    //        Activator.context createService arff
     Activator.context.registerService(classOf[TFactory].getName(), arff, null)
+    Activator.context.registerService(classOf[TFactory].getName(), naiveBayes, null)
+    Activator.context.registerService(classOf[TFactory].getName(), oneR, null)
   }
 
   private def loadServices {
-    val arff = Util.getFactoryService(WekaArffLoaderFactory.id, null)
+    val arff = Util.getFactoryService(WekaArffLoaderFactory.id)
     val properties = new Properties()
     properties.setProperty(WekaArffLoader.PROP_FILE, "/home/muki/iris.arff")
     arff match {
-      case Some(l) => l.getInstance.start ! Start(properties)
+      case Some(l) =>
+        val actor = l.getInstance.start
+        actor ! Configure(properties)
+        actor ! Start
       case None => println("None found")
     }
-    
-    val testloader = Util.getFactoryService("Loader id", null);
+
+    val testloader = Util.getFactoryService("Loader id");
     testloader match {
-      case Some(l) => l.getInstance.start ! Start(properties)
+      case Some(l) =>
+        val actor = l.getInstance.start
+        actor ! Configure(properties)
+        actor ! Start
       case None => println("None found")
     }
   }

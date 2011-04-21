@@ -12,7 +12,7 @@ import java.util.Properties
  * @version 0.1
  * @since 21.04.2011
  */
-abstract class Configurator(properties: Properties,
+class Configurator(properties: Properties,
 		values:Map[String, Array[Any]],
 		descriptions:Map[String,String]) {
   
@@ -23,5 +23,15 @@ abstract class Configurator(properties: Properties,
 
   def propertyValues(key: String): Array[Any] = values(key)
   
-  def validate(properties:Properties):Array[String]
+  def validate(configuration:Properties):Array[String] = {
+    val errorOptions = propertyNames map (key => validateProperty(key,configuration getProperty(key)))
+    val errorsDefined = errorOptions filter (option => option.isDefined)
+    val errors = errorsDefined map (option => option.get)
+    errors.toArray
+  }
+  
+  private def validateProperty(key:String, value:String):Option[String] = {
+    //TODO Configurator => validate method!
+    None
+  }
 }

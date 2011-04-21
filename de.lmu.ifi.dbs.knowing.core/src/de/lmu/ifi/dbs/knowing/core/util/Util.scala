@@ -10,7 +10,7 @@ import java.util.Properties
 
 object Util {
 
-  def getFactoryService(id: String, properties: Properties): Option[TFactory] = {
+  def getFactoryService(id: String): Option[TFactory] = {
     val context = Activator.getContext()
     try {
       val references = context.getServiceReferences(classOf[TFactory].getName, null)

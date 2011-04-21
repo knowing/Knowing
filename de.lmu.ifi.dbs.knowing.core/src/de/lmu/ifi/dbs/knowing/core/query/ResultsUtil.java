@@ -22,7 +22,7 @@ import weka.core.ProtectedProperties;
  * @since 31.03.2011
  *
  */
-public class Results {
+public class ResultsUtil {
 	
 	public static final String ATTRIBUTE_CLASS = "class";
 	public static final String ATTRIBUTE_PROBABILITY = "probability";
