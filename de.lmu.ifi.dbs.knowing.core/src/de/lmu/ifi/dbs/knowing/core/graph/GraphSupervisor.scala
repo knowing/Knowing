@@ -1,6 +1,6 @@
 package de.lmu.ifi.dbs.knowing.core.graph
 
-import de.lmu.ifi.dbs.knowing.core.factory.TFactory
+import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.util._
 import de.lmu.ifi.dbs.knowing.core.processing.{ TPresenter, TSender }
 import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit
@@ -10,17 +10,18 @@ import akka.actor.Actor.actorOf
 
 import org.osgi.framework.FrameworkUtil
 
-class GraphSupervisor(val dpu: DataProcessingUnit) extends Actor with TSender {
+class GraphSupervisor(val dpu: DataProcessingUnit, val uifactory: UIFactory) extends Actor with TSender {
 
   var actors: Map[String, ActorRef] = Map()
+  var events:List[String] = Nil
 
   def receive = {
     case Register(actor) =>
       addListener(actor)
-      log info ("Event occured: Register")
+//      log info ("Event occured: Register")
     case Start => evaluate
-    case event: Event => log.info("Event occured: " + event.getClass().getSimpleName)
-    case _ => log.error("Unkown message")
+    case event: Event => events + event.getClass().getSimpleName
+    case _ => log error("----")
   }
 
   def evaluate {
@@ -37,12 +38,14 @@ class GraphSupervisor(val dpu: DataProcessingUnit) extends Actor with TSender {
           //Create actor
           val actor = f.getInstance.start
           //Register and link the supervisor
-          self link (actor)
+//          self link (actor)
           actor ! Register(self)
+          //Check for presenter and init
+          if (node.nodeType.equals(Node.PRESENTER))
+            actor !! UIFactoryEvent(uifactory, node)
           //Configure with properties
-          actor ! Configure(node.properties)
+          actor !! Configure(node.properties)
           //Add to internal map
-          log debug(node.id + " -> " + actor)
           actors += (node.id -> actor)
         case None => println("ERROR")
       }
@@ -54,6 +57,7 @@ class GraphSupervisor(val dpu: DataProcessingUnit) extends Actor with TSender {
       val source = actors(edge.sourceId)
       val target = actors(edge.targetId)
       source !! Register(target)
+      log debug (source.getActorClassName + " -> " + target.getActorClassName)
     })
   }
 

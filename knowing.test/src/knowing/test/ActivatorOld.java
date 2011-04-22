@@ -8,8 +8,6 @@ import java.util.Properties;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.lmu.ifi.dbs.knowing.core.factory.IPresenterFactory;
-
 public class ActivatorOld implements BundleActivator {
 
 	private static BundleContext context;
@@ -135,11 +133,11 @@ public class ActivatorOld implements BundleActivator {
 		return properties;
 	}
 	
-	private Properties presenterProperties() {
-		Properties properties = new Properties();
-		properties.setProperty(IPresenterFactory.PROP_UI_CLASS, "org.eclipse.swt.widgets.Composite");
-		return properties;
-	}
+//	private Properties presenterProperties() {
+//		Properties properties = new Properties();
+//		properties.setProperty(IPresenterFactory.PROP_UI_CLASS, "org.eclipse.swt.widgets.Composite");
+//		return properties;
+//	}
 	
 	private OutputStream sampleOutput() throws FileNotFoundException {
 		String pathname = System.getProperty("user.home") + "/" + "kmeans.model";

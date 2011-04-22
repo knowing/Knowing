@@ -3,7 +3,6 @@
  */
 package knowing.test.loader;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,10 +18,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.BatchConverter;
-import de.lmu.ifi.dbs.knowing.core.factory.ILoaderFactory;
-import de.lmu.ifi.dbs.knowing.core.processing.ILoader;
-import de.lmu.ifi.dbs.knowing.core.processing.SynchronizedLoader;
-import de.lmu.ifi.dbs.knowing.core.query.Results;
+import de.lmu.ifi.dbs.knowing.core.query.ResultsUtil;
 
 /**
  * @author Nepomuk Seiler
@@ -30,7 +26,7 @@ import de.lmu.ifi.dbs.knowing.core.query.Results;
  * @since 01.04.2011
  * 
  */
-public class SDRLoader extends AbstractFileLoader implements BatchConverter, ILoaderFactory {
+public class SDRLoader extends AbstractFileLoader implements BatchConverter {
 
 	/* ==== Factory ==== */
 	public static final String ID = "de.sendsor.accelerationSensor.converter.SDRLoader";
@@ -56,14 +52,14 @@ public class SDRLoader extends AbstractFileLoader implements BatchConverter, ILo
 	private Attribute zAttribute;
 
 	public SDRLoader() {
-		m_structure = Results.dateAndValuesResult(new String[] { "x", "y", "z" });
+		m_structure = ResultsUtil.dateAndValuesResult(new String[] { "x", "y", "z" });
 		dataset = new Instances(m_structure);
 		
-		timeAttribute = dataset.attribute(Results.ATTRIBUTE_TIMESTAMP);
+		timeAttribute = dataset.attribute(ResultsUtil.ATTRIBUTE_TIMESTAMP);
 		//initialize value attributes
-		List<Attribute> valueAttributes = Results.findValueAttributes(dataset);
+		List<Attribute> valueAttributes = ResultsUtil.findValueAttributes(dataset);
 		for (Attribute attribute : valueAttributes) {
-			String name = attribute.getMetadata().getProperty(Results.META_ATTRIBUTE_NAME);
+			String name = attribute.getMetadata().getProperty(ResultsUtil.META_ATTRIBUTE_NAME);
 			if (name.equals("x"))
 				xAttribute = attribute;
 			else if (name.equals("y"))
@@ -201,35 +197,17 @@ public class SDRLoader extends AbstractFileLoader implements BatchConverter, ILo
 		return "";
 	}
 	
-	/* ================= */
-	/* ==== Factory ==== */
-	/* ================= */
 
-	@Override
-	public String getId() {
-		return ID;
-	}
-
-	@Override
-	public String getName() {
-		return "SDRLoaderFactory";
-	}
-
-	@Override
-	public Properties getDefault() {
-		return properties;
-	}
-
-	@Override
-	public ILoader getInstance(Properties properties) {
-		String pathname = properties.getProperty(FILE, "/home/muki/input.sdr");
-		SDRLoader loader = new SDRLoader();		
-		try {
-			loader.setFile(new File(pathname));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return new SynchronizedLoader(loader);
-	}
+//	@Override
+//	public ILoader getInstance(Properties properties) {
+//		String pathname = properties.getProperty(FILE, "/home/muki/input.sdr");
+//		SDRLoader loader = new SDRLoader();		
+//		try {
+//			loader.setFile(new File(pathname));
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		return new SynchronizedLoader(loader);
+//	}
 
 }

@@ -3,7 +3,9 @@ package de.lmu.ifi.dbs.knowing.core.processing
 import weka.core.Instances
 import akka.actor.Actor
 
+import de.lmu.ifi.dbs.knowing.core.graph.Node
 import de.lmu.ifi.dbs.knowing.core.events._
+import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
 
 /**
  * @author Nepomuk Seiler
@@ -15,10 +17,19 @@ trait TPresenter[T] extends Actor {
   val name: String
 
   def receive = {
-    case UIContainer(parent: T) => self reply createContainer(parent)
+    case UIFactoryEvent(factory, node) => 
+      val parent = factory createContainer (node)
+      createContainer(parent.asInstanceOf[T])
+      self reply Ready
+    case UIContainer(parent: T) => 
+      log debug("UIContainer " + parent)
+      createContainer(parent)
+      self ! Ready
     case Results(instances) => buildPresentation(instances)
     case Query => self reply getContainerClass
-    case _ => log error ("unkown message")
+    case Configure(_) => self reply Ready
+    case Start => log debug("Running " + self.getActorClassName)
+    case msg => log error("<----> " + msg)
   }
 
   /**
@@ -27,7 +38,7 @@ trait TPresenter[T] extends Actor {
    * @param parent
    * @return
    */
-  def createContainer(parent: T): AnyRef
+  def createContainer(parent: T)
 
   /**
    * @param instances

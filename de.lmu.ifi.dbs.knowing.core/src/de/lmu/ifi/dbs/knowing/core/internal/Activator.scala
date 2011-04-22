@@ -22,10 +22,10 @@ class Activator extends BundleActivator {
   def start(context: BundleContext) = {
     Activator.context = context
     println("Activator started")
-    //    logger info "Activator started"
+    //logger info "Activator started"
     registerServices
-    //    loadServices
-    testActors
+    //loadServices
+    //testActors
   }
 
   def stop(context: BundleContext) = {

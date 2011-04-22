@@ -25,11 +25,13 @@ trait TProcessor extends Actor with TSender {
 
   def receive = {
     case Register(actor) => addListener(actor)
-    case Configure(p) => configure(p)
-    case Start => log.info("Running")
+    case Configure(p) => 
+      configure(p)
+      self reply Ready
+    case Start => log.info("Running " + self.getActorClassName)
     case Query(q) => query(q)
     case Results(instances) => build(instances)
-    case msg => log.info("Unkown message: " + msg)
+    case msg => log error("<----> " + msg)
   }
 
   /**

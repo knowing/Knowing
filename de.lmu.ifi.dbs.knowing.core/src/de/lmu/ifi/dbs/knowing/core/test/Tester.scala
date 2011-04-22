@@ -40,7 +40,7 @@ class Tester extends Actor {
   }
   
   def runDPU {
-    val supervisor = actorOf(new GraphSupervisor(createDPU)).start
+    val supervisor = actorOf(new GraphSupervisor(createDPU, null)).start
     supervisor ! Start
   }
 
@@ -62,13 +62,15 @@ class Tester extends Actor {
     val n1 = LoaderNode("ARFF", classOf[ArffLoader].getName, arffProperties)
     val n2 = ProcessorNode("OneR", classOf[weka.classifiers.rules.OneR].getName, new Properties)
     val n3 = ProcessorNode("NaiveBayes", classOf[weka.classifiers.bayes.NaiveBayes].getName, new Properties)
-    Array(n1, n2, n3)
+    val n4 = PresenterNode("MultiTablePresenter", "de.lmu.ifi.dbs.knowing.core.swt.MultiTablePresenter", new Properties)
+    Array(n1, n2, n3, n4)
   }
 
   def testEdges: Array[Edge] = {
     val arff_OneR = new Edge("arff_OneR", "ARFF", "OneR")
     val arff_NaiveBayes = new Edge("arff_NaiveBayes", "ARFF", "NaiveBayes")
-    Array(arff_OneR, arff_NaiveBayes)
+    val arff_Presenter = new Edge("arff_MultiTablePresenter", "ARFF", "MultiTablePresenter")
+    Array(arff_OneR, arff_NaiveBayes, arff_Presenter)
   }
 
   def arffProperties: Properties = {

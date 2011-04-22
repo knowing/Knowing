@@ -28,10 +28,10 @@ case class LoaderNode(var id: String, var factoryId: String, var properties: Pro
   var nodeType = Node.LOADER
 }
 case class PresenterNode(var id: String, var factoryId: String, var properties: Properties) extends Node {
-  var nodeType = Node.PROCESSOR
+  var nodeType = Node.PRESENTER
 }
 case class ProcessorNode(var id: String, var factoryId: String, var properties: Properties) extends Node {
-  var nodeType = Node.PRESENTER
+  var nodeType = Node.PROCESSOR
 }
 
 @XmlAccessorType(XmlAccessType.FIELD)
