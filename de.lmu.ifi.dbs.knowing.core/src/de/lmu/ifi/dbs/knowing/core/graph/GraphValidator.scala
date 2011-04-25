@@ -5,7 +5,7 @@ import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit
 
 class GraphValidator(nodes: Array[_<: Node], edges: Array[Edge]) {
 
-  val errors = new HashMap[String, String]
+  private val errors = new HashMap[String, String]
 
   private val targetNodes = (edges: Array[Edge]) => edges map (e => e.sourceId)
   private val sourceNodes = (edges: Array[Edge]) => edges map (e => e.targetId)
@@ -40,6 +40,8 @@ class GraphValidator(nodes: Array[_<: Node], edges: Array[Edge]) {
 
     }
   }
+  
+  def getErrors:Array[String] = errors map {case (k,v) => k + ": " + v} toArray
 }
 
 object GraphValidator {
