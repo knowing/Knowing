@@ -28,7 +28,6 @@ Export-Package: akka;version="1.0.0",
  de.lmu.ifi.dbs.knowing.core.graph,
  de.lmu.ifi.dbs.knowing.core.graph.xml,
  de.lmu.ifi.dbs.knowing.core.processing,
- de.lmu.ifi.dbs.knowing.core.query,
  de.lmu.ifi.dbs.knowing.core.util
 Bundle-ClassPath: lib/akka-actor-1.0.jar,
  lib/akka-stm-1.0.jar,

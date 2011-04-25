@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -18,7 +19,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.BatchConverter;
-import de.lmu.ifi.dbs.knowing.core.query.ResultsUtil;
+import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil;
 
 /**
  * @author Nepomuk Seiler
@@ -52,14 +53,14 @@ public class SDRLoader extends AbstractFileLoader implements BatchConverter {
 	private Attribute zAttribute;
 
 	public SDRLoader() {
-		m_structure = ResultsUtil.dateAndValuesResult(new String[] { "x", "y", "z" });
+		m_structure = ResultsUtil.dateAndValuesResult(Arrays.asList(new String[] { "x", "y", "z" }));
 		dataset = new Instances(m_structure);
 		
-		timeAttribute = dataset.attribute(ResultsUtil.ATTRIBUTE_TIMESTAMP);
+		timeAttribute = dataset.attribute(ResultsUtil.ATTRIBUTE_TIMESTAMP());
 		//initialize value attributes
 		List<Attribute> valueAttributes = ResultsUtil.findValueAttributes(dataset);
 		for (Attribute attribute : valueAttributes) {
-			String name = attribute.getMetadata().getProperty(ResultsUtil.META_ATTRIBUTE_NAME);
+			String name = attribute.getMetadata().getProperty(ResultsUtil.META_ATTRIBUTE_NAME());
 			if (name.equals("x"))
 				xAttribute = attribute;
 			else if (name.equals("y"))

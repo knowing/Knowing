@@ -1,6 +1,3 @@
-/**
- *
- */
 package de.lmu.ifi.dbs.knowing.core.swt
 
 import de.lmu.ifi.dbs.knowing.core.events.UIContainer
@@ -36,6 +33,8 @@ abstract class SWTPresenter extends TPresenter[Composite] {
   }
 
   def dispose = composite dispose
+  
+  def redraw = composite redraw
 
   /**
    * <p>Delegates the call to buildContent() and runs it async <br>

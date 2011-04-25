@@ -1,6 +1,6 @@
 package de.lmu.ifi.dbs.knowing.core.weka
 
-import de.lmu.ifi.dbs.knowing.core.query.ResultsUtil
+import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.core.processing.{ TProcessor , TSender }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.factory._

@@ -30,9 +30,16 @@ class TestLoaderFactory extends TFactory {
   val name: String = TestLoaderFactory.name
   val id: String = TestLoaderFactory.id
 
-  def getInstance(): ActorRef = {
-    actorOf[TestLoader]
-  }
+  def getInstance(): ActorRef = actorOf[TestLoader]
+  
+    
+  def createDefaultProperties: Properties = new Properties
+  
+  def createPropertyValues:Map[String, Array[Any]] = Map()
+  
+  def createPropertyDescription:Map[String, String] = Map()
+  
+  
 }
 
 object TestLoaderFactory {

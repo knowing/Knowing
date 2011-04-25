@@ -29,9 +29,6 @@ import org.jfree.data.xy.XYDataset;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
-import de.lmu.ifi.dbs.knowing.core.factory.IPresenterFactory;
-import de.lmu.ifi.dbs.knowing.core.processing.IPresenter;
-import de.lmu.ifi.dbs.knowing.core.query.Results;
 
 /**
  * @author Nepomuk Seiler
@@ -39,9 +36,9 @@ import de.lmu.ifi.dbs.knowing.core.query.Results;
  * @since 01.04.2011
  * 
  */
-public class TimePeriodValuesPresenter extends AbstractChartPresenter implements IPresenterFactory {
-
-	public static final String ID = "de.lmu.ifi.dbs.knowing.core.swt.charts.TimePeriodValuesPresenter";
+public class TimePeriodValuesPresenter  {
+//extends AbstractChartPresenter 
+/*	public static final String ID = "de.lmu.ifi.dbs.knowing.core.swt.charts.TimePeriodValuesPresenter";
 
 	private Instances model;
 
@@ -54,16 +51,16 @@ public class TimePeriodValuesPresenter extends AbstractChartPresenter implements
 		super("TimePeriodValuesPresenter");
 	}
 
-	/* ========================== */
-	/* == Dataset manipulation == */
-	/* ========================== */
+	 ========================== 
+	 == Dataset manipulation == 
+	 ========================== 
 
 	@Override
 	protected void createContent(Instances dataset) {
 		ArrayList<Instance> instances = Collections.<Instance> list(dataset.enumerateInstances());
-		Attribute timeAttribute = dataset.attribute(Results.ATTRIBUTE_TIMESTAMP);
+		Attribute timeAttribute = dataset.attribute(ResultsUtil.ATTRIBUTE_TIMESTAMP);
 		// Attribute valAttribute = dataset.attribute(Results.ATTRIBUTE_VALUE);
-		List<Attribute> valueAttributes = Results.findValueAttributes(dataset);
+		List<Attribute> valueAttributes = ResultsUtil.findValueAttributes(dataset);
 
 		for (Instance instance : instances) {
 			// Timestamp
@@ -87,7 +84,7 @@ public class TimePeriodValuesPresenter extends AbstractChartPresenter implements
 			// Values
 			for (Attribute attribute : valueAttributes) {
 				double value = instance.value(attribute);
-				String name = attribute.getMetadata().getProperty(Results.META_ATTRIBUTE_NAME, attribute.name());
+				String name = attribute.getMetadata().getProperty(ResultsUtil.META_ATTRIBUTE_NAME, attribute.name());
 				for (int i = 0; i < interval_length; i++) {
 					add(name, period, value);
 				}
@@ -121,9 +118,9 @@ public class TimePeriodValuesPresenter extends AbstractChartPresenter implements
 		return new Millisecond(new Date(timeInMillis));
 	}
 
-	/* ========================== */
-	/* ===== Chart creation ===== */
-	/* ========================== */
+	 ========================== 
+	 ===== Chart creation ===== 
+	 ========================== 
 
 	@Override
 	protected JFreeChart createChart(Dataset dataset) {
@@ -149,27 +146,8 @@ public class TimePeriodValuesPresenter extends AbstractChartPresenter implements
 	public Instances getModel(List<String> labels) {
 		// Not really as intended!!
 		if (model == null)
-			model = Results.dateAndValuesResult(labels);
+			model = ResultsUtil.dateAndValuesResult(labels);
 		return model;
-	}
-
-	/* ========================== */
-	/* ======== Factory ========= */
-	/* ========================== */
-
-	@Override
-	public String getId() {
-		return ID;
-	}
-
-	@Override
-	public Properties getDefault() {
-		return new Properties();
-	}
-
-	@Override
-	public IPresenter<Composite> getInstance(Properties properties) {
-		return new TimePeriodValuesPresenter();
-	}
+	}*/
 
 }
