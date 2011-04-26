@@ -14,5 +14,8 @@
 #ignore generated .class files
 *.class
 
+#Scala
+*.scala_dependencies 
+
 #except this file
 !.gitignore
