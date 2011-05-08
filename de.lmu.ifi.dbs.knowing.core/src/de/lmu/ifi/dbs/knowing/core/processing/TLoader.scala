@@ -43,3 +43,8 @@ trait TLoader extends Actor with TSender {
   def reset
 
 }
+
+object TLoader {
+  val FILE = "file"
+  val URL = "url"
+}
