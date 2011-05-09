@@ -31,6 +31,12 @@ class DataProcessingUnit(@XmlAttributeField var name: String,
     list = new PersistentNode(node) :: list
     nodes = list.toArray
   }
+  
+  def nodesOfType(typ:String):Array[_<: Node] = nodes filter(node => node.nodeType.equals(typ))
+  
+  def loaderNodes:Array[_<: Node] =  nodesOfType(Node.LOADER)
+  def presenterNodes:Array[_<: Node] = nodesOfType(Node.PRESENTER)
+  def processorNodes:Array[_<: Node] = nodesOfType(Node.PROCESSOR)
 
 }
 
