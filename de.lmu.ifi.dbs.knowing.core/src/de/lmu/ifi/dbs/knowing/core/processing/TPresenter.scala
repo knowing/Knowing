@@ -1,5 +1,6 @@
 package de.lmu.ifi.dbs.knowing.core.processing
 
+import java.util.Properties
 import weka.core.Instances
 import akka.actor.Actor
 
@@ -12,24 +13,26 @@ import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
  * @version 0.2
  * @since 18.04.2011
  */
-trait TPresenter[T] extends Actor {
+trait TPresenter[T] extends Actor with TConfigurable {
 
   val name: String
 
   def receive = {
-    case UIFactoryEvent(factory, node) => 
+    case UIFactoryEvent(factory, node) =>
       val parent = factory createContainer (node)
       createContainer(parent.asInstanceOf[T])
       self reply Ready
-    case UIContainer(parent: T) => 
-      log debug("UIContainer " + parent)
+    case UIContainer(parent: T) =>
+      log debug ("UIContainer " + parent)
       createContainer(parent)
       self ! Ready
+    case Configure(properties) =>
+      configure(properties)
+      self reply Ready
     case Results(instances) => buildPresentation(instances)
     case Query => self reply getContainerClass
-    case Configure(_) => self reply Ready
-    case Start => log debug("Running " + self.getActorClassName)
-    case msg => log error("<----> " + msg)
+    case Start => log debug ("Running " + self.getActorClassName)
+    case msg => log error ("<----> " + msg)
   }
 
   /**

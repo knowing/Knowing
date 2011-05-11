@@ -18,8 +18,8 @@ object ResultsUtil {
 
   val NAME_CLASS_ONLY = "class_only";
   val NAME_CLASS_AND_PROBABILITY = "class_and_probability";
-  val NAME_DATE_AND_VALUE = "data_and_value";
-  val NAME_DATE_AND_VALUES = "data_and_values";
+  val NAME_DATE_AND_VALUE = "date_and_value";
+  val NAME_DATE_AND_VALUES = "date_and_values";
 
   val META_ATTRIBUTE_NAME = "name";
 
@@ -100,7 +100,7 @@ object ResultsUtil {
     val attributes = new ArrayList[Attribute]
 
     val timestampAttribute = new Attribute(ATTRIBUTE_TIMESTAMP, "yyyy-MM-dd'T'HH:mm:ss")
-    val valueAttribute = new Attribute(ATTRIBUTE_VALUE)
+    val valueAttribute = new Attribute(ATTRIBUTE_VALUE + 0)
     attributes.add(timestampAttribute)
     attributes.add(valueAttribute)
 
@@ -198,7 +198,7 @@ object ResultsUtil {
    */
   def findValueAttributes(dataset: Instances): List[Attribute] = {
     val returns = new ArrayList[Attribute]
-    var i = 1
+    var i = 0
     var attribute = dataset.attribute(ATTRIBUTE_VALUE + i)
     while (attribute != null) {
       returns.add(attribute)

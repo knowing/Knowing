@@ -47,7 +47,8 @@ class GraphSupervisor(val dpu: DataProcessingUnit, val uifactory: UIFactory) ext
           actor !! Configure(node.properties)
           //Add to internal map
           actors += (node.id -> actor)
-        case None => println("ERROR")
+          log info ("#Add " + node.properties)
+        case None => log error("No factory found for: " + node.factoryId)
       }
     })
   }

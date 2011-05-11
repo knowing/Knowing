@@ -21,7 +21,7 @@ import de.lmu.ifi.dbs.knowing.core.events._
  * @version 0.3
  * @since 2011-04-15
  */
-trait TProcessor extends Actor with TSender {
+trait TProcessor extends Actor with TSender with TConfigurable {
 
   def receive = {
     case Register(actor) => addListener(actor)
@@ -70,12 +70,6 @@ trait TProcessor extends Actor with TSender {
    * @return - class labels
    */
   def getClassLabels: Array[String]
-
-  /**
-   * Configure this processor. URL, password, file-extension
-   * @param properties
-   */
-  def configure(properties: Properties)
 
   /**
    *  <p>Checks the dataset for class attribute in this order

@@ -38,11 +38,11 @@ class MultiTablePresenter extends SWTPresenter {
     presenter match {
       case Some(p) => p ! Results(instances)
       case None => //Create new container
-        log debug("Creating new TablePresenter...")
+        log debug ("Creating new TablePresenter...")
         val p = actorOf[TablePresenter].start
-        log debug("... and createContainer for " + p.getActorClassName)
+        log debug ("... and createContainer for " + p.getActorClassName)
         p ! UIContainer(createTab(relation))
-        log debug("... and build content for " + p.getActorClassName)
+        log debug ("... and build content for " + p.getActorClassName)
         p ! Results(instances)
         tables += (relation -> p)
     }
@@ -61,9 +61,11 @@ class MultiTablePresenter extends SWTPresenter {
     val composite = new Composite(tabFolder, SWT.NONE)
     composite.setLayout(new FillLayout())
     tabItem.setControl(composite)
-    log debug("Composite created: " + composite)
+    log debug ("Composite created: " + composite)
     composite
   }
+
+  def configure(properties: Properties) = {}
 
   def getModel(labels: Array[String]): Instances = { null }
 
@@ -75,7 +77,7 @@ class MultiTablePresenterFactory extends TFactory {
 
   val name: String = MultiTablePresenter.name
   val id: String = classOf[MultiTablePresenter].getName
-  
+
   def getInstance(): ActorRef = actorOf[MultiTablePresenter]
 
   def createDefaultProperties: Properties = new Properties
@@ -83,5 +85,5 @@ class MultiTablePresenterFactory extends TFactory {
   def createPropertyValues: Map[String, Array[Any]] = Map()
 
   def createPropertyDescription: Map[String, String] = Map()
-  
+
 }

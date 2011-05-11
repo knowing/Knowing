@@ -1,8 +1,6 @@
-/**
- *
- */
 package de.lmu.ifi.dbs.knowing.core.swt.handler
 
+import org.eclipse.ui.PlatformUI
 import org.eclipse.swt.widgets.Composite
 import java.io.File;
 
@@ -37,21 +35,8 @@ class EvaluateHandler extends AbstractHandler {
     if (pathname == null || pathname.isEmpty())
       return null;
     val dpu = unmarshallDPU(pathname)
-    try {
-      val view = HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(PresenterView.ID)
-      val pView = view.asInstanceOf[PresenterView]
-      val supervisor = actorOf(new GraphSupervisor(dpu, pView.uifactory)).start
-      supervisor ! Start
-      null
-    } catch {
-      case pEx: PartInitException =>
-        pEx.printStackTrace
-        null
-      case e: Exception => 
-        e.printStackTrace
-        null
-    }
-
+    EvaluateHandler.evaluate(dpu)
+    null;
   }
 
   /**
@@ -81,6 +66,27 @@ class EvaluateHandler extends AbstractHandler {
     dialog.setFilterExtensions(Array("*.xml", "*.dpu"))
     dialog.setFilterNames(Array("XML DataProcessingUnit", "DPU DataProcessingUnit"))
     dialog.open()
+  }
+
+}
+
+object EvaluateHandler {
+
+  def evaluate(dpu: DataProcessingUnit) {
+    try {
+      val view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(PresenterView.ID)
+      val pView = view.asInstanceOf[PresenterView]
+      val supervisor = actorOf(new GraphSupervisor(dpu, pView.uifactory)).start
+      supervisor ! Start
+      null
+    } catch {
+      case pEx: PartInitException =>
+        pEx.printStackTrace
+        null
+      case e: Exception =>
+        e.printStackTrace
+        null
+    }
   }
 
 }

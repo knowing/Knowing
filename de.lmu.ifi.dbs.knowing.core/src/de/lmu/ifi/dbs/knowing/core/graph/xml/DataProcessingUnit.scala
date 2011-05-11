@@ -32,11 +32,21 @@ class DataProcessingUnit(@XmlAttributeField var name: String,
     nodes = list.toArray
   }
   
+  /* ==================== */
+  /* === Util methods === */
+  /* ==================== */
+  
+  /**
+   * @param typ - Node.LOADER, Node.PROCESSOR, Node.PRESENTER
+   */
   def nodesOfType(typ:String):Array[_<: Node] = nodes filter(node => node.nodeType.equals(typ))
   
   def loaderNodes:Array[_<: Node] =  nodesOfType(Node.LOADER)
   def presenterNodes:Array[_<: Node] = nodesOfType(Node.PRESENTER)
   def processorNodes:Array[_<: Node] = nodesOfType(Node.PROCESSOR)
+  
+  def node(typ:String, factory:String):Array[_<: Node] =  nodes filter(node => node.nodeType.equals(typ) && node.factoryId.equals(factory))
+  
 
 }
 

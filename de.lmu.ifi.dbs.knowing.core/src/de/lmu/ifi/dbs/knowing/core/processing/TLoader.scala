@@ -6,7 +6,7 @@ import weka.core.Instances
 import de.lmu.ifi.dbs.knowing.core.events._
 import akka.actor.Actor
 
-trait TLoader extends Actor with TSender {
+trait TLoader extends Actor with TSender with TConfigurable {
 
   def receive = {
     case Register(actor) => addListener(actor)
@@ -30,12 +30,6 @@ trait TLoader extends Actor with TSender {
    */
   @throws(classOf[IOException])
   def getDataSet(): Instances
-
-  /**
-   * Configure this loader. URL, password, file-extension
-   * @param properties
-   */
-  def configure(properties: Properties)
 
   /**
    * Reset dataset, properties and possible connections, inputstreams, etc.

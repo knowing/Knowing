@@ -25,21 +25,22 @@ class TablePresenter extends SWTPresenter {
 
   private var viewer: TableViewer = _
   private var columnsInit = false
+  private var rows = 100
 
   def createControl(parent: Composite) = viewer = new TableViewer(parent)
 
   def buildContent(instances: Instances) = {
-    log debug("buildContent...")
+    log debug ("buildContent...")
     createColumns(instances.enumerateAttributes());
-    viewer.setInput(instances);
+    viewer.setInput(createInput(instances));
     viewer.refresh();
-    log debug("... content build")
+    log debug ("... content build")
   }
 
   def getModel(labels: Array[String]): Instances = { null }
 
   def createColumns(eAttr: java.util.Enumeration[_]) {
-    log debug("createColumns...")
+    log debug ("createColumns...")
     if (columnsInit)
       return ;
     viewer.getTable().setHeaderVisible(true);
@@ -55,12 +56,26 @@ class TablePresenter extends SWTPresenter {
     viewer.setLabelProvider(new InstanceLabelProvider());
     viewer.setContentProvider(new InstanceContentProvider(true));
     columnsInit = true;
-    log debug("... columns created")
+    log debug ("... columns created")
+  }
+  
+  def configure(properties:Properties) = {
+    log debug ("Configure TablePresenter with " + properties)
+    val row_string = properties.getProperty(TablePresenter.ROWS_PER_PAGE)
+    rows = Integer.getInteger(row_string)
+  }
+  
+  private def createInput(instances: Instances):Instances = {
+    new Instances(instances, 0, rows)
   }
 
 }
 
-object TablePresenter { val name = "Table Presenter" }
+object TablePresenter {
+
+  val ROWS_PER_PAGE = "rows"
+  val name = "Table Presenter"
+}
 
 class TablePresenterFactory extends TFactory {
 
@@ -69,7 +84,11 @@ class TablePresenterFactory extends TFactory {
 
   def getInstance(): ActorRef = actorOf[TablePresenter]
 
-  def createDefaultProperties: Properties = new Properties
+  def createDefaultProperties: Properties = {
+    val properties = new Properties
+    properties.setProperty(TablePresenter.ROWS_PER_PAGE, "100");
+    properties
+  }
 
   def createPropertyValues: Map[String, Array[Any]] = Map()
 
