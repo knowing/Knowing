@@ -27,6 +27,8 @@ class TablePresenter extends SWTPresenter {
   private var columnsInit = false
   private var rows = 100
 
+  //TODO knowing.swt.TablePresenter -> Controls to switch pages
+  
   def createControl(parent: Composite) = viewer = new TableViewer(parent)
 
   def buildContent(instances: Instances) = {
@@ -48,13 +50,13 @@ class TablePresenter extends SWTPresenter {
     while (eAttr.hasMoreElements) {
       val a = eAttr.nextElement().asInstanceOf[Attribute]
       val viewerColumn = new TableViewerColumn(viewer, SWT.LEAD)
-      viewerColumn.getColumn().setText(a.name())
-      viewerColumn.getColumn().setWidth(70)
-      viewerColumn.getColumn().setResizable(true)
-      viewerColumn.getColumn().setMoveable(true)
+      viewerColumn.getColumn.setText(a.name)
+      viewerColumn.getColumn.setWidth(70)
+      viewerColumn.getColumn.setResizable(true)
+      viewerColumn.getColumn.setMoveable(true)
     }
-    viewer.setLabelProvider(new InstanceLabelProvider());
-    viewer.setContentProvider(new InstanceContentProvider(true));
+    viewer.setLabelProvider(new InstanceLabelProvider);
+    viewer.setContentProvider(new InstanceContentProvider);
     columnsInit = true;
     log debug ("... columns created")
   }
@@ -90,7 +92,7 @@ class TablePresenterFactory extends TFactory {
     properties
   }
 
-  def createPropertyValues: Map[String, Array[Any]] = Map()
+  def createPropertyValues: Map[String, Array[Any]] = Map(TablePresenter.ROWS_PER_PAGE -> Array(0,1000))
 
-  def createPropertyDescription: Map[String, String] = Map()
+  def createPropertyDescription: Map[String, String] = Map(TablePresenter.ROWS_PER_PAGE -> "How much rows to show")
 }

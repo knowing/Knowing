@@ -32,7 +32,11 @@ trait TFactory {
   
   def createDefaultProperties: Properties
   
-  def createPropertyValues:Map[String, Array[Any]]
+  def createPropertyValues:Map[String, Array[_<:Any]]
   
   def createPropertyDescription:Map[String, String]
+}
+
+object TFactory {
+  val boolean_property = Array("true", "false")
 }

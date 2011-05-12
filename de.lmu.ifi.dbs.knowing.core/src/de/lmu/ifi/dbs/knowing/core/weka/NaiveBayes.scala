@@ -4,6 +4,9 @@ import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.core.processing.{ TProcessor , TSender }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.factory._
+import de.lmu.ifi.dbs.knowing.core.factory.TFactory._
+import de.lmu.ifi.dbs.knowing.core.weka.WekaClassifierFactory._
+import de.lmu.ifi.dbs.knowing.core.weka.NaiveBayesFactory._
 
 import weka.core.{ Instance, Instances }
 
@@ -19,27 +22,20 @@ import scala.collection.JavaConversions._
  * @version 0.1
  * @since 21.04.2011
  */
-class NaiveBayes extends TProcessor {
+class NaiveBayes extends WekaClassifier(new weka.classifiers.bayes.NaiveBayes) {
 
-  lazy val naiveBayes = new weka.classifiers.bayes.NaiveBayes()
-
-  def build(instances: Instances) =  {
-    log debug("Build classifier...")
-    guessAndSetClassLabel(instances)
-    naiveBayes buildClassifier(instances)
-    log debug("... succesfull")
-    sendEvent(Ready())
+  override def configure(properties:Properties) = {
+    val bayes = classifier.asInstanceOf[weka.classifiers.bayes.NaiveBayes]
+    
+    val kernel = properties.getProperty(KERNEL_ESTIMATOR)
+    bayes.setUseKernelEstimator(kernel.toBoolean)
+    
+    val supervised = properties.getProperty(SUPERVISED_DISCRETIZATION)
+    bayes.setUseSupervisedDiscretization(supervised.toBoolean)
+    
+    val debug = properties.getProperty(DEBUG)
+    bayes.setDebug(debug.toBoolean)
   }
-
-  def query(query: Instance) = {
-	  val distribution = naiveBayes distributionForInstance(query)
-	  val result = ResultsUtil.classAndProbabilityResult(getClassLabels.toList, distribution)
-	  self reply Results(result)
-  }
-
-  def getClassLabels: Array[String] =  Array()
-  
-  def configure(properties:Properties) = {}
 }
 
 /* =========================== */
@@ -47,8 +43,8 @@ class NaiveBayes extends TProcessor {
 /* =========================== */
 
 object NaiveBayesFactory {
-  val name: String = "Naive Bayes"
-  val id: String = "weka.classifiers.bayes.NaiveBayes"
+	val KERNEL_ESTIMATOR = "kernel-estimator"
+	val SUPERVISED_DISCRETIZATION = "supervised-discretization"
 }
 
 /**
@@ -56,22 +52,25 @@ object NaiveBayesFactory {
  * @version 0.1
  * @since 21.04.2011
  */
-class NaiveBayesFactory extends TFactory {
-  val name: String = NaiveBayesFactory.name
-  val id: String = NaiveBayesFactory.id
+class NaiveBayesFactory extends WekaClassifierFactory[NaiveBayes, weka.classifiers.bayes.NaiveBayes](classOf[NaiveBayes], classOf[weka.classifiers.bayes.NaiveBayes]) {
 
-  def getInstance: ActorRef = actorOf[NaiveBayes]
-
-  def createDefaultProperties: Properties = {
+  override def createDefaultProperties: Properties = {
     val returns = new Properties
+    returns.setProperty(KERNEL_ESTIMATOR, "false")
+    returns.setProperty(SUPERVISED_DISCRETIZATION, "false")
+    returns.setProperty(DEBUG, "false")
     returns
   }
 
-  def createPropertyValues: Map[String, Array[Any]] = {
-    Map()
+  override def createPropertyValues: Map[String, Array[_<:Any]] = {
+    Map(KERNEL_ESTIMATOR -> boolean_property,
+        SUPERVISED_DISCRETIZATION -> boolean_property,
+        DEBUG -> boolean_property)
   }
 
-  def createPropertyDescription: Map[String, String] = {
-    Map()
+  override def createPropertyDescription: Map[String, String] = {
+        Map(KERNEL_ESTIMATOR -> "?",
+        SUPERVISED_DISCRETIZATION -> "?",
+        DEBUG -> "Debug true/false")
   }
 }

@@ -5,7 +5,6 @@ import de.lmu.ifi.dbs.knowing.core.weka._
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import de.lmu.ifi.dbs.knowing.core.util.Util
-import de.lmu.ifi.dbs.knowing.core.test.Tester
 import de.lmu.ifi.dbs.knowing.core.processing.TLoader
 
 import java.util.Properties
@@ -24,22 +23,10 @@ class Activator extends BundleActivator {
     println("Activator started")
     //logger info "Activator started"
     registerServices
-    //loadServices
-    //testActors
   }
 
   def stop(context: BundleContext) = {
     Activator.context = null;
-  }
-
-  private def testActors {
-    new Thread(new Runnable() {
-      def run = {
-        Thread.sleep(2000)
-        val tester = Actor.actorOf(classOf[Tester]).start
-        tester ! "do something"
-      }
-    }).start;
   }
 
   private def registerServices {
@@ -50,28 +37,6 @@ class Activator extends BundleActivator {
     Activator.context.registerService(classOf[TFactory].getName(), arff, null)
     Activator.context.registerService(classOf[TFactory].getName(), naiveBayes, null)
     Activator.context.registerService(classOf[TFactory].getName(), oneR, null)
-  }
-
-  private def loadServices {
-    val arff = Util.getFactoryService(WekaArffLoaderFactory.id)
-    val properties = new Properties()
-    properties.setProperty(WekaArffLoader.PROP_FILE, "/home/muki/iris.arff")
-    arff match {
-      case Some(l) =>
-        val actor = l.getInstance.start
-        actor ! Configure(properties)
-        actor ! Start
-      case None => println("None found")
-    }
-
-    val testloader = Util.getFactoryService("Loader id");
-    testloader match {
-      case Some(l) =>
-        val actor = l.getInstance.start
-        actor ! Configure(properties)
-        actor ! Start
-      case None => println("None found")
-    }
   }
 
 }

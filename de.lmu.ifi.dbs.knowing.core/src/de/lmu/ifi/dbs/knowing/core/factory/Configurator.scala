@@ -13,7 +13,7 @@ import java.util.Properties
  * @since 21.04.2011
  */
 class Configurator(properties: Properties,
-		values:Map[String, Array[Any]],
+		values:Map[String, Array[_<:Any]],
 		descriptions:Map[String,String]) {
   
   //TODO Configurator: Better conversion
@@ -21,7 +21,7 @@ class Configurator(properties: Properties,
 
   def propertyDescription(key: String): String = descriptions(key)
 
-  def propertyValues(key: String): Array[Any] = values(key)
+  def propertyValues(key: String): Array[_<:Any] = values(key)
   
   def validate(configuration:Properties):Array[String] = {
     val errorOptions = propertyNames map (key => validateProperty(key,configuration getProperty(key)))

@@ -1,6 +1,5 @@
 package de.lmu.ifi.dbs.knowing.core.weka
 
-import de.lmu.ifi.dbs.knowing.core.test.Tester
 import java.util.Properties
 
 import de.lmu.ifi.dbs.knowing.core.factory._
@@ -23,7 +22,7 @@ import scala.collection.JavaConversions._
  * @since 21.04.2011
  * 
  */
-class WekaClassifier(classifier: Classifier) extends TProcessor {
+class WekaClassifier(protected val classifier: Classifier) extends TProcessor {
 
   private var classLabels: Array[String] = _
   private val name = getClass().getSimpleName;
@@ -76,10 +75,14 @@ class WekaClassifierFactory[T <: WekaClassifier, S <: Classifier](wrapper: Class
 
   def createDefaultProperties: Properties = new Properties
 
-  def createPropertyValues: Map[String, Array[Any]] = Map()
+  def createPropertyValues: Map[String, Array[_<:Any]] = Map()
 
   def createPropertyDescription: Map[String, String] = Map()
 
+}
+
+object WekaClassifierFactory {
+  val DEBUG = "debug"
 }
 
 /* =========================== */
