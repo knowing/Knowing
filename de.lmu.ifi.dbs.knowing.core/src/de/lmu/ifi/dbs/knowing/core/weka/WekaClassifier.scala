@@ -42,8 +42,7 @@ class WekaClassifier(protected val classifier: Classifier) extends TProcessor {
 
   def query(query: Instance) = {
     val distribution = classifier.distributionForInstance(query)
-    val result = ResultsUtil.classAndProbabilityResult(getClassLabels.toList, distribution)
-    self reply Results(result)
+    ResultsUtil.classAndProbabilityResult(getClassLabels.toList, distribution)
   }
 
   def getClassLabels(): Array[String] = classLabels

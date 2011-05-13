@@ -29,7 +29,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
       configure(p)
       self reply Ready
     case Start => log.info("Running " + self.getActorClassName)
-    case Query(q) => query(q)
+    case Query(q) => self reply Results(query(q))
     case Results(instances) => build(instances)
     case msg => log error("<----> " + msg)
   }
@@ -60,7 +60,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
    * @param query - Instance with query
    * @return Instances - Query result
    */
-  def query(query: Instance)
+  def query(query: Instance):Instances
 
   /**
    * <p>The presenter connected to this {@link IResultProcessor} calls this<br>
