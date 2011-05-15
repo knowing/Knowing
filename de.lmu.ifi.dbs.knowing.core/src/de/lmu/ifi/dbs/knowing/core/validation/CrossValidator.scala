@@ -1,52 +1,97 @@
 package de.lmu.ifi.dbs.knowing.core.validation
 
-
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
-
+import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
-import de.lmu.ifi.dbs.knowing.core.util.Util
-import de.lmu.ifi.dbs.knowing.core.events._
+import de.lmu.ifi.dbs.knowing.core.util.Util.getFactoryService
+import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import java.util.Properties
+import weka.core.{ Attribute, Instance, Instances }
+import akka.event.EventHandler
 
-import weka.core.{ Instance, Instances }
+/**
+ * @author Nepomuk Seiler
+ * @version 0.2
+ * @since 13.05.2011
+ *
+ */
+class CrossValidator(var factory: TFactory, var folds: Int, var fold: Int, var classifier_properties: Properties) extends TProcessor {
 
+  var confusionMatrix: Instances = _
+  var classLabels: Array[String] = Array()
+  var classifier: Option[ActorRef] = None
 
-class CrossValidator extends TProcessor {
-
-  var factory: TFactory = _
-  var folds:Int = _
-  var classifier_properties:Properties = _
+  def this() = this(null, 2, 1, new Properties)
 
   def build(instances: Instances) = {
-    val classifier = for (i <- 0 until folds; val actor = factory.getInstance.start) yield actor;
-    log debug ("Fold-Actors created!")
-    for(j <- 0 until folds) {
-      classifier(j) !! Configure(classifier_properties)
-      classifier(j) ! Results(instances.trainCV(folds, j)) 
+    //Results from classifier
+    if (ResultsUtil.isClassAndProbabilityResult(instances)) {
+      //Assume n*n matrix, |lables|==|instances|
+      if (instances.size != classLabels.length)
+        EventHandler.warning(this, "ConfusionMatrix doesn't fit to result data")
+      for (i <- 0 until instances.size) {
+        val entry = confusionMatrix.get(i)
+        val result = instances.get(i)
+        for (j <- 0 until instances.size) {
+          val v = entry.value(j)
+          val t = result.value(j)
+          entry.setValue(j, (v + t) / 2)
+        }
+      }
+      sendEvent(Results(confusionMatrix))
+    } else {
+      buildClassifier(instances) //Input data
     }
-    log debug ("Fold-Actors configured and trained")
-    
+
   }
+
+  private def buildClassifier(instances: Instances) {
+    val index = guessAndSetClassLabel(instances)
+    index match {
+      case -1 =>
+        classLabels = Array()
+        EventHandler.warning(this, "No classLabel found in " + instances.relationName)
+      case x => classLabels = classLables(instances.attribute(x))
+    }
+    classifier match {
+      case Some(c) => c stop
+      case None =>
+    }
+    classifier = Some(factory.getInstance.start)
+    classifier.get !! Configure(classifier_properties)
+    classifier.get ! Results(instances.trainCV(folds, fold))
+    confusionMatrix = ResultsUtil.crossValidation(getClassLabels.toList)
+
+    classifier.get ! Queries(instances.testCV(folds, fold))
+  }
+
+  def query(query: Instance): Instances = {
+    classifier match {
+      case None => EventHandler.warning(this, "No classifier found")
+      case Some(c) => c forward Query(query)
+    }
+    confusionMatrix
+  }
+
+  def getClassLabels(): Array[String] = classLabels
 
   def configure(properties: Properties) = {
-	  val factoryId = properties.getProperty(CrossValidatorFactory.CLASSIFIER)
-	  val factory = Util.getFactoryService(factoryId)
-	  factory match {
-	    case Some(f) => this.factory = f
-	    case None => throw new Exception("No Factory with " + factoryId + " found!")
-	  }
-	  val strFolds = properties.getProperty(CrossValidatorFactory.FOLDS, "10")
-	  folds = strFolds.toInt
-	  properties.remove(CrossValidatorFactory.CLASSIFIER)
-	  properties.remove(CrossValidatorFactory.FOLDS)
-	  classifier_properties = properties
+    val factoryId = properties.getProperty(XCrossValidatorFactory.CLASSIFIER)
+    val factory = getFactoryService(factoryId)
+    factory match {
+      case Some(f) => this.factory = f
+      case None => throw new Exception("No Factory with " + factoryId + " found!")
+    }
+    val strFolds = properties.getProperty(CrossValidatorFactory.FOLDS, "10")
+    val strFold = properties.getProperty(CrossValidatorFactory.FOLD, "1")
+    folds = strFolds.toInt
+    fold = strFold.toInt
+    properties.remove(CrossValidatorFactory.CLASSIFIER)
+    properties.remove(CrossValidatorFactory.FOLDS)
+    classifier_properties = properties
   }
-  
-  def query(query: Instance):Instances = {null}
-
-  def getClassLabels(): Array[String] = { null }
 
 }
 
@@ -60,6 +105,8 @@ class CrossValidatorFactory extends TFactory {
   def createDefaultProperties: Properties = {
     val props = new Properties();
     props.setProperty(CrossValidatorFactory.CLASSIFIER, "")
+    props.setProperty(CrossValidatorFactory.FOLD, "1")
+    props.setProperty(CrossValidatorFactory.FOLDS, "2")
     props
   }
 
@@ -71,8 +118,8 @@ class CrossValidatorFactory extends TFactory {
 object CrossValidatorFactory {
 
   val name: String = "CrossValidator"
-  val id: String = "de.lmu.ifi.dbs.knowing.core.validation.CrossValidator"
-
+  val id: String = classOf[CrossValidator].getName
   val CLASSIFIER = "classifier"
+  val FOLD = "fold"
   val FOLDS = "folds"
 }

@@ -1,19 +1,16 @@
 package de.lmu.ifi.dbs.knowing.core.weka
 
 import java.util.Properties
-
 import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.events.Results
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
-
 import weka.classifiers.Classifier
 import weka.core.{ Instance, Instances }
-
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
-
 import scala.collection.JavaConversions._
+import akka.event.EventHandler
 
 /**
  * 
@@ -28,16 +25,16 @@ class WekaClassifier(protected val classifier: Classifier) extends TProcessor {
   private val name = getClass().getSimpleName;
 
   def build(instances: Instances) = {
-    log debug ("Build internal model for " + name + " ...")
+    EventHandler.debug(this,"Build internal model for " + name + " ...")
     val index = guessAndSetClassLabel(instances)
     index match {
       case -1 =>
         classLabels = Array()
-        log warning ("No classLabel found in " + name)
+        EventHandler.warning(this,"No classLabel found in " + name)
       case x: Int => classLabels = classLables(instances.attribute(x))
     }
     classifier.buildClassifier(instances)
-    log debug ("... build successfull for " + name)
+    EventHandler.debug(this,"... build successfull for " + name)
   }
 
   def query(query: Instance) = {

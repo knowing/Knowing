@@ -25,7 +25,6 @@ class WekaArffLoader extends TLoader {
     val path = properties.getProperty(WekaArffLoader.PROP_FILE)
     val fin = new FileInputStream(path)
     loader.setSource(fin)
-    log debug ("Set file to " + path)
   }
 
   def reset() = {}

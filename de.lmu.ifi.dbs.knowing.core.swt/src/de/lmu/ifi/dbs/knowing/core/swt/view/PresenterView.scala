@@ -7,7 +7,6 @@ import akka.actor.TypedActor
 import akka.actor.ActorRef
 import akka.actor.Actor
 import akka.actor.Actor.actorOf
-
 import java.util.concurrent.SynchronousQueue
 import org.eclipse.swt.layout.FillLayout
 import org.eclipse.swt.SWT
@@ -18,6 +17,7 @@ import org.eclipse.ui.IPropertyListener
 import de.lmu.ifi.dbs.knowing.core.graph.Node
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
 import de.lmu.ifi.dbs.knowing.core.events.UIContainer
+import akka.event.EventHandler
 
 /**
  * @author Nepomuk Seiler
@@ -75,11 +75,11 @@ object PresenterView { val ID = "de.lmu.ifi.dbs.knowing.core.swt.presenterView" 
 class PresenterUIFactory(view:PresenterView) extends TypedActor with UIFactory {
   
   def createContainer(node: Node):Composite = {
-    log debug("CreateContainer with " + node)
+    EventHandler.debug(this,"CreateContainer with " + node)
     view.createNodeTab(node)
-    log debug("Waiting for finish...")
+    EventHandler.debug(this,"Waiting for finish...")
     val parent = view.rendevouz.take()
-    log debug("Took parent: " + parent)
+    EventHandler.debug(this,"Took parent: " + parent)
     parent
   }
 }

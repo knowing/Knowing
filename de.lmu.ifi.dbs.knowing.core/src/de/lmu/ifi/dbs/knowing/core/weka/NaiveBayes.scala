@@ -27,13 +27,14 @@ class NaiveBayes extends WekaClassifier(new weka.classifiers.bayes.NaiveBayes) {
   override def configure(properties:Properties) = {
     val bayes = classifier.asInstanceOf[weka.classifiers.bayes.NaiveBayes]
     
-    val kernel = properties.getProperty(KERNEL_ESTIMATOR)
-    bayes.setUseKernelEstimator(kernel.toBoolean)
+    val kernel = properties.getProperty(KERNEL_ESTIMATOR, "false")
+    val boolKernel = kernel.toBoolean
+    bayes.setUseKernelEstimator(boolKernel)
     
-    val supervised = properties.getProperty(SUPERVISED_DISCRETIZATION)
+    val supervised = properties.getProperty(SUPERVISED_DISCRETIZATION, "false")
     bayes.setUseSupervisedDiscretization(supervised.toBoolean)
     
-    val debug = properties.getProperty(DEBUG)
+    val debug = properties.getProperty(DEBUG, "false")
     bayes.setDebug(debug.toBoolean)
   }
 }

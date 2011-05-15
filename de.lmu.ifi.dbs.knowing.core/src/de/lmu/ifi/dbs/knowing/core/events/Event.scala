@@ -16,6 +16,7 @@ sealed trait Event
 case class Results(instances: Instances) extends Event
 case class ModelResults(results: Instances) extends Event
 case class Query(query: Instance) extends Event
+case class Queries(queries: Instances) extends Event
 case class UIContainer(container: AnyRef) extends Event
 case class UIFactoryEvent(factory:UIFactory, node:Node) extends Event
 

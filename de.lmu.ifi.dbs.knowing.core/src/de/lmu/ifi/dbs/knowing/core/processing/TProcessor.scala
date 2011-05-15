@@ -1,13 +1,11 @@
 package de.lmu.ifi.dbs.knowing.core.processing
 
 import java.util.Properties
-import weka.core.Attribute
-import weka.core.Instances
-import weka.core.Instance
+import weka.core.{ Attribute, Instance, Instances }
 import akka.actor.Actor
 import scala.collection.JavaConversions._
-
 import de.lmu.ifi.dbs.knowing.core.events._
+import akka.event.EventHandler
 
 /**
  * <p>An IProcessor encapsulates a data processing algorithm.
@@ -25,13 +23,17 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 
   def receive = {
     case Register(actor) => addListener(actor)
-    case Configure(p) => 
+    case Configure(p) =>
       configure(p)
       self reply Ready
-    case Start => log.info("Running " + self.getActorClassName)
+    case Start => EventHandler.debug(this, "Running " + self.getActorClassName)
     case Query(q) => self reply Results(query(q))
+    case Queries(q) =>
+      val enum = q.enumerateInstances
+      while (enum.hasMoreElements)
+        self reply Results(query(enum.nextElement.asInstanceOf[Instance]))
     case Results(instances) => build(instances)
-    case msg => log error("<----> " + msg)
+    case msg => EventHandler.warning(this,"<----> " + msg)
   }
 
   /**
@@ -60,7 +62,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
    * @param query - Instance with query
    * @return Instances - Query result
    */
-  def query(query: Instance):Instances
+  def query(query: Instance): Instances
 
   /**
    * <p>The presenter connected to this {@link IResultProcessor} calls this<br>

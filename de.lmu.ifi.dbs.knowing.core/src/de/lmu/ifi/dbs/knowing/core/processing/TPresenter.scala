@@ -3,10 +3,10 @@ package de.lmu.ifi.dbs.knowing.core.processing
 import java.util.Properties
 import weka.core.Instances
 import akka.actor.Actor
-
 import de.lmu.ifi.dbs.knowing.core.graph.Node
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
+import akka.event.EventHandler
 
 /**
  * @author Nepomuk Seiler
@@ -23,7 +23,6 @@ trait TPresenter[T] extends Actor with TConfigurable {
       createContainer(parent.asInstanceOf[T])
       self reply Ready
     case UIContainer(parent: T) =>
-      log debug ("UIContainer " + parent)
       createContainer(parent)
       self ! Ready
     case Configure(properties) =>
@@ -31,8 +30,8 @@ trait TPresenter[T] extends Actor with TConfigurable {
       self reply Ready
     case Results(instances) => buildPresentation(instances)
     case Query => self reply getContainerClass
-    case Start => log debug ("Running " + self.getActorClassName)
-    case msg => log error ("<----> " + msg)
+    case Start => EventHandler.debug(this,("Running " + self.getActorClassName))
+    case msg => EventHandler.warning(this,"<----> " + msg)
   }
 
   /**

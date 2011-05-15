@@ -8,11 +8,11 @@ import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
 import java.util.Properties
-
 import org.eclipse.swt.layout.FillLayout
 import org.eclipse.swt.SWT
 import org.eclipse.swt.widgets.{ Composite, TabFolder, TabItem }
 import weka.core.Instances
+import akka.event.EventHandler
 
 /**
  * <p>MultiTablePresenter holds multiple TablePresenter in a map.<br>
@@ -38,13 +38,15 @@ class MultiTablePresenter extends SWTPresenter {
     presenter match {
       case Some(p) => p ! Results(instances)
       case None => //Create new container
-        log debug ("Creating new TablePresenter...")
+        EventHandler.debug(this, "Creating new TablePresenter...")
+        println("Creating new TablePresenter...")
         val p = actorOf[TablePresenter].start
-        log debug ("... and createContainer for " + p.getActorClassName)
+        EventHandler.debug(this, "... and createContainer for " + p.getActorClassName)
         p ! UIContainer(createTab(relation))
-        log debug ("... and build content for " + p.getActorClassName)
+        EventHandler.debug(this, "... and build content for " + p.getActorClassName)
         p ! Results(instances)
         tables += (relation -> p)
+
     }
   }
 
@@ -61,7 +63,7 @@ class MultiTablePresenter extends SWTPresenter {
     val composite = new Composite(tabFolder, SWT.NONE)
     composite.setLayout(new FillLayout())
     tabItem.setControl(composite)
-    log debug ("Composite created: " + composite)
+    EventHandler.debug(this,"Composite created: " + composite)
     composite
   }
 

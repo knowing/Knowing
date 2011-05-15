@@ -5,6 +5,7 @@ import java.util.Properties
 import weka.core.Instances
 import de.lmu.ifi.dbs.knowing.core.events._
 import akka.actor.Actor
+import akka.event.EventHandler
 
 trait TLoader extends Actor with TSender with TConfigurable {
 
@@ -14,11 +15,10 @@ trait TLoader extends Actor with TSender with TConfigurable {
       configure(p)
       self reply Ready
     case Start =>
-      log debug ("Loader " + getClass().getSimpleName + " started...")
       val dataset = getDataSet
       sendEvent(new Results(dataset))
     case Reset => reset
-    case msg => log error("<----> " + msg)
+    case msg => EventHandler.warning(this,"<----> " + msg)
   }
 
   /**

@@ -5,8 +5,8 @@ import de.lmu.ifi.dbs.knowing.core.processing.TPresenter
 import org.eclipse.swt.layout.FillLayout
 import org.eclipse.swt.SWT
 import org.eclipse.swt.widgets.Composite
-
 import weka.core.Instances
+import akka.event.EventHandler
 
 /**
  * @author Nepomuk Seiler
@@ -24,7 +24,7 @@ abstract class SWTPresenter extends TPresenter[Composite] {
 
     parent.getDisplay().syncExec(new Runnable() {
       def run() {
-        log debug ("SWTPresenter.createContainer with " + parent)
+        EventHandler.debug(this,"SWTPresenter.createContainer with " + parent)
         composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new FillLayout());
         createControl(composite);
@@ -45,7 +45,7 @@ abstract class SWTPresenter extends TPresenter[Composite] {
     if (composite != null) {
       composite.getDisplay().syncExec(new Runnable() {
         def run() {
-          log debug ("SWTPresenter.buildPresentation with  " + instances.relationName)
+          EventHandler.debug(this,"SWTPresenter.buildPresentation with  " + instances.relationName)
           buildContent(instances);
         }
       });

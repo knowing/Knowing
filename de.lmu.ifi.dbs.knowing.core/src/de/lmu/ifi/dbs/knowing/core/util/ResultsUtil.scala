@@ -1,7 +1,7 @@
 package de.lmu.ifi.dbs.knowing.core.util
 
 import java.util.{ ArrayList, Arrays, Collections, List, Properties }
-
+import scala.collection.JavaConversions._
 import weka.core.{ Attribute, DenseInstance, Instances, ProtectedProperties }
 
 /**
@@ -11,17 +11,18 @@ import weka.core.{ Attribute, DenseInstance, Instances, ProtectedProperties }
  *
  */
 object ResultsUtil {
-  val ATTRIBUTE_CLASS = "class";
-  val ATTRIBUTE_PROBABILITY = "probability";
-  val ATTRIBUTE_TIMESTAMP = "timestamp";
-  val ATTRIBUTE_VALUE = "y";
+  val ATTRIBUTE_CLASS = "class"
+  val ATTRIBUTE_PROBABILITY = "probability"
+  val ATTRIBUTE_TIMESTAMP = "timestamp"
+  val ATTRIBUTE_VALUE = "y"
 
-  val NAME_CLASS_ONLY = "class_only";
-  val NAME_CLASS_AND_PROBABILITY = "class_and_probability";
-  val NAME_DATE_AND_VALUE = "date_and_value";
-  val NAME_DATE_AND_VALUES = "date_and_values";
+  val NAME_CLASS_ONLY = "class_only"
+  val NAME_CLASS_AND_PROBABILITY = "class_and_probability"
+  val NAME_DATE_AND_VALUE = "date_and_value"
+  val NAME_DATE_AND_VALUES = "date_and_values"
+  val NAME_CROSS_VALIDATION = "cross_validation"
 
-  val META_ATTRIBUTE_NAME = "name";
+  val META_ATTRIBUTE_NAME = "name"
 
   /* ========================= */
   /* ==== Result Creation ==== */
@@ -35,14 +36,24 @@ object ResultsUtil {
    * @param labels
    * @return {@link Instances}
    */
-  def classOnlyResult(labels: List[String]): Instances = {
+  def classOnlyResult(labels: scala.List[String]): Instances = {
     val attributes = new ArrayList[Attribute]
     val classAttribute = new Attribute(ATTRIBUTE_CLASS, labels)
     attributes.add(classAttribute)
     val returns = new Instances(NAME_CLASS_ONLY, attributes, 0)
     returns.setClass(classAttribute)
-    return returns
+    returns
   }
+  
+    /**
+   * [p]
+   * [li]relation name: {@link #NAME_CLASS_ONLY}[/li]
+   * [li]attributes: {@link #ATTRIBUTE_CLASS}[/li]
+   * [/p]
+   * @param labels
+   * @return {@link Instances}
+   */
+  def classOnlyResult(labels: List[String]): Instances =classOnlyResult(labels.toList)
 
   /**
    * [p]
@@ -53,7 +64,7 @@ object ResultsUtil {
    * @param labels
    * @return {@link Instances} with {@link Attribute}s: "class" and "probability"
    */
-  def classAndProbabilityResult(labels: List[String]): Instances = {
+  def classAndProbabilityResult(labels: scala.List[String]): Instances = {
     val attributes = new ArrayList[Attribute]
 
     val classAttribute = new Attribute(ATTRIBUTE_CLASS, labels)
@@ -63,8 +74,19 @@ object ResultsUtil {
 
     val returns = new Instances(NAME_CLASS_ONLY, attributes, 0)
     returns.setClass(classAttribute)
-    return returns
+    returns
   }
+  
+    /**
+   * [p]
+   * [li]relation name: {@link #NAME_CLASS_AND_PROBABILITY}[/li]
+   * [li]attributes: {@link #ATTRIBUTE_CLASS}, {@link #ATTRIBUTE_PROBABILITY}[/li]
+   * [/p]
+   *
+   * @param labels
+   * @return {@link Instances} with {@link Attribute}s: "class" and "probability"
+   */
+  def classAndProbabilityResult(labels: List[String]): Instances = classAndProbabilityResult(labels.toList)
 
   /**
    * [p]Adds [code]distribution.length[/code] instances to the dataset.[p]
@@ -74,7 +96,7 @@ object ResultsUtil {
    * @param distribution
    * @return
    */
-  def classAndProbabilityResult(labels: List[String], distribution: Array[Double]): Instances = {
+  def classAndProbabilityResult(labels: scala.List[String], distribution: Array[Double]): Instances = {
     val returns = classAndProbabilityResult(labels)
     if (distribution.length != returns.numClasses())
       return returns
@@ -87,8 +109,19 @@ object ResultsUtil {
       instance.setValue(probaAttribute, distribution(i))
       returns.add(instance)
     }
-    return returns;
+    returns;
   }
+  
+    /**
+   * [p]Adds [code]distribution.length[/code] instances to the dataset.[p]
+   * [p]The lables list must have the same ordering as the distribution array[/p]
+   *
+   * @param labels
+   * @param distribution
+   * @return
+   */
+  def classAndProbabilityResult(labels: List[String], distribution: Array[Double]): Instances = classAndProbabilityResult(labels.toList)
+  
   /**
    * [p]
    * [li]relation name: {@link #NAME_DATE_AND_VALUE}
@@ -103,8 +136,7 @@ object ResultsUtil {
     val valueAttribute = new Attribute(ATTRIBUTE_VALUE + 0)
     attributes.add(timestampAttribute)
     attributes.add(valueAttribute)
-
-    return new Instances(NAME_DATE_AND_VALUE, attributes, 0)
+    new Instances(NAME_DATE_AND_VALUE, attributes, 0)
   }
 
   /**
@@ -118,8 +150,8 @@ object ResultsUtil {
    * @param names - the numeric attributes names -] accessable via meta data
    * @return
    */
-  def dateAndValuesResult(names: List[String]): Instances = {
-    val attributes = new ArrayList[Attribute]()
+  def dateAndValuesResult(names: scala.List[String]): Instances = {
+    val attributes = new ArrayList[Attribute]
 
     attributes.add(new Attribute(ATTRIBUTE_TIMESTAMP, "yyyy-MM-dd'T'HH:mm:ss"))
     for (i <- 0 until names.size) {
@@ -128,9 +160,50 @@ object ResultsUtil {
       val attribute = new Attribute(ATTRIBUTE_VALUE + i, new ProtectedProperties(props))
       attributes.add(attribute)
     }
-
-    return new Instances(NAME_DATE_AND_VALUES, attributes, 0)
+    new Instances(NAME_DATE_AND_VALUES, attributes, 0)
   }
+  
+    /**
+   * [p]
+   * Creates an Instances object with a DATE column and [code]names.size()[/code]
+   * nummeric attributes. [br] All numeric attributes provide meta data with one
+   * property {@link #META_ATTRIBUTE_NAME}.
+   * [li]relation name: {@link #NAME_DATE_AND_VALUES}
+   * [li]attributes: {@link #ATTRIBUTE_TIMESTAMP}, {@link #ATTRIBUTE_VALUE}+index
+   * [/p]
+   * @param names - the numeric attributes names -] accessable via meta data
+   * @return
+   */
+  def dateAndValuesResult(names: List[String]): Instances = dateAndValuesResult(names.toList)
+
+  /**
+   * Columns: One column for every label
+   * Rows: One row for every label
+   *
+   * index of row/column -> names.index
+   *
+   * @param names - class label names
+   * @return
+   */
+  def crossValidation(names: scala.List[String]): Instances = {
+    val attributes = new ArrayList[Attribute]
+    names foreach (name => attributes.add(new Attribute(name)))
+    val dataset = new Instances(NAME_CROSS_VALIDATION, attributes, names.length)
+    for (i <- 0 until names.length)
+      dataset.add(i, new DenseInstance(1.0, Array.fill(names.length) { 1.0 }))
+    dataset
+  }
+
+  /**
+   * Columns: One column for every label
+   * Rows: One row for every label
+   *
+   * index of row/column -> names.index
+   *
+   * @param names - class label names
+   * @return
+   */
+  def crossValidation(names: List[String]): Instances = crossValidation(names.toList)
 
   /* ========================= */
   /* === Result validation === */
@@ -143,7 +216,7 @@ object ResultsUtil {
   def isClassOnlyResult(dataset: Instances): Boolean = {
     if (dataset.numAttributes() != 1)
       return false
-    return dataset.attribute(ATTRIBUTE_CLASS) != null
+    dataset.attribute(ATTRIBUTE_CLASS) != null
   }
 
   /**
@@ -155,7 +228,7 @@ object ResultsUtil {
       return false
     val classAttribute = dataset.attribute(ATTRIBUTE_CLASS)
     val probaAttribute = dataset.attribute(ATTRIBUTE_PROBABILITY)
-    return classAttribute != null && probaAttribute != null
+    classAttribute != null && probaAttribute != null
   }
 
   /* ========================= */
@@ -188,7 +261,7 @@ object ResultsUtil {
       if (attribute.isNominal())
         return attribute.index()
     }
-    return -1;
+    -1;
   }
 
   /**
@@ -205,7 +278,7 @@ object ResultsUtil {
       i += 1
       attribute = dataset.attribute(ATTRIBUTE_VALUE + i)
     }
-    return returns
+    returns
 
   }
 
@@ -222,7 +295,7 @@ object ResultsUtil {
       if (attribute.isNumeric())
         returns add (attribute)
     }
-    return returns
+    returns
   }
 
 }

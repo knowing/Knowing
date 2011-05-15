@@ -1,6 +1,3 @@
-/**
- *
- */
 package de.lmu.ifi.dbs.knowing.core.swt
 
 import java.util.Properties
@@ -12,6 +9,7 @@ import org.eclipse.jface.viewers.{ TableViewerColumn, TableViewer }
 import org.eclipse.swt.SWT
 import org.eclipse.swt.widgets.Composite
 import weka.core.{ Instances, Attribute }
+import akka.event.EventHandler
 
 /**
  * @author Nepomuk Seiler
@@ -28,21 +26,21 @@ class TablePresenter extends SWTPresenter {
   private var rows = 100
 
   //TODO knowing.swt.TablePresenter -> Controls to switch pages
-  
+
   def createControl(parent: Composite) = viewer = new TableViewer(parent)
 
   def buildContent(instances: Instances) = {
-    log debug ("buildContent...")
+    EventHandler.debug(this,"buildContent...")
     createColumns(instances.enumerateAttributes());
     viewer.setInput(createInput(instances));
     viewer.refresh();
-    log debug ("... content build")
+    EventHandler.debug(this,"... content build")
   }
 
   def getModel(labels: Array[String]): Instances = { null }
 
   def createColumns(eAttr: java.util.Enumeration[_]) {
-    log debug ("createColumns...")
+    EventHandler.debug(this,"createColumns...")
     if (columnsInit)
       return ;
     viewer.getTable().setHeaderVisible(true);
@@ -58,25 +56,23 @@ class TablePresenter extends SWTPresenter {
     viewer.setLabelProvider(new InstanceLabelProvider);
     viewer.setContentProvider(new InstanceContentProvider);
     columnsInit = true;
-    log debug ("... columns created")
+    EventHandler.debug(this,"... columns created")
   }
-  
-  def configure(properties:Properties) = {
-    log debug ("Configure TablePresenter with " + properties)
-    val row_string = properties.getProperty(TablePresenter.ROWS_PER_PAGE)
-    rows = Integer.getInteger(row_string)
+
+  def configure(properties: Properties) = {
+   EventHandler.debug(this,"Configure TablePresenter with " + properties)
+    val row_string = properties.getProperty(TablePresenter.ROWS_PER_PAGE, "100")
+    rows = row_string.toInt
   }
-  
-  private def createInput(instances: Instances):Instances = {
-    new Instances(instances, 0, rows)
-  }
+
+  private def createInput(instances: Instances): Instances = new Instances(instances, 0, rows)
 
 }
 
 object TablePresenter {
 
-  val ROWS_PER_PAGE = "rows"
   val name = "Table Presenter"
+  val ROWS_PER_PAGE = "rows"
 }
 
 class TablePresenterFactory extends TFactory {
@@ -92,7 +88,7 @@ class TablePresenterFactory extends TFactory {
     properties
   }
 
-  def createPropertyValues: Map[String, Array[Any]] = Map(TablePresenter.ROWS_PER_PAGE -> Array(0,1000))
+  def createPropertyValues: Map[String, Array[Any]] = Map(TablePresenter.ROWS_PER_PAGE -> Array(0, 1000))
 
   def createPropertyDescription: Map[String, String] = Map(TablePresenter.ROWS_PER_PAGE -> "How much rows to show")
 }
