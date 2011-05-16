@@ -31,14 +31,14 @@ class CrossValidator(var factory: TFactory, var folds: Int, var fold: Int, var c
       //Assume n*n matrix, |lables|==|instances|
       if (instances.size != classLabels.length)
         EventHandler.warning(this, "ConfusionMatrix doesn't fit to result data")
+      val index = highestProbability(instances)
+      val entry = confusionMatrix.get(index)
       for (i <- 0 until instances.size) {
-        val entry = confusionMatrix.get(i)
         val result = instances.get(i)
-        for (j <- 0 until instances.size) {
-          val v = entry.value(j)
-          val t = result.value(j)
-          entry.setValue(j, (v + t) / 2)
-        }
+        //TODO CrossValidator doesn't really work!
+        val v = entry.value(i)
+        val t = result.value(1)
+        entry.setValue(i, (v + t) / 2)
       }
       sendEvent(Results(confusionMatrix))
     } else {
@@ -47,6 +47,9 @@ class CrossValidator(var factory: TFactory, var folds: Int, var fold: Int, var c
 
   }
 
+  /**
+   *
+   */
   private def buildClassifier(instances: Instances) {
     val index = guessAndSetClassLabel(instances)
     index match {
@@ -67,6 +70,24 @@ class CrossValidator(var factory: TFactory, var folds: Int, var fold: Int, var c
     classifier.get ! Queries(instances.testCV(folds, fold))
   }
 
+  private def highestProbability(instances: Instances): Int = {
+    var index = -1
+    var max = -1.0
+    val valAttr = instances.attribute(1)
+    for (i <- 0 until instances.numInstances) {
+      val inst = instances.instance(i)
+      val value = inst.value(valAttr)
+      if (value > max) {
+        max = value
+        index = i
+      }
+    }
+    index
+  }
+
+  /**
+   *
+   */
   def query(query: Instance): Instances = {
     classifier match {
       case None => EventHandler.warning(this, "No classifier found")

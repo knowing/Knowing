@@ -25,19 +25,19 @@ class WekaClassifier(protected val classifier: Classifier) extends TProcessor {
   private val name = getClass().getSimpleName;
 
   def build(instances: Instances) = {
-    EventHandler.debug(this,"Build internal model for " + name + " ...")
+    EventHandler debug(this,"Build internal model for " + name + " ...")
     val index = guessAndSetClassLabel(instances)
     index match {
       case -1 =>
         classLabels = Array()
-        EventHandler.warning(this,"No classLabel found in " + name)
-      case x: Int => classLabels = classLables(instances.attribute(x))
+        EventHandler warning(this,"No classLabel found in " + name)
+      case x => classLabels = classLables(instances.attribute(x))
     }
     classifier.buildClassifier(instances)
-    EventHandler.debug(this,"... build successfull for " + name)
+    EventHandler debug(this,"... build successfull for " + name)
   }
 
-  def query(query: Instance) = {
+  def query(query: Instance):Instances = {
     val distribution = classifier.distributionForInstance(query)
     ResultsUtil.classAndProbabilityResult(getClassLabels.toList, distribution)
   }

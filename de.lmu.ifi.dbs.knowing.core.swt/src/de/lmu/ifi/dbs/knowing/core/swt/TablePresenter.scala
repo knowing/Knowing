@@ -40,9 +40,10 @@ class TablePresenter extends SWTPresenter {
   def getModel(labels: Array[String]): Instances = { null }
 
   def createColumns(eAttr: java.util.Enumeration[_]) {
+    if (columnsInit) 
+      return 
+      
     EventHandler.debug(this,"createColumns...")
-    if (columnsInit)
-      return ;
     viewer.getTable().setHeaderVisible(true);
     viewer.getTable().setLinesVisible(true);
     while (eAttr.hasMoreElements) {
@@ -65,7 +66,13 @@ class TablePresenter extends SWTPresenter {
     rows = row_string.toInt
   }
 
-  private def createInput(instances: Instances): Instances = new Instances(instances, 0, rows)
+  private def createInput(instances: Instances): Instances = {
+//    println("Instances: " + instances)
+    if(instances.numInstances > rows)
+    	new Instances(instances, 0, rows)
+    else
+      instances
+  }
 
 }
 

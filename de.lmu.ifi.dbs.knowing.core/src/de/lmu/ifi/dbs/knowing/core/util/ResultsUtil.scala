@@ -44,8 +44,8 @@ object ResultsUtil {
     returns.setClass(classAttribute)
     returns
   }
-  
-    /**
+
+  /**
    * [p]
    * [li]relation name: {@link #NAME_CLASS_ONLY}[/li]
    * [li]attributes: {@link #ATTRIBUTE_CLASS}[/li]
@@ -53,7 +53,7 @@ object ResultsUtil {
    * @param labels
    * @return {@link Instances}
    */
-  def classOnlyResult(labels: List[String]): Instances =classOnlyResult(labels.toList)
+  def classOnlyResult(labels: List[String]): Instances = classOnlyResult(labels.toList)
 
   /**
    * [p]
@@ -76,8 +76,8 @@ object ResultsUtil {
     returns.setClass(classAttribute)
     returns
   }
-  
-    /**
+
+  /**
    * [p]
    * [li]relation name: {@link #NAME_CLASS_AND_PROBABILITY}[/li]
    * [li]attributes: {@link #ATTRIBUTE_CLASS}, {@link #ATTRIBUTE_PROBABILITY}[/li]
@@ -98,21 +98,28 @@ object ResultsUtil {
    */
   def classAndProbabilityResult(labels: scala.List[String], distribution: Array[Double]): Instances = {
     val returns = classAndProbabilityResult(labels)
-    if (distribution.length != returns.numClasses())
+    if (distribution.length > returns.numClasses())
       return returns
-
+     
     val classAttribute = returns.attribute(ATTRIBUTE_CLASS)
     val probaAttribute = returns.attribute(ATTRIBUTE_PROBABILITY)
     for (i <- 0 until distribution.length) {
       val instance = new DenseInstance(2)
       instance.setValue(classAttribute, classAttribute.value(i))
       instance.setValue(probaAttribute, distribution(i))
-      returns.add(instance)
+      returns.add(i,instance)
     }
-    returns;
+    //Just in case
+    for (i <- distribution.length until (labels.size - distribution.length)) {
+      val instance = new DenseInstance(2)
+      instance.setValue(classAttribute, classAttribute.value(i))
+      instance.setValue(probaAttribute, 0)
+      returns.add(i, instance)
+    }
+    returns
   }
-  
-    /**
+
+  /**
    * [p]Adds [code]distribution.length[/code] instances to the dataset.[p]
    * [p]The lables list must have the same ordering as the distribution array[/p]
    *
@@ -121,7 +128,7 @@ object ResultsUtil {
    * @return
    */
   def classAndProbabilityResult(labels: List[String], distribution: Array[Double]): Instances = classAndProbabilityResult(labels.toList)
-  
+
   /**
    * [p]
    * [li]relation name: {@link #NAME_DATE_AND_VALUE}
@@ -162,8 +169,8 @@ object ResultsUtil {
     }
     new Instances(NAME_DATE_AND_VALUES, attributes, 0)
   }
-  
-    /**
+
+  /**
    * [p]
    * Creates an Instances object with a DATE column and [code]names.size()[/code]
    * nummeric attributes. [br] All numeric attributes provide meta data with one

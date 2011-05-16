@@ -1,11 +1,16 @@
 package de.lmu.ifi.dbs.knowing.core.processing
 
 import java.util.Properties
-import weka.core.{ Attribute, Instance, Instances }
-import akka.actor.Actor
 import scala.collection.JavaConversions._
-import de.lmu.ifi.dbs.knowing.core.events._
+
+import akka.actor.Actor
 import akka.event.EventHandler
+
+import de.lmu.ifi.dbs.knowing.core.events._
+
+import weka.core.{ Attribute, Instance, Instances }
+
+
 
 /**
  * <p>An IProcessor encapsulates a data processing algorithm.
@@ -111,11 +116,11 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 
   def classLables(attribute: Attribute): Array[String] = {
     val enum = attribute.enumerateValues()
-    val labels = Nil
+    var labels:List[String] = Nil
     while (enum.hasMoreElements) {
       val label = enum.nextElement().asInstanceOf[String]
-      labels + label
+      labels = label :: labels
     }
-    labels.toArray
+    labels.reverse.toArray
   }
 }
