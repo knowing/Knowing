@@ -76,6 +76,7 @@ object EvaluateHandler {
     try {
       val view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(PresenterView.ID)
       val pView = view.asInstanceOf[PresenterView]
+      pView.clearTabs
       val supervisor = actorOf(new GraphSupervisor(dpu, pView.uifactory)).start
       supervisor ! Start
       null

@@ -8,8 +8,13 @@ import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import de.lmu.ifi.dbs.knowing.core.swt.provider.{ InstanceContentProvider, InstanceLabelProvider }
 import org.eclipse.jface.viewers.{ TableViewerColumn, TableViewer }
 import org.eclipse.swt.SWT
-import org.eclipse.swt.widgets.Composite
+import org.eclipse.swt.widgets. {Composite, Button, Label, Spinner }
+import org.eclipse.swt.layout.{ GridData , GridLayout }
+import org.eclipse.jface.layout.TableColumnLayout
+import org.eclipse.jface.viewers.ColumnWeightData
 import weka.core.{ Instances, Attribute }
+
+
 
 /**
  * @author Nepomuk Seiler
@@ -22,31 +27,72 @@ class TablePresenter extends SWTPresenter {
   val name = TablePresenter.name
 
   private var viewer: TableViewer = _
+  private var layout: TableColumnLayout = _
   private var columnsInit = false
   private var rows = 100
 
-  //TODO knowing.swt.TablePresenter -> Controls to switch pages
+  def createControl(parent: Composite) {
+    val composite = new Composite(parent, SWT.NONE)
+    composite.setLayout(new GridLayout(4, false))
 
-  def createControl(parent: Composite) = viewer = new TableViewer(parent)
+    val bLeft = new Button(composite, SWT.NONE)
+    val gd_bLeft = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1)
+    gd_bLeft.widthHint = 40
+    gd_bLeft.minimumWidth = 40
+    gd_bLeft.horizontalIndent = -1
+    gd_bLeft.verticalIndent = -1
+    bLeft.setLayoutData(gd_bLeft)
+    bLeft.setText("<-")
+    bLeft.setEnabled(false)
 
-  def buildContent(instances: Instances) = {
-    createColumns(instances.enumerateAttributes());
-    viewer.setInput(createInput(instances));
-    viewer.refresh();
+    val lPageIndex = new Label(composite, SWT.NONE)
+    lPageIndex.setAlignment(SWT.CENTER)
+    val gd_lPageIndex = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1)
+    gd_lPageIndex.widthHint = 40
+    lPageIndex.setLayoutData(gd_lPageIndex)
+    lPageIndex.setText("- / -")
+
+    val bRight = new Button(composite, SWT.NONE)
+    val gd_button = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1)
+    gd_button.widthHint = 40
+    bRight.setLayoutData(gd_button)
+    bRight.setText("->")
+    bRight.setEnabled(false)
+
+    val sRows = new Spinner(composite, SWT.BORDER)
+    val gd_spinner = new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1)
+    gd_spinner.widthHint = 50
+    sRows.setLayoutData(gd_spinner)
+    sRows.setSelection(rows)
+
+    val tableComposite = new Composite(composite, SWT.NONE)
+    layout = new TableColumnLayout
+    tableComposite.setLayout(layout)
+    tableComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1))
+    viewer = new TableViewer(tableComposite, SWT.BORDER | SWT.FULL_SELECTION)
+  }
+
+  def buildContent(instances: Instances) {
+    createColumns(instances)
+    viewer.setInput(createInput(instances))
+    viewer.refresh()
   }
 
   def getModel(labels: Array[String]): Instances = { null }
 
-  def createColumns(eAttr: java.util.Enumeration[_]) {
-    if (columnsInit) 
-      return 
-      
-    debug(this,"createColumns...")
+  def createColumns(instances: Instances) {
+    if (columnsInit)
+      return
+
+    debug(this, "createColumns...")
+    val eAttr = instances.enumerateAttributes
+    val weight = 100 / instances.numAttributes
     viewer.getTable().setHeaderVisible(true);
     viewer.getTable().setLinesVisible(true);
     while (eAttr.hasMoreElements) {
       val a = eAttr.nextElement().asInstanceOf[Attribute]
       val viewerColumn = new TableViewerColumn(viewer, SWT.LEAD)
+      layout.setColumnData(viewerColumn.getColumn, new ColumnWeightData(weight, 70, true))
       viewerColumn.getColumn.setText(a.name)
       viewerColumn.getColumn.setWidth(70)
       viewerColumn.getColumn.setResizable(true)
@@ -55,18 +101,18 @@ class TablePresenter extends SWTPresenter {
     viewer.setLabelProvider(new InstanceLabelProvider);
     viewer.setContentProvider(new InstanceContentProvider);
     columnsInit = true;
-    debug(this,"... columns created")
+    debug(this, "... columns created")
   }
 
   def configure(properties: Properties) = {
-   debug(this,"Configure TablePresenter with " + properties)
+    debug(this, "Configure TablePresenter with " + properties)
     val row_string = properties.getProperty(TablePresenter.ROWS_PER_PAGE, "100")
     rows = row_string.toInt
   }
 
   private def createInput(instances: Instances): Instances = {
-    if(instances.numInstances > rows)
-    	new Instances(instances, 0, rows)
+    if (instances.numInstances > rows)
+      new Instances(instances, 0, rows)
     else
       instances
   }

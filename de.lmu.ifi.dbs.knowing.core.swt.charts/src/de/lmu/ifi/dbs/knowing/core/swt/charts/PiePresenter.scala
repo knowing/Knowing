@@ -167,6 +167,8 @@ class PiePresenter extends AbstractChartPresenter("Pie Presenter") {
     updateChart
     redraw
   }
+  
+  def configure(properties:Properties) = {}
 
   def getModel(labels: Array[String]): Instances = { null }
 

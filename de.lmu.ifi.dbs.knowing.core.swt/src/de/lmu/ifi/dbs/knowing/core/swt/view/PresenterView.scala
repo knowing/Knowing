@@ -1,6 +1,3 @@
-/**
- *
- */
 package de.lmu.ifi.dbs.knowing.core.swt.view
 
 import akka.actor.TypedActor
@@ -33,17 +30,16 @@ class PresenterView extends ViewPart {
 
   private var tabFolder: TabFolder = _
 
-  def createPartControl(parent: Composite) = tabFolder = new TabFolder(parent, SWT.BOTTOM);
+  def createPartControl(parent: Composite) =  tabFolder = new TabFolder(parent, SWT.BOTTOM)
 
-  def createNodeTab(node: Node) = {
+  def createNodeTab(node: Node) {
     tabFolder.getDisplay.asyncExec(new Runnable() {
       def run() {
         debug(uifactory, "Trying to create tab... ")
         val composite = createTab(node.id)
         rendevouz put (composite)
-        println(uifactory, "... " + composite + " tab created")
       }
-    });
+    })
   }
 
   /**
@@ -54,15 +50,15 @@ class PresenterView extends ViewPart {
    * @return tab content composite
    */
   def createTab(name: String): Composite = {
-    val tabItem = new TabItem(tabFolder, SWT.NONE);
-    tabItem.setText(name);
-    val composite = new Composite(tabFolder, SWT.NONE);
-    composite.setLayout(new FillLayout());
-    tabItem.setControl(composite);
-    composite;
+    val tabItem = new TabItem(tabFolder, SWT.NONE)
+    tabItem.setText(name)
+    val composite = new Composite(tabFolder, SWT.NONE)
+    composite.setLayout(new FillLayout)
+    tabItem.setControl(composite)
+    composite
   }
 
-  def clearTab {
+  def clearTabs {
     val items = tabFolder.getItems();
     items foreach (item => item.dispose)
   }
