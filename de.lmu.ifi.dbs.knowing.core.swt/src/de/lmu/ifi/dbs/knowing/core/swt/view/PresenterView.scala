@@ -7,6 +7,7 @@ import akka.actor.TypedActor
 import akka.actor.ActorRef
 import akka.actor.Actor
 import akka.actor.Actor.actorOf
+import akka.event.EventHandler.{ debug, info, warning, error }
 import java.util.concurrent.SynchronousQueue
 import org.eclipse.swt.layout.FillLayout
 import org.eclipse.swt.SWT
@@ -28,19 +29,19 @@ import akka.event.EventHandler
 class PresenterView extends ViewPart {
 
   val uifactory = TypedActor.newInstance(classOf[UIFactory], new PresenterUIFactory(this))
-  var tabFolder: TabFolder = _
-  
   val rendevouz = new SynchronousQueue[Composite]
+
+  private var tabFolder: TabFolder = _
 
   def createPartControl(parent: Composite) = tabFolder = new TabFolder(parent, SWT.BOTTOM);
 
   def createNodeTab(node: Node) = {
     tabFolder.getDisplay.asyncExec(new Runnable() {
       def run() {
-        println("Trying to create tab... ")
+        debug(uifactory, "Trying to create tab... ")
         val composite = createTab(node.id)
-        rendevouz put(composite)
-        println("... " + composite + " tab created")
+        rendevouz put (composite)
+        println(uifactory, "... " + composite + " tab created")
       }
     });
   }
@@ -72,14 +73,14 @@ class PresenterView extends ViewPart {
 
 object PresenterView { val ID = "de.lmu.ifi.dbs.knowing.core.swt.presenterView" }
 
-class PresenterUIFactory(view:PresenterView) extends TypedActor with UIFactory {
-  
-  def createContainer(node: Node):Composite = {
-    EventHandler.debug(this,"CreateContainer with " + node)
+class PresenterUIFactory(view: PresenterView) extends TypedActor with UIFactory {
+
+  def createContainer(node: Node): Composite = {
+    debug(this, "CreateContainer with " + node)
     view.createNodeTab(node)
-    EventHandler.debug(this,"Waiting for finish...")
+    debug(this, "Waiting for finish...")
     val parent = view.rendevouz.take()
-    EventHandler.debug(this,"Took parent: " + parent)
+    debug(this, "Took parent: " + parent)
     parent
   }
 }

@@ -7,8 +7,8 @@ import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit
 import de.lmu.ifi.dbs.knowing.core.events._
 import akka.actor.{ Actor, ActorRef }
 import akka.actor.Actor.actorOf
+import akka.event.EventHandler.{ debug, info, warning, error }
 import org.osgi.framework.FrameworkUtil
-import akka.event.EventHandler
 
 class GraphSupervisor(val dpu: DataProcessingUnit, val uifactory: UIFactory) extends Actor with TSender {
 
@@ -20,7 +20,7 @@ class GraphSupervisor(val dpu: DataProcessingUnit, val uifactory: UIFactory) ext
       addListener(actor)
     case Start => evaluate
     case event: Event => events + event.getClass().getSimpleName
-    case _ => EventHandler.debug(this,"----") 
+    case msg => debug(this,"Unkown Message: " + msg) 
   }
 
   def evaluate {
@@ -46,8 +46,7 @@ class GraphSupervisor(val dpu: DataProcessingUnit, val uifactory: UIFactory) ext
           actor !! Configure(node.properties)
           //Add to internal map
           actors += (node.id -> actor)
-         EventHandler.debug(this,"#Add " + node.properties)
-          case None =>EventHandler.warning(this,"No factory found for: " + node.factoryId)
+          case None =>warning(this,"No factory found for: " + node.factoryId)
       }
     })
   }
@@ -57,12 +56,10 @@ class GraphSupervisor(val dpu: DataProcessingUnit, val uifactory: UIFactory) ext
       val source = actors(edge.sourceId)
       val target = actors(edge.targetId)
       source !! Register(target)
-      EventHandler.debug(this,source.getActorClassName + " -> " + target.getActorClassName)
+      debug(this,source.getActorClassName + " -> " + target.getActorClassName)
     })
   }
 
-  def getPresenterActors(): List[TPresenter[Unit]] = {
-    Nil
-  }
+  def getPresenterActors(): List[ActorRef] = Nil
 
 }

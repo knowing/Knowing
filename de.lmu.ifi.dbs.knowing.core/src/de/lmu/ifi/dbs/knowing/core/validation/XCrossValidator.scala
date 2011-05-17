@@ -29,6 +29,8 @@ class XCrossValidator extends TProcessor {
     EventHandler.debug(this,"Fold-Actors configured and trained")
     
   }
+  
+  def result(result:Instances, query:Instance) {}
 
   def configure(properties: Properties) = {
 	  val factoryId = properties.getProperty(XCrossValidatorFactory.CLASSIFIER)

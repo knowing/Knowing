@@ -3,6 +3,8 @@
  */
 package de.lmu.ifi.dbs.knowing.core.swt.provider;
 
+import java.text.DecimalFormat;
+
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -17,6 +19,9 @@ import weka.core.Instance;
  */
 public class InstanceLabelProvider extends LabelProvider implements ITableLabelProvider {
 
+	//TODO InstanceLabelProvider -> DecimalFormat property
+	private final DecimalFormat format = new DecimalFormat("#.###");
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
 	 */
@@ -36,7 +41,7 @@ public class InstanceLabelProvider extends LabelProvider implements ITableLabelP
 		if(attribute.isDate())
 			return attribute.formatDate(value);
 		if(attribute.isNumeric())
-			return String.valueOf(value);
+			return format.format(value);
 		return inst.stringValue(columnIndex);
 	}
 

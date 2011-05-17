@@ -3,13 +3,13 @@ package de.lmu.ifi.dbs.knowing.core.swt
 import java.util.Properties
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
+import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import de.lmu.ifi.dbs.knowing.core.swt.provider.{ InstanceContentProvider, InstanceLabelProvider }
 import org.eclipse.jface.viewers.{ TableViewerColumn, TableViewer }
 import org.eclipse.swt.SWT
 import org.eclipse.swt.widgets.Composite
 import weka.core.{ Instances, Attribute }
-import akka.event.EventHandler
 
 /**
  * @author Nepomuk Seiler
@@ -30,11 +30,9 @@ class TablePresenter extends SWTPresenter {
   def createControl(parent: Composite) = viewer = new TableViewer(parent)
 
   def buildContent(instances: Instances) = {
-    EventHandler.debug(this,"buildContent...")
     createColumns(instances.enumerateAttributes());
     viewer.setInput(createInput(instances));
     viewer.refresh();
-    EventHandler.debug(this,"... content build")
   }
 
   def getModel(labels: Array[String]): Instances = { null }
@@ -43,7 +41,7 @@ class TablePresenter extends SWTPresenter {
     if (columnsInit) 
       return 
       
-    EventHandler.debug(this,"createColumns...")
+    debug(this,"createColumns...")
     viewer.getTable().setHeaderVisible(true);
     viewer.getTable().setLinesVisible(true);
     while (eAttr.hasMoreElements) {
@@ -57,17 +55,16 @@ class TablePresenter extends SWTPresenter {
     viewer.setLabelProvider(new InstanceLabelProvider);
     viewer.setContentProvider(new InstanceContentProvider);
     columnsInit = true;
-    EventHandler.debug(this,"... columns created")
+    debug(this,"... columns created")
   }
 
   def configure(properties: Properties) = {
-   EventHandler.debug(this,"Configure TablePresenter with " + properties)
+   debug(this,"Configure TablePresenter with " + properties)
     val row_string = properties.getProperty(TablePresenter.ROWS_PER_PAGE, "100")
     rows = row_string.toInt
   }
 
   private def createInput(instances: Instances): Instances = {
-//    println("Instances: " + instances)
     if(instances.numInstances > rows)
     	new Instances(instances, 0, rows)
     else

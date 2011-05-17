@@ -4,13 +4,11 @@ import java.util.Properties
 import scala.collection.JavaConversions._
 
 import akka.actor.Actor
-import akka.event.EventHandler
+import akka.event.EventHandler.{ debug, info, warning, error }
 
 import de.lmu.ifi.dbs.knowing.core.events._
 
 import weka.core.{ Attribute, Instance, Instances }
-
-
 
 /**
  * <p>An IProcessor encapsulates a data processing algorithm.
@@ -31,14 +29,17 @@ trait TProcessor extends Actor with TSender with TConfigurable {
     case Configure(p) =>
       configure(p)
       self reply Ready
-    case Start => EventHandler.debug(this, "Running " + self.getActorClassName)
-    case Query(q) => self reply Results(query(q))
+    case Start => debug(this, "Running " + self.getActorClassName)
+    case Query(q) => self reply QueryResults(query(q),q)
     case Queries(q) =>
       val enum = q.enumerateInstances
-      while (enum.hasMoreElements)
-        self reply Results(query(enum.nextElement.asInstanceOf[Instance]))
+      while (enum.hasMoreElements) {
+        val instance = enum.nextElement.asInstanceOf[Instance]
+        self reply QueryResults(query(instance), instance)
+      }
+    case QueryResults(r,q) => result(r,q)
     case Results(instances) => build(instances)
-    case msg => EventHandler.warning(this,"<----> " + msg)
+    case msg => warning(this, "<----> " + msg)
   }
 
   /**
@@ -68,6 +69,15 @@ trait TProcessor extends Actor with TSender with TConfigurable {
    * @return Instances - Query result
    */
   def query(query: Instance): Instances
+  
+  /**
+   * <p>After the processor sending a query, this method
+   * is called if it gets a response</p>
+   * 
+   * @param result - the results
+   * @param query - the query 
+   */
+  def result(result: Instances, query:Instance)
 
   /**
    * <p>The presenter connected to this {@link IResultProcessor} calls this<br>
@@ -116,7 +126,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 
   def classLables(attribute: Attribute): Array[String] = {
     val enum = attribute.enumerateValues()
-    var labels:List[String] = Nil
+    var labels: List[String] = Nil
     while (enum.hasMoreElements) {
       val label = enum.nextElement().asInstanceOf[String]
       labels = label :: labels

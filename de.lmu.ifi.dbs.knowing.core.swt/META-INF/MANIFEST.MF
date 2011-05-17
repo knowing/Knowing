@@ -15,3 +15,4 @@ Export-Package: de.lmu.ifi.dbs.knowing.core.swt,
  de.lmu.ifi.dbs.knowing.core.swt.handler,
  de.lmu.ifi.dbs.knowing.core.swt.provider,
  de.lmu.ifi.dbs.knowing.core.swt.view
+Import-Package: org.eclipse.help

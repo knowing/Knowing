@@ -1,23 +1,23 @@
 package de.lmu.ifi.dbs.knowing.core.weka
 
 import java.util.Properties
+import scala.collection.JavaConversions._
 import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.events.Results
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
-import weka.classifiers.Classifier
-import weka.core.{ Instance, Instances }
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
-import scala.collection.JavaConversions._
-import akka.event.EventHandler
+import akka.event.EventHandler.{ debug, info, warning, error }
+import weka.classifiers.Classifier
+import weka.core.{ Instance, Instances }
 
 /**
- * 
+ *
  * @author Nepomuk Seiler
  * @version 0.1
  * @since 21.04.2011
- * 
+ *
  */
 class WekaClassifier(protected val classifier: Classifier) extends TProcessor {
 
@@ -25,26 +25,32 @@ class WekaClassifier(protected val classifier: Classifier) extends TProcessor {
   private val name = getClass().getSimpleName;
 
   def build(instances: Instances) = {
-    EventHandler debug(this,"Build internal model for " + name + " ...")
+    debug(this, "Build internal model for " + name + " ...")
     val index = guessAndSetClassLabel(instances)
     index match {
       case -1 =>
         classLabels = Array()
-        EventHandler warning(this,"No classLabel found in " + name)
+        warning(this, "No classLabel found in " + name)
       case x => classLabels = classLables(instances.attribute(x))
     }
     classifier.buildClassifier(instances)
-    EventHandler debug(this,"... build successfull for " + name)
+    debug(this, "... build successfull for " + name)
   }
 
-  def query(query: Instance):Instances = {
+  def query(query: Instance): Instances = {
     val distribution = classifier.distributionForInstance(query)
+    print("Classified with: ")
+    distribution foreach (d => print(d + " ; "))
+    print(" ClassValue: " + query.classValue)
+    println("")
     ResultsUtil.classAndProbabilityResult(getClassLabels.toList, distribution)
   }
 
   def getClassLabels(): Array[String] = classLabels
-  
-  def configure(properties:Properties) = {} //Override for special behaviour
+
+  def configure(properties: Properties) {} //Override for special behaviour
+
+  def result(result: Instances, query: Instance) {} //Override for special behaviour
 
 }
 
@@ -53,7 +59,7 @@ class WekaClassifier(protected val classifier: Classifier) extends TProcessor {
 /* =========================== */
 
 /**
- * 
+ *
  * @author Nepomuk Seiler
  * @version 0.1
  * @since 21.04.2011
@@ -71,7 +77,7 @@ class WekaClassifierFactory[T <: WekaClassifier, S <: Classifier](wrapper: Class
 
   def createDefaultProperties: Properties = new Properties
 
-  def createPropertyValues: Map[String, Array[_<:Any]] = Map()
+  def createPropertyValues: Map[String, Array[_ <: Any]] = Map()
 
   def createPropertyDescription: Map[String, String] = Map()
 

@@ -72,7 +72,7 @@ object ResultsUtil {
     attributes.add(classAttribute)
     attributes.add(probaAttribute)
 
-    val returns = new Instances(NAME_CLASS_ONLY, attributes, 0)
+    val returns = new Instances(NAME_CLASS_AND_PROBABILITY, attributes, 0)
     returns.setClass(classAttribute)
     returns
   }
@@ -192,12 +192,12 @@ object ResultsUtil {
    * @param names - class label names
    * @return
    */
-  def crossValidation(names: scala.List[String]): Instances = {
+  def confusionMatrix(names: scala.List[String]): Instances = {
     val attributes = new ArrayList[Attribute]
     names foreach (name => attributes.add(new Attribute(name)))
     val dataset = new Instances(NAME_CROSS_VALIDATION, attributes, names.length)
     for (i <- 0 until names.length)
-      dataset.add(i, new DenseInstance(1.0, Array.fill(names.length) { 1.0 }))
+      dataset.add(i, new DenseInstance(1.0, Array.fill(names.length) { 0.0 }))
     dataset
   }
 
@@ -210,7 +210,7 @@ object ResultsUtil {
    * @param names - class label names
    * @return
    */
-  def crossValidation(names: List[String]): Instances = crossValidation(names.toList)
+  def crossValidation(names: List[String]): Instances = confusionMatrix(names.toList)
 
   /* ========================= */
   /* === Result validation === */
