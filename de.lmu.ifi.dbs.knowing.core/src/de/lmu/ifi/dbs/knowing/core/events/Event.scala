@@ -17,7 +17,6 @@ case class Results(instances: Instances) extends Event
 case class QueryResults(instances: Instances, query: Instance )extends Event
 case class Query(query: Instance) extends Event
 case class Queries(queries: Instances) extends Event
-case class UIContainer(container: AnyRef) extends Event
 case class UIFactoryEvent(factory: UIFactory, node: Node) extends Event
 
 /* ======================== */
@@ -28,6 +27,7 @@ case class Start extends Event
 case class Reset extends Event
 case class Ready extends Event
 case class Finished extends Event
+case class UpdateUI extends Event
 
 /* ========================= */
 /* == Actor Communication == */

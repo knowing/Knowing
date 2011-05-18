@@ -12,4 +12,7 @@ import de.lmu.ifi.dbs.knowing.core.graph.Node
 trait UIFactory { 
   
   def createContainer(node: Node):AnyRef
+  
+  def update
+  
 }

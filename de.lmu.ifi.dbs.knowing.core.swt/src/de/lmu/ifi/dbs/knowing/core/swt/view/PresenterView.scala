@@ -1,21 +1,19 @@
 package de.lmu.ifi.dbs.knowing.core.swt.view
 
-import akka.actor.TypedActor
-import akka.actor.ActorRef
-import akka.actor.Actor
+import akka.actor.{ ActorRef, Actor, TypedActor }
 import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
 import java.util.concurrent.SynchronousQueue
 import org.eclipse.swt.layout.FillLayout
 import org.eclipse.swt.SWT
-import org.eclipse.swt.widgets.{ Composite, TabFolder, TabItem }
+import org.eclipse.swt.widgets.Composite 
 import org.eclipse.swt.graphics.Image
+import org.eclipse.swt.custom.{ CTabFolder , CTabItem }
 import org.eclipse.ui.part.ViewPart
 import org.eclipse.ui.IPropertyListener
 import de.lmu.ifi.dbs.knowing.core.graph.Node
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
-import de.lmu.ifi.dbs.knowing.core.events.UIContainer
-import akka.event.EventHandler
+
 
 /**
  * @author Nepomuk Seiler
@@ -28,13 +26,13 @@ class PresenterView extends ViewPart {
   val uifactory = TypedActor.newInstance(classOf[UIFactory], new PresenterUIFactory(this))
   val rendevouz = new SynchronousQueue[Composite]
 
-  private var tabFolder: TabFolder = _
+  private var tabFolder: CTabFolder = _
 
-  def createPartControl(parent: Composite) =  tabFolder = new TabFolder(parent, SWT.BOTTOM)
+  def createPartControl(parent: Composite) = tabFolder = new CTabFolder(parent, SWT.BOTTOM)
 
   def createNodeTab(node: Node) {
-    tabFolder.getDisplay.asyncExec(new Runnable() {
-      def run() {
+    tabFolder.getDisplay.asyncExec(new Runnable {
+      def run {
         debug(uifactory, "Trying to create tab... ")
         val composite = createTab(node.id)
         rendevouz put (composite)
@@ -50,7 +48,7 @@ class PresenterView extends ViewPart {
    * @return tab content composite
    */
   def createTab(name: String): Composite = {
-    val tabItem = new TabItem(tabFolder, SWT.NONE)
+    val tabItem = new CTabItem(tabFolder, SWT.NONE)
     tabItem.setText(name)
     val composite = new Composite(tabFolder, SWT.NONE)
     composite.setLayout(new FillLayout)
@@ -65,6 +63,12 @@ class PresenterView extends ViewPart {
 
   def setFocus() = tabFolder setFocus
 
+  def update = {
+    tabFolder.getDisplay.syncExec(new Runnable {
+      def run = tabFolder.setSelection(0)
+    })
+  }
+
 }
 
 object PresenterView { val ID = "de.lmu.ifi.dbs.knowing.core.swt.presenterView" }
@@ -75,8 +79,10 @@ class PresenterUIFactory(view: PresenterView) extends TypedActor with UIFactory 
     debug(this, "CreateContainer with " + node)
     view.createNodeTab(node)
     debug(this, "Waiting for finish...")
-    val parent = view.rendevouz.take()
+    val parent = view.rendevouz.take
     debug(this, "Took parent: " + parent)
     parent
   }
+
+  def update = view update
 }

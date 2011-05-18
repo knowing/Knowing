@@ -38,7 +38,8 @@ class MultiTablePresenter extends SWTPresenter {
         debug(this, "Creating new TablePresenter...")
         val p = actorOf[TablePresenter].start
         debug(this, "... and createContainer for " + p.getActorClassName)
-        p ! UIContainer(createTab(relation))
+        //TODO MultiTablePresenter must declare own UIFactory
+//        p ! UIContainer(createTab(relation))
         debug(this, "... and build content for " + p.getActorClassName)
         p ! Results(instances)
         tables += (relation -> p)

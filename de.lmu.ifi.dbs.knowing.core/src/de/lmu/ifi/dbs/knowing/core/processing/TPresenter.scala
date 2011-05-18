@@ -2,18 +2,19 @@ package de.lmu.ifi.dbs.knowing.core.processing
 
 import java.util.Properties
 import weka.core.Instances
-import akka.actor.Actor
+import akka.actor.{ Actor, ActorRef }
+import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.graph.Node
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
-import akka.event.EventHandler
+import scala.collection.mutable.{ Set => MSet }
 
 /**
  * @author Nepomuk Seiler
  * @version 0.2
  * @since 18.04.2011
  */
-trait TPresenter[T] extends Actor with TConfigurable {
+trait TPresenter[T] extends Actor with TSender with TConfigurable {
 
   val name: String
 
@@ -22,16 +23,16 @@ trait TPresenter[T] extends Actor with TConfigurable {
       val parent = factory createContainer (node)
       createContainer(parent.asInstanceOf[T])
       self reply Ready
-    case UIContainer(parent: T) =>
-      createContainer(parent)
-      self ! Ready
     case Configure(properties) =>
       configure(properties)
       self reply Ready
-    case Results(instances) => buildPresentation(instances)
+    case Results(instances) =>
+      buildPresentation(instances)
+      sendEvent(new UpdateUI)
+    case Register(actor) => addListener(actor)
     case Query => self reply getContainerClass
-    case Start => EventHandler.debug(this,("Running " + self.getActorClassName))
-    case msg => EventHandler.warning(this,"<----> " + msg)
+    case Start => debug(this, ("Running " + self.getActorClassName))
+    case msg => warning(this, "<----> " + msg)
   }
 
   /**

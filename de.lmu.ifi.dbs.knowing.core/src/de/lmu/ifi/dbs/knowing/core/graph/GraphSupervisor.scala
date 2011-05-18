@@ -19,7 +19,8 @@ class GraphSupervisor(val dpu: DataProcessingUnit, val uifactory: UIFactory) ext
     case Register(actor) =>
       addListener(actor)
     case Start => evaluate
-    case event: Event => events + event.getClass().getSimpleName
+    case UpdateUI() => uifactory update
+    case event: Event =>  events + event.getClass().getSimpleName
     case msg => debug(this,"Unkown Message: " + msg) 
   }
 

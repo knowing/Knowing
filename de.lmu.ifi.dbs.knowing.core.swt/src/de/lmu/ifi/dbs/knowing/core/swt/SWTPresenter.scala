@@ -1,12 +1,12 @@
 package de.lmu.ifi.dbs.knowing.core.swt
 
-import de.lmu.ifi.dbs.knowing.core.events.UIContainer
 import de.lmu.ifi.dbs.knowing.core.processing.TPresenter
 import org.eclipse.swt.layout.FillLayout
 import org.eclipse.swt.SWT
 import org.eclipse.swt.widgets.Composite
 import weka.core.Instances
 import akka.event.EventHandler.{ debug, info, warning, error }
+import org.eclipse.swt.widgets.Label
 
 /**
  * @author Nepomuk Seiler

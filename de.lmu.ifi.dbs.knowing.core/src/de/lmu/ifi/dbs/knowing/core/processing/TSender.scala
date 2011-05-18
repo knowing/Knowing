@@ -14,11 +14,9 @@ trait TSender { this: Actor =>
     self reply Registered(true)
   }
 
-  def removeListener(listener: ActorRef) = {
-    listeners remove (listener.getUuid)
-  }
-
-  def sendEvent(event: Event) = listeners foreach (t => sendToActor(t._2, event))
+  def removeListener(listener: ActorRef) =  listeners remove (listener.getUuid)
+  
+  def sendEvent(event: Event) = listeners foreach {case (_, actor) => sendToActor(actor, event)}
   
   protected def sendToActor(actor: ActorRef, event: Event) = {
     if (actor.isRunning)
