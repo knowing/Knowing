@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Core
+Bundle-Name: Knowing Core
 Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.lmu.ifi.dbs.knowing.core.internal.Activator
@@ -24,21 +24,24 @@ Export-Package: akka,
  akka.transactor.annotation,
  akka.util,
  akka.util.duration,
+ com.eaio.util.lang,
+ com.eaio.uuid,
  de.lmu.ifi.dbs.knowing.core.annotations,
  de.lmu.ifi.dbs.knowing.core.events,
  de.lmu.ifi.dbs.knowing.core.factory,
  de.lmu.ifi.dbs.knowing.core.graph,
  de.lmu.ifi.dbs.knowing.core.graph.xml,
+ de.lmu.ifi.dbs.knowing.core.internal;x-internal:=true,
  de.lmu.ifi.dbs.knowing.core.processing,
- de.lmu.ifi.dbs.knowing.core.util
+ de.lmu.ifi.dbs.knowing.core.util,
+ de.lmu.ifi.dbs.knowing.core.validation,
+ de.lmu.ifi.dbs.knowing.core.weka
 Bundle-ClassPath: .,
  lib/akka-actor-1.1.jar,
  lib/akka-slf4j-1.1.jar,
  lib/akka-stm-1.1.jar,
  lib/akka-typed-actor-1.1.jar
-Import-Package: com.weiglewilczek.scalamodules;version="2.0.2";resolution:=optional,
- com.weiglewilczek.slf4s;version="1.0.4";resolution:=optional,
- org.osgi.framework;version="1.5.0",
+Import-Package: org.osgi.framework;version="1.5.0",
  scala;version="2.9.0.final",
  scala.collection;version="2.9.0.final",
  scala.collection.generic;version="2.9.0.final",
@@ -71,3 +74,4 @@ Import-Package: com.weiglewilczek.scalamodules;version="2.0.2";resolution:=optio
  scala.util.parsing.json;version="2.9.0.final",
  scala.util.parsing.syntax;version="2.9.0.final",
  scala.util.regexp;version="2.9.0.final"
+Bundle-Vendor: LMU Munich - Database Systems Group

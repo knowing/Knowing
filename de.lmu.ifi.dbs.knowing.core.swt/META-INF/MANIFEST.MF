@@ -6,7 +6,6 @@ Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.eclipse.ui;bundle-version="3.6.0",
  org.eclipse.core.runtime,
  de.lmu.ifi.dbs.knowing.core;bundle-version="1.0.0",
- org.scala-ide.scala.library,
  se.scalablesolutions.akka.osgi.dependencies.bundle;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
@@ -15,4 +14,18 @@ Export-Package: de.lmu.ifi.dbs.knowing.core.swt,
  de.lmu.ifi.dbs.knowing.core.swt.handler,
  de.lmu.ifi.dbs.knowing.core.swt.provider,
  de.lmu.ifi.dbs.knowing.core.swt.view
-Import-Package: org.eclipse.help
+Import-Package: org.eclipse.help,
+ scala;version="2.9.0.final",
+ scala.collection;version="2.9.0.final",
+ scala.collection.generic;version="2.9.0.final",
+ scala.collection.immutable;version="2.9.0.final",
+ scala.collection.interfaces;version="2.9.0.final",
+ scala.collection.mutable;version="2.9.0.final",
+ scala.io;version="2.9.0.final",
+ scala.math;version="2.9.0.final",
+ scala.ref;version="2.9.0.final",
+ scala.reflect;version="2.9.0.final",
+ scala.reflect.generic;version="2.9.0.final",
+ scala.runtime;version="2.9.0.final",
+ scala.util;version="2.9.0.final"
+Bundle-Vendor: LMU Munich - Database Systems Group

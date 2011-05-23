@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Weka
+Bundle-Name: Weka Library
 Bundle-SymbolicName: nz.ac.waikato.cs.weka
 Bundle-Version: 3.7.3
 Export-Package: java_cup.runtime,
@@ -81,3 +81,4 @@ Export-Package: java_cup.runtime,
  weka.gui.visualize,
  weka.gui.visualize.plugins
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Vendor: University of Waikato - Machine Learning Group

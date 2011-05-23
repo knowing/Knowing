@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Charts
+Bundle-Name: Knowing SWT JFreeChart
 Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.core.swt.charts
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.lmu.ifi.dbs.knowing.core.swt.charts.internal.Activator
@@ -90,3 +90,4 @@ Import-Package: org.jfree,
  scala.util;version="2.9.0.final",
  weka.core
 Bundle-ActivationPolicy: lazy
+Bundle-Vendor: LMU Munich - Database Systems Group
