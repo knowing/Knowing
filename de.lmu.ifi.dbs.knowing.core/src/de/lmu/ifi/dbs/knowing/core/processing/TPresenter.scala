@@ -29,6 +29,9 @@ trait TPresenter[T] extends Actor with TSender with TConfigurable {
     case Results(instances) =>
       buildPresentation(instances)
       sendEvent(new UpdateUI)
+    case QueryResults(instances, _) =>
+      buildPresentation(instances)
+      sendEvent(new UpdateUI)
     case Register(actor) => addListener(actor)
     case Query => self reply getContainerClass
     case Start => debug(this, ("Running " + self.getActorClassName))

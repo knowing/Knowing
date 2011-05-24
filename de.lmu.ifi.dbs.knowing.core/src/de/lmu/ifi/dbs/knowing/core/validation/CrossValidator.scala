@@ -52,7 +52,7 @@ class CrossValidator(var factory: TFactory, var folds: Int, var fold: Int, var c
       
       entry.setValue(column.toInt, value)
     }
-    sendEvent(Results(confusionMatrix))
+    sendEvent(QueryResults(confusionMatrix, query))
   }
 
   /**
@@ -107,7 +107,7 @@ class CrossValidator(var factory: TFactory, var folds: Int, var fold: Int, var c
   def getClassLabels(): Array[String] = classLabels
 
   def configure(properties: Properties) = {
-    val factoryId = properties.getProperty(XCrossValidatorFactory.CLASSIFIER)
+    val factoryId = properties.getProperty(CrossValidatorFactory.CLASSIFIER)
     val factory = getFactoryService(factoryId)
     factory match {
       case Some(f) => this.factory = f

@@ -39,10 +39,9 @@ class WekaClassifier(protected val classifier: Classifier) extends TProcessor {
 
   def query(query: Instance): Instances = {
     val distribution = classifier.distributionForInstance(query)
-    print("Classified with: ")
-    distribution foreach (d => print(d + " ; "))
-    print(" ClassValue: " + query.classValue)
-    println("")
+    
+    val distString = for (i <- 0 until distribution.length) yield distribution(i).toString
+    debug(this, "Classified with: " +  distString + " # ClassValue: " + query.classValue)
     ResultsUtil.classAndProbabilityResult(getClassLabels.toList, distribution)
   }
 
