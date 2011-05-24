@@ -11,14 +11,14 @@ trait TLoader extends Actor with TSender with TConfigurable {
 
   def receive = {
     case Register(actor) => addListener(actor)
-    case Configure(p) => 
+    case Configure(p) =>
       configure(p)
       self reply Ready
     case Start =>
       val dataset = getDataSet
       sendEvent(new Results(dataset))
     case Reset => reset
-    case msg => EventHandler.warning(this,"<----> " + msg)
+    case msg => EventHandler.warning(this, "<----> " + msg)
   }
 
   /**
@@ -39,6 +39,11 @@ trait TLoader extends Actor with TSender with TConfigurable {
 }
 
 object TLoader {
+  /* ==== Properties to configure TLoader ==== */
+  val ABSOLUTE_PATH = "absolute-path"
   val FILE = "file"
   val URL = "url"
+
+  /** Points to the dpu directory. Ends with a file.seperator */
+  val DPU_PATH = "path-to-dpu" // this properties is created by the GraphSupervisor-Caller
 }

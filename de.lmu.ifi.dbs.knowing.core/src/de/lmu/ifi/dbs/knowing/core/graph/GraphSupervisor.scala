@@ -2,22 +2,21 @@ package de.lmu.ifi.dbs.knowing.core.graph
 
 import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.util._
-import de.lmu.ifi.dbs.knowing.core.processing.{ TPresenter, TSender }
+import de.lmu.ifi.dbs.knowing.core.processing.{ TPresenter, TSender, TLoader }
 import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit
 import de.lmu.ifi.dbs.knowing.core.events._
 import akka.actor.{ Actor, ActorRef }
-import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
 import org.osgi.framework.FrameworkUtil
+import java.util.Properties
 
-class GraphSupervisor(val dpu: DataProcessingUnit, val uifactory: UIFactory) extends Actor with TSender {
+class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuDir: String) extends Actor with TSender {
 
   var actors: Map[String, ActorRef] = Map()
   var events:List[String] = Nil
 
   def receive = {
-    case Register(actor) =>
-      addListener(actor)
+    case Register(actor) => addListener(actor)
     case Start => evaluate
     case UpdateUI() => uifactory update
     case event: Event =>  events + event.getClass().getSimpleName
@@ -44,14 +43,25 @@ class GraphSupervisor(val dpu: DataProcessingUnit, val uifactory: UIFactory) ext
           if (node.nodeType.equals(Node.PRESENTER))
             actor !! UIFactoryEvent(uifactory, node)
           //Configure with properties
-          actor !! Configure(node.properties)
+          actor !! Configure(configureProperties(node.properties))
           //Add to internal map
           actors += (node.id -> actor)
           case None =>warning(this,"No factory found for: " + node.factoryId)
       }
     })
   }
+  
+  /**
+   * Adds the DPU_PATH property to the property configuration
+   */
+  private def configureProperties(properties:Properties):Properties = {
+    properties setProperty(TLoader.DPU_PATH, dpuDir)
+    properties
+  }
 
+  /**
+   * 
+   */
   private def connectActors {
     dpu.edges foreach (edge => {
       val source = actors(edge.sourceId)

@@ -35,7 +35,7 @@ class EvaluateHandler extends AbstractHandler {
     if (pathname == null || pathname.isEmpty())
       return null;
     val dpu = unmarshallDPU(pathname)
-    EvaluateHandler.evaluate(dpu)
+    EvaluateHandler.evaluate(dpu, getDirectory(pathname))
     null;
   }
 
@@ -61,23 +61,29 @@ class EvaluateHandler extends AbstractHandler {
    * @param event
    * @return
    */
-  def openDPU(event: ExecutionEvent): String = {
+  private def openDPU(event: ExecutionEvent): String = {
     val dialog = new FileDialog(HandlerUtil.getActiveShell(event))
-    dialog.setFilterExtensions(Array("*.xml", "*.dpu"))
-    dialog.setFilterNames(Array("XML DataProcessingUnit", "DPU DataProcessingUnit"))
+    dialog.setFilterExtensions(Array("*.dpu"))
+    dialog.setFilterNames(Array("DPU DataProcessingUnit"))
     dialog.open()
+  }
+  
+  private def getDirectory(dpuPath: String):String = {
+    val sep = System.getProperty("file.separator")
+    val index = dpuPath.lastIndexOf(sep)
+    dpuPath.substring(0,index+1)
   }
 
 }
 
 object EvaluateHandler {
 
-  def evaluate(dpu: DataProcessingUnit) {
+  def evaluate(dpu: DataProcessingUnit, dpuPath: String) {
     try {
       val view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(PresenterView.ID)
       val pView = view.asInstanceOf[PresenterView]
       pView.clearTabs
-      val supervisor = actorOf(new GraphSupervisor(dpu, pView.uifactory)).start
+      val supervisor = actorOf(new GraphSupervisor(dpu, pView.uifactory, dpuPath)).start
       supervisor ! Start
       null
     } catch {
