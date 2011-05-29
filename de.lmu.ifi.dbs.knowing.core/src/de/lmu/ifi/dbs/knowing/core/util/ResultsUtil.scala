@@ -15,24 +15,30 @@ object ResultsUtil {
   val ATTRIBUTE_PROBABILITY = "probability"
   val ATTRIBUTE_TIMESTAMP = "timestamp"
   val ATTRIBUTE_VALUE = "y"
+  val ATTRIBUTE_FROM = "from"
+  val ATTRIBUTE_TO = "to"
 
   val NAME_CLASS_ONLY = "class_only"
   val NAME_CLASS_AND_PROBABILITY = "class_and_probability"
   val NAME_DATE_AND_VALUE = "date_and_value"
   val NAME_DATE_AND_VALUES = "date_and_values"
   val NAME_CROSS_VALIDATION = "cross_validation"
+  val NAME_TIME_INTERVAL = "time_interval"
+  val NAME_TIME_SERIES = "time_series"
 
   val META_ATTRIBUTE_NAME = "name"
+
+  val DATETIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss"
 
   /* ========================= */
   /* ==== Result Creation ==== */
   /* ========================= */
 
   /**
-   * [p]
-   * [li]relation name: {@link #NAME_CLASS_ONLY}[/li]
-   * [li]attributes: {@link #ATTRIBUTE_CLASS}[/li]
-   * [/p]
+   * <p>
+   * <li>relation name: {@link #NAME_CLASS_ONLY}</li>
+   * <li>attributes: {@link #ATTRIBUTE_CLASS}</li>
+   * </p>
    * @param labels
    * @return {@link Instances}
    */
@@ -46,20 +52,20 @@ object ResultsUtil {
   }
 
   /**
-   * [p]
-   * [li]relation name: {@link #NAME_CLASS_ONLY}[/li]
-   * [li]attributes: {@link #ATTRIBUTE_CLASS}[/li]
-   * [/p]
+   * <p>
+   * <li>relation name: {@link #NAME_CLASS_ONLY}</li>
+   * <li>attributes: {@link #ATTRIBUTE_CLASS}</li>
+   * </p>
    * @param labels
    * @return {@link Instances}
    */
   def classOnlyResult(labels: List[String]): Instances = classOnlyResult(labels.toList)
 
   /**
-   * [p]
-   * [li]relation name: {@link #NAME_CLASS_AND_PROBABILITY}[/li]
-   * [li]attributes: {@link #ATTRIBUTE_CLASS}, {@link #ATTRIBUTE_PROBABILITY}[/li]
-   * [/p]
+   * <p>
+   * <li>relation name: {@link #NAME_CLASS_AND_PROBABILITY}</li>
+   * <li>attributes: {@link #ATTRIBUTE_CLASS}, {@link #ATTRIBUTE_PROBABILITY}</li>
+   * </p>
    *
    * @param labels
    * @return {@link Instances} with {@link Attribute}s: "class" and "probability"
@@ -78,10 +84,10 @@ object ResultsUtil {
   }
 
   /**
-   * [p]
-   * [li]relation name: {@link #NAME_CLASS_AND_PROBABILITY}[/li]
-   * [li]attributes: {@link #ATTRIBUTE_CLASS}, {@link #ATTRIBUTE_PROBABILITY}[/li]
-   * [/p]
+   * <p>
+   * <li>relation name: {@link #NAME_CLASS_AND_PROBABILITY}</li>
+   * <li>attributes: {@link #ATTRIBUTE_CLASS}, {@link #ATTRIBUTE_PROBABILITY}</li>
+   * </p>
    *
    * @param labels
    * @return {@link Instances} with {@link Attribute}s: "class" and "probability"
@@ -89,8 +95,8 @@ object ResultsUtil {
   def classAndProbabilityResult(labels: List[String]): Instances = classAndProbabilityResult(labels.toList)
 
   /**
-   * [p]Adds [code]distribution.length[/code] instances to the dataset.[p]
-   * [p]The lables list must have the same ordering as the distribution array[/p]
+   * <p>Adds [code]distribution.length[/code] instances to the dataset.<p>
+   * <p>The lables list must have the same ordering as the distribution array</p>
    *
    * @param labels
    * @param distribution
@@ -100,14 +106,14 @@ object ResultsUtil {
     val returns = classAndProbabilityResult(labels)
     if (distribution.length > returns.numClasses())
       return returns
-     
+
     val classAttribute = returns.attribute(ATTRIBUTE_CLASS)
     val probaAttribute = returns.attribute(ATTRIBUTE_PROBABILITY)
     for (i <- 0 until distribution.length) {
       val instance = new DenseInstance(2)
       instance.setValue(classAttribute, classAttribute.value(i))
       instance.setValue(probaAttribute, distribution(i))
-      returns.add(i,instance)
+      returns.add(i, instance)
     }
     //Just in case
     for (i <- distribution.length until (labels.size - distribution.length)) {
@@ -120,8 +126,8 @@ object ResultsUtil {
   }
 
   /**
-   * [p]Adds [code]distribution.length[/code] instances to the dataset.[p]
-   * [p]The lables list must have the same ordering as the distribution array[/p]
+   * <p>Adds [code]distribution.length[/code] instances to the dataset.<p>
+   * <p>The lables list must have the same ordering as the distribution array</p>
    *
    * @param labels
    * @param distribution
@@ -130,16 +136,16 @@ object ResultsUtil {
   def classAndProbabilityResult(labels: List[String], distribution: Array[Double]): Instances = classAndProbabilityResult(labels.toList)
 
   /**
-   * [p]
-   * [li]relation name: {@link #NAME_DATE_AND_VALUE}
-   * [li]attributes: {@link #ATTRIBUTE_TIMESTAMP}, {@link #ATTRIBUTE_VALUE}
-   * [/p]
+   * <p>
+   * <li>relation name: {@link #NAME_DATE_AND_VALUE}
+   * <li>attributes: {@link #ATTRIBUTE_TIMESTAMP}, {@link #ATTRIBUTE_VALUE}
+   * </p>
    * @return
    */
   def dateAndValueResult: Instances = {
     val attributes = new ArrayList[Attribute]
 
-    val timestampAttribute = new Attribute(ATTRIBUTE_TIMESTAMP, "yyyy-MM-dd'T'HH:mm:ss")
+    val timestampAttribute = new Attribute(ATTRIBUTE_TIMESTAMP, DATETIME_PATTERN)
     val valueAttribute = new Attribute(ATTRIBUTE_VALUE + 0)
     attributes.add(timestampAttribute)
     attributes.add(valueAttribute)
@@ -147,13 +153,13 @@ object ResultsUtil {
   }
 
   /**
-   * [p]
+   * <p>
    * Creates an Instances object with a DATE column and [code]names.size()[/code]
    * nummeric attributes. [br] All numeric attributes provide meta data with one
    * property {@link #META_ATTRIBUTE_NAME}.
-   * [li]relation name: {@link #NAME_DATE_AND_VALUES}
-   * [li]attributes: {@link #ATTRIBUTE_TIMESTAMP}, {@link #ATTRIBUTE_VALUE}+index
-   * [/p]
+   * <li>relation name: {@link #NAME_DATE_AND_VALUES}
+   * <li>attributes: {@link #ATTRIBUTE_TIMESTAMP}, {@link #ATTRIBUTE_VALUE}+index
+   * </p>
    * @param names - the numeric attributes names -] accessable via meta data
    * @return
    */
@@ -171,13 +177,13 @@ object ResultsUtil {
   }
 
   /**
-   * [p]
+   * <p>
    * Creates an Instances object with a DATE column and [code]names.size()[/code]
    * nummeric attributes. [br] All numeric attributes provide meta data with one
    * property {@link #META_ATTRIBUTE_NAME}.
-   * [li]relation name: {@link #NAME_DATE_AND_VALUES}
-   * [li]attributes: {@link #ATTRIBUTE_TIMESTAMP}, {@link #ATTRIBUTE_VALUE}+index
-   * [/p]
+   * <li>relation name: {@link #NAME_DATE_AND_VALUES}
+   * <li>attributes: {@link #ATTRIBUTE_TIMESTAMP}, {@link #ATTRIBUTE_VALUE}+index
+   * </p>
    * @param names - the numeric attributes names -] accessable via meta data
    * @return
    */
@@ -202,15 +208,43 @@ object ResultsUtil {
   }
 
   /**
-   * Columns: One column for every label
-   * Rows: One row for every label
+   * <p>Columns: One column for every label</p>
+   * <li>Rows: One row for every label</li>
    *
-   * index of row/column -> names.index
+   * <p>index of row/column -> names.index</p>
    *
    * @param names - class label names
    * @return
    */
   def crossValidation(names: List[String]): Instances = confusionMatrix(names.toList)
+
+  /**
+   * <p>Creates a Result-Instance for TimeInterval data</p>
+   *
+   * from | to | class
+   *
+   * @param lables - class labels
+   * @return Instances
+   */
+  def timeIntervalResult(labels: scala.List[String]): Instances = {
+    val attributes = new ArrayList[Attribute]
+    attributes.add(new Attribute(ATTRIBUTE_FROM, DATETIME_PATTERN))
+    attributes.add(new Attribute(ATTRIBUTE_TO, DATETIME_PATTERN))
+    attributes.add(new Attribute(ATTRIBUTE_CLASS, labels))
+    val dataset = new Instances(NAME_TIME_INTERVAL, attributes, 0)
+    dataset.setClass(dataset.attribute(ATTRIBUTE_CLASS))
+    dataset
+  }
+
+  /**
+   * <p>Creates a Result-Instance for TimeInterval data</p>
+   *
+   * from | to | class
+   *
+   * @param lables - class labels
+   * @return Instances
+   */
+  def timeIntervalResult(labels: List[String]): Instances = timeIntervalResult(labels.toList)
 
   /* ========================= */
   /* === Result validation === */
@@ -243,11 +277,11 @@ object ResultsUtil {
   /* ========================= */
 
   /**
-   *  [p]Checks the dataset for class attribute in this order
-   *  [li] {@link Instances#classIndex()} -] if ]= 0 returns index[/li]
-   *  [li] returns index of the attribute named "class" if exists[/li]
-   *  [li] returns index of the first nominal attribute[/li]
-   *  [/p]
+   *  <p>Checks the dataset for class attribute in this order
+   *  <li> {@link Instances#classIndex()} -] if ]= 0 returns index</li>
+   *  <li> returns index of the attribute named "class" if exists</li>
+   *  <li> returns index of the first nominal attribute</li>
+   *  </p>
    *
    * @param dataset
    * @return class attribute index or -1

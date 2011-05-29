@@ -26,14 +26,14 @@ abstract class AbstractChartPresenter(val name: String) extends SWTPresenter {
    *
    */
   def createControl(parent: Composite) = {
-    chart = createChart(dataset);
-    configurePlot(chart.getPlot());
-    chartComposite = new ChartComposite(parent, SWT.NONE, chart, true);
+    chart = createChart(dataset)
+    configurePlot(chart.getPlot())
+    chartComposite = new ChartComposite(parent, SWT.NONE, chart, true)
   }
 
   def updateChart {
     if (chart != null)
-      chart.fireChartChanged();
+      chart.fireChartChanged()
   }
   /**
    * Override this method for special behaviour. It's called

@@ -170,8 +170,6 @@ class PiePresenter extends AbstractChartPresenter("Pie Presenter") {
   
   def configure(properties:Properties) = {}
 
-  def getModel(labels: Array[String]): Instances = { null }
-
   /* ========================== */
   /* ===== Chart creation ===== */
   /* ========================== */
@@ -212,7 +210,7 @@ class PiePresenterFactory extends TFactory {
 
   def createDefaultProperties: Properties = new Properties
 
-  def createPropertyValues: Map[String, Array[Any]] = Map()
+  def createPropertyValues: Map[String, Array[_<:Any]] = Map()
 
   def createPropertyDescription: Map[String, String] = Map()
 }
