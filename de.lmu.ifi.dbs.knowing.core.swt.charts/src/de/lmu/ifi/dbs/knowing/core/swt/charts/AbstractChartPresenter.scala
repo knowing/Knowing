@@ -19,7 +19,8 @@ abstract class AbstractChartPresenter(val name: String) extends SWTPresenter {
 
   private var chartComposite: ChartComposite = _
   private var chart: JFreeChart = _
-
+  
+  protected var plot: Plot = _
   protected var dataset: Dataset = createDataset
 
   /**
@@ -27,8 +28,9 @@ abstract class AbstractChartPresenter(val name: String) extends SWTPresenter {
    */
   def createControl(parent: Composite) = {
     chart = createChart(dataset)
-    configurePlot(chart.getPlot())
+    configurePlot(chart.getPlot)
     chartComposite = new ChartComposite(parent, SWT.NONE, chart, true)
+    plot = chart.getPlot
   }
 
   def updateChart {

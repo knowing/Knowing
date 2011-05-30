@@ -1,6 +1,6 @@
 package de.lmu.ifi.dbs.knowing.core.swt.charts.internal
 
-import de.lmu.ifi.dbs.knowing.core.swt.charts.{ PiePresenterFactory, TimeIntervalClassPresenterFactory }
+import de.lmu.ifi.dbs.knowing.core.swt.charts.{ PiePresenterFactory, TimeIntervalClassPresenterFactory, TimeSeriesPresenterFactory }
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import org.osgi.framework.{ BundleContext, BundleActivator, ServiceRegistration }
 
@@ -17,6 +17,7 @@ class Activator extends BundleActivator {
   def start(context: BundleContext) = {
     services = context.registerService(classOf[TFactory].getName, new PiePresenterFactory, null) :: services
     services = context.registerService(classOf[TFactory].getName, new TimeIntervalClassPresenterFactory, null) :: services
+    services = context.registerService(classOf[TFactory].getName, new TimeSeriesPresenterFactory, null) :: services
   }
 
   def stop(context: BundleContext) = {

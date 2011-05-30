@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DataProcessingUnit name="dpu">
+    <description>Simple Description here</description>
+    <tags>Tag1, Tag2</tags>
+    <nodes>
+        <node nodeType="loader" factoryId="weka.core.converters.ArffLoader" id="ARFF">
+            <properties>
+                <item value="timeInterval.arff" key="file"/>
+            </properties>
+        </node>
+        <node nodeType="presenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" id="TablePresenter">
+            <properties/>
+        </node>
+        <node nodeType="presenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.charts.TimeIntervalClassPresenter" id="BarChartPresenter">
+            <properties/>
+        </node>
+    </nodes>
+    <edges>
+        <edge weight="1" targetId="TablePresenter" sourceId="ARFF" id="arff_TablePresenter"/>
+	<edge weight="1" targetId="BarChartPresenter" sourceId="ARFF" id="arff_BarChartPresenter"/>
+    </edges>
+</DataProcessingUnit>

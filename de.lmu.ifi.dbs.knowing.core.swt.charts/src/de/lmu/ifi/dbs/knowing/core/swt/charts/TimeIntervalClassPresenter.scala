@@ -1,6 +1,7 @@
 package de.lmu.ifi.dbs.knowing.core.swt.charts
 
 import java.util.{ Properties, Date }
+import java.awt.Color
 
 import scala.collection.mutable.{ Map => MutableMap }
 
@@ -9,7 +10,9 @@ import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
 
 import org.jfree.chart.{ JFreeChart, ChartFactory }
-import org.jfree.chart.plot.PlotOrientation
+import org.jfree.chart.plot.{ Plot, XYPlot, PlotOrientation }
+import org.jfree.chart.axis.{ SymbolAxis, DateAxis }
+import org.jfree.chart.renderer.xy.XYBarRenderer
 import org.jfree.data.general.Dataset
 import org.jfree.data.xy.{ IntervalXYDataset, XYIntervalSeriesCollection, XYIntervalSeries }
 import org.jfree.data.time.{ RegularTimePeriod, Second, Millisecond }
@@ -36,21 +39,49 @@ class TimeIntervalClassPresenter extends AbstractChartPresenter("Time Interval C
 
   protected def createDataset(): Dataset = new XYIntervalSeriesCollection
 
+  override def configurePlot(plot: Plot) {
+    val xyplot = plot.asInstanceOf[XYPlot]
+    //Date Axis
+    xyplot.setRangeAxis(new DateAxis("Date"))
+
+    //Labels Axis
+    val xAxis = new SymbolAxis("Labels", Array())
+    xAxis.setGridBandsVisible(false)
+    xyplot.setDomainAxis(xAxis)
+
+    //Renderer
+    val renderer = xyplot.getRenderer.asInstanceOf[XYBarRenderer]
+    renderer.setUseYInterval(true)
+    xyplot.setRenderer(renderer)
+    xyplot.setBackgroundPaint(Color.lightGray)
+    xyplot.setDomainGridlinePaint(Color.white)
+    xyplot.setRangeGridlinePaint(Color.white)
+  }
+
   def buildContent(instances: Instances) = {
     //TODO TimeIntervalClassPresenter -> Check for right Instances format
-	guessAndSetClassLabel(instances)
+    guessAndSetClassLabel(instances)
     //First buildContent call
     if (series == null) {
       series = MutableMap()
       val classes = instances.classAttribute.enumerateValues
       var index = 0
+      var labels:List[String] = Nil
       while (classes.hasMoreElements) {
         val clazz = classes.nextElement.asInstanceOf[String]
         val s = new XYIntervalSeries(clazz.asInstanceOf[String])
         dataset.asInstanceOf[XYIntervalSeriesCollection].addSeries(s)
         series += (clazz -> (s, index))
         index += 1
+        labels = clazz :: labels
       }
+
+      //Update DomainAxis with labels
+      val xyplot = plot.asInstanceOf[XYPlot]
+      val xAxisLabel = xyplot.getDomainAxis().getLabel
+      val xAxis = new SymbolAxis(xAxisLabel, labels.reverse.toArray)
+      xAxis.setGridBandsVisible(false)
+      xyplot.setDomainAxis(xAxis)
 
     }
     //Fill content
@@ -75,6 +106,7 @@ class TimeIntervalClassPresenter extends AbstractChartPresenter("Time Interval C
   }
 
   private def addItem(s: XYIntervalSeries, p0: RegularTimePeriod, p1: RegularTimePeriod, index: Int) {
+    debug(this, "# Add Time: " + p0 + " to " + p1)
     s.add(index, index - 0.25, index + 0.25, p0.getFirstMillisecond(), p0.getFirstMillisecond(), p1.getLastMillisecond())
   }
 
@@ -95,7 +127,7 @@ class TimeIntervalClassPresenterFactory extends TFactory {
 
   def createDefaultProperties: Properties = new Properties
 
-  def createPropertyValues: Map[String, Array[_<:Any]] = Map()
+  def createPropertyValues: Map[String, Array[_ <: Any]] = Map()
 
   def createPropertyDescription: Map[String, String] = Map()
 }

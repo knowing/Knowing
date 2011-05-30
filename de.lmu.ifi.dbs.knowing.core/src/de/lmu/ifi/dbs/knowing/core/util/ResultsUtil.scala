@@ -20,8 +20,6 @@ object ResultsUtil {
 
   val NAME_CLASS_ONLY = "class_only"
   val NAME_CLASS_AND_PROBABILITY = "class_and_probability"
-  val NAME_DATE_AND_VALUE = "date_and_value"
-  val NAME_DATE_AND_VALUES = "date_and_values"
   val NAME_CROSS_VALIDATION = "cross_validation"
   val NAME_TIME_INTERVAL = "time_interval"
   val NAME_TIME_SERIES = "time_series"
@@ -135,22 +133,22 @@ object ResultsUtil {
    */
   def classAndProbabilityResult(labels: List[String], distribution: Array[Double]): Instances = classAndProbabilityResult(labels.toList)
 
-  /**
-   * <p>
-   * <li>relation name: {@link #NAME_DATE_AND_VALUE}
-   * <li>attributes: {@link #ATTRIBUTE_TIMESTAMP}, {@link #ATTRIBUTE_VALUE}
-   * </p>
-   * @return
-   */
-  def dateAndValueResult: Instances = {
-    val attributes = new ArrayList[Attribute]
-
-    val timestampAttribute = new Attribute(ATTRIBUTE_TIMESTAMP, DATETIME_PATTERN)
-    val valueAttribute = new Attribute(ATTRIBUTE_VALUE + 0)
-    attributes.add(timestampAttribute)
-    attributes.add(valueAttribute)
-    new Instances(NAME_DATE_AND_VALUE, attributes, 0)
-  }
+  //  /**
+  //   * <p>
+  //   * <li>relation name: {@link #NAME_DATE_AND_VALUE}
+  //   * <li>attributes: {@link #ATTRIBUTE_TIMESTAMP}, {@link #ATTRIBUTE_VALUE}
+  //   * </p>
+  //   * @return
+  //   */
+  //  def dateAndValueResult: Instances = {
+  //    val attributes = new ArrayList[Attribute]
+  //
+  //    val timestampAttribute = new Attribute(ATTRIBUTE_TIMESTAMP, DATETIME_PATTERN)
+  //    val valueAttribute = new Attribute(ATTRIBUTE_VALUE + 0)
+  //    attributes.add(timestampAttribute)
+  //    attributes.add(valueAttribute)
+  //    new Instances(NAME_TIME_SERIES, attributes, 0)
+  //  }
 
   /**
    * <p>
@@ -163,7 +161,7 @@ object ResultsUtil {
    * @param names - the numeric attributes names -] accessable via meta data
    * @return
    */
-  def dateAndValuesResult(names: scala.List[String]): Instances = {
+  def timeSeriesResult(names: scala.List[String]): Instances = {
     val attributes = new ArrayList[Attribute]
 
     attributes.add(new Attribute(ATTRIBUTE_TIMESTAMP, "yyyy-MM-dd'T'HH:mm:ss"))
@@ -173,7 +171,7 @@ object ResultsUtil {
       val attribute = new Attribute(ATTRIBUTE_VALUE + i, new ProtectedProperties(props))
       attributes.add(attribute)
     }
-    new Instances(NAME_DATE_AND_VALUES, attributes, 0)
+    new Instances(NAME_TIME_SERIES, attributes, 0)
   }
 
   /**
@@ -187,7 +185,7 @@ object ResultsUtil {
    * @param names - the numeric attributes names -] accessable via meta data
    * @return
    */
-  def dateAndValuesResult(names: List[String]): Instances = dateAndValuesResult(names.toList)
+  def timeSeriesResult(names: List[String]): Instances = timeSeriesResult(names.toList)
 
   /**
    * Columns: One column for every label
@@ -322,6 +320,34 @@ object ResultsUtil {
     returns
 
   }
+
+  /**
+   *
+   * @param dataset
+   * @return map with META_ATTRIBUTE_NAME -> Attribute
+   */
+  def findValueAttributesAsMap(dataset: Instances): Map[String, Attribute] = {
+    var returns: Map[String, Attribute] = Map()
+    var i = 0
+    var attribute = dataset.attribute(ATTRIBUTE_VALUE + i)
+    while (attribute != null) {
+      val name = attribute.getMetadata.getProperty(META_ATTRIBUTE_NAME)
+      if(name == null || name.isEmpty)
+        returns += (attribute.name -> attribute)
+      else
+     	returns += (name -> attribute)
+      i += 1
+      attribute = dataset.attribute(ATTRIBUTE_VALUE + i)
+    }
+    returns
+  }
+
+  /**
+   *
+   * @param dataset
+   * @return map with META_ATTRIBUTE_NAME -> Attribute
+   */
+  def findValueAttributesAsJavaMap(dataset: Instances): java.util.Map[String, Attribute] = findValueAttributesAsMap(dataset).toMap[String, Attribute]
 
   /**
    *
