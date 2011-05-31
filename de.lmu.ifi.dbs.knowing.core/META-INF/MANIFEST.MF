@@ -5,12 +5,11 @@ Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.lmu.ifi.dbs.knowing.core.internal.Activator
 Require-Bundle: nz.ac.waikato.cs.weka;bundle-version="3.7.3";visibility:=reexport,
- se.scalablesolutions.akka.osgi.dependencies.bundle;bundle-version="1.0.0"
+ org.codehaus.aspectwerkz;bundle-version="2.2.2";visibility:=reexport
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: akka,
  akka.actor,
- akka.agent,
  akka.config,
  akka.dataflow,
  akka.dispatch,
@@ -19,7 +18,6 @@ Export-Package: akka,
  akka.japi,
  akka.remoteinterface,
  akka.routing,
- akka.stm,
  akka.transactor,
  akka.transactor.annotation,
  akka.util,
@@ -31,7 +29,6 @@ Export-Package: akka,
  de.lmu.ifi.dbs.knowing.core.factory,
  de.lmu.ifi.dbs.knowing.core.graph,
  de.lmu.ifi.dbs.knowing.core.graph.xml,
- de.lmu.ifi.dbs.knowing.core.internal;x-internal:=true,
  de.lmu.ifi.dbs.knowing.core.processing,
  de.lmu.ifi.dbs.knowing.core.util,
  de.lmu.ifi.dbs.knowing.core.validation,
@@ -39,7 +36,6 @@ Export-Package: akka,
 Bundle-ClassPath: .,
  lib/akka-actor-1.1.jar,
  lib/akka-slf4j-1.1.jar,
- lib/akka-stm-1.1.jar,
  lib/akka-typed-actor-1.1.jar
 Import-Package: org.osgi.framework;version="1.5.0",
  scala;version="2.9.0.final",
