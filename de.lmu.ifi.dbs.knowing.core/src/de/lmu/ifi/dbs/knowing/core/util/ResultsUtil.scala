@@ -26,7 +26,7 @@ object ResultsUtil {
 
   val META_ATTRIBUTE_NAME = "name"
 
-  val DATETIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss"
+  val DATETIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss:SSS"
 
   /* ========================= */
   /* ==== Result Creation ==== */
@@ -164,7 +164,7 @@ object ResultsUtil {
   def timeSeriesResult(names: scala.List[String]): Instances = {
     val attributes = new ArrayList[Attribute]
 
-    attributes.add(new Attribute(ATTRIBUTE_TIMESTAMP, "yyyy-MM-dd'T'HH:mm:ss"))
+    attributes.add(new Attribute(ATTRIBUTE_TIMESTAMP, DATETIME_PATTERN))
     for (i <- 0 until names.size) {
       val props = new Properties()
       props.setProperty(META_ATTRIBUTE_NAME, names.get(i))

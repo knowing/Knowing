@@ -17,7 +17,6 @@ class Activator extends BundleActivator {
 
   def start(context: BundleContext) = {
     Activator.context = context
-    println("Activator started")
     //logger info "Activator started"
     registerServices
   }

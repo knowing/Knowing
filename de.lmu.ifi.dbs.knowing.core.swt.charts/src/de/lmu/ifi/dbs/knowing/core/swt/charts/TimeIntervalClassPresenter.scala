@@ -106,7 +106,6 @@ class TimeIntervalClassPresenter extends AbstractChartPresenter("Time Interval C
   }
 
   private def addItem(s: XYIntervalSeries, p0: RegularTimePeriod, p1: RegularTimePeriod, index: Int) {
-    debug(this, "# Add Time: " + p0 + " to " + p1)
     s.add(index, index - 0.25, index + 0.25, p0.getFirstMillisecond(), p0.getFirstMillisecond(), p1.getLastMillisecond())
   }
 

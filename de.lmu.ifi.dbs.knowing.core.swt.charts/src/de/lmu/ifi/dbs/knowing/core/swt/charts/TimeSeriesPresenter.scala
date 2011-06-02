@@ -10,14 +10,12 @@ import org.jfree.chart.{ JFreeChart, ChartFactory }
 import org.jfree.data.xy.XYDataset
 import org.jfree.chart.plot.{ Plot, XYPlot }
 import org.jfree.data.general.Dataset
-import org.jfree.data.time.{ TimeSeriesCollection, TimeSeries, Second }
+import org.jfree.data.time.{ TimeSeriesCollection, TimeSeries, Second, Millisecond }
 
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import weka.core.{ Instances, Instance, Attribute }
-
-
 
 /**
  * @author Nepomuk Seiler
@@ -47,6 +45,7 @@ class TimeSeriesPresenter extends AbstractChartPresenter("Time Series Presenter"
   }
 
   def buildContent(instances: Instances) = {
+    debug(this, "Create content in TimeSeries: " + instances.relationName)
     //TODO TimeSeriesPresenter -> Check for right Instances format
     guessAndSetClassLabel(instances)
     //First buildContent call
@@ -58,11 +57,16 @@ class TimeSeriesPresenter extends AbstractChartPresenter("Time Series Presenter"
           val s = new TimeSeries(name) //Create TimeSeries with META_ATTRIBUTE_NAME value
           dataset.asInstanceOf[TimeSeriesCollection].addSeries(s)
           series += (attribute.name -> s) //Store internally with real name
+          debug(this, "Added attribute in TimeSeries: " + attribute.name)
       }
     }
 
     //Fill content
     val enum = instances.enumerateInstances
+    val numInst = instances.numInstances;
+    var i = 0
+    var last = 0
+    debug(this, "[                    ][0%]")
     while (enum.hasMoreElements) {
       val inst = enum.nextElement.asInstanceOf[Instance]
       val dateTime = inst.value(instances.attribute(ResultsUtil.ATTRIBUTE_TIMESTAMP))
@@ -71,14 +75,33 @@ class TimeSeriesPresenter extends AbstractChartPresenter("Time Series Presenter"
       series foreach {
         case (name, s) =>
           val value = inst.value(instances.attribute(name))
-          s.add(new Second(date), value)
+          s.add(new Millisecond(date), value)
       }
+      last = printProgress(i, numInst, last)
+      i += 1
     }
     updateChart
   }
 
   def configure(properties: Properties) {}
-
+  
+  private def printProgress(current:Int, complete:Int, last:Int):Int = {
+    val percent = (current * 100) / complete
+    val dots = percent / 5
+    val print = (percent % 5) == 0
+    if(print && last != dots) {
+      val sb = new StringBuilder
+      sb append("[")
+      for(i <- 0 until dots) sb append(".")
+      for(i <- dots until 20) sb append(" ")
+      sb append("][")
+      sb append(percent)
+      sb append("%]")
+      debug(this, sb toString)
+    }
+    dots
+  }
+  
 }
 
 object TimeSeriesPresenter {
