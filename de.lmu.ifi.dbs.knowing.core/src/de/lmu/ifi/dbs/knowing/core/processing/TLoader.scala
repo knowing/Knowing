@@ -46,4 +46,12 @@ object TLoader {
 
   /** Points to the dpu directory. Ends with a file.seperator */
   val DPU_PATH = "path-to-dpu" // this properties is created by the GraphSupervisor-Caller
+
+  def getFilePath(properties: Properties): String = {
+    val absolute = properties.getProperty(ABSOLUTE_PATH, "false").toBoolean
+    absolute match {
+      case true => properties.getProperty(FILE)
+      case false => properties.getProperty(DPU_PATH) + properties.getProperty(FILE)
+    }
+  }
 }

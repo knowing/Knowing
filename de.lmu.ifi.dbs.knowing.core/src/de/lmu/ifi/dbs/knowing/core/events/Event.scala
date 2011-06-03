@@ -28,6 +28,7 @@ case class Reset extends Event
 case class Ready extends Event
 case class Finished extends Event
 case class UpdateUI extends Event
+case class Progress(task:String, worked:Int, work:Int) extends Event
 
 /* ========================= */
 /* == Actor Communication == */

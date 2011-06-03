@@ -5,7 +5,9 @@
    <extension
          point="org.eclipse.ui.views">
       <view
+            category="de.lmu.ifi.dbs.medmon.medic.ui.medmon"
             class="de.lmu.ifi.dbs.knowing.core.swt.view.PresenterView"
+            icon="icons/monitor_16.png"
             id="de.lmu.ifi.dbs.knowing.core.swt.presenterView"
             name="Presenter"
             restorable="true">

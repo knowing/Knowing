@@ -30,14 +30,7 @@ class WekaArffLoader extends TLoader {
   def getDataSet(): Instances = loader.getDataSet
 
   def configure(properties: Properties) = {
-    val absolute = properties.getProperty(WekaArffLoader.PROP_ABSOLUTE_PATH, "false").toBoolean
-    var file = properties.getProperty(WekaArffLoader.PROP_FILE)
-    absolute match {
-      case true => 
-      case false => 
-        val dpuPath = properties.getProperty(TLoader.DPU_PATH)
-        file = dpuPath + file
-    }
+    var file = TLoader.getFilePath(properties)
     val fin = new FileInputStream(file)
     loader.setSource(fin)
   }

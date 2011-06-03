@@ -36,12 +36,12 @@ class TimeSeriesPresenter extends AbstractChartPresenter("Time Series Presenter"
 
   override def configurePlot(plot: Plot) {
     val xyplot = plot.asInstanceOf[XYPlot]
-    val renderer = new XYLineAndShapeRenderer();
-    renderer.setBaseShapesVisible(false);
-    renderer.setSeriesStroke(0, new BasicStroke(
-      0.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
-      5.0f, Array(5.0f, 10.0f), 0.0f));
-    xyplot.setRenderer(renderer);
+//    val renderer = new XYLineAndShapeRenderer();
+//    renderer.setBaseShapesVisible(false);
+//    renderer.setSeriesStroke(0, new BasicStroke(
+//      0.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+//      5.0f, Array(5.0f, 10.0f), 0.0f));
+//    xyplot.setRenderer(renderer);
   }
 
   def buildContent(instances: Instances) = {
@@ -66,6 +66,7 @@ class TimeSeriesPresenter extends AbstractChartPresenter("Time Series Presenter"
     val numInst = instances.numInstances;
     var i = 0
     var last = 0
+    debug(this, "Compute TimeSeries model with " + numInst + " instances")
     debug(this, "[                    ][0%]")
     while (enum.hasMoreElements) {
       val inst = enum.nextElement.asInstanceOf[Instance]
