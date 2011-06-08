@@ -36,12 +36,12 @@ class TimeSeriesPresenter extends AbstractChartPresenter("Time Series Presenter"
 
   override def configurePlot(plot: Plot) {
     val xyplot = plot.asInstanceOf[XYPlot]
-//    val renderer = new XYLineAndShapeRenderer();
-//    renderer.setBaseShapesVisible(false);
-//    renderer.setSeriesStroke(0, new BasicStroke(
-//      0.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
-//      5.0f, Array(5.0f, 10.0f), 0.0f));
-//    xyplot.setRenderer(renderer);
+    //    val renderer = new XYLineAndShapeRenderer();
+    //    renderer.setBaseShapesVisible(false);
+    //    renderer.setSeriesStroke(0, new BasicStroke(
+    //      0.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+    //      5.0f, Array(5.0f, 10.0f), 0.0f));
+    //    xyplot.setRenderer(renderer);
   }
 
   def buildContent(instances: Instances) = {
@@ -50,14 +50,12 @@ class TimeSeriesPresenter extends AbstractChartPresenter("Time Series Presenter"
     guessAndSetClassLabel(instances)
     //First buildContent call
     if (series == null) {
-      series = MutableMap()
-      val values = ResultsUtil.findValueAttributesAsMap(instances)
-      values foreach {
-        case (name, attribute) =>
-          val s = new TimeSeries(name) //Create TimeSeries with META_ATTRIBUTE_NAME value
-          dataset.asInstanceOf[TimeSeriesCollection].addSeries(s)
-          series += (attribute.name -> s) //Store internally with real name
-          debug(this, "Added attribute in TimeSeries: " + attribute.name)
+    	initSeries(instances)
+    } else {
+      series foreach {
+        case (name, s) =>
+          dataset.asInstanceOf[TimeSeriesCollection].removeSeries(s)
+          debug(this, "Removed TimeSeries: " + name)
       }
     }
 
@@ -81,28 +79,51 @@ class TimeSeriesPresenter extends AbstractChartPresenter("Time Series Presenter"
       last = printProgress(i, numInst, last)
       i += 1
     }
+
+    series foreach {
+      case (name, s) =>
+        dataset.asInstanceOf[TimeSeriesCollection].addSeries(s)
+        debug(this, "Readded TimeSeries: " + name)
+    }
     updateChart
   }
 
   def configure(properties: Properties) {}
-  
-  private def printProgress(current:Int, complete:Int, last:Int):Int = {
+
+  /**
+   * <p>Initialize TimeSeries internal model</p>
+   */
+  private def initSeries(instances: Instances) {
+    series = MutableMap()
+    val values = ResultsUtil.findValueAttributesAsMap(instances)
+    values foreach {
+      case (name, attribute) =>
+        val s = new TimeSeries(name) //Create TimeSeries with META_ATTRIBUTE_NAME value
+        series += (attribute.name -> s) //Store internally with real name
+        debug(this, "Added attribute in TimeSeries: " + attribute.name)
+    }
+  }
+
+  /**
+   * Prints progress bar to console
+   */
+  private def printProgress(current: Int, complete: Int, last: Int): Int = {
     val percent = (current * 100) / complete
     val dots = percent / 5
     val print = (percent % 5) == 0
-    if(print && last != dots) {
+    if (print && last != dots) {
       val sb = new StringBuilder
-      sb append("[")
-      for(i <- 0 until dots) sb append(".")
-      for(i <- dots until 20) sb append(" ")
-      sb append("][")
-      sb append(percent)
-      sb append("%]")
+      sb append ("[")
+      for (i <- 0 until dots) sb append (".")
+      for (i <- dots until 20) sb append (" ")
+      sb append ("][")
+      sb append (percent)
+      sb append ("%]")
       debug(this, sb toString)
     }
     dots
   }
-  
+
 }
 
 object TimeSeriesPresenter {

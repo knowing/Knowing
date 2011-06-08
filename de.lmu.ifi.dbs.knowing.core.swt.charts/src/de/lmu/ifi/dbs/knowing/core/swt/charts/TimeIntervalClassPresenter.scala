@@ -66,11 +66,11 @@ class TimeIntervalClassPresenter extends AbstractChartPresenter("Time Interval C
       series = MutableMap()
       val classes = instances.classAttribute.enumerateValues
       var index = 0
-      var labels:List[String] = Nil
+      var labels: List[String] = Nil
       while (classes.hasMoreElements) {
         val clazz = classes.nextElement.asInstanceOf[String]
         val s = new XYIntervalSeries(clazz.asInstanceOf[String])
-        dataset.asInstanceOf[XYIntervalSeriesCollection].addSeries(s)
+        //        dataset.asInstanceOf[XYIntervalSeriesCollection].addSeries(s)
         series += (clazz -> (s, index))
         index += 1
         labels = clazz :: labels
@@ -82,7 +82,10 @@ class TimeIntervalClassPresenter extends AbstractChartPresenter("Time Interval C
       val xAxis = new SymbolAxis(xAxisLabel, labels.reverse.toArray)
       xAxis.setGridBandsVisible(false)
       xyplot.setDomainAxis(xAxis)
-
+    } else {
+      series foreach {
+        case (_, (s, _)) => dataset.asInstanceOf[XYIntervalSeriesCollection].removeSeries(s)
+      }
     }
     //Fill content
     val enum = instances.enumerateInstances
@@ -101,6 +104,9 @@ class TimeIntervalClassPresenter extends AbstractChartPresenter("Time Interval C
         case (s, index) => addItem(s, new Second(new Date(from.toLong)), new Second(new Date(to.toLong)), index)
         case _ => warning(this, "Unkown value")
       }
+    }
+    series foreach {
+      case (_, (s, _)) => dataset.asInstanceOf[XYIntervalSeriesCollection].addSeries(s)
     }
     updateChart
   }
