@@ -24,20 +24,31 @@ import weka.core.{ Attribute, Instance, Instances }
  */
 trait TProcessor extends Actor with TSender with TConfigurable {
 
-  def receive = {
+  def receive: Receive = customReceive orElse defaultReceive
+
+  /**
+   * <p>Override for special behaviour</p>
+   */
+  protected def customReceive: Receive = defaultReceive
+
+  /**
+   * <p>Default behaviour</p>
+   */
+  private def defaultReceive: Receive = {
     case Register(actor) => addListener(actor)
     case Configure(p) =>
       configure(p)
-      self reply Ready
+      if (self.getSender.isDefined)
+        self reply Ready
     case Start => debug(this, "Running " + self.getActorClassName)
-    case Query(q) => self reply QueryResults(query(q),q)
+    case Query(q) => self reply QueryResults(query(q), q)
     case Queries(q) =>
       val enum = q.enumerateInstances
       while (enum.hasMoreElements) {
         val instance = enum.nextElement.asInstanceOf[Instance]
         self reply QueryResults(query(instance), instance)
       }
-    case QueryResults(r,q) => result(r,q)
+    case QueryResults(r, q) => result(r, q)
     case Results(instances) => build(instances)
     case msg => warning(this, "<----> " + msg)
   }
@@ -69,15 +80,15 @@ trait TProcessor extends Actor with TSender with TConfigurable {
    * @return Instances - Query result
    */
   def query(query: Instance): Instances
-  
+
   /**
    * <p>After the processor sending a query, this method
    * is called if it gets a response</p>
-   * 
+   *
    * @param result - the results
-   * @param query - the query 
+   * @param query - the query
    */
-  def result(result: Instances, query:Instance)
+  def result(result: Instances, query: Instance)
 
   /**
    * <p>The presenter connected to this {@link IResultProcessor} calls this<br>

@@ -6,16 +6,17 @@ import scala.collection.mutable.{ Map => MutableMap }
 import akka.event.EventHandler.{ debug, info, warning, error }
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
+import org.eclipse.swt.widgets.Listener
 import org.jfree.chart.{ JFreeChart, ChartFactory }
 import org.jfree.data.xy.XYDataset
 import org.jfree.chart.plot.{ Plot, XYPlot }
 import org.jfree.data.general.Dataset
 import org.jfree.data.time.{ TimeSeriesCollection, TimeSeries, Second, Millisecond }
-
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import weka.core.{ Instances, Instance, Attribute }
+
 
 /**
  * @author Nepomuk Seiler
@@ -28,35 +29,22 @@ class TimeSeriesPresenter extends AbstractChartPresenter("Time Series Presenter"
   private var series: MutableMap[String, TimeSeries] = null
 
   protected def createChart(dataset: Dataset): JFreeChart = {
-    ChartFactory.createTimeSeriesChart(name, "Day", "Value",
+    ChartFactory.createTimeSeriesChart(name, "", "",
       dataset.asInstanceOf[XYDataset], false, false, false)
   }
 
   protected def createDataset(): Dataset = new TimeSeriesCollection
-
-  override def configurePlot(plot: Plot) {
-    val xyplot = plot.asInstanceOf[XYPlot]
-    //    val renderer = new XYLineAndShapeRenderer();
-    //    renderer.setBaseShapesVisible(false);
-    //    renderer.setSeriesStroke(0, new BasicStroke(
-    //      0.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
-    //      5.0f, Array(5.0f, 10.0f), 0.0f));
-    //    xyplot.setRenderer(renderer);
-  }
 
   def buildContent(instances: Instances) = {
     debug(this, "Create content in TimeSeries: " + instances.relationName)
     //TODO TimeSeriesPresenter -> Check for right Instances format
     guessAndSetClassLabel(instances)
     //First buildContent call
+    val dataset = this.dataset.asInstanceOf[TimeSeriesCollection]
     if (series == null) {
-    	initSeries(instances)
+      initSeries(instances)
     } else {
-      series foreach {
-        case (name, s) =>
-          dataset.asInstanceOf[TimeSeriesCollection].removeSeries(s)
-          debug(this, "Removed TimeSeries: " + name)
-      }
+      series foreach { case (name, s) => dataset.removeSeries(s) }
     }
 
     //Fill content
@@ -80,16 +68,12 @@ class TimeSeriesPresenter extends AbstractChartPresenter("Time Series Presenter"
       i += 1
     }
 
-    series foreach {
-      case (name, s) =>
-        dataset.asInstanceOf[TimeSeriesCollection].addSeries(s)
-        debug(this, "Readded TimeSeries: " + name)
-    }
+    series foreach { case (name, s) => dataset.addSeries(s) }
     updateChart
   }
 
   def configure(properties: Properties) {}
-
+  
   /**
    * <p>Initialize TimeSeries internal model</p>
    */

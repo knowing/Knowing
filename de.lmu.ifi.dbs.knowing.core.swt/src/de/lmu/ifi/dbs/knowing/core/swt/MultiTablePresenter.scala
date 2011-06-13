@@ -2,14 +2,16 @@ package de.lmu.ifi.dbs.knowing.core.swt
 
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
+import de.lmu.ifi.dbs.knowing.core.swt.handler.SWTListener
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
 import java.util.Properties
 import org.eclipse.swt.layout.FillLayout
 import org.eclipse.swt.SWT
-import org.eclipse.swt.widgets.{ Composite, TabFolder, TabItem }
+import org.eclipse.swt.widgets.{ Composite, TabFolder, TabItem , Listener}
 import weka.core.Instances
+
 
 /**
  * <p>MultiTablePresenter holds multiple TablePresenter in a map.<br>
@@ -39,7 +41,7 @@ class MultiTablePresenter extends SWTPresenter {
         val p = actorOf[TablePresenter].start
         debug(this, "... and createContainer for " + p.getActorClassName)
         //TODO MultiTablePresenter must declare own UIFactory
-//        p ! UIContainer(createTab(relation))
+        //        p ! UIContainer(createTab(relation))
         debug(this, "... and build content for " + p.getActorClassName)
         p ! Results(instances)
         tables += (relation -> p)
@@ -60,14 +62,13 @@ class MultiTablePresenter extends SWTPresenter {
     val composite = new Composite(tabFolder, SWT.NONE)
     composite.setLayout(new FillLayout())
     tabItem.setControl(composite)
-    debug(this,"Composite created: " + composite)
+    debug(this, "Composite created: " + composite)
     composite
   }
 
   def configure(properties: Properties) = {}
 
-  def getModel(labels: Array[String]): Instances = { null }
-
+  def addListener(typ: Int, listener: Listener) = tables foreach {case(_, actor) => actor ! SWTListener(typ, listener)}
 }
 
 object MultiTablePresenter { val name = "MultiTable Presenter" }

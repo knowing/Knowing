@@ -1,12 +1,12 @@
 package de.lmu.ifi.dbs.knowing.core.swt
 
-import de.lmu.ifi.dbs.knowing.core.processing.TPresenter
 import org.eclipse.swt.layout.FillLayout
 import org.eclipse.swt.SWT
-import org.eclipse.swt.widgets.Composite
+import org.eclipse.swt.widgets.{ Composite, Label, Listener }
 import weka.core.Instances
 import akka.event.EventHandler.{ debug, info, warning, error }
-import org.eclipse.swt.widgets.Label
+import de.lmu.ifi.dbs.knowing.core.processing.TPresenter
+import de.lmu.ifi.dbs.knowing.core.swt.handler.SWTListener
 
 /**
  * @author Nepomuk Seiler
@@ -17,6 +17,12 @@ import org.eclipse.swt.widgets.Label
 abstract class SWTPresenter extends TPresenter[Composite] {
 
   private var composite: Composite = _
+  
+  override def customReceive = {
+    case SWTListener(typ, listener) => composite.getDisplay.asyncExec(new Runnable() {
+      def run = addListener(typ, listener) })
+    
+  }
 
   def createContainer(parent: Composite) {
     if (composite != null && !composite.isDisposed())
@@ -34,6 +40,8 @@ abstract class SWTPresenter extends TPresenter[Composite] {
   def dispose = composite dispose
 
   def redraw = composite redraw
+  
+  def addListener(typ:Int, listener:Listener)
 
   /**
    * <p>Delegates the call to buildContent() and runs it sync <br>

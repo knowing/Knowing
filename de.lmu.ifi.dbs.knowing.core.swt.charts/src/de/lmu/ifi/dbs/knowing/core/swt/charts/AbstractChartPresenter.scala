@@ -1,26 +1,19 @@
 package de.lmu.ifi.dbs.knowing.core.swt.charts
 
+import java.awt.Point
+import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.swt.SWTPresenter
+import de.lmu.ifi.dbs.knowing.core.swt.charts.handler.{ TChartHandler, ZoomChartHandler, ChartHandlerAdapter }
 import org.jfree.data.general.Dataset
 import org.jfree.chart.JFreeChart
-import org.jfree.chart.plot.Plot
+import org.jfree.chart.{ ChartMouseListener, ChartMouseEvent }
+import org.jfree.chart.event.{ ChartChangeListener, ChartChangeEvent, ChartProgressListener, ChartProgressEvent }
+import org.jfree.chart.plot.{ Plot, Zoomable }
 import org.jfree.experimental.chart.swt.ChartComposite
-import org.eclipse.swt.widgets.Composite
+import org.eclipse.swt.widgets.{ Composite, Listener, Event, Widget }
 import org.eclipse.swt.SWT
+import org.eclipse.swt.events.{ MouseEvent, MouseWheelListener }
 import weka.core.Instances
-import org.jfree.chart.ChartMouseListener
-import org.jfree.chart.ChartMouseEvent
-import org.eclipse.swt.events.MouseEvent
-import org.eclipse.swt.events.MouseWheelListener
-import org.jfree.chart.plot.Zoomable
-import java.awt.Point
-import org.jfree.chart.event.ChartChangeListener
-import org.jfree.chart.event.ChartChangeEvent
-import org.jfree.chart.event.ChartProgressListener
-import org.jfree.chart.event.ChartProgressEvent
-import handler.ChartHandlerAdapter
-import de.lmu.ifi.dbs.knowing.core.swt.charts.handler.TChartHandler
-import de.lmu.ifi.dbs.knowing.core.swt.charts.handler.ZoomChartHandler
 
 /**
  * @author Nepomuk Seiler
@@ -30,9 +23,9 @@ import de.lmu.ifi.dbs.knowing.core.swt.charts.handler.ZoomChartHandler
  */
 abstract class AbstractChartPresenter(val name: String) extends SWTPresenter {
 
-  private var chartComposite: ChartComposite = _
   private var chart: JFreeChart = _
 
+  protected var chartComposite: ChartComposite = _
   protected var plot: Plot = _
   protected var dataset: Dataset = createDataset
 
@@ -45,13 +38,22 @@ abstract class AbstractChartPresenter(val name: String) extends SWTPresenter {
     chartComposite = new ChartComposite(parent, SWT.NONE, chart, true)
     configureChartHandler(chartComposite)
     plot = chart.getPlot
-    
+
   }
 
   def updateChart {
     if (chart != null)
       chart.fireChartChanged
   }
+
+  def addListener(typ: Int, listener: Listener) {
+    typ match {
+      case SWT.MouseDown => chartComposite.addChartMouseListener(new SWTMouseListenerProxy(typ, listener))
+      case SWT.MouseMove => chartComposite.addChartMouseListener(new SWTMouseListenerProxy(typ, listener))
+      case _ => chartComposite.addListener(typ, listener)
+    }
+  }
+
   /**
    * Override this method for special behaviour. It's called
    * after the dataset was created;
@@ -75,6 +77,33 @@ abstract class AbstractChartPresenter(val name: String) extends SWTPresenter {
 
   protected def createDataset: Dataset
 
+}
+
+class SWTMouseListenerProxy(typ: Int, listener: Listener) extends ChartMouseListener {
+
+  def chartMouseClicked(event: ChartMouseEvent) {
+    if (typ != SWT.MouseDown)
+      return
+    listener.handleEvent(convert(event))
+  }
+
+  def chartMouseMoved(event: ChartMouseEvent) {
+    if (typ != SWT.MouseMove)
+      return
+    listener.handleEvent(convert(event))
+  }
+
+  private def convert(event: ChartMouseEvent): Event = {
+    val e = new Event
+    val trigger = event.getTrigger
+    e.x = trigger.getX
+    e.y = trigger.getY
+    e.button = trigger.getButton
+    e.count = trigger.getClickCount
+    e.time = trigger.getWhen.toInt
+    e.data = event.getChart
+    e
+  }
 }
 
 

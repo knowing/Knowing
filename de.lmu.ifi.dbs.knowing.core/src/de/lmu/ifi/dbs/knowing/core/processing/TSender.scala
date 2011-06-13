@@ -11,13 +11,14 @@ trait TSender { this: Actor =>
 
   def addListener(listener: ActorRef) = {
     listeners += (listener.getUuid -> listener)
-    self reply Registered(true)
+    if (self.getSender.isDefined)
+      self reply Registered(true)
   }
 
-  def removeListener(listener: ActorRef) =  listeners remove (listener.getUuid)
-  
-  def sendEvent(event: Event) = listeners foreach {case (_, actor) => sendToActor(actor, event)}
-  
+  def removeListener(listener: ActorRef) = listeners remove (listener.getUuid)
+
+  def sendEvent(event: Event) = listeners foreach { case (_, actor) => sendToActor(actor, event) }
+
   protected def sendToActor(actor: ActorRef, event: Event) = {
     if (actor.isRunning)
       actor ! event

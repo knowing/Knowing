@@ -8,7 +8,7 @@ import weka.core.Instance
 
 import java.util.Properties
 
-sealed trait Event
+trait Event
 
 /* ======================== */
 /* == Data Exchange ======= */

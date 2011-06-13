@@ -13,6 +13,7 @@ import org.eclipse.swt.layout.{ GridData , GridLayout }
 import org.eclipse.jface.layout.TableColumnLayout
 import org.eclipse.jface.viewers.ColumnWeightData
 import weka.core.{ Instances, Attribute }
+import org.eclipse.swt.widgets.Listener
 
 
 
@@ -78,8 +79,6 @@ class TablePresenter extends SWTPresenter {
     viewer.refresh()
   }
 
-  def getModel(labels: Array[String]): Instances = { null }
-
   def createColumns(instances: Instances) {
     if (columnsInit)
       return
@@ -109,6 +108,8 @@ class TablePresenter extends SWTPresenter {
     val row_string = properties.getProperty(TablePresenter.ROWS_PER_PAGE, "100")
     rows = row_string.toInt
   }
+  
+  def addListener(typ:Int, listener:Listener) = viewer.getTable.addListener(typ, listener)
 
   private def createInput(instances: Instances): Instances = {
     if (instances.numInstances > rows)

@@ -9,11 +9,22 @@ import akka.event.EventHandler
 
 trait TLoader extends Actor with TSender with TConfigurable {
 
-  def receive = {
+  def receive: Receive = customReceive orElse defaultReceive
+
+  /**
+   * <p>Override for special behaviour</p>
+   */
+  protected def customReceive: Receive = defaultReceive
+
+  /**
+   * <p>Default behaviour</p>
+   */
+  private def defaultReceive: Receive = {
     case Register(actor) => addListener(actor)
     case Configure(p) =>
       configure(p)
-      self reply Ready
+      if (self.getSender.isDefined)
+        self reply Ready
     case Start =>
       val dataset = getDataSet
       sendEvent(new Results(dataset))

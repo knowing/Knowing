@@ -1,7 +1,7 @@
 package de.lmu.ifi.dbs.knowing.core.processing
 
 import java.util.Properties
-import weka.core.{ Instances , Attribute}
+import weka.core.{ Instances, Attribute }
 import akka.actor.{ Actor, ActorRef }
 import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.graph.Node
@@ -19,11 +19,22 @@ trait TPresenter[T] extends Actor with TSender with TConfigurable {
 
   val name: String
 
-  def receive = {
+  def receive: Receive = customReceive orElse defaultReceive
+
+  /**
+   * <p>Override for special behaviour</p>
+   */
+  protected def customReceive: Receive = defaultReceive
+
+  /**
+   * <p>Default behaviour</p>
+   */
+  private def defaultReceive: Receive = {
     case UIFactoryEvent(factory, node) =>
       val parent = factory createContainer (node)
       createContainer(parent.asInstanceOf[T])
-      self reply Ready
+      if(self.getSender.isDefined)
+    	  self reply Ready
     case Configure(properties) =>
       configure(properties)
       self reply Ready
