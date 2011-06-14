@@ -3,7 +3,9 @@ package de.lmu.ifi.dbs.knowing.core.swt.charts
 import java.awt.Point
 import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.swt.SWTPresenter
+import de.lmu.ifi.dbs.knowing.core.swt.handler.SWTListener
 import de.lmu.ifi.dbs.knowing.core.swt.charts.handler.{ TChartHandler, ZoomChartHandler, ChartHandlerAdapter }
+import de.lmu.ifi.dbs.knowing.core.swt.charts.events._
 import org.jfree.data.general.Dataset
 import org.jfree.chart.JFreeChart
 import org.jfree.chart.{ ChartMouseListener, ChartMouseEvent }
@@ -29,6 +31,15 @@ abstract class AbstractChartPresenter(val name: String) extends SWTPresenter {
   protected var plot: Plot = _
   protected var dataset: Dataset = createDataset
 
+  private var progressListener: List[ChartProgressListener] = Nil
+  private var changeListener: List[ChartChangeListener] = Nil
+
+  override def customReceive = {
+    case ChartProgressListenerRegister(l) => addProgressListener(l)
+    case ChartChangeListenerRegister(l) => addChangeListener(l)
+    case SWTListener(typ, listener) => super.customReceive { SWTListener(typ, listener) }
+  }
+
   /**
    *
    */
@@ -39,6 +50,10 @@ abstract class AbstractChartPresenter(val name: String) extends SWTPresenter {
     configureChartHandler(chartComposite)
     plot = chart.getPlot
 
+    progressListener foreach (l => chart.addProgressListener(l))
+    progressListener = Nil
+    changeListener foreach (l => chart.addChangeListener(l))
+    changeListener = Nil
   }
 
   def updateChart {
@@ -52,6 +67,20 @@ abstract class AbstractChartPresenter(val name: String) extends SWTPresenter {
       case SWT.MouseMove => chartComposite.addChartMouseListener(new SWTMouseListenerProxy(typ, listener))
       case _ => chartComposite.addListener(typ, listener)
     }
+  }
+
+  private def addProgressListener(l: ChartProgressListener) {
+    if (chart != null)
+      chart.addProgressListener(l)
+    else
+      progressListener ::= l
+  }
+
+  private def addChangeListener(l: ChartChangeListener) {
+    if (chart != null)
+      chart.addChangeListener(l)
+    else
+      changeListener ::= l
   }
 
   /**
@@ -82,6 +111,7 @@ abstract class AbstractChartPresenter(val name: String) extends SWTPresenter {
 class SWTMouseListenerProxy(typ: Int, listener: Listener) extends ChartMouseListener {
 
   def chartMouseClicked(event: ChartMouseEvent) {
+    
     if (typ != SWT.MouseDown)
       return
     listener.handleEvent(convert(event))
