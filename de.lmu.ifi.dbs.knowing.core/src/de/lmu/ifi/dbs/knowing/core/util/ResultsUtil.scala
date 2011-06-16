@@ -18,6 +18,7 @@ object ResultsUtil {
   val ATTRIBUTE_FROM = "from"
   val ATTRIBUTE_TO = "to"
 
+  val NAME_EMPTY = "empty"
   val NAME_CLASS_ONLY = "class_only"
   val NAME_CLASS_AND_PROBABILITY = "class_and_probability"
   val NAME_CROSS_VALIDATION = "cross_validation"
@@ -31,6 +32,11 @@ object ResultsUtil {
   /* ========================= */
   /* ==== Result Creation ==== */
   /* ========================= */
+
+  /**
+   * Empty Instances
+   */
+  def emptyResult: Instances = new Instances(NAME_EMPTY, new ArrayList[Attribute], 0)
 
   /**
    * <p>
@@ -332,10 +338,10 @@ object ResultsUtil {
     var attribute = dataset.attribute(ATTRIBUTE_VALUE + i)
     while (attribute != null) {
       val name = attribute.getMetadata.getProperty(META_ATTRIBUTE_NAME)
-      if(name == null || name.isEmpty)
+      if (name == null || name.isEmpty)
         returns += (attribute.name -> attribute)
       else
-     	returns += (name -> attribute)
+        returns += (name -> attribute)
       i += 1
       attribute = dataset.attribute(ATTRIBUTE_VALUE + i)
     }

@@ -54,20 +54,16 @@ trait TProcessor extends Actor with TSender with TConfigurable {
   }
 
   /**
-   * <p>This method build the internal model which is used<br>
-   * to answer queries.</p>
-   *
-   * <p>The build process should be implemented in an own<br>
-   * thread, so other processors could build up their models<br>
-   * too.</p>
-   *
-   * <p>Calling this method more than once should generate a<br>
-   * new model based on the old one, instead of building a<br>
-   * new model. For reseting the model use {@link #resetModel()}</p>
-   *
-   * @param the dataset
+   * @see TClassifier
    */
+  @deprecated
   def build(instances: Instances)
+
+  /**
+   * @see TClassifier
+   */
+  @deprecated
+  def getClassLabels: Array[String]
 
   /**
    * <p>A query is answered via the interal model build by the buildModel method.<br>
@@ -89,15 +85,6 @@ trait TProcessor extends Actor with TSender with TConfigurable {
    * @param query - the query
    */
   def result(result: Instances, query: Instance)
-
-  /**
-   * <p>The presenter connected to this {@link IResultProcessor} calls this<br>
-   * method to generate his initial presentation model. After that the<br>
-   * presenter starts querying the processor.</p>
-   *
-   * @return - class labels
-   */
-  def getClassLabels: Array[String]
 
   /**
    *  <p>Checks the dataset for class attribute in this order
