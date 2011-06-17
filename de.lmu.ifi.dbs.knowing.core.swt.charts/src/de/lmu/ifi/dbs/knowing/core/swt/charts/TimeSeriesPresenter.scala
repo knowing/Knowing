@@ -71,6 +71,11 @@ class TimeSeriesPresenter extends AbstractChartPresenter("Time Series Presenter"
     series foreach { case (name, s) => dataset.addSeries(s) }
     updateChart
   }
+  
+  override def configurePlot(plot: Plot) {
+    val xyplot = plot.asInstanceOf[XYPlot]
+    xyplot.setDomainCrosshairVisible(true);
+  }
 
   def configure(properties: Properties) {}
   
