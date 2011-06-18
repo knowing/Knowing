@@ -49,21 +49,9 @@ trait TProcessor extends Actor with TSender with TConfigurable {
         self reply QueryResults(query(instance), instance)
       }
     case QueryResults(r, q) => result(r, q)
-    case Results(instances) => build(instances)
     case msg => warning(this, "<----> " + msg)
   }
 
-  /**
-   * @see TClassifier
-   */
-  @deprecated
-  def build(instances: Instances)
-
-  /**
-   * @see TClassifier
-   */
-  @deprecated
-  def getClassLabels: Array[String]
 
   /**
    * <p>A query is answered via the interal model build by the buildModel method.<br>

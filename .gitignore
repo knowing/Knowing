@@ -19,3 +19,4 @@
 
 #except this file
 !.gitignore
+/nz.ac.waikato.cs.weka
