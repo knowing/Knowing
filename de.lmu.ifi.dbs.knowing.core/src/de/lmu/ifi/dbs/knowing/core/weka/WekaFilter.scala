@@ -1,11 +1,13 @@
 package de.lmu.ifi.dbs.knowing.core.weka
 
 import java.util.Properties
-
 import de.lmu.ifi.dbs.knowing.core.processing.TFilter
-
 import weka.core.{ Instance, Instances }
 import weka.filters.Filter
+import de.lmu.ifi.dbs.knowing.core.factory.TFactory
+import akka.actor.ActorRef
+import akka.actor.Actor.actorOf
+import akka.event.EventHandler.{ debug, info, warning, error }
 
 /**
  * @author Nepomuk Seiler
@@ -19,6 +21,7 @@ class WekaFilter(protected val filter: Filter) extends TFilter {
    * <p>Code mainly from weka.filters.Filter</p>
    */
   def filter(instances: Instances): Instances = {
+    instances.setClassIndex(instances.numAttributes()-1)
     filter.setInputFormat(new Instances(instances, 0))
     val enum = instances.enumerateInstances
     while (enum.hasMoreElements) {
@@ -45,4 +48,37 @@ class WekaFilter(protected val filter: Filter) extends TFilter {
 
   def configure(properties: Properties) = {}
 
+}
+
+/* =========================== */
+/* ==== Processor Factory ==== */
+/* =========================== */
+
+/**
+ *
+ * @author Nepomuk Seiler
+ * @version 0.1
+ * @since 21.04.2011
+ */
+class WekaFilterFactory[T <: WekaFilter, S <: Filter](wrapper: Class[T], clazz: Class[S]) extends TFactory {
+
+  val name: String = clazz.getSimpleName
+  val id: String = clazz.getName
+
+  def getInstance(): ActorRef = actorOf(wrapper)
+
+  /* ======================= */
+  /* ==== Configuration ==== */
+  /* ======================= */
+
+  def createDefaultProperties: Properties = new Properties
+
+  def createPropertyValues: Map[String, Array[_ <: Any]] = Map()
+
+  def createPropertyDescription: Map[String, String] = Map()
+
+}
+
+object WekaFilterFactory {
+  val DEBUG = "debug"
 }
