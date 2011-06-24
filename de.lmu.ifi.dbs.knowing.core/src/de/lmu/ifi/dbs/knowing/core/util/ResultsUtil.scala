@@ -139,23 +139,6 @@ object ResultsUtil {
    */
   def classAndProbabilityResult(labels: List[String], distribution: Array[Double]): Instances = classAndProbabilityResult(labels.toList)
 
-  //  /**
-  //   * <p>
-  //   * <li>relation name: {@link #NAME_DATE_AND_VALUE}
-  //   * <li>attributes: {@link #ATTRIBUTE_TIMESTAMP}, {@link #ATTRIBUTE_VALUE}
-  //   * </p>
-  //   * @return
-  //   */
-  //  def dateAndValueResult: Instances = {
-  //    val attributes = new ArrayList[Attribute]
-  //
-  //    val timestampAttribute = new Attribute(ATTRIBUTE_TIMESTAMP, DATETIME_PATTERN)
-  //    val valueAttribute = new Attribute(ATTRIBUTE_VALUE + 0)
-  //    attributes.add(timestampAttribute)
-  //    attributes.add(valueAttribute)
-  //    new Instances(NAME_TIME_SERIES, attributes, 0)
-  //  }
-
   /**
    * <p>
    * Creates an Instances object with a DATE column and [code]names.size()[/code]
@@ -167,10 +150,10 @@ object ResultsUtil {
    * @param names - the numeric attributes names -] accessable via meta data
    * @return
    */
-  def timeSeriesResult(names: scala.List[String]): Instances = {
+  def timeSeriesResult(names: scala.List[String], datePattern: String): Instances = {
     val attributes = new ArrayList[Attribute]
 
-    attributes.add(new Attribute(ATTRIBUTE_TIMESTAMP, DATETIME_PATTERN))
+    attributes.add(new Attribute(ATTRIBUTE_TIMESTAMP, datePattern))
     for (i <- 0 until names.size) {
       val props = new Properties()
       props.setProperty(META_ATTRIBUTE_NAME, names.get(i))
@@ -180,6 +163,11 @@ object ResultsUtil {
     new Instances(NAME_TIME_SERIES, attributes, 0)
   }
 
+  /**
+   * @see timeSeriesResult(names, datePattern)
+   */
+  def timeSeriesResult(names: scala.List[String]): Instances = timeSeriesResult(names, DATETIME_PATTERN)
+  
   /**
    * <p>
    * Creates an Instances object with a DATE column and [code]names.size()[/code]
@@ -192,6 +180,8 @@ object ResultsUtil {
    * @return
    */
   def timeSeriesResult(names: List[String]): Instances = timeSeriesResult(names.toList)
+  
+  def timeSeriesResult(names: List[String], datePattern: String): Instances = timeSeriesResult(names.toList, datePattern)
 
   /**
    * Columns: One column for every label

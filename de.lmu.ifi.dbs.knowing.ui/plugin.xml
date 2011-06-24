@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="de.lmu.ifi.dbs.knowing.ui.editor.DPUEditor"
+            contributorClass="de.lmu.ifi.dbs.knowing.ui.editor.DPUActionBarContributor"
+            default="true"
+            extensions="dpu, xml"
+            filenames="dpu, dpu.xml"
+            id="de.lmu.ifi.dbs.knowing.ui.editor.DPUEditor"
+            name="DPU Edtior">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="de.lmu.ifi.dbs.knowing.ui.knowing"
+            name="Knowing">
+      </category>
+      <wizard
+            class="de.lmu.ifi.dbs.knowing.ui.wizard.NewDPUWizard"
+            id="de.lmu.ifi.dbs.knowing.ui.NewDPUWizard"
+            name="New DataProcessingUnit">
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="de.lmu.ifi.dbs.knowing.core.graph.Node"
+            class="de.lmu.ifi.dbs.knowing.ui.adapter.NodeAdapterFactory">
+         <adapter
+               type="de.lmu.ifi.dbs.knowing.ui.adapter.IWorkbenchColumnAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="de.lmu.ifi.dbs.knowing.core.graph.Edge"
+            class="de.lmu.ifi.dbs.knowing.ui.adapter.EdgeAdapterFactory">
+         <adapter
+               type="de.lmu.ifi.dbs.knowing.ui.adapter.IWorkbenchColumnAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+      </factory>
+   </extension>
+</plugin>

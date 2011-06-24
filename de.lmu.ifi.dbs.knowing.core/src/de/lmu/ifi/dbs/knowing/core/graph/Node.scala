@@ -17,7 +17,7 @@ import de.lmu.ifi.dbs.knowing.core.graph.xml.PropertiesAdapter
  * @since 18.04.2011
  * 
  */
-sealed trait Node {
+trait Node {
   var id: String
   var factoryId: String
   var nodeType: String
