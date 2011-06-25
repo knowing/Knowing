@@ -20,51 +20,76 @@ import weka.filters.SimpleBatchFilter;
 public class LDAFilter extends SimpleBatchFilter{
 	
 	private final static double DIMENSION_REDUCTION_PER = 0.95;
+	
+	private boolean dimReduction = false;
 	private static double SINGULARITY_DETECTION_THRESHOLD = 1.0E-60;
 	private static final long serialVersionUID = 1L;
-	private ArrayList<String> classList;
+	
 	private int dimension;
-	private double[] totalMean;
-	private double[][] groupMean;
+	private int discriminants;
 	private Matrix eigenVectorMatrix;
 	private double[] eigenValues;
 	
 	@Override
-	public String globalInfo() {
-		// TODO change description
-		return "A simple batch filter that adds an additional attribute 'bla' at the end containing the index of the processed instance.";
+	public String globalInfo() {		
+		return "This batch filter perfoms a linear discriminant analysis (LDA) on all numeric attributes of the instances.\n\n" +
+				"For furhter details on the LDA have a look at the Article 'Eigenfaces vs. Fisherfaces: recognition using class " +
+				"specific linear projection' by Belhumeur et al. (1997).";
 	}
 	
 	@Override
 	protected Instances determineOutputFormat(Instances inputFormat) throws Exception {
 		Instances result = new Instances(inputFormat, 0);
+		if(dimReduction){
+			int toDelete = dimension - discriminants;
+			for(int i=inputFormat.numAttributes()-1; toDelete>0 && i>=0; i--){
+				if(i!=inputFormat.classIndex() && inputFormat.attribute(i).isNumeric()){
+					result.deleteAttributeAt(i);
+					toDelete--;
+				}
+			}
+		}
 		return result;
 	}
+	
 	@Override
 	public Capabilities getCapabilities() {
 	     Capabilities result = super.getCapabilities();	     
-	     result.enable(Capability.NUMERIC_ATTRIBUTES); // only numeric attributes are accepted
-	     result.enable(Capability.STRING_CLASS);  // filter needs a class to be set
+	     result.enable(Capability.DATE_ATTRIBUTES); // date attribute is accepted, but will only be passed through
+	     result.enable(Capability.NUMERIC_ATTRIBUTES); // only numeric attributes are proccessed
+	     result.enable(Capability.STRING_CLASS);  // filter needs a string class to be set
+	     
 	     return result;
 	}
-	
-	
 		
-	protected Instances process(Instances inst) throws Exception {
-		
-		this.performLDA(inst);
-		Instances result = new Instances(determineOutputFormat(inst), 0);
-	    for (int i = 0; i < inst.numInstances(); i++) {
-	    	Instance r = transformData(inst.get(i));
-	    	result.add(r);
-	    }
-		return result;
+	public void setDimensionReduction(boolean b) throws Exception{
+		this.dimReduction = b;
 	}
 	
-	private void performLDA(Instances inst) throws Exception{
+	@Override
+	protected Instances process(Instances inst) throws Exception {
 		
-		dimension = inst.numAttributes()-1;
-		classList = Collections.list((Enumeration<String>)inst.classAttribute().enumerateValues());								
+		this.determineProjectionMatrix(inst);
+		
+		return this.transformData(inst,dimReduction);		
+	}
+	
+	/**
+	 * perfoms a Eigenvalue decomposition to determine the optimal projection matrix for the given Instances 
+	 * @param inst the instances to calculate the LDA for
+	 * @throws Exception throws an Exception if one of the covariance matrixes gets singular 
+	 */
+	private void determineProjectionMatrix(Instances inst) throws Exception{
+		
+		dimension = 0;
+		for(int i=0;i<inst.numAttributes();i++){
+			if(i!=inst.classIndex() && inst.attribute(i).isNumeric()){
+				dimension++;
+			}
+		}
+		
+		//This cast is save -> capabilities allow only String classes
+		ArrayList<String> classList = Collections.list((Enumeration<String>)inst.classAttribute().enumerateValues());								
 		
 		// divide data into subsets
 		ArrayList<ArrayList<ArrayList<Double>>> subset = new ArrayList<ArrayList<ArrayList<Double>>>();
@@ -77,7 +102,7 @@ public class LDAFilter extends SimpleBatchFilter{
 				if(cla.equals(currentClasss)){
 					ArrayList<Double> al = new ArrayList<Double>();
 					for(int k=0;k<in.numAttributes();k++){
-						if(k!=inst.classIndex()){
+						if(k!=inst.classIndex() && inst.attribute(k).isNumeric()){
 							al.add(in.value(k));
 						}
 					}
@@ -88,7 +113,7 @@ public class LDAFilter extends SimpleBatchFilter{
 		}
 		
 		// calculate group mean
-		groupMean = new double[subset.size()][dimension];
+		double[][] groupMean = new double[subset.size()][dimension];
 		for (int i = 0; i < groupMean.length; i++) {
 			for (int j = 0; j < groupMean[i].length; j++) {
 				groupMean[i][j] = getGroupMean(j, subset.get(i));
@@ -96,7 +121,7 @@ public class LDAFilter extends SimpleBatchFilter{
 		}
 
 		// calculate total mean
-		totalMean = new double[dimension];
+		double[] totalMean = new double[dimension];
 		for (int i = 0; i < totalMean.length; i++) {
 			totalMean[i] = getTotalMean(i, inst);
 		}
@@ -139,8 +164,7 @@ public class LDAFilter extends SimpleBatchFilter{
 		
 		Matrix sbm = new Matrix(sb);
 		Matrix swm = new Matrix(sw);
-		
-		
+				
 		Matrix criterion = (swm.inverse()).times(sbm);
 		EigenvalueDecomposition evd = new EigenvalueDecomposition(criterion);
 		eigenVectorMatrix = evd.getV();		
@@ -149,6 +173,10 @@ public class LDAFilter extends SimpleBatchFilter{
 		this.sortEigenvalues();
 	}
 	
+	
+	/**
+	 * sort the Eigenvalues in descendig order and rearrange the Eigenvektor matrix accordingly 
+	 */
 	private void sortEigenvalues(){
 		double[] evArray = Arrays.copyOf(eigenValues, eigenValues.length);
 		double[] evSorted = new double[evArray.length];
@@ -192,11 +220,11 @@ public class LDAFilter extends SimpleBatchFilter{
 		eigenValues = evSorted;			
 	}
 	
-	public Instance transformData(Instance in){		
-		return transformData(in, eigenValues.length);		
+	private Instances transformData(Instances inst) throws Exception{		
+		return transformData(inst, eigenValues.length);		
 	}
 	
-	public Instance transformData(Instance in, boolean dimensionReduction){
+	private Instances transformData(Instances inst, boolean dimensionReduction) throws Exception{
 		if(dimensionReduction){
 			double sum = 0.0;
 			double totalPer = 1.0;
@@ -210,45 +238,64 @@ public class LDAFilter extends SimpleBatchFilter{
 					totalPer -= per;
 					discriminants--;					
 				}
-			}
-			System.out.println("LDA: dimension reduced to "+discriminants+" of "+eigenValues.length);
-			return transformData(in, discriminants);
+			}			
+			return transformData(inst, discriminants);
 		}
 		else{
-			return transformData(in, eigenValues.length);
+			return transformData(inst, eigenValues.length);
 		}
 	}
 		
-	public Instance transformData(Instance in, int discriminants){		
+	private Instances transformData(Instances inst, int discriminants) throws Exception{		
 		double[][] eva = eigenVectorMatrix.getArray();
 		double[][] tempEva = new double[eva.length][discriminants];		
 		for(int i=0;i<eva.length;i++){
 			tempEva[i] = Arrays.copyOf(eva[i], discriminants);
 		}
-		double[][] data = new double[1][in.numAttributes()-1];
-		int di = 0;
-		for(int i=0;i<in.numAttributes();i++){
-			if(i!=in.classIndex()){
-				data[0][di] = in.value(i);
-				di++;
+		double[][] data = new double[inst.numInstances()][dimension];
+		
+		for(int i=0;i<inst.numInstances();i++){
+			Instance in = inst.get(i);
+			int dj = 0;
+			for(int j=0;j<inst.numAttributes();j++){				
+				if(j!=in.classIndex() && in.attribute(j).isNumeric()){
+					data[i][dj] = in.value(j);
+					dj++;
+				}
 			}
 		}
+		
 		Matrix evm = new Matrix(tempEva);
 		Matrix dataM = new Matrix(data);
 		Matrix resultM = (evm.transpose()).times(dataM.transpose());
-		Instance result = new DenseInstance(in);
-		double[][] r =  resultM.transpose().getArrayCopy();
-		int ri = 0;
-		for(int i=0;i<in.numAttributes();i++){
-			if(i!=in.classIndex()){
-				result.setValue(i, r[0][ri]);
-				ri++;
+		
+		Instances result = new Instances(determineOutputFormat(inst), 0);
+		double[][] rm =  resultM.transpose().getArrayCopy();
+		
+		for(int i=0;i<inst.numInstances();i++){
+			Instance in = inst.get(i);
+			Instance r = new DenseInstance(result.numAttributes());			
+			int rj = 0;
+			for(int j=0;j<result.numAttributes();j++){
+				if(j!=in.classIndex() && in.attribute(j).isNumeric()){
+					r.setValue(j, rm[i][rj]);
+					rj++;
+				}
+				else{				
+					r.setValue(j, in.value(j));
+				}
 			}
+			result.add(r);
 		}
 		return result;
 	}
 	
-	
+	/**
+	 * calculates the mean value for the column at the given index
+	 * @param column index of the column to calculate the mean for
+	 * @param data feature vectors to calculate the mean for
+	 * @return mean value
+	 */
 	private static double getGroupMean(int column, ArrayList<ArrayList<Double>> data) {
 		double[] d = new double[data.size()];
 		for (int i = 0; i < data.size(); i++) {
@@ -258,10 +305,16 @@ public class LDAFilter extends SimpleBatchFilter{
 		return getMean(d);
 	}
 	
-	private static double getTotalMean(int column, Instances inst) {
+	/**
+	 * calculates the mean value for the attribute at the given index over all instances
+	 * @param attIndex index of the attribute to calculate the mean for
+	 * @param inst instances to calculate the mean for
+	 * @return mean value
+	 */
+	private static double getTotalMean(int attIndex, Instances inst) {
 		double[] d = new double[inst.numInstances()];
 		for (int i = 0; i < inst.numInstances(); i++) {
-			d[i] = inst.get(i).value(column);
+			d[i] = inst.get(i).value(attIndex);
 		}
 
 		return getMean(d);
@@ -286,21 +339,29 @@ public class LDAFilter extends SimpleBatchFilter{
 		return mean / (double) values.length;
 	}
 	
-	private static double[][] getCovarianceMatrix(ArrayList<ArrayList<Double>> matrix, double[] means){		
-		int dimension = matrix.get(0).size();
+	/**
+	 * calculates the covariance matrix for the given feature vectors
+	 * @param fvs the the feature vectors to calculate the covariances for
+	 * @param means array with mean values for each feature in the feature vector
+	 * @return covariance matrix
+	 */
+	private static double[][] getCovarianceMatrix(ArrayList<ArrayList<Double>> fvs, double[] means){		
+		int dimension = fvs.get(0).size();
 		double[][] covariance = new double[dimension][dimension];
 		for (int i = 0; i < dimension; i++) {
 			for (int j = i; j < dimension; j++) {
 				double s = 0.0;
-				for (int k = 0; k < matrix.size(); k++) {					
-					s += (matrix.get(k).get(j) - means[j]) * (matrix.get(k).get(i) - means[i]);
+				for (int k = 0; k < fvs.size(); k++) {					
+					s += (fvs.get(k).get(j) - means[j]) * (fvs.get(k).get(i) - means[i]);
 				}
-				s /= matrix.size();
+				s /= fvs.size();
 				covariance[i][j] = s;
 				covariance[j][i] = s;
 			}
 		}		
 		return covariance;
 	}
+
+	
 
 }

@@ -6,6 +6,7 @@
         <node nodeType="processor" factoryId="de.lmu.ifi.dbs.knowing.core.filter.lda.LDAFilter" id="LDAFilter">
             <properties>            
             	<item value="true" key="debug"/>   
+            	<item value="true" key="dimreduction"/>
             </properties>
         </node>
         <node nodeType="loader" factoryId="weka.core.converters.ArffLoader" id="ARFF">

@@ -36,6 +36,8 @@ class LDAFilterWrapper extends WekaFilter(new LDAFilter()) {
      //Configure your classifier here with
      val myFilter = filter.asInstanceOf[LDAFilter]
      val debug = properties.getProperty(DEBUG)
+     val dimreduction = "false"
      myFilter.setDebug(debug.toBoolean)
+     myFilter.setDimensionReduction(dimreduction.toBoolean)
    }
 }
