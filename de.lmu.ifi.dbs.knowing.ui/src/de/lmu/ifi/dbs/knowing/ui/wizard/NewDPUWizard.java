@@ -33,7 +33,7 @@ import de.lmu.ifi.dbs.knowing.ui.wizard.pages.SourcePage;
 
 public class NewDPUWizard extends Wizard implements INewWizard {
 
-	private SourcePage page;
+	private WizardNewFileCreationPage page;
 	
 	private ISelection selection;
 	
@@ -44,9 +44,7 @@ public class NewDPUWizard extends Wizard implements INewWizard {
 
 	@Override
 	public void addPages() {
-		page = new SourcePage(selection);
-		addPage(page);
-		addPage(new WizardNewFileCreationPage("Name", (IStructuredSelection) selection));
+		addPage(page = new WizardNewFileCreationPage("Name", (IStructuredSelection) selection));
 	}
 	
 	/**
@@ -56,7 +54,7 @@ public class NewDPUWizard extends Wizard implements INewWizard {
 	 */
 	@Override
 	public boolean performFinish() {
-		final String containerName = page.getContainerName();
+		final String containerName = page.getContainerFullPath().toOSString();
 		final String fileName = page.getFileName();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {

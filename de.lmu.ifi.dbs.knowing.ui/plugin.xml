@@ -47,5 +47,15 @@
                type="org.eclipse.ui.model.IWorkbenchAdapter">
          </adapter>
       </factory>
+      <factory
+            adaptableType="de.lmu.ifi.dbs.knowing.core.graph.xml.Property"
+            class="de.lmu.ifi.dbs.knowing.ui.adapter.PropertyAdapterFactory">
+         <adapter
+               type="de.lmu.ifi.dbs.knowing.ui.adapter.IWorkbenchColumnAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+      </factory>
    </extension>
 </plugin>

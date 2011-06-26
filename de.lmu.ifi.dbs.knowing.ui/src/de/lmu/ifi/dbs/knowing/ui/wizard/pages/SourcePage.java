@@ -158,8 +158,8 @@ public class SourcePage extends WizardPage {
 		int dotLoc = fileName.lastIndexOf('.');
 		if (dotLoc != -1) {
 			String ext = fileName.substring(dotLoc + 1);
-			if (ext.equalsIgnoreCase("mpe") == false) {
-				updateStatus("File extension must be \"mpe\"");
+			if (ext.equalsIgnoreCase("xml") == false) {
+				updateStatus("File extension must be \"xml\"");
 				return;
 			}
 		}

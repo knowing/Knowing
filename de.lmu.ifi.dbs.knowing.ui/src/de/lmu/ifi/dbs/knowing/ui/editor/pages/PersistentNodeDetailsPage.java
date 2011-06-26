@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
@@ -21,6 +22,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 import de.lmu.ifi.dbs.knowing.core.graph.PersistentNode;
+import de.lmu.ifi.dbs.knowing.ui.viewer.PropertyTableViewer;
 
 public class PersistentNodeDetailsPage implements IDetailsPage {
 
@@ -32,6 +34,8 @@ public class PersistentNodeDetailsPage implements IDetailsPage {
 	private Section sectionProperties;
 
 	private PersistentNode node;
+
+	private PropertyTableViewer propertyTableViewer;
 
 
 	/**
@@ -90,24 +94,18 @@ public class PersistentNodeDetailsPage implements IDetailsPage {
 		sectionProperties.setExpanded(true);
 		
 		Composite cProperties = toolkit.createComposite(sectionProperties, SWT.NONE);
-		cProperties.setLayout(new GridLayout(2, false));
+		cProperties.setLayout(new GridLayout(1, false));
 		toolkit.paintBordersFor(cProperties);
 		sectionProperties.setClient(cProperties);
+		
+		Table propTable = toolkit.createTable(cProperties, SWT.NONE);
+		propTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		toolkit.paintBordersFor(propTable);
+		propertyTableViewer = new PropertyTableViewer(propTable);
 	}
 	
 	private void updateProperties() {
-		Composite cProperties = (Composite) sectionProperties.getClient();
-		for(Control c : cProperties.getChildren()) 
-			c.dispose();
-		
-		FormToolkit toolkit = managedForm.getToolkit();
-		//TODO get TFactory for property!
-		Properties properties = node.properties();
-		for(String name : properties.stringPropertyNames()) {
-			String value = properties.getProperty(name);
-			toolkit.createLabel(cProperties, name);
-			toolkit.createLabel(cProperties, value);
-		}
+		propertyTableViewer.setInput2(node);
 		//That's not the way it should work. Update the UI proper here!
 		sectionProperties.setExpanded(false);
 		sectionProperties.setExpanded(true);
