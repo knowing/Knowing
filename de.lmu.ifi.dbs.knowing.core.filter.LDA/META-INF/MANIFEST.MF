@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: LDA
+Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.core.filter.lda
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.lmu.ifi.dbs.knowing.core.filter.lda.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ org.scala-ide.scala.library,
+ de.lmu.ifi.dbs.knowing.core;bundle-version="1.0.0",
+ gov.nist.math.jama;bundle-version="1.0.2"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
