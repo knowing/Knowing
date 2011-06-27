@@ -6,6 +6,7 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.wst.sse.ui.StructuredTextEditor;
 
 import de.lmu.ifi.dbs.knowing.ui.editor.pages.ConfigurationPage;
+import de.lmu.ifi.dbs.knowing.ui.editor.pages.GraphicPage;
 
 public class DPUEditor extends FormEditor {
 
@@ -16,12 +17,16 @@ public class DPUEditor extends FormEditor {
 
 	private StructuredTextEditor sourcePage;
 	private int sourcePageIndex;
+	
+	private GraphicPage graphicPage;
+	private int graphicPageIndex;
 
 	@Override
 	protected void addPages() {
 		try {
 			configPageIndex = addPage(configPage = new ConfigurationPage(this));
 			sourcePageIndex = addPage(sourcePage = new StructuredTextEditor(), getEditorInput());
+			graphicPageIndex = addPage(graphicPage = new GraphicPage(this));
 			setPageText(1, "Source");
 		} catch (PartInitException e) {
 			e.printStackTrace();

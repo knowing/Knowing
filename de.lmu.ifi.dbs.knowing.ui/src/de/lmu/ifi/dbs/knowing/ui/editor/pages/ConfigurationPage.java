@@ -63,6 +63,7 @@ public class ConfigurationPage extends FormPage {
 		form.setText("Configuration");
 		Composite body = form.getBody();
 		block.createContent(managedForm);
+		getSite().setSelectionProvider(block.getNodeTableViewer());
 		toolkit.decorateFormHeading(form.getForm());
 		toolkit.paintBordersFor(body);
 	}

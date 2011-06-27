@@ -135,5 +135,9 @@ public class ConfigurationMasterDetailBlock extends MasterDetailsBlock {
 		}
 			
 	}
+	
+	public NodeTableViewer getNodeTableViewer() {
+		return nodeTableViewer;
+	}
 
 }
