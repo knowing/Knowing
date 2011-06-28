@@ -104,7 +104,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
     val attributes = dataset.enumerateAttributes().toList
     val nominal = attributes filter (a => a.asInstanceOf[Attribute].isNominal)
     nominal.headOption match {
-      case Some(x) => x.asInstanceOf[Int]
+      case Some(x) => x.asInstanceOf[Attribute].index
       case None => -1
 
     }
