@@ -33,8 +33,8 @@ trait TPresenter[T] extends Actor with TSender with TConfigurable {
     case UIFactoryEvent(factory, node) =>
       val parent = factory createContainer (node)
       createContainer(parent.asInstanceOf[T])
-      if(self.getSender.isDefined)
-    	  self reply Ready
+      if (self.getSender.isDefined)
+        self reply Ready
     case Configure(properties) =>
       configure(properties)
       self reply Ready
@@ -44,7 +44,7 @@ trait TPresenter[T] extends Actor with TSender with TConfigurable {
     case QueryResults(instances, _) =>
       buildPresentation(instances)
       sendEvent(new UpdateUI)
-    case Register(actor) => addListener(actor)
+    case Register(actor, port) => addListener(actor, port)
     case Query => self reply getContainerClass
     case Start => debug(this, ("Running " + self.getActorClassName))
     case msg => warning(this, "<----> " + msg)

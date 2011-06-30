@@ -16,8 +16,12 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
   var classLabels: Array[String] = Array()
 
   def this() = this(null, 10, new Properties)
+  
+  override def customReceive = {
+    case Results(instances) => build(instances)
+  }
 
-  def build(instances: Instances) = {
+  def build(instances: Instances) {
     //Init classlabels
     val index = guessAndSetClassLabel(instances)
     index match {
@@ -31,7 +35,7 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
     val crossValidators = for (i <- 0 until folds; val actor = factory.getInstance.start) yield actor;
     debug(this, "Fold-Actors created!")
     for (j <- 0 until folds) {
-      crossValidators(j) !! Register(self)
+      crossValidators(j) !! Register(self, None)
       crossValidators(j) !! Configure(configureProperties(validator_properties, j))
       crossValidators(j) ! Results(instances.trainCV(folds, j))
     }

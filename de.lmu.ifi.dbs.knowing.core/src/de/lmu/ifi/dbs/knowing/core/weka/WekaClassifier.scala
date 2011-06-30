@@ -24,6 +24,10 @@ class WekaClassifier(protected val classifier: Classifier) extends TProcessor {
   private var classLabels: Array[String] = _
   private val name = getClass().getSimpleName;
 
+  override def customReceive = {
+    case Results(instances) => build(instances)
+  }
+
   def build(instances: Instances) = {
     debug(this, "Build internal model for " + name + " ...")
     val index = guessAndSetClassLabel(instances)
@@ -39,9 +43,9 @@ class WekaClassifier(protected val classifier: Classifier) extends TProcessor {
 
   def query(query: Instance): Instances = {
     val distribution = classifier.distributionForInstance(query)
-    
+
     val distString = for (i <- 0 until distribution.length) yield distribution(i).toString
-    debug(this, "Classified with: " +  distString + " # ClassValue: " + query.classValue)
+    debug(this, "Classified with: " + distString + " # ClassValue: " + query.classValue)
     ResultsUtil.classAndProbabilityResult(getClassLabels.toList, distribution)
   }
 

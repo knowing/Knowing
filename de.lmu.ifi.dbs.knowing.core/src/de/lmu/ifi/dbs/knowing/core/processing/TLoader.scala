@@ -20,7 +20,7 @@ trait TLoader extends Actor with TSender with TConfigurable {
    * <p>Default behaviour</p>
    */
   private def defaultReceive: Receive = {
-    case Register(actor) => addListener(actor)
+     case Register(actor, port) => addListener(actor, port)
     case Configure(p) =>
       configure(p)
       if (self.getSender.isDefined)

@@ -13,14 +13,14 @@ import java.util.Properties
 class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuDir: String) extends Actor with TSender {
 
   var actors: Map[String, ActorRef] = Map()
-  var events:List[String] = Nil
+  var events: List[String] = Nil
 
   def receive = {
-    case Register(actor) => addListener(actor)
+    case Register(actor, port) => addListener(actor, port)
     case Start => evaluate
     case UpdateUI() => uifactory update
-    case event: Event =>  events + event.getClass().getSimpleName
-    case msg => debug(this,"Unkown Message: " + msg) 
+    case event: Event => events + event.getClass().getSimpleName
+    case msg => debug(this, "Unkown Message: " + msg)
   }
 
   def evaluate {
@@ -37,8 +37,8 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuDir: Str
           //Create actor
           val actor = f.getInstance.start
           //Register and link the supervisor
-//          self link (actor)
-          actor ! Register(self)
+          //          self link (actor)
+          actor ! Register(self, None)
           //Check for presenter and init
           if (node.nodeType.equals(Node.PRESENTER))
             actor !! UIFactoryEvent(uifactory, node)
@@ -46,28 +46,37 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuDir: Str
           actor !! Configure(configureProperties(node.properties))
           //Add to internal map
           actors += (node.id -> actor)
-          case None =>warning(this,"No factory found for: " + node.factoryId)
+        case None => warning(this, "No factory found for: " + node.factoryId)
       }
     })
   }
-  
+
   /**
    * Adds the DPU_PATH property to the property configuration
    */
-  private def configureProperties(properties:Properties):Properties = {
-    properties setProperty(TLoader.DPU_PATH, dpuDir)
+  private def configureProperties(properties: Properties): Properties = {
+    properties setProperty (TLoader.DPU_PATH, dpuDir)
     properties
   }
 
   /**
-   * 
+   *
    */
   private def connectActors {
     dpu.edges foreach (edge => {
-      val source = actors(edge.sourceId)
+      val sid = edge.sourceId.split(":")
+      val source = actors(sid(0))
       val target = actors(edge.targetId)
-      source !! Register(target)
-      debug(this,source.getActorClassName + " -> " + target.getActorClassName)
+      val length = sid.length
+      length match {
+        case 1 =>
+          source !! Register(target, None)
+          debug(this, source.getActorClassName + " -> " + target.getActorClassName)
+        case 2 =>
+          source !! Register(target, Some(sid(1)))
+          debug(this, source.getActorClassName + " -> " + target.getActorClassName + ":" + sid(1))
+      }
+
     })
   }
 

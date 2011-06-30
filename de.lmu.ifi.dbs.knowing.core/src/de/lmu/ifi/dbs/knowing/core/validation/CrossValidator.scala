@@ -27,6 +27,10 @@ class CrossValidator(var factory: TFactory, var folds: Int, var fold: Int, var c
 
   def this() = this(null, 2, 1, new Properties)
 
+  override def customReceive = {
+    case Results(instances) => build(instances)
+  }
+
   def build(instances: Instances) = buildClassifier(instances) //Input data
 
   def result(result: Instances, query: Instance) {
@@ -44,12 +48,12 @@ class CrossValidator(var factory: TFactory, var folds: Int, var fold: Int, var c
       val old_value = entry.value(column.toInt) / 100
       var value = 0.0
       first_run match {
-        case true => 
+        case true =>
           value = new_value
           first_run = false
         case false => value = ((new_value + old_value) / 2) * 100
       }
-      
+
       entry.setValue(column.toInt, value)
     }
     sendEvent(QueryResults(confusionMatrix, query))

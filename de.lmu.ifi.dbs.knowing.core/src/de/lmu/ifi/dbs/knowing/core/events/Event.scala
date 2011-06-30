@@ -33,5 +33,5 @@ case class Progress(task:String, worked:Int, work:Int) extends Event
 /* ========================= */
 /* == Actor Communication == */
 /* ========================= */
-case class Register(actor: ActorRef) extends Event
+case class Register(actor: ActorRef, port:Option[String]) extends Event
 case class Registered(success: Boolean) extends Event
