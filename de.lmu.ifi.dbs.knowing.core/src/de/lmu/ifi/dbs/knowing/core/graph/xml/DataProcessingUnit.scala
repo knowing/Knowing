@@ -26,27 +26,31 @@ class DataProcessingUnit(@XmlAttributeField var name: String,
 
   def addTag(tag: String) = tags += "," + tag
 
-  def addNode(node: Node) = {
+  def addNode(node: Node) {
     var list = nodes.toList
     list = new PersistentNode(node) :: list
     nodes = list.toArray
   }
-  
+
+  def removeNode(node: Node) {
+    val filtered = nodes.toList filter(n => n.id != node.id)
+    nodes = filtered toArray
+  }
+
   /* ==================== */
   /* === Util methods === */
   /* ==================== */
-  
+
   /**
    * @param typ - Node.LOADER, Node.PROCESSOR, Node.PRESENTER
    */
-  def nodesOfType(typ:String):Array[_<: Node] = nodes filter(node => node.nodeType.equals(typ))
-  
-  def loaderNodes:Array[_<: Node] =  nodesOfType(Node.LOADER)
-  def presenterNodes:Array[_<: Node] = nodesOfType(Node.PRESENTER)
-  def processorNodes:Array[_<: Node] = nodesOfType(Node.PROCESSOR)
-  
-  def node(typ:String, factory:String):Array[_<: Node] =  nodes filter(node => node.nodeType.equals(typ) && node.factoryId.equals(factory))
-  
+  def nodesOfType(typ: String): Array[_ <: Node] = nodes filter (node => node.nodeType.equals(typ))
+
+  def loaderNodes: Array[_ <: Node] = nodesOfType(Node.LOADER)
+  def presenterNodes: Array[_ <: Node] = nodesOfType(Node.PRESENTER)
+  def processorNodes: Array[_ <: Node] = nodesOfType(Node.PROCESSOR)
+
+  def node(typ: String, factory: String): Array[_ <: Node] = nodes filter (node => node.nodeType.equals(typ) && node.factoryId.equals(factory))
 
 }
 

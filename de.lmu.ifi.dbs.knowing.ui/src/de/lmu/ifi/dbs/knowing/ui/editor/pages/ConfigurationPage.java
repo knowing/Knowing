@@ -1,10 +1,11 @@
 package de.lmu.ifi.dbs.knowing.ui.editor.pages;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectOutputStream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -25,7 +26,14 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit;
 
-public class ConfigurationPage extends FormPage {
+/**
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.5
+ * @since 28.06.2011
+ *
+ */
+public class ConfigurationPage extends FormPage implements PropertyChangeListener {
 
 	public static final String id = ConfigurationPage.class.getName();
 	public static final String title = "Configuration";
@@ -33,6 +41,9 @@ public class ConfigurationPage extends FormPage {
 	private ConfigurationMasterDetailBlock block;
 	private DataProcessingUnit dpu;
 	private IFile file;
+	
+	private boolean dirty;
+	private IManagedForm managedForm;
 
 	/**
 	 * 
@@ -64,12 +75,14 @@ public class ConfigurationPage extends FormPage {
 	 */
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
+		this.managedForm = managedForm;
 		FormToolkit toolkit = managedForm.getToolkit();
 		ScrolledForm form = managedForm.getForm();
 		form.setText("Configuration");
 		Composite body = form.getBody();
 		block.createContent(managedForm);
 		getSite().setSelectionProvider(block.getNodeTableViewer());
+		block.getNodeTableViewer().addPropertyChangeListener(this);
 		toolkit.decorateFormHeading(form.getForm());
 		toolkit.paintBordersFor(body);
 	}
@@ -82,27 +95,36 @@ public class ConfigurationPage extends FormPage {
 	}
 
 	@Override
+	public boolean isDirty() {
+		return dirty || super.isDirty();
+	}
+	
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 		super.doSave(monitor);
+		dirty = false;
+		managedForm.dirtyStateChanged();
 		System.out.println("DoSave in ConfigurationPage");
 		if (dpu == null || file == null)
 			return;
 		//TODO ConfigurationPage -> Save changes!
-//		try {
-//			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//			ObjectOutputStream oos = new ObjectOutputStream(bos);
-//			oos.writeObject(dpu);
-//			oos.flush();
-//			oos.close();
-//			bos.close();
-//			byte[] data = bos.toByteArray();
-//			ByteArrayInputStream source = new ByteArrayInputStream(data);
-//			file.setContents(source, IFile.FORCE, null);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		} catch (CoreException e) {
-//			e.printStackTrace();
-//		}
+		try {
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			JAXBContext context = JAXBContext.newInstance(DataProcessingUnit.class);
+			Marshaller marshaller = context.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			marshaller.marshal(dpu, bos);
+			bos.close();
+			byte[] data = bos.toByteArray();
+			ByteArrayInputStream source = new ByteArrayInputStream(data);
+			file.setContents(source, IFile.FORCE, null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (CoreException e) {
+			e.printStackTrace();
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
 
 	}
 
@@ -128,6 +150,12 @@ public class ConfigurationPage extends FormPage {
 					e.printStackTrace();
 				}
 		}
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		dirty = true;
+		managedForm.dirtyStateChanged();
 	}
 
 }

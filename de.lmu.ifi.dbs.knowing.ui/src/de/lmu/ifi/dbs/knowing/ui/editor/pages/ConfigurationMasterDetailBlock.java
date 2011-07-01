@@ -1,8 +1,11 @@
 package de.lmu.ifi.dbs.knowing.ui.editor.pages;
 
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -26,7 +29,6 @@ public class ConfigurationMasterDetailBlock extends MasterDetailsBlock {
 	private EdgeTableViewer edgeTableViewer;
 
 	private DataProcessingUnit dpu;
-	private IManagedForm managedForm;
 
 	/**
 	 * Create the master details block.
@@ -43,7 +45,6 @@ public class ConfigurationMasterDetailBlock extends MasterDetailsBlock {
 	 */
 	@Override
 	protected void createMasterPart(final IManagedForm managedForm, Composite parent) {
-		this.managedForm = managedForm;
 		FormToolkit toolkit = managedForm.getToolkit();
 		Composite container = toolkit.createComposite(parent, SWT.NONE);
 		container.setLayout(new GridLayout(1, false));
@@ -72,8 +73,28 @@ public class ConfigurationMasterDetailBlock extends MasterDetailsBlock {
 
 		Button bRemoveNode = toolkit.createButton(cNode, "remove", SWT.PUSH);
 		bRemoveNode.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
+		bRemoveNode.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IStructuredSelection selection = (IStructuredSelection) nodeTableViewer.getSelection();
+				if(selection.isEmpty())
+					return;
+				PersistentNode node = (PersistentNode) selection.getFirstElement();
+				dpu.removeNode(node);
+				nodeTableViewer.setInput(dpu.nodes());
+			}
+		});
+		
 		Button bAddNode = toolkit.createButton(cNode, "add", SWT.NONE);
 		bAddNode.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		bAddNode.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				PersistentNode node = new PersistentNode("newId", "class","processor");
+				dpu.addNode(node);
+				nodeTableViewer.setInput(dpu.nodes());
+			}
+		});
 
 		Section sectionEdge = toolkit.createSection(container, Section.EXPANDED | Section.TWISTIE | Section.TITLE_BAR);
 		sectionEdge.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -124,15 +145,11 @@ public class ConfigurationMasterDetailBlock extends MasterDetailsBlock {
 
 	public void setInput(DataProcessingUnit dpu) {
 		this.dpu = dpu;
-		if (nodeTableViewer != null) {
+		if (nodeTableViewer != null) 
 			nodeTableViewer.setInput(dpu.nodes());
-			//TODO Update ConfigurationView here!
-//			managedForm.fireSelectionChanged(detailsPart, nodeTableViewer.getSelection());
-		}
 			
-		if (edgeTableViewer != null) {
+		if (edgeTableViewer != null) 
 			edgeTableViewer.setInput(dpu.edges());
-		}
 			
 	}
 	

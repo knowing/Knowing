@@ -149,8 +149,10 @@ public class PersistentNodeDetailsPage implements IDetailsPage, PropertyChangeLi
 
 	@Override
 	public void commit(boolean onSave) {
-		dirty = false;
-		managedForm.dirtyStateChanged();
+		if(onSave) {
+			dirty = false;
+			managedForm.dirtyStateChanged();
+		}
 	}
 
 	@Override

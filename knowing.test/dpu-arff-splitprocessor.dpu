@@ -5,7 +5,7 @@
     <nodes>
         <node nodeType="processor" factoryId="knowing.test.processor.SplitProcessor" id="splitter">
             <properties>
-                <item value="ratio" key="0.5"/>
+                <item value="0.5" key="ratio"/>
             </properties>
         </node>
         <node nodeType="loader" factoryId="weka.core.converters.ArffLoader" id="ARFF">

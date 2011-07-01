@@ -77,7 +77,9 @@ class GraphicPage(editor: FormEditor) extends FormPage(editor, classOf[GraphicPa
     val nodesArray = for(node <- dpu.nodes) yield (node.id -> new GraphNode(graph,SWT.NONE, node.id))
     var nodes:mMap[String, GraphNode] = new HashMap
     nodesArray foreach {case (id, node) => nodes += (id -> node)}
-    dpu.edges foreach(e => new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes(e.sourceId), nodes(e.targetId)))
+    dpu.edges foreach(e => new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes(e.sourceId.split(":")(0)), nodes(e.targetId)))
     graph.setLayoutAlgorithm(new SpringLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true)
   }
+
+    
 }
