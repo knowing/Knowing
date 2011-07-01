@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.{ XmlAccessorType, XmlAccessType, XmlAttribute 
 class Edge(@(XmlAttribute @field) var id: String,
   @(XmlAttribute @field) var sourceId: String,
   @(XmlAttribute @field) var targetId: String,
-  @(XmlAttribute @field) var weight: Int) {
+  @(XmlAttribute @field) var weight: Int) extends Serializable {
   
   def this(id:String, sourceId:String, targetId:String) = this(id, sourceId, targetId, 1)
   

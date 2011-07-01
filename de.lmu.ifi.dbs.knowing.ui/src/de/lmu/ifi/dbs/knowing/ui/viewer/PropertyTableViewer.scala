@@ -9,6 +9,7 @@ import org.eclipse.swt.SWT
 import de.lmu.ifi.dbs.knowing.ui.provider.WorkbenchTableLabelProvider
 import de.lmu.ifi.dbs.knowing.core.graph.Node
 import de.lmu.ifi.dbs.knowing.core.graph.xml.Property
+import java.beans.PropertyChangeListener
 
 /**
  * @author Nepomuk Seiler
@@ -49,12 +50,13 @@ class PropertyTableViewer(table: Table) extends TableViewer(table) {
     //TODO Random order every time!
     propList.toArray
   }
+  
+  def addPropertyChangeListener(listener: PropertyChangeListener) = valueEditingSupport.addPropertyChangeListener(listener)
 
+  def removePropertyChangeListener(listener: PropertyChangeListener) = valueEditingSupport.removePropertyChangeListener(listener)
 }
 
 object PropertyTableViewer {
   val columns = Array("Property", "Value")
   val width = Array(150, 150)
 }
-
-//class Property(var key: String, var value: String)

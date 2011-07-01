@@ -10,7 +10,7 @@ import javax.xml.bind.annotation._
 @XmlAccessorType(XmlAccessType.FIELD)
 class DataProcessingUnit(@XmlAttributeField var name: String,
   @XmlElementField var description: String,
-  @XmlElementField var tags: String) {
+  @XmlElementField var tags: String) extends Serializable {
 
   @XmlElementWrapper(name = "nodes")
   @XmlElement(name = "node")

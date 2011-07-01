@@ -1,6 +1,7 @@
 package de.lmu.ifi.dbs.knowing.ui.editor.pages;
 
-import java.util.Properties;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -10,10 +11,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
@@ -24,18 +25,19 @@ import org.eclipse.ui.forms.widgets.Section;
 import de.lmu.ifi.dbs.knowing.core.graph.PersistentNode;
 import de.lmu.ifi.dbs.knowing.ui.viewer.PropertyTableViewer;
 
-public class PersistentNodeDetailsPage implements IDetailsPage {
+public class PersistentNodeDetailsPage implements IDetailsPage, PropertyChangeListener {
 
 	private IManagedForm managedForm;
 	
 	private Text tName;
 	private Text tFactory;
+	private PropertyTableViewer propertyTableViewer;
 	
 	private Section sectionProperties;
 
 	private PersistentNode node;
 
-	private PropertyTableViewer propertyTableViewer;
+	private boolean dirty;
 
 
 	/**
@@ -102,6 +104,7 @@ public class PersistentNodeDetailsPage implements IDetailsPage {
 		propTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		toolkit.paintBordersFor(propTable);
 		propertyTableViewer = new PropertyTableViewer(propTable);
+		propertyTableViewer.addPropertyChangeListener(this);
 	}
 	
 	private void updateProperties() {
@@ -146,13 +149,13 @@ public class PersistentNodeDetailsPage implements IDetailsPage {
 
 	@Override
 	public void commit(boolean onSave) {
-		System.out.println("Commit on save: " + onSave);
-		// Commit
+		dirty = false;
+		managedForm.dirtyStateChanged();
 	}
 
 	@Override
 	public boolean isDirty() {
-		return false;
+		return dirty;
 	}
 
 	@Override
@@ -163,5 +166,11 @@ public class PersistentNodeDetailsPage implements IDetailsPage {
 	@Override
 	public void refresh() {
 		update();
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		dirty = true;
+		managedForm.dirtyStateChanged();
 	}
 }

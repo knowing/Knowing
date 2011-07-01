@@ -1,10 +1,14 @@
 package de.lmu.ifi.dbs.knowing.ui.editor.pages;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.eclipse.core.resources.IFile;
@@ -25,8 +29,10 @@ public class ConfigurationPage extends FormPage {
 
 	public static final String id = ConfigurationPage.class.getName();
 	public static final String title = "Configuration";
-	
+
 	private ConfigurationMasterDetailBlock block;
+	private DataProcessingUnit dpu;
+	private IFile file;
 
 	/**
 	 * 
@@ -74,21 +80,40 @@ public class ConfigurationPage extends FormPage {
 		update(input);
 
 	}
-	
+
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		super.doSave(monitor);
 		System.out.println("DoSave in ConfigurationPage");
+		if (dpu == null || file == null)
+			return;
+		//TODO ConfigurationPage -> Save changes!
+//		try {
+//			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//			ObjectOutputStream oos = new ObjectOutputStream(bos);
+//			oos.writeObject(dpu);
+//			oos.flush();
+//			oos.close();
+//			bos.close();
+//			byte[] data = bos.toByteArray();
+//			ByteArrayInputStream source = new ByteArrayInputStream(data);
+//			file.setContents(source, IFile.FORCE, null);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} catch (CoreException e) {
+//			e.printStackTrace();
+//		}
+
 	}
-	
+
 	public void update(IEditorInput input) {
-		IFile file = (IFile) input.getAdapter(IFile.class);
+		file = (IFile) input.getAdapter(IFile.class);
 		InputStream in = null;
 		try {
 			JAXBContext context = JAXBContext.newInstance(DataProcessingUnit.class);
 			Unmarshaller um = context.createUnmarshaller();
 			in = file.getContents();
-			DataProcessingUnit dpu = (DataProcessingUnit) um.unmarshal(in);
+			dpu = (DataProcessingUnit) um.unmarshal(in);
 			block.setInput(dpu);
 
 		} catch (CoreException e) {

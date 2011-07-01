@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.{ XmlAccessorType, XmlAccessType, XmlAttribute 
 
 @XmlAccessorType(XmlAccessType.FIELD)
 class Property(@(XmlAttribute @field) var key: String,
-  @(XmlAttribute @field) var value: String) {
+  @(XmlAttribute @field) var value: String) extends Serializable {
 
   def this() = this("", "")
 
