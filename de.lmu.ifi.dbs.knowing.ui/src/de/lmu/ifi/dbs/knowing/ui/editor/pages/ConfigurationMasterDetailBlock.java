@@ -1,5 +1,8 @@
 package de.lmu.ifi.dbs.knowing.ui.editor.pages;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -23,7 +26,7 @@ import de.lmu.ifi.dbs.knowing.core.graph.*;
 import de.lmu.ifi.dbs.knowing.ui.viewer.EdgeTableViewer;
 import de.lmu.ifi.dbs.knowing.ui.viewer.NodeTableViewer;
 
-public class ConfigurationMasterDetailBlock extends MasterDetailsBlock {
+public class ConfigurationMasterDetailBlock extends MasterDetailsBlock implements PropertyChangeListener {
 
 	private NodeTableViewer nodeTableViewer;
 	private EdgeTableViewer edgeTableViewer;
@@ -115,8 +118,28 @@ public class ConfigurationMasterDetailBlock extends MasterDetailsBlock {
 
 		Button bRemoveEdge = toolkit.createButton(cEdge, "remove", SWT.PUSH);
 		bRemoveEdge.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
+		bRemoveEdge.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IStructuredSelection selection = (IStructuredSelection) edgeTableViewer.getSelection();
+				if(selection.isEmpty())
+					return;
+				Edge edge = (Edge) selection.getFirstElement();
+				dpu.removeEdge(edge);
+				edgeTableViewer.setInput(dpu.edges());
+			}
+		});
+		
 		Button bAddEdge = toolkit.createButton(cEdge, "add", SWT.NONE);
 		bAddEdge.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		bAddEdge.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Edge edge = new Edge("newId", "newSource", "newTarget", 1);
+				dpu.addEdge(edge);
+				edgeTableViewer.setInput(dpu.edges());
+			}
+		});
 
 		if (dpu != null)
 			setInput(dpu);
@@ -130,7 +153,7 @@ public class ConfigurationMasterDetailBlock extends MasterDetailsBlock {
 	 */
 	@Override
 	protected void registerPages(DetailsPart part) {
-		part.registerPage(PersistentNode.class, new PersistentNodeDetailsPage());
+		part.registerPage(PersistentNode.class, new PersistentNodeDetailsPage().addPropertyChangeListener(this));
 	}
 
 	/**
@@ -150,11 +173,25 @@ public class ConfigurationMasterDetailBlock extends MasterDetailsBlock {
 			
 		if (edgeTableViewer != null) 
 			edgeTableViewer.setInput(dpu.edges());
+		refresh();
+	}
+	
+	public void refresh() {
+		if (nodeTableViewer != null) 
+			nodeTableViewer.refresh();
 			
+		if (edgeTableViewer != null) 
+			edgeTableViewer.refresh();
 	}
 	
 	public NodeTableViewer getNodeTableViewer() {
 		return nodeTableViewer;
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		if(dpu != null)
+			setInput(dpu);
 	}
 
 }

@@ -2,10 +2,13 @@ package de.lmu.ifi.dbs.knowing.ui.editor.pages;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -14,7 +17,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
@@ -29,23 +31,17 @@ public class PersistentNodeDetailsPage implements IDetailsPage, PropertyChangeLi
 
 	private IManagedForm managedForm;
 	
+	private Section sectionProperties;
 	private Text tName;
 	private Text tFactory;
 	private PropertyTableViewer propertyTableViewer;
 	
-	private Section sectionProperties;
-
+	private boolean dirty;
+	
 	private PersistentNode node;
 
-	private boolean dirty;
+	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
-
-	/**
-	 * Create the details page.
-	 */
-	public PersistentNodeDetailsPage() {
-		// Create the details page
-	}
 
 	/**
 	 * Initialize the details page.
@@ -78,6 +74,18 @@ public class PersistentNodeDetailsPage implements IDetailsPage, PropertyChangeLi
 		tName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		tName.setText("");
 		tName.setBounds(0, 0, 56, 19);
+		tName.addModifyListener(new ModifyListener() {
+			
+			@Override
+			public void modifyText(ModifyEvent e) {
+				String oldValue = node.id();
+				node.id_$eq(tName.getText());
+				propertyChangeSupport.firePropertyChange("node", oldValue, tName.getText());
+				System.out.println("OldValue: " + oldValue + " / NewValue: " + node.id());
+				dirty =  true;
+				managedForm.dirtyStateChanged();
+			}
+		});
 		new Label(cGeneral, SWT.NONE);
 		
 		Label lFactory = toolkit.createLabel(cGeneral, "Factory", SWT.NONE);
@@ -86,6 +94,17 @@ public class PersistentNodeDetailsPage implements IDetailsPage, PropertyChangeLi
 		tFactory = toolkit.createText(cGeneral, "New Text", SWT.NONE);
 		tFactory.setText("");
 		tFactory.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		tFactory.addModifyListener(new ModifyListener() {
+			
+			@Override
+			public void modifyText(ModifyEvent e) {
+				String oldValue = node.factoryId();
+				node.factoryId_$eq(tFactory.getText());
+				propertyChangeSupport.firePropertyChange("node", oldValue, tFactory.getText());
+				dirty = true;
+				managedForm.dirtyStateChanged();
+			}
+		});
 		
 		Button bBrowse = toolkit.createButton(cGeneral, "Browse", SWT.NONE);
 		
@@ -107,22 +126,6 @@ public class PersistentNodeDetailsPage implements IDetailsPage, PropertyChangeLi
 		propertyTableViewer.addPropertyChangeListener(this);
 	}
 	
-	private void updateProperties() {
-		propertyTableViewer.setInput2(node);
-		//That's not the way it should work. Update the UI proper here!
-		sectionProperties.setExpanded(false);
-		sectionProperties.setExpanded(true);
-	}
-	
-
-	private void update() {
-		if(node == null)
-			return;
-		tName.setText(node.id());
-		tFactory.setText(node.factoryId());
-		updateProperties();
-	}
-
 	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		if(selection.isEmpty())
@@ -131,6 +134,22 @@ public class PersistentNodeDetailsPage implements IDetailsPage, PropertyChangeLi
 		node = (PersistentNode) structuredSelection.getFirstElement();
 		update();
 	}
+	
+	private void update() {
+		if(node == null)
+			return;
+		tName.setText(node.id());
+		tFactory.setText(node.factoryId());
+		updateProperties();
+	}
+	
+	private void updateProperties() {
+		propertyTableViewer.setInput2(node);
+		//That's not the way it should work. Update the UI proper here!
+		sectionProperties.setExpanded(false);
+		sectionProperties.setExpanded(true);
+	}
+
 
 	@Override
 	public void dispose() {
@@ -149,10 +168,8 @@ public class PersistentNodeDetailsPage implements IDetailsPage, PropertyChangeLi
 
 	@Override
 	public void commit(boolean onSave) {
-		if(onSave) {
+		if(onSave) 
 			dirty = false;
-			managedForm.dirtyStateChanged();
-		}
 	}
 
 	@Override
@@ -175,4 +192,24 @@ public class PersistentNodeDetailsPage implements IDetailsPage, PropertyChangeLi
 		dirty = true;
 		managedForm.dirtyStateChanged();
 	}
+
+	/**
+	 * @param listener
+	 * @return this - for fluent interfaces
+	 * @see java.beans.PropertyChangeSupport#addPropertyChangeListener(java.beans.PropertyChangeListener)
+	 */
+	public PersistentNodeDetailsPage addPropertyChangeListener(PropertyChangeListener listener) {
+		propertyChangeSupport.addPropertyChangeListener(listener);
+		return this;
+	}
+
+	/**
+	 * @param listener
+	 * @see java.beans.PropertyChangeSupport#removePropertyChangeListener(java.beans.PropertyChangeListener)
+	 */
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		propertyChangeSupport.removePropertyChangeListener(listener);
+	}
+	
+	
 }

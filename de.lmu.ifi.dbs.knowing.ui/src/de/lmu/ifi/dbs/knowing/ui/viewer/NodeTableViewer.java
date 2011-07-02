@@ -19,7 +19,7 @@ import de.lmu.ifi.dbs.knowing.ui.provider.WorkbenchTableLabelProvider;
  */
 public class NodeTableViewer extends TableViewer {
 
-	protected static final String[] columns = new String[] { "Name", "Type", "In", "Out", "Class" };
+	protected static final String[] columns = new String[] { "Name", "Type", "In", "Out", "Factory/Class" };
 	private static final int[] width = new int[] { 120, 100, 40, 40, 200 };
 
 	private NodeEditingSupport[] nodeEditingSupport = new NodeEditingSupport[5];

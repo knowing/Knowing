@@ -33,10 +33,20 @@ class DataProcessingUnit(@XmlAttributeField var name: String,
   }
 
   def removeNode(node: Node) {
-    val filtered = nodes.toList filter(n => n.id != node.id)
+    val filtered = nodes.toList filter (n => n.id != node.id)
     nodes = filtered toArray
   }
 
+  def addEdge(edge: Edge) {
+    var list = edges.toList
+    list = edge :: list
+    edges = list.toArray
+  }
+
+  def removeEdge(edge: Edge) {
+    val filtered = edges.toList filter (e => e.id != edge.id)
+    edges = filtered toArray
+  }
   /* ==================== */
   /* === Util methods === */
   /* ==================== */

@@ -102,12 +102,9 @@ public class ConfigurationPage extends FormPage implements PropertyChangeListene
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		super.doSave(monitor);
-		dirty = false;
-		managedForm.dirtyStateChanged();
-		System.out.println("DoSave in ConfigurationPage");
 		if (dpu == null || file == null)
 			return;
-		//TODO ConfigurationPage -> Save changes!
+		System.out.println("DoSave in ConfigurationPage: " + dpu);
 		try {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			JAXBContext context = JAXBContext.newInstance(DataProcessingUnit.class);
@@ -125,7 +122,8 @@ public class ConfigurationPage extends FormPage implements PropertyChangeListene
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
-
+		dirty = false;
+		managedForm.dirtyStateChanged();
 	}
 
 	public void update(IEditorInput input) {
