@@ -17,7 +17,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin
  */
 class Activator extends AbstractUIPlugin {
   
-  var services:List[ServiceRegistration] = Nil
+  var services:List[ServiceRegistration[_]] = Nil
 
   /**
    * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)

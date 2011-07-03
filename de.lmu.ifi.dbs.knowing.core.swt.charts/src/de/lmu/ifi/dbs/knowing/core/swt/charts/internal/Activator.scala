@@ -12,7 +12,7 @@ import org.osgi.framework.{ BundleContext, BundleActivator, ServiceRegistration 
  */
 class Activator extends BundleActivator {
 
-  var services: List[ServiceRegistration] = Nil
+  var services: List[ServiceRegistration[_]] = Nil
 
   def start(context: BundleContext) = {
     services = context.registerService(classOf[TFactory].getName, new PiePresenterFactory, null) :: services

@@ -1,42 +1,37 @@
 package de.lmu.ifi.dbs.knowing.core.internal
 
-import akka.actor.ActorRef
-import de.lmu.ifi.dbs.knowing.core.weka._
-import de.lmu.ifi.dbs.knowing.core.events._
-import de.lmu.ifi.dbs.knowing.core.factory.TFactory
-import de.lmu.ifi.dbs.knowing.core.util.Util
-import de.lmu.ifi.dbs.knowing.core.processing.TLoader
-import de.lmu.ifi.dbs.knowing.core.validation.{CrossValidatorFactory, XCrossValidatorFactory }
-import java.util.Properties
-import akka.actor.Actor
-import org.osgi.framework.{ BundleActivator, BundleContext }
+import org.osgi.framework.BundleActivator
+import org.osgi.framework.BundleContext
 
+import de.lmu.ifi.dbs.knowing.core.util.OSGIUtil
+import de.lmu.ifi.dbs.knowing.core.validation.CrossValidatorFactory
+import de.lmu.ifi.dbs.knowing.core.validation.XCrossValidatorFactory
+import de.lmu.ifi.dbs.knowing.core.weka.NaiveBayesFactory
+import de.lmu.ifi.dbs.knowing.core.weka.OneRFactory
+import de.lmu.ifi.dbs.knowing.core.weka.WekaArffLoaderFactory
 
 class Activator extends BundleActivator {
-  //with Logging
+
+  private var osgiUtil: OSGIUtil = _
 
   def start(context: BundleContext) = {
     Activator.context = context
-    //logger info "Activator started"
+    osgiUtil = new OSGIUtil(context)
     registerServices
   }
 
   def stop(context: BundleContext) = {
     Activator.context = null;
+    osgiUtil.deregisterAll
+    osgiUtil = null
   }
 
   private def registerServices {
-    val arff = new WekaArffLoaderFactory
-    val naiveBayes = new NaiveBayesFactory
-    val oneR = new OneRFactory
-    val crossVal = new CrossValidatorFactory
-    val xcrossVal = new XCrossValidatorFactory
-    //        Activator.context createService arff
-    Activator.context.registerService(classOf[TFactory].getName(), arff, null)
-    Activator.context.registerService(classOf[TFactory].getName(), naiveBayes, null)
-    Activator.context.registerService(classOf[TFactory].getName(), oneR, null)
-    Activator.context.registerService(classOf[TFactory].getName(), crossVal, null)
-    Activator.context.registerService(classOf[TFactory].getName(), xcrossVal, null)
+    osgiUtil.registerLoader(new WekaArffLoaderFactory, WekaArffLoaderFactory.id)
+    osgiUtil.registerProcessor(new NaiveBayesFactory, classOf[weka.classifiers.bayes.NaiveBayes].getName)
+    osgiUtil.registerProcessor(new OneRFactory, classOf[weka.classifiers.rules.OneR].getName)
+    osgiUtil.registerProcessor(new CrossValidatorFactory, CrossValidatorFactory.id)
+    osgiUtil.registerProcessor(new XCrossValidatorFactory, XCrossValidatorFactory.id)
   }
 
 }
