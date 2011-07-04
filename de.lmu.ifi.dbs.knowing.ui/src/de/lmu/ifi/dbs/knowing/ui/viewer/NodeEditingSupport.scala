@@ -58,5 +58,5 @@ class NodeEditingSupport(viewer: TableViewer, colum: Int) extends EditingSupport
 }
 
 object NodeEditingSupport {
-  val types = Array("loader", "processor", "presenter")
+  val types = Array("loader", "processor", "presenter", "saver")
 }

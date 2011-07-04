@@ -4,7 +4,7 @@ import akka.actor.ActorRef
 import de.lmu.ifi.dbs.knowing.core.weka._
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
-import de.lmu.ifi.dbs.knowing.core.util.{Util, OSGIUtil}
+import de.lmu.ifi.dbs.knowing.core.util.{ Util, OSGIUtil }
 import de.lmu.ifi.dbs.knowing.core.processing.TLoader
 import de.lmu.ifi.dbs.knowing.core.validation.{ CrossValidatorFactory, XCrossValidatorFactory }
 import java.util.Properties
@@ -29,6 +29,7 @@ class Activator extends BundleActivator {
 
   private def registerServices {
     osgiUtil.registerLoader(new WekaArffLoaderFactory, WekaArffLoaderFactory.id)
+    osgiUtil.registerSaver(new WekaArffSaverFactory, WekaArffSaverFactory.id)
     osgiUtil.registerProcessor(new NaiveBayesFactory, classOf[weka.classifiers.bayes.NaiveBayes].getName)
     osgiUtil.registerProcessor(new OneRFactory, classOf[weka.classifiers.rules.OneR].getName)
     osgiUtil.registerProcessor(new CrossValidatorFactory, CrossValidatorFactory.id)

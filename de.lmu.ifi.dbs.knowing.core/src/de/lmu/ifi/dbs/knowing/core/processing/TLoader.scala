@@ -5,7 +5,7 @@ import java.util.Properties
 import weka.core.Instances
 import de.lmu.ifi.dbs.knowing.core.events._
 import akka.actor.Actor
-import akka.event.EventHandler
+import akka.event.EventHandler.{debug, info, warning, error}
 
 trait TLoader extends Actor with TSender with TConfigurable {
 
@@ -20,16 +20,16 @@ trait TLoader extends Actor with TSender with TConfigurable {
    * <p>Default behaviour</p>
    */
   private def defaultReceive: Receive = {
-     case Register(actor, port) => addListener(actor, port)
+    case Register(actor, port) => addListener(actor, port)
     case Configure(p) =>
       configure(p)
       if (self.getSender.isDefined)
         self reply Ready
     case Start | Start() =>
       val dataset = getDataSet
-      sendEvent(new Results(dataset))
+      sendEvent(Results(dataset))
     case Reset => reset
-    case msg => EventHandler.warning(this, "<----> " + msg)
+    case msg => warning(this, "<----> " + msg)
   }
 
   /**
@@ -62,12 +62,12 @@ object TLoader {
     val absolute = properties.getProperty(ABSOLUTE_PATH, "false").toBoolean
     absolute match {
       case true => properties.getProperty(FILE)
-      case false => 
+      case false =>
         val path = properties.getProperty(DPU_PATH)
-        if(path == null || path.isEmpty)
-        	properties.getProperty(FILE)
+        if (path == null || path.isEmpty)
+          properties.getProperty(FILE)
         else
-        	path + properties.getProperty(FILE)
+          path + properties.getProperty(FILE)
     }
   }
 }
