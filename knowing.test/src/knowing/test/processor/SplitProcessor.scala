@@ -14,13 +14,12 @@ import SplitProcessorFactory._
 
 class SplitProcessor extends TProcessor {
 
-  override def customReceive = {
-    case Results(inst) => 
-      val toCopy = inst.numInstances / 2
-      val one = new Instances(inst, 0, toCopy)
-      val two = new Instances(inst, inst.numInstances / 2, toCopy -1)
-      sendEvent(Results(one), OUTPUT1)
-      sendEvent(Results(two), OUTPUT2)
+  def build(inst: Instances) {
+    val toCopy = inst.numInstances / 2
+    val one = new Instances(inst, 0, toCopy)
+    val two = new Instances(inst, inst.numInstances / 2, toCopy - 1)
+    sendEvent(Results(one), OUTPUT1)
+    sendEvent(Results(two), OUTPUT2)
   }
 
   def query(query: Instance): Instances = { null }

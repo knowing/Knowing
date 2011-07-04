@@ -21,6 +21,13 @@ trait TSender { this: Actor =>
     }
   }
 
+  def removeListener(listener: ActorRef, port: Option[String]) {
+    port match {
+      case Some(p) => removeListener(listener, p)
+      case None => removeListener(listener)
+    }
+  }
+
   /* ========================== */
   /* == Generic input/output == */
   /* ========================== */
@@ -39,7 +46,7 @@ trait TSender { this: Actor =>
   /* == Custom input/output == */
   /* ========================= */
 
-  def addListener(listener: ActorRef, port: String) {
+  protected def addListener(listener: ActorRef, port: String) {
     val entry = outputListeners.get(port)
     val value = (listener.getUuid -> listener)
     entry match {
@@ -50,7 +57,7 @@ trait TSender { this: Actor =>
       self reply Registered(true)
   }
 
-  def removeListener(listener: ActorRef, port: String) {
+  protected def removeListener(listener: ActorRef, port: String) {
     val entry = outputListeners.get(port)
     entry match {
       case Some(e) => e.remove(listener.getUuid)

@@ -17,10 +17,6 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
 
   def this() = this(null, 10, new Properties)
   
-  override def customReceive = {
-    case Results(instances) => build(instances)
-  }
-
   def build(instances: Instances) {
     //Init classlabels
     val index = guessAndSetClassLabel(instances)

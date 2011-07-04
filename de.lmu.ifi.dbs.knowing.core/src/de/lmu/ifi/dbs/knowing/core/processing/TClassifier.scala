@@ -29,7 +29,7 @@ trait TClassifier extends TProcessor {
    *
    * @param the dataset
    */
-  def build(instances: Instances): Unit = {}
+  def build(instances: Instances)
 
   /**
    * <p>The presenter connected to this {@link IResultProcessor} calls this<br>
@@ -38,6 +38,6 @@ trait TClassifier extends TProcessor {
    *
    * @return - class labels
    */
-  def getClassLabels(): Array[String] = { null }
+  def getClassLabels(): Array[String]
 
 }

@@ -27,10 +27,6 @@ class CrossValidator(var factory: TFactory, var folds: Int, var fold: Int, var c
 
   def this() = this(null, 2, 1, new Properties)
 
-  override def customReceive = {
-    case Results(instances) => build(instances)
-  }
-
   def build(instances: Instances) = buildClassifier(instances) //Input data
 
   def result(result: Instances, query: Instance) {
