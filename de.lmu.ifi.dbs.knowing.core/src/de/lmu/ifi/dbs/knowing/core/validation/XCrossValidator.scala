@@ -12,11 +12,12 @@ import weka.core.{ Instance, Instances }
 
 class XCrossValidator(var factory: TFactory, var folds: Int, var validator_properties: Properties) extends TProcessor {
 
-  var confusionMatrix: Instances = _
-  var classLabels: Array[String] = Array()
+  private var confusionMatrix: Instances = _
+  private var classLabels: Array[String] = Array()
+  private var currentFold: Int = 0
 
   def this() = this(null, 10, new Properties)
-  
+
   def build(instances: Instances) {
     //Init classlabels
     val index = guessAndSetClassLabel(instances)
@@ -35,30 +36,37 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
       crossValidators(j) !! Configure(configureProperties(validator_properties, j))
       crossValidators(j) ! Results(instances.trainCV(folds, j))
     }
-    debug(this, "Fold-Actors configured and trained")
+    debug(this, "Fold-Actors configured and training started")
 
   }
 
   def result(result: Instances, query: Instance) {
-	if(!result.equalHeaders(confusionMatrix))
-	  warning (this, "Model ConfusionMatrix doesn't fit Result ConfusionMatrix")
-	for(i <- 0 until confusionMatrix.numInstances) {
-	  for(j <- 0 until confusionMatrix.numAttributes) {
-	    val valResult = result get(i) value(j)
-	    val valMatrix = confusionMatrix get(i) value(j)
-	    val values = (valResult, valMatrix)
-	    values match {
-	      case (0, matrix) => //change nothing
-	      case (result,0) => confusionMatrix get(i) setValue(j, result)
-	      case (v1,v2) => confusionMatrix get(i) setValue(j, (v1+v2) / 2.0)
-	    }
-	  }
-	}
-	sendEvent(Results(confusionMatrix))
+    if (!result.equalHeaders(confusionMatrix))
+      warning(this, "Model ConfusionMatrix doesn't fit Result ConfusionMatrix")
+    for (i <- 0 until confusionMatrix.numInstances) {
+      for (j <- 0 until confusionMatrix.numAttributes) {
+        val valResult = result get (i) value (j)
+        val valMatrix = confusionMatrix get (i) value (j)
+        val values = (valResult, valMatrix)
+        values match {
+          case (0, matrix) => //change nothing
+          case (result, 0) => confusionMatrix get (i) setValue (j, result)
+          case (v1, v2) => confusionMatrix get (i) setValue (j, (v1 + v2) / 2.0)
+        }
+      }
+    }
+    currentFold += 1
+    if (currentFold == folds) {
+      sendEvent(Results(confusionMatrix))
+      currentFold = 0
+    } else {
+      debug(this, "Fold " + currentFold + " results arrived")
+    }
+
   }
 
   def configure(properties: Properties) = {
-    debug (this, "configure with: " + properties)
+    debug(this, "configure with: " + properties)
     val factory = Util.getFactoryService(CrossValidatorFactory.id)
     factory match {
       case Some(f) => this.factory = f

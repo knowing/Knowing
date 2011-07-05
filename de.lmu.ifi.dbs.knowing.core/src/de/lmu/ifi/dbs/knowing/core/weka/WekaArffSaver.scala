@@ -4,13 +4,13 @@ import de.lmu.ifi.dbs.knowing.core.processing.TSaver
 import de.lmu.ifi.dbs.knowing.core.processing.TSaver._
 import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory._
-import de.lmu.ifi.dbs.knowing.core.weka.WekaArffSaver
 import weka.core.Instances
 import java.util.Properties
-import weka.core.converters.ArffSaver
 import java.io.File
+import weka.core.converters.ArffSaver
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
+import akka.event.EventHandler.{debug, info, warning, error}
 
 /**
  * <p>Wraps the weka.core.converters.ArffSaver to save ARFF files</p>
@@ -23,10 +23,11 @@ class WekaArffSaver extends TSaver {
   lazy val saver = new ArffSaver
 
   def write(instances: Instances) {
-    println("#### write: ")
+	debug(this, "Write Instances")
     saver.setInstances(instances)
     saver.writeBatch
     reset
+    //TODO WekaArffSaver -> must be configured again, after write
   }
 
   def reset {
@@ -36,7 +37,6 @@ class WekaArffSaver extends TSaver {
   }
 
   def configure(properties: Properties) {
-    println("#### CONFIGURE: " + properties)
     //TODO WekaArffSaver -> RetrievalMode
     if (!file.equals("<no file>")) {
       val outputFile = new File(getFilePath(properties))

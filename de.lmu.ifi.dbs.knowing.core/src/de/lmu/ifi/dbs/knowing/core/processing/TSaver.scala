@@ -29,7 +29,7 @@ trait TSaver extends Actor with TSender with TConfigurable {
     case Register(actor, port) => addListener(actor, port)
     case Configure(p) => saverConfiguration(p)
     case Reset => reset
-    case msg => warning(this, "<----> " + msg)
+    case msg => warning(this, "<----> " )
   }
 
   def write(instances: Instances)
@@ -41,8 +41,8 @@ trait TSaver extends Actor with TSender with TConfigurable {
 
   private def saverConfiguration(properties: Properties) {
     _mode = properties.getProperty(WRITE_MODE, WRITE_MODE_BATCH)
-    _mode = properties.getProperty(FILE, "<no file>")
-    _mode = properties.getProperty(URL, "<no url>")
+    _file = properties.getProperty(FILE, "<no file>")
+    _url = properties.getProperty(URL, "<no url>")
     configure(properties)
     if (self.getSender.isDefined)
       self reply Ready
