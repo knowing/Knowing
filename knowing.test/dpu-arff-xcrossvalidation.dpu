@@ -8,7 +8,6 @@
 			factoryId="de.lmu.ifi.dbs.knowing.core.validation.XCrossValidator" id="validator">
 			<properties>
 				<item value="weka.classifiers.bayes.NaiveBayes" key="classifier" />
-				<item value="5" key="fold" />
 				<item value="10" key="folds" />
 
 				<item value="false" key="kernel-estimator" />
