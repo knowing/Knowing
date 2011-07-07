@@ -83,6 +83,7 @@ public class ConfigurationPage extends FormPage implements PropertyChangeListene
 		block.createContent(managedForm);
 		getSite().setSelectionProvider(block.getNodeTableViewer());
 		block.getNodeTableViewer().addPropertyChangeListener(this);
+		block.getEdgeTableViewer().addPropertyChangeListener(this);
 		toolkit.decorateFormHeading(form.getForm());
 		toolkit.paintBordersFor(body);
 	}
@@ -104,7 +105,6 @@ public class ConfigurationPage extends FormPage implements PropertyChangeListene
 		super.doSave(monitor);
 		if (dpu == null || file == null)
 			return;
-		System.out.println("DoSave in ConfigurationPage: " + dpu);
 		try {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			JAXBContext context = JAXBContext.newInstance(DataProcessingUnit.class);
@@ -115,6 +115,7 @@ public class ConfigurationPage extends FormPage implements PropertyChangeListene
 			byte[] data = bos.toByteArray();
 			ByteArrayInputStream source = new ByteArrayInputStream(data);
 			file.setContents(source, IFile.FORCE, null);
+			block.refresh();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (CoreException e) {

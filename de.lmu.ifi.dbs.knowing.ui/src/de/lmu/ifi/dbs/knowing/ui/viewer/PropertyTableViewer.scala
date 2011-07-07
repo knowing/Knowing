@@ -10,6 +10,7 @@ import de.lmu.ifi.dbs.knowing.ui.provider.WorkbenchTableLabelProvider
 import de.lmu.ifi.dbs.knowing.core.graph.Node
 import de.lmu.ifi.dbs.knowing.core.graph.xml.Property
 import java.beans.PropertyChangeListener
+import java.util.HashSet
 
 /**
  * @author Nepomuk Seiler
@@ -18,6 +19,8 @@ import java.beans.PropertyChangeListener
  *
  */
 class PropertyTableViewer(table: Table) extends TableViewer(table) {
+
+  private var properties: Properties = new Properties
 
   getTable.setHeaderVisible(true)
   getTable.setLinesVisible(true)
@@ -39,18 +42,34 @@ class PropertyTableViewer(table: Table) extends TableViewer(table) {
   setContentProvider(new ArrayContentProvider)
   setLabelProvider(new WorkbenchTableLabelProvider)
 
-  def setInput2(node: Node)  {
+  def setInput2(node: Node) {
+    this.properties = node.properties
     valueEditingSupport.properties = node.properties
     setInput(convert(node.properties))
   }
-  
+
   private def convert(properties: Properties): Array[Property] = {
-    val keys = asScalaSet(properties.stringPropertyNames)
-    val propList = for(key <- keys) yield new Property(key, properties.getProperty(key))
-    //TODO Random order every time!
+    //var keys = properties.stringPropertyNames
+    //val propList = for (key <- keys) yield new Property(key, properties.getProperty(key))
+    val keys = properties.propertyNames
+    var propList: List[Property] = Nil
+    while (keys.hasMoreElements) {
+      val key = keys.nextElement.toString
+      propList ::= new Property(key, properties.getProperty(key))
+    }
     propList.toArray
   }
-  
+
+  def addProperty(key: String, value: String) {
+    properties.setProperty(key, value)
+    setInput(convert(properties))
+  }
+
+  def removeProperty(key: String) {
+    properties.remove(key)
+    setInput(convert(properties))
+  }
+
   def addPropertyChangeListener(listener: PropertyChangeListener) = valueEditingSupport.addPropertyChangeListener(listener)
 
   def removePropertyChangeListener(listener: PropertyChangeListener) = valueEditingSupport.removePropertyChangeListener(listener)

@@ -5,10 +5,15 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -24,10 +29,16 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-import de.lmu.ifi.dbs.knowing.core.graph.PersistentNode;
+import de.lmu.ifi.dbs.knowing.core.graph.*;
+import de.lmu.ifi.dbs.knowing.core.graph.xml.*;
 import de.lmu.ifi.dbs.knowing.ui.viewer.PropertyTableViewer;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.jface.viewers.ComboViewer;
+
 
 public class PersistentNodeDetailsPage implements IDetailsPage, PropertyChangeListener {
+	public PersistentNodeDetailsPage() {
+	}
 
 	private IManagedForm managedForm;
 	
@@ -41,6 +52,8 @@ public class PersistentNodeDetailsPage implements IDetailsPage, PropertyChangeLi
 	private PersistentNode node;
 
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+
+	private ComboViewer typeViewer;
 
 
 	/**
@@ -79,11 +92,41 @@ public class PersistentNodeDetailsPage implements IDetailsPage, PropertyChangeLi
 			@Override
 			public void modifyText(ModifyEvent e) {
 				String oldValue = node.id();
-				node.id_$eq(tName.getText());
-				propertyChangeSupport.firePropertyChange("node", oldValue, tName.getText());
-				System.out.println("OldValue: " + oldValue + " / NewValue: " + node.id());
-				dirty =  true;
-				managedForm.dirtyStateChanged();
+				if(!oldValue.equals(tName.getText())) {
+					node.id_$eq(tName.getText());
+					dirty =  true;
+					managedForm.dirtyStateChanged();
+					propertyChangeSupport.firePropertyChange("node", oldValue, tName.getText());
+				}
+
+			}
+		});
+		new Label(cGeneral, SWT.NONE);
+		
+		Label lType = toolkit.createLabel(cGeneral, "Type", SWT.NONE);
+		lType.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		
+		typeViewer = new ComboViewer(cGeneral, SWT.NONE);
+		Combo combo = typeViewer.getCombo();
+		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		toolkit.paintBordersFor(combo);
+		typeViewer.add(new String[] {"loader", "processor", "presenter", "saver"});
+		typeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				ISelection selection = event.getSelection();
+				if(selection.isEmpty())
+					return;
+				String oldValue = node.nodeType();
+				String newValue = ((IStructuredSelection)selection).getFirstElement().toString();
+				if(!oldValue.equals(newValue)) {
+					node.nodeType_$eq(newValue);
+					dirty = true;
+					managedForm.dirtyStateChanged();
+					propertyChangeSupport.firePropertyChange("node", oldValue, newValue);
+				}
+				
 			}
 		});
 		new Label(cGeneral, SWT.NONE);
@@ -99,10 +142,12 @@ public class PersistentNodeDetailsPage implements IDetailsPage, PropertyChangeLi
 			@Override
 			public void modifyText(ModifyEvent e) {
 				String oldValue = node.factoryId();
-				node.factoryId_$eq(tFactory.getText());
-				propertyChangeSupport.firePropertyChange("node", oldValue, tFactory.getText());
-				dirty = true;
-				managedForm.dirtyStateChanged();
+				if(!oldValue.equals(tFactory.getText())) {
+					node.factoryId_$eq(tFactory.getText());
+					dirty =  true;
+					managedForm.dirtyStateChanged();
+					propertyChangeSupport.firePropertyChange("node", oldValue, tFactory.getText());
+				}
 			}
 		});
 		
@@ -121,9 +166,37 @@ public class PersistentNodeDetailsPage implements IDetailsPage, PropertyChangeLi
 		
 		Table propTable = toolkit.createTable(cProperties, SWT.NONE);
 		propTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		toolkit.paintBordersFor(propTable);
 		propertyTableViewer = new PropertyTableViewer(propTable);
 		propertyTableViewer.addPropertyChangeListener(this);
+		toolkit.paintBordersFor(propTable);
+		new Label(cGeneral, SWT.NONE);
+		
+		Button bRemove = toolkit.createButton(cGeneral, "Remove", SWT.NONE);
+		bRemove.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		bRemove.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IStructuredSelection selection = (IStructuredSelection) propertyTableViewer.getSelection();
+				if(selection.isEmpty())
+					return;
+				Property property = (Property) selection.getFirstElement();
+				propertyTableViewer.removeProperty(property.key());
+				dirty =  true;
+				managedForm.dirtyStateChanged();
+			}
+		});
+		
+		Button bAdd = toolkit.createButton(cGeneral, "Add", SWT.NONE);
+		bAdd.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		bAdd.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				propertyTableViewer.addProperty("key", "value");
+				dirty =  true;
+				managedForm.dirtyStateChanged();
+			}
+		});
+
 	}
 	
 	@Override
@@ -140,6 +213,7 @@ public class PersistentNodeDetailsPage implements IDetailsPage, PropertyChangeLi
 			return;
 		tName.setText(node.id());
 		tFactory.setText(node.factoryId());
+		typeViewer.setSelection(new StructuredSelection(node.nodeType()));
 		updateProperties();
 	}
 	

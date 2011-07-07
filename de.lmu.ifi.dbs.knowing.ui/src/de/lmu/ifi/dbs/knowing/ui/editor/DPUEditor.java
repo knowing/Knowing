@@ -15,19 +15,20 @@ public class DPUEditor extends FormEditor {
 	private ConfigurationPage configPage;
 	private int configPageIndex;
 
+	private GraphicPage graphicPage;
+	private int graphicPageIndex;
+	
 	private StructuredTextEditor sourcePage;
 	private int sourcePageIndex;
 	
-	private GraphicPage graphicPage;
-	private int graphicPageIndex;
 
 	@Override
 	protected void addPages() {
 		try {
 			configPageIndex = addPage(configPage = new ConfigurationPage(this));
-			sourcePageIndex = addPage(sourcePage = new StructuredTextEditor(), getEditorInput());
 			graphicPageIndex = addPage(graphicPage = new GraphicPage(this));
-			setPageText(1, "Source");
+			sourcePageIndex = addPage(sourcePage = new StructuredTextEditor(), getEditorInput());
+			setPageText(sourcePageIndex, "Source");
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		}
@@ -48,6 +49,7 @@ public class DPUEditor extends FormEditor {
 
 		try {
 			configPage.update(getEditorInput());
+			graphicPage.update(getEditorInput());
 			sourcePage.init(getEditorSite(), getEditorInput());
 		} catch (PartInitException e) {
 			e.printStackTrace();

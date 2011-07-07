@@ -14,6 +14,7 @@ class NodeEditingSupport(viewer: TableViewer, colum: Int) extends EditingSupport
 
   protected def setValue(element: Object, value: Object) = {
     val node = element.asInstanceOf[Node]
+    val oldValue = getValue(element)
     var refresh = true
     colum match {
       case 0 => node.id = value.toString
@@ -21,9 +22,10 @@ class NodeEditingSupport(viewer: TableViewer, colum: Int) extends EditingSupport
       case 4 => node.factoryId = value.toString
       case _ => refresh = false
     }
-    if (refresh) {
+    val newValue = getValue(element)
+    if (refresh && !oldValue.eq(newValue)) {
       viewer.refresh()
-      propertyChangeSupport.firePropertyChange("property", null, element)
+      propertyChangeSupport.firePropertyChange("property-value", oldValue, newValue)
     }
   }
 

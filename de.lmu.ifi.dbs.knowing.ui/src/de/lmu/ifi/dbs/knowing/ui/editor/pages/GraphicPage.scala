@@ -21,20 +21,19 @@ import org.eclipse.swt.widgets.Composite;
 class GraphicPage(editor: FormEditor) extends FormPage(editor, classOf[GraphicPage].getName, "Graphic") {
 
   var container: Composite = _
+  var mForm:IManagedForm = _
   var dpu: DataProcessingUnit = _
 
   override protected def createFormContent(managedForm: IManagedForm) {
+    mForm = managedForm
     val toolkit = managedForm.getToolkit
     val form = managedForm.getForm
     form.setText("Data Processing Unit - Graph View");
-    val body = form.getBody
+    container = form.getBody
     toolkit.decorateFormHeading(form.getForm)
-    toolkit.paintBordersFor(body)
-    body.setLayout(new FillLayout)
-
-    container = toolkit.createComposite(body)
+    toolkit.paintBordersFor(container)
     container.setLayout(new FillLayout)
-    managedForm.getToolkit().paintBordersFor(container);
+
     updateView(dpu)
   }
 
@@ -73,12 +72,16 @@ class GraphicPage(editor: FormEditor) extends FormPage(editor, classOf[GraphicPa
   def updateView(dpu: DataProcessingUnit) {
     if (container == null)
       return
+    container.getChildren foreach (c => c dispose)
     val graph = new Graph(container, SWT.NONE)
     val nodesArray = for(node <- dpu.nodes) yield (node.id -> new GraphNode(graph,SWT.NONE, node.id))
     var nodes:mMap[String, GraphNode] = new HashMap
     nodesArray foreach {case (id, node) => nodes += (id -> node)}
     dpu.edges foreach(e => new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, nodes(e.sourceId.split(":")(0)), nodes(e.targetId)))
     graph.setLayoutAlgorithm(new SpringLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true)
+    
+    //TODO GraphicPage -> Not updating view!
+    mForm.reflow(true)
   }
 
     

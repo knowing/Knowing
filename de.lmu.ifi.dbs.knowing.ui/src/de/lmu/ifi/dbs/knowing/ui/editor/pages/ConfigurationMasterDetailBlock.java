@@ -3,6 +3,7 @@ package de.lmu.ifi.dbs.knowing.ui.editor.pages;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -171,14 +172,20 @@ public class ConfigurationMasterDetailBlock extends MasterDetailsBlock implement
 		if (nodeTableViewer != null) 
 			nodeTableViewer.setInput(dpu.nodes());
 			
-		if (edgeTableViewer != null) 
+		if (edgeTableViewer != null)  {
 			edgeTableViewer.setInput(dpu.edges());
+			edgeTableViewer.setDpu(dpu);
+		}
+			
 		refresh();
 	}
 	
 	public void refresh() {
-		if (nodeTableViewer != null) 
+		if (nodeTableViewer != null) {
 			nodeTableViewer.refresh();
+			ISelection selection = nodeTableViewer.getSelection();
+			nodeTableViewer.setSelection(selection);
+		}
 			
 		if (edgeTableViewer != null) 
 			edgeTableViewer.refresh();
@@ -186,6 +193,10 @@ public class ConfigurationMasterDetailBlock extends MasterDetailsBlock implement
 	
 	public NodeTableViewer getNodeTableViewer() {
 		return nodeTableViewer;
+	}
+	
+	public EdgeTableViewer getEdgeTableViewer() {
+		return edgeTableViewer;
 	}
 
 	@Override
