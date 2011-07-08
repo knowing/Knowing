@@ -21,6 +21,8 @@ trait TFilter extends TProcessor {
 
   def filter(instances: Instances): Instances
   
+  def build(instances: Instances) = { /* Do nothing */}
+  
   //TODO TFilter => Input/Output Format configuration
 
 }

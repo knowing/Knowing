@@ -34,6 +34,10 @@ case class ProcessorNode(var id: String, var factoryId: String, var properties: 
   var nodeType = Node.PROCESSOR
 }
 
+case class SaverNode(var id: String, var factoryId: String, var properties: Properties) extends Node {
+  var nodeType = Node.SAVER
+}
+
 @XmlAccessorType(XmlAccessType.FIELD)
 case class PersistentNode(@(XmlAttribute @field) var id: String,
   @(XmlAttribute @field) var factoryId: String,
@@ -54,4 +58,5 @@ object Node {
   val LOADER = "loader"
   val PROCESSOR = "processor"
   val PRESENTER = "presenter"
+  val SAVER = "saver"
 }

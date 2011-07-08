@@ -40,7 +40,8 @@ trait TProcessor extends Actor with TSender with TConfigurable {
       configure(p)
       if (self.getSender.isDefined)
         self reply Ready
-    case Start => debug(this, "Running " + self.getActorClassName)
+    case Start | Start() => debug(this, "Running " + self.getActorClassName)
+    case Results(inst) => build(inst)
     case Query(q) => self reply QueryResults(query(q), q)
     case Queries(q) =>
       val enum = q.enumerateInstances
@@ -49,8 +50,10 @@ trait TProcessor extends Actor with TSender with TConfigurable {
         self reply QueryResults(query(instance), instance)
       }
     case QueryResults(r, q) => result(r, q)
-    case msg => warning(this, "<----> " + msg)
+    case msg => messageException(msg)
   }
+  
+  def build(instances: Instances)
 
 
   /**
@@ -73,6 +76,12 @@ trait TProcessor extends Actor with TSender with TConfigurable {
    * @param query - the query
    */
   def result(result: Instances, query: Instance)
+  
+  /**
+   * <p>Just puts a warning on the console and prints out the message</p>
+   * 
+   */
+  def messageException(message: Any) = warning(this, "<----> " + message)
 
   /**
    *  <p>Checks the dataset for class attribute in this order

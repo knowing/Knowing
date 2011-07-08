@@ -53,7 +53,7 @@ abstract class SWTPresenter extends TPresenter[Composite] {
     if (composite != null) {
       composite.getDisplay().syncExec(new Runnable {
         def run {
-          debug(this, "SWTPresenter.buildPresentation with  " + instances.relationName)
+          //debug(this, "SWTPresenter.buildPresentation with  " + instances.relationName)
           buildContent(instances);
         }
       })

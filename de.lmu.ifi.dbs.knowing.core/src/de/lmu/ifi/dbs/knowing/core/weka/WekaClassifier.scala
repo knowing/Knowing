@@ -24,11 +24,7 @@ class WekaClassifier(protected val classifier: Classifier) extends TProcessor {
   private var classLabels: Array[String] = _
   private val name = getClass().getSimpleName;
 
-  override def customReceive = {
-    case Results(instances) => build(instances)
-  }
-
-  def build(instances: Instances) = {
+  def build(instances: Instances) {
     debug(this, "Build internal model for " + name + " ...")
     val index = guessAndSetClassLabel(instances)
     index match {

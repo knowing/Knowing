@@ -19,17 +19,15 @@ import weka.core.{ Attribute, Instance, Instances }
  */
 class CrossValidator(var factory: TFactory, var folds: Int, var fold: Int, var classifier_properties: Properties) extends TProcessor {
 
-  var confusionMatrix: Instances = _
-  var classLabels: Array[String] = Array()
-  var classifier: Option[ActorRef] = None
+  private var confusionMatrix: Instances = _
+  private var classLabels: Array[String] = Array()
+  private var classifier: Option[ActorRef] = None
+  private var numInstances: Int = 0
+  private var currentInst: Int = 0
 
   private var first_run = true
 
   def this() = this(null, 2, 1, new Properties)
-
-  override def customReceive = {
-    case Results(instances) => build(instances)
-  }
 
   def build(instances: Instances) = buildClassifier(instances) //Input data
 
@@ -56,7 +54,13 @@ class CrossValidator(var factory: TFactory, var folds: Int, var fold: Int, var c
 
       entry.setValue(column.toInt, value)
     }
-    sendEvent(QueryResults(confusionMatrix, query))
+    //debug(this,  currentInst + "/" + numInstances)
+    currentInst += 1
+    if (currentInst == numInstances) {
+      sendEvent(QueryResults(confusionMatrix, query))
+      numInstances = 0
+      currentInst = 0
+    }
   }
 
   /**
@@ -78,8 +82,9 @@ class CrossValidator(var factory: TFactory, var folds: Int, var fold: Int, var c
     classifier.get !! Configure(classifier_properties)
     classifier.get ! Results(instances.trainCV(folds, fold))
     confusionMatrix = ResultsUtil.confusionMatrix(getClassLabels.toList)
-
-    classifier.get ! Queries(instances.testCV(folds, fold))
+    val testSet = instances.testCV(folds, fold)
+    numInstances = testSet.numInstances
+    classifier.get ! Queries(testSet)
   }
 
   private def highestProbability(instances: Instances): Int = {

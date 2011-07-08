@@ -1,5 +1,7 @@
 package de.lmu.ifi.dbs.knowing.ui.viewer;
 
+import java.beans.PropertyChangeListener;
+
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -8,6 +10,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 
 import de.lmu.ifi.dbs.knowing.ui.provider.WorkbenchTableLabelProvider;
+import de.lmu.ifi.dbs.knowing.core.graph.xml.*;
 
 /**
  * 
@@ -19,6 +22,9 @@ public class EdgeTableViewer  extends TableViewer {
 
 	private static final String[] columns = new String[] { "Name", "Source", "Target", "W" };
 	private static final int[] width = new int[] { 150, 150, 150, 30};
+	
+	private EdgeEditingSupport[] edgeEditingSupport = new EdgeEditingSupport[4];
+	private DataProcessingUnit dpu;
 	
 	/**
 	 * @param parent
@@ -55,6 +61,8 @@ public class EdgeTableViewer  extends TableViewer {
 			viewerColumn.getColumn().setResizable(true);
 			// Spalten lassen sich untereinander verschieben
 			viewerColumn.getColumn().setMoveable(true);
+			edgeEditingSupport[i] = new EdgeEditingSupport(this, i);
+			viewerColumn.setEditingSupport(edgeEditingSupport[i]);
 		}
 	}
 
@@ -62,4 +70,33 @@ public class EdgeTableViewer  extends TableViewer {
 		setContentProvider(new ArrayContentProvider());
 		setLabelProvider(new WorkbenchTableLabelProvider());
 	}
+
+	public DataProcessingUnit getDpu() {
+		return dpu;
+	}
+
+	public void setDpu(DataProcessingUnit dpu) {
+		this.dpu = dpu;
+		for (EdgeEditingSupport support : edgeEditingSupport)
+			support.updateDPU(dpu);
+	}
+	
+	/**
+	 * @param listener
+	 * @see de.lmu.ifi.dbs.knowing.ui.viewer.TPropertyChangeSupport#addPropertyChangeListener(java.beans.PropertyChangeListener)
+	 */
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		for (EdgeEditingSupport pes : edgeEditingSupport)
+			pes.addPropertyChangeListener(listener);
+	}
+
+	/**
+	 * @param listener
+	 * @see de.lmu.ifi.dbs.knowing.ui.viewer.TPropertyChangeSupport#removePropertyChangeListener(java.beans.PropertyChangeListener)
+	 */
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		for (EdgeEditingSupport pes : edgeEditingSupport)
+			pes.removePropertyChangeListener(listener);
+	}
+	
 }
