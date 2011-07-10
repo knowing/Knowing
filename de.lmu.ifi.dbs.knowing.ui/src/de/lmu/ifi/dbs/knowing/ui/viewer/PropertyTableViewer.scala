@@ -60,6 +60,11 @@ class PropertyTableViewer(table: Table) extends TableViewer(table) {
     propList.toArray
   }
 
+  def addProperty(property: Property) = {
+    properties.setProperty(property.key, property.value)
+    setInput(convert(properties))
+  }
+
   def addProperty(key: String, value: String) {
     properties.setProperty(key, value)
     setInput(convert(properties))

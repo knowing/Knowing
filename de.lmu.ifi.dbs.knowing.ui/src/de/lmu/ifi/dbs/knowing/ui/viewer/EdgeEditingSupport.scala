@@ -7,6 +7,7 @@ import org.eclipse.jface.viewers.TextCellEditor
 import org.eclipse.jface.viewers.ComboBoxCellEditor
 import de.lmu.ifi.dbs.knowing.core.graph.{ Edge, Node }
 import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit
+import EdgeEditingSupport._
 
 class EdgeEditingSupport(viewer: TableViewer, colum: Int) extends EditingSupport(viewer) with TPropertyChangeSupport {
 
@@ -18,10 +19,12 @@ class EdgeEditingSupport(viewer: TableViewer, colum: Int) extends EditingSupport
     val oldValue = getValue(element)
     var refresh = true
     colum match {
-      case 0 => edge.id = value.toString
-      case 1 => edge.sourceId = nodeIds(value.asInstanceOf[Int])
-      case 2 => edge.targetId = nodeIds(value.asInstanceOf[Int])
-      case 3 => edge.weight = value.asInstanceOf[Int]
+      case EDGE_ID => edge.id = value.toString
+      case SOURCE_ID => edge.setPlainSourceId(nodeIds(value.asInstanceOf[Int]))
+      case SOURCE_PORT => edge.setSourcePort(value.toString)
+      case TARGET_ID => edge.setPlainTargetId(nodeIds(value.asInstanceOf[Int]))
+      case TARGET_PORT => edge.setTargetPort(value.toString)
+      case EDGE_WEIGHT => edge.weight = value.asInstanceOf[Int]
       case _ => refresh = false
     }
     val newValue = getValue(element)
@@ -34,20 +37,24 @@ class EdgeEditingSupport(viewer: TableViewer, colum: Int) extends EditingSupport
   protected def getValue(element: Object): Object = {
     val edge = element.asInstanceOf[Edge]
     colum match {
-      case 0 => edge.id
-      case 1 => nodeIds.indexOf(edge.sourceId).asInstanceOf[AnyRef]
-      case 2 => nodeIds.indexOf(edge.targetId).asInstanceOf[AnyRef]
-      case 3 => edge.weight.toString
+      case EDGE_ID => edge.id
+      case SOURCE_ID => nodeIds.indexOf(edge.sourceId).asInstanceOf[AnyRef]
+      case SOURCE_PORT => edge.getSourcePort
+      case TARGET_ID => nodeIds.indexOf(edge.targetId).asInstanceOf[AnyRef]
+      case TARGET_PORT => edge.getTargetPort
+      case 5 => edge.weight.toString
       case _ => "-"
     }
   }
 
   protected def getCellEditor(element: Object): CellEditor = {
     colum match {
-      case 0 => new TextCellEditor(viewer.getTable)
-      case 1 => new ComboBoxCellEditor(viewer.getTable(), nodeIds toArray)
-      case 2 => new ComboBoxCellEditor(viewer.getTable(), nodeIds toArray)
-      case 3 => new TextCellEditor(viewer.getTable)
+      case EDGE_ID => new TextCellEditor(viewer.getTable)
+      case SOURCE_ID => new ComboBoxCellEditor(viewer.getTable(), nodeIds toArray)
+      case SOURCE_PORT => new TextCellEditor(viewer.getTable)
+      case TARGET_ID => new ComboBoxCellEditor(viewer.getTable(), nodeIds toArray)
+      case TARGET_PORT => new TextCellEditor(viewer.getTable)
+      case EDGE_WEIGHT => new TextCellEditor(viewer.getTable)
       case _ => null
     }
   }
@@ -59,4 +66,13 @@ class EdgeEditingSupport(viewer: TableViewer, colum: Int) extends EditingSupport
     nodeIds = dpu.nodes map (n => n.id)
   }
 
+}
+
+object EdgeEditingSupport {
+  val EDGE_ID = 0
+  val SOURCE_ID = 1
+  val SOURCE_PORT = 2
+  val TARGET_ID = 3
+  val TARGET_PORT = 4
+  val EDGE_WEIGHT = 5
 }

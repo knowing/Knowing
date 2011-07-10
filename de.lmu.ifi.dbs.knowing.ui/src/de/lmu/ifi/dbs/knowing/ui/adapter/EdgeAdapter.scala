@@ -10,9 +10,11 @@ class EdgeAdapter extends IWorkbenchColumnAdapter {
     val edge = element.asInstanceOf[Edge]
     columnIndex match {
       case 0 => edge.id
-      case 1 => edge.sourceId
-      case 2 => edge.targetId
-      case 3 => edge.weight.toString
+      case 1 => edge.getPlainSourceId
+      case 2 => edge.getSourcePort
+      case 3 => edge.getPlainTargetId
+      case 4 => edge.getTargetPort
+      case 5 => edge.weight.toString
       case _ => "-"
     }
   }

@@ -31,9 +31,11 @@ import org.eclipse.ui.forms.widgets.Section;
 
 import de.lmu.ifi.dbs.knowing.core.graph.*;
 import de.lmu.ifi.dbs.knowing.core.graph.xml.*;
+import de.lmu.ifi.dbs.knowing.ui.dialogs.NewPropertyDialog;
 import de.lmu.ifi.dbs.knowing.ui.viewer.PropertyTableViewer;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.window.Window;
 
 
 public class PersistentNodeDetailsPage implements IDetailsPage, PropertyChangeListener {
@@ -191,7 +193,11 @@ public class PersistentNodeDetailsPage implements IDetailsPage, PropertyChangeLi
 		bAdd.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				propertyTableViewer.addProperty("key", "value");
+				NewPropertyDialog dialog = new NewPropertyDialog(managedForm.getForm().getShell());
+				int ret = dialog.open();
+				if(ret != Window.OK) 
+					return;
+				propertyTableViewer.addProperty(dialog.getProperty());
 				dirty =  true;
 				managedForm.dirtyStateChanged();
 			}
