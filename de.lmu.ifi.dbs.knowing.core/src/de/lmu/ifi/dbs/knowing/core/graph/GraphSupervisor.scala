@@ -1,24 +1,39 @@
 package de.lmu.ifi.dbs.knowing.core.graph
 
+import akka.actor.{ Actor, ActorRef, Scheduler }
+import akka.event.EventHandler.{ debug, info, warning, error }
+import akka.config.Supervision.AllForOneStrategy
+import com.eaio.uuid.UUID
 import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.util._
 import de.lmu.ifi.dbs.knowing.core.processing.{ TPresenter, TSender, TLoader }
 import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit
 import de.lmu.ifi.dbs.knowing.core.events._
-import akka.actor.{ Actor, ActorRef }
-import akka.event.EventHandler.{ debug, info, warning, error }
-import org.osgi.framework.FrameworkUtil
 import java.util.Properties
+import java.util.concurrent.{ TimeUnit, ScheduledFuture }
+import scala.collection.mutable.{ Map => MutableMap, LinkedList }
+import System.{ currentTimeMillis => systemTime }
+import org.osgi.framework.FrameworkUtil
 
 class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuDir: String) extends Actor with TSender {
 
-  var actors: Map[String, ActorRef] = Map()
-  var events: List[String] = Nil
+  self.faultHandler = AllForOneStrategy(List(classOf[Throwable]), 5, 5000)
+
+  private val actors: MutableMap[String, ActorRef] = MutableMap()
+  private val statusMap: MutableMap[UUID, (ActorRef, Status, Long)] = MutableMap()
+  private val events: LinkedList[String] = LinkedList()
+  private var schedules: List[ScheduledFuture[AnyRef]] = List()
+
+  //Time-to-life in ms
+  private val ttl = 2500L
+
+  private var timestamp = systemTime
 
   def receive = {
     case Register(actor, port) => addListener(actor, port)
-    case Start => evaluate
-    case UpdateUI() => uifactory update
+    case Start | Start() => evaluate
+    case UpdateUI | UpdateUI() => uifactory update
+    case status: Status => handleStatus(status)
     case event: Event => events + event.getClass().getSimpleName
     case msg => debug(this, "Unkown Message: " + msg)
   }
@@ -27,6 +42,7 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuDir: Str
     initialize
     connectActors
     actors foreach { case (_, actor) => actor ! Start }
+    schedule
   }
 
   private def initialize {
@@ -35,7 +51,8 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuDir: Str
       factory match {
         case Some(f) =>
           //Create actor
-          val actor = f.getInstance.start
+          val actor = f.getInstance
+          self startLink actor
           //Register and link the supervisor
           //          self link (actor)
           actor ! Register(self, None)
@@ -46,6 +63,7 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuDir: Str
           actor !! Configure(configureProperties(node.properties))
           //Add to internal map
           actors += (node.id -> actor)
+          statusMap += (actor.getUuid -> (actor, Created(), systemTime))
         case None => warning(this, "No factory found for: " + node.factoryId)
       }
     })
@@ -76,10 +94,50 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuDir: Str
           source !! Register(target, Some(sid(1)))
           debug(this, source.getActorClassName + " -> " + target.getActorClassName + ":" + sid(1))
       }
-
     })
   }
 
-  def getPresenterActors(): List[ActorRef] = Nil
+  /**
+   * <p>Checks actors if they are alive.</p>
+   */
+  private def schedule {
+    actors foreach {
+      case (_, actor) => schedules = Scheduler.schedule(actor, Alive, 500, 2500, TimeUnit.MILLISECONDS) :: schedules
+    }
+  }
+
+  private def handleStatus(status: Status) {
+    self.sender match {
+      case Some(a) => statusMap update (a.getUuid, (a, status, systemTime))
+      case None => warning(this, "Unkown sender from status message: " + status)
+    }
+    if (finished) {
+      info(this, "Evaluation finished. Stopping schedules and supervisor")
+      schedules foreach (future => future.cancel(true))
+      self.stop
+    }
+  }
+
+  /**
+   * <p>Evaluation process is finished if: <p>
+   * 1) All actors have status Finished | Ready
+   * 2) One actor timed out
+   */
+  private def finished: Boolean = {
+    val timestamp = systemTime
+    if (ttl - 500 > Math.abs(timestamp - this.timestamp))
+      return false
+    this.timestamp = timestamp
+    statusMap.exists {
+      case (_, (_, status, lastTimestamp)) =>
+        status match {
+          case Ready() => return true
+          case Finished() => return true
+          case _ => return false
+        }
+        //TODO GraphSupervisor -> Actor Timeout error handling
+        ttl < Math.abs(timestamp - lastTimestamp)
+    }
+  }
 
 }

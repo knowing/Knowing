@@ -12,7 +12,7 @@ import de.lmu.ifi.dbs.knowing.core.events._
  *  @since 16.06.2011
  */
 trait TFilter extends TProcessor {
-
+  
   override def customReceive = {
     case Results(instances) =>
       val returns = filter(instances)
@@ -20,9 +20,9 @@ trait TFilter extends TProcessor {
   }
 
   def filter(instances: Instances): Instances
-  
-  def build(instances: Instances) = { /* Do nothing */}
-  
+
+  def build(instances: Instances) = { /* Do nothing */ }
+
   //TODO TFilter => Input/Output Format configuration
 
 }

@@ -7,6 +7,7 @@ import akka.actor.ActorRef;
 import weka.core.Instance;
 import weka.core.Instances;
 import de.lmu.ifi.dbs.knowing.core.events.Event;
+import de.lmu.ifi.dbs.knowing.core.events.Status;
 
 /**
  * 
@@ -72,4 +73,10 @@ public interface IProcessor {
 	 *            - can be null
 	 */
 	void sendEvent(Event event, String port);
+	
+	/**
+	 * 
+	 * @param status - Ready | Running | Progress(task, worked, work) | Finished
+	 */
+	void setStatus(Status status);
 }

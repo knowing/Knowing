@@ -9,6 +9,7 @@ import weka.core.Instance
 import java.util.Properties
 
 trait Event
+trait Status extends Event
 
 /* ======================== */
 /* == Data Exchange ======= */
@@ -20,15 +21,22 @@ case class Queries(queries: Instances) extends Event
 case class UIFactoryEvent(factory: UIFactory, node: Node) extends Event
 
 /* ======================== */
+/* == Status Commands ===== */
+/* ======================== */
+case class Created extends Status
+case class Ready extends Status
+case class Running extends Status
+case class Progress(task:String, worked:Int, work:Int) extends Status
+case class Finished extends Status
+
+/* ======================== */
 /* == Runtime Commands ==== */
 /* ======================== */
-case class Configure(properties: Properties) extends Event
 case class Start extends Event
 case class Reset extends Event
-case class Ready extends Event
-case class Finished extends Event
-case class UpdateUI extends Event
-case class Progress(task:String, worked:Int, work:Int) extends Event
+case class Alive extends Event
+case class Configure(properties: Properties) extends Event
+case class UpdateUI extends Status
 
 /* ========================= */
 /* == Actor Communication == */

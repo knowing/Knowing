@@ -18,7 +18,7 @@ abstract class SWTPresenter extends TPresenter[Composite] {
 
   private var composite: Composite = _
   
-  override def customReceive = {
+  override def presenterReceive = {
     case SWTListener(typ, listener) => 
       debug(this, "Received SWTListener: " + listener)
       composite.getDisplay.asyncExec(new Runnable() {

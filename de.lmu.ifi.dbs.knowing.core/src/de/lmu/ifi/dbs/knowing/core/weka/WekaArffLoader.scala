@@ -35,7 +35,7 @@ class WekaArffLoader extends TLoader {
     loader.setSource(fin)
   }
 
-  def reset() = {}
+  def reset = loader.reset
 
 }
 

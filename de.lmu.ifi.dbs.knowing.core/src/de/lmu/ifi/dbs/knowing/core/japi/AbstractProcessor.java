@@ -1,6 +1,7 @@
 package de.lmu.ifi.dbs.knowing.core.japi;
 
 import de.lmu.ifi.dbs.knowing.core.events.Event;
+import de.lmu.ifi.dbs.knowing.core.events.Status;
 
 public abstract class AbstractProcessor implements IProcessor {
 
@@ -13,6 +14,11 @@ public abstract class AbstractProcessor implements IProcessor {
 	@Override
 	public void sendEvent(Event event, String port) {
 		wrapper.sendEvent(event, port);
+	}
+	
+	@Override
+	public void setStatus(Status status) {
+		wrapper.status_$eq(status);		
 	}
 	
 }

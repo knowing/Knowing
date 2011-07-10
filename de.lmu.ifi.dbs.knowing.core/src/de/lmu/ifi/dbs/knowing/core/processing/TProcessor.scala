@@ -5,6 +5,7 @@ import scala.collection.JavaConversions._
 
 import akka.actor.Actor
 import akka.event.EventHandler.{ debug, info, warning, error }
+import akka.config.Supervision.Permanent
 
 import de.lmu.ifi.dbs.knowing.core.events._
 
@@ -24,6 +25,12 @@ import weka.core.{ Attribute, Instance, Instances }
  */
 trait TProcessor extends Actor with TSender with TConfigurable {
 
+  //Current status of processor
+  protected var status: Status = Created()
+
+  //Default lifeCylce 
+  self.lifeCycle = Permanent
+
   def receive: Receive = customReceive orElse defaultReceive
 
   /**
@@ -38,23 +45,40 @@ trait TProcessor extends Actor with TSender with TConfigurable {
     case Register(actor, port) => addListener(actor, port)
     case Configure(p) =>
       configure(p)
-      if (self.getSender.isDefined)
-        self reply Ready
+      if (self.getSender.isDefined) self reply Ready
+      statusChanged(Ready())
     case Start | Start() => debug(this, "Running " + self.getActorClassName)
-    case Results(inst) => build(inst)
-    case Query(q) => self reply QueryResults(query(q), q)
+    case Results(inst) =>
+      statusChanged(Running())
+      build(inst)
+      statusChanged(Ready())
+    case Query(q) =>
+      statusChanged(Running())
+      self reply QueryResults(query(q), q)
+      statusChanged(Ready())
     case Queries(q) =>
       val enum = q.enumerateInstances
       while (enum.hasMoreElements) {
         val instance = enum.nextElement.asInstanceOf[Instance]
         self reply QueryResults(query(instance), instance)
       }
-    case QueryResults(r, q) => result(r, q)
+    case QueryResults(r, q) =>
+      statusChanged(Running())
+      result(r, q)
+      statusChanged(Ready())
+    case Alive | Alive() => statusChanged(status)
     case msg => messageException(msg)
   }
-  
-  def build(instances: Instances)
 
+  override def preRestart(reason: Throwable) {
+    // clean up before restart
+  }
+
+  override def postRestart(reason: Throwable) {
+    // reinit stable state after restart
+  }
+
+  def build(instances: Instances)
 
   /**
    * <p>A query is answered via the interal model build by the buildModel method.<br>
@@ -76,12 +100,12 @@ trait TProcessor extends Actor with TSender with TConfigurable {
    * @param query - the query
    */
   def result(result: Instances, query: Instance)
-  
+
   /**
    * <p>Just puts a warning on the console and prints out the message</p>
-   * 
+   *
    */
-  def messageException(message: Any) = warning(this, "<----> " + message)
+  def messageException(message: Any) = warning(this, "Unkown Message " + message)
 
   /**
    *  <p>Checks the dataset for class attribute in this order
@@ -101,6 +125,17 @@ trait TProcessor extends Actor with TSender with TConfigurable {
         dataset.setClassIndex(cIndex)
         cIndex
       case x => x
+    }
+  }
+
+  /**
+   * <p>Sends the status change to the actors supervisor</p>
+   */
+  protected def statusChanged(status: Status) {
+    this.status = status
+    self.supervisor match {
+      case Some(s) => s ! status
+      case None => warning(this, "No supervisor defined!")
     }
   }
 

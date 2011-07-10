@@ -13,6 +13,25 @@ trait TSender { this: Actor =>
 
   val listeners = Map.empty[UUID, ActorRef]
   val outputListeners = Map.empty[String, Map[UUID, ActorRef]]
+  
+
+  /* ================================ */
+  /* == Generic input/output ports == */
+  /* ================================ */
+
+  def addListener(listener: ActorRef) {
+    listeners += (listener.getUuid -> listener)
+    if (self.getSender.isDefined)
+      self reply Registered(true)
+  }
+
+  def removeListener(listener: ActorRef) = listeners remove (listener.getUuid)
+
+  protected def sendEvent(event: Event) = listeners foreach { case (_, actor) => sendToActor(actor, event) }
+
+  /* =============================== */
+  /* == Custom input/output ports == */
+  /* =============================== */
 
   def addListener(listener: ActorRef, port: Option[String]) {
     port match {
@@ -27,24 +46,6 @@ trait TSender { this: Actor =>
       case None => removeListener(listener)
     }
   }
-
-  /* ========================== */
-  /* == Generic input/output == */
-  /* ========================== */
-
-  def addListener(listener: ActorRef) {
-    listeners += (listener.getUuid -> listener)
-    if (self.getSender.isDefined)
-      self reply Registered(true)
-  }
-
-  def removeListener(listener: ActorRef) = listeners remove (listener.getUuid)
-
-  protected def sendEvent(event: Event) = listeners foreach { case (_, actor) => sendToActor(actor, event) }
-
-  /* ========================= */
-  /* == Custom input/output == */
-  /* ========================= */
 
   protected def addListener(listener: ActorRef, port: String) {
     val entry = outputListeners.get(port)
