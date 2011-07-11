@@ -17,19 +17,60 @@ import weka.core.{ Attribute, Instance, Instances }
  * @since 13.05.2011
  *
  */
-class CrossValidator(var factory: TFactory, var folds: Int, var fold: Int, var classifier_properties: Properties) extends TProcessor {
+class CrossValidator extends TProcessor {
+
+  var classifierFactory: TFactory = _
+  var classifierProperties = new Properties
+
+  var folds = 2
+  var fold = 0
+  var standalone = true
 
   private var confusionMatrix: Instances = _
   private var classLabels: Array[String] = Array()
   private var classifier: Option[ActorRef] = None
+
   private var numInstances: Int = 0
   private var currentInst: Int = 0
 
   private var first_run = true
 
-  def this() = this(null, 2, 1, new Properties)
+  override def customReceive = {
+    case Query(q) =>
+      numInstances = 1
+      statusChanged(Running())
+      query(q)
+    case Queries(q) => queries(q)
+    case status: Status => statusChanged(status)
+  }
 
-  def build(instances: Instances) = buildClassifier(instances) //Input data
+  def build(instances: Instances) {
+    val index = guessAndSetClassLabel(instances)
+    index match {
+      case -1 =>
+        classLabels = Array()
+        warning(this, "No classLabel found in " + instances.relationName)
+      case x => classLabels = classLables(instances.attribute(x))
+    }
+    classifier match {
+      case Some(c) => c stop
+      case None =>
+    }
+    classifier = Some(classifierFactory.getInstance)
+    self startLink classifier.get
+    classifier.get !! Configure(classifierProperties)
+
+    standalone match {
+      case true =>
+        classifier.get ! Results(instances.trainCV(folds, fold))
+        val testSet = instances.testCV(folds, fold)
+        numInstances = testSet.numInstances
+        classifier.get ! Queries(testSet)
+      case false =>
+        classifier.get ! Results(instances)
+    }
+    confusionMatrix = ResultsUtil.confusionMatrix(getClassLabels.toList)
+  }
 
   def result(result: Instances, query: Instance) {
     //Assume n*n matrix, |lables|==|instances|
@@ -54,37 +95,55 @@ class CrossValidator(var factory: TFactory, var folds: Int, var fold: Int, var c
 
       entry.setValue(column.toInt, value)
     }
-    //debug(this,  currentInst + "/" + numInstances)
+//    debug(this,  currentInst + "/" + numInstances + " of [" + fold + "/" + folds + "]")
     currentInst += 1
     if (currentInst == numInstances) {
       sendEvent(QueryResults(confusionMatrix, query))
+//      debug(this,"[" + fold + "/" + folds + "]" + confusionMatrix)
       numInstances = 0
       currentInst = 0
+      statusChanged(Ready())
     }
+  }
+
+  def queries(queries: Instances) {
+    statusChanged(Running())
+    numInstances = queries.numInstances 
+    val enum = queries.enumerateInstances
+    while (enum.hasMoreElements)
+      query(enum.nextElement.asInstanceOf[Instance])
   }
 
   /**
    *
    */
-  private def buildClassifier(instances: Instances) {
-    val index = guessAndSetClassLabel(instances)
-    index match {
-      case -1 =>
-        classLabels = Array()
-        warning(this, "No classLabel found in " + instances.relationName)
-      case x => classLabels = classLables(instances.attribute(x))
-    }
+  def query(query: Instance): Instances = {
     classifier match {
-      case Some(c) => c stop
-      case None =>
+      case None => warning(this, "No classifier found")
+      case Some(c) => c ! Query(query)
     }
-    classifier = Some(factory.getInstance.start)
-    classifier.get !! Configure(classifier_properties)
-    classifier.get ! Results(instances.trainCV(folds, fold))
-    confusionMatrix = ResultsUtil.confusionMatrix(getClassLabels.toList)
-    val testSet = instances.testCV(folds, fold)
-    numInstances = testSet.numInstances
-    classifier.get ! Queries(testSet)
+    confusionMatrix
+  }
+
+  def getClassLabels(): Array[String] = classLabels
+
+  def configure(properties: Properties) = {
+    val factoryId = properties.getProperty(CrossValidatorFactory.CLASSIFIER)
+    val factory = getFactoryService(factoryId)
+    factory match {
+      case Some(f) => classifierFactory = f
+      case None => throw new Exception("No Factory with " + factoryId + " found!")
+    }
+    folds = properties.getProperty(CrossValidatorFactory.FOLDS, "10").toInt
+    fold = properties.getProperty(CrossValidatorFactory.FOLD, "1").toInt
+    standalone = properties.getProperty(CrossValidatorFactory.STANDALONE, "true").toBoolean
+
+    //Remove used properties
+    properties.remove(CrossValidatorFactory.CLASSIFIER)
+    properties.remove(CrossValidatorFactory.FOLDS)
+    properties.remove(CrossValidatorFactory.FOLD)
+    properties.remove(CrossValidatorFactory.STANDALONE)
+    classifierProperties = properties
   }
 
   private def highestProbability(instances: Instances): Int = {
@@ -100,37 +159,6 @@ class CrossValidator(var factory: TFactory, var folds: Int, var fold: Int, var c
       }
     }
     index
-  }
-
-  /**
-   *
-   */
-  def query(query: Instance): Instances = {
-    classifier match {
-      case None => warning(this, "No classifier found")
-      case Some(c) => c forward Query(query)
-    }
-    confusionMatrix
-  }
-
-  def getClassLabels(): Array[String] = classLabels
-
-  def configure(properties: Properties) = {
-    val factoryId = properties.getProperty(CrossValidatorFactory.CLASSIFIER)
-    val factory = getFactoryService(factoryId)
-    factory match {
-      case Some(f) => this.factory = f
-      case None => throw new Exception("No Factory with " + factoryId + " found!")
-    }
-    val strFolds = properties.getProperty(CrossValidatorFactory.FOLDS, "10")
-    val strFold = properties.getProperty(CrossValidatorFactory.FOLD, "1")
-    folds = strFolds.toInt
-    fold = strFold.toInt
-    //Remove used properties
-    properties.remove(CrossValidatorFactory.CLASSIFIER)
-    properties.remove(CrossValidatorFactory.FOLDS)
-    properties.remove(CrossValidatorFactory.FOLD)
-    classifier_properties = properties
   }
 
 }
@@ -162,4 +190,5 @@ object CrossValidatorFactory {
   val CLASSIFIER = "classifier"
   val FOLD = "fold"
   val FOLDS = "folds"
+  val STANDALONE = "standalone"
 }

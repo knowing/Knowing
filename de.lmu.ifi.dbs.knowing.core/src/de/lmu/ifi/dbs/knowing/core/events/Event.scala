@@ -23,11 +23,12 @@ case class UIFactoryEvent(factory: UIFactory, node: Node) extends Event
 /* ======================== */
 /* == Status Commands ===== */
 /* ======================== */
-case class Created extends Status
-case class Ready extends Status
-case class Running extends Status
+case class Created extends Status	//processor created
+case class Waiting extends Status	//waiting for first messages
+case class Ready extends Status		//process already one message and is ready to do more
+case class Running extends Status	//is currently running
 case class Progress(task:String, worked:Int, work:Int) extends Status
-case class Finished extends Status
+case class Finished extends Status	//all work is done, not ready for more messages
 
 /* ======================== */
 /* == Runtime Commands ==== */

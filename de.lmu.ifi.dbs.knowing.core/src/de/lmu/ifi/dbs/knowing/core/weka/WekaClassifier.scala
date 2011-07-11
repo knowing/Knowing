@@ -3,7 +3,7 @@ package de.lmu.ifi.dbs.knowing.core.weka
 import java.util.Properties
 import scala.collection.JavaConversions._
 import de.lmu.ifi.dbs.knowing.core.factory._
-import de.lmu.ifi.dbs.knowing.core.events.Results
+import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 import akka.actor.ActorRef
@@ -41,7 +41,7 @@ class WekaClassifier(protected val classifier: Classifier) extends TProcessor {
     val distribution = classifier.distributionForInstance(query)
 
     val distString = for (i <- 0 until distribution.length) yield distribution(i).toString
-    debug(this, "Classified with: " + distString + " # ClassValue: " + query.classValue)
+//    debug(this, "Classified with: " + distString + " # ClassValue: " + query.classValue)
     ResultsUtil.classAndProbabilityResult(getClassLabels.toList, distribution)
   }
 

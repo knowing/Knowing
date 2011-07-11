@@ -46,7 +46,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
     case Configure(p) =>
       configure(p)
       if (self.getSender.isDefined) self reply Ready
-      statusChanged(Ready())
+      statusChanged(Waiting())
     case Start | Start() => debug(this, "Running " + self.getActorClassName)
     case Results(inst) =>
       statusChanged(Running())
@@ -92,6 +92,24 @@ trait TProcessor extends Actor with TSender with TConfigurable {
    */
   def query(query: Instance): Instances
 
+  //TODO live/deadlock!?!?
+//  def queries(queries: Instances): Instances = {
+//    val enum = queries.enumerateInstances
+//    var results: Instances = null
+//    var i = 0
+//    while (enum.hasMoreElements) {
+//      val instance = enum.nextElement.asInstanceOf[Instance]
+//      results match {
+//        case null => results = query(instance)
+//        case _ => results.addAll(results)
+//      }
+//      statusChanged(Progress(queries.relationName, i, queries.numInstances))
+//      i += 1
+//    }
+//    statusChanged(Ready())
+//    results
+//  }
+
   /**
    * <p>After the processor sending a query, this method
    * is called if it gets a response</p>
@@ -132,6 +150,8 @@ trait TProcessor extends Actor with TSender with TConfigurable {
    * <p>Sends the status change to the actors supervisor</p>
    */
   protected def statusChanged(status: Status) {
+    if (this.status.equals(status))
+      return
     this.status = status
     self.supervisor match {
       case Some(s) => s ! status
