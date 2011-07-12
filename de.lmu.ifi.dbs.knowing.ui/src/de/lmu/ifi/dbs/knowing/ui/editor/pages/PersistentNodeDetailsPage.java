@@ -72,7 +72,10 @@ public class PersistentNodeDetailsPage implements IDetailsPage, PropertyChangeLi
 	 */
 	public void createContents(Composite parent) {
 		FormToolkit toolkit = managedForm.getToolkit();
-		parent.setLayout(new FillLayout());
+		FillLayout layout = new FillLayout();
+		layout.marginHeight = 5;
+		layout.marginWidth = 5;
+		parent.setLayout(layout);
 		//		
 		Section section = toolkit.createSection(parent, ExpandableComposite.EXPANDED | ExpandableComposite.TITLE_BAR);
 		section.setText("Persistent Node");

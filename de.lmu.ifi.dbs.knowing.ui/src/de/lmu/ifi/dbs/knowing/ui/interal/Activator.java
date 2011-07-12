@@ -1,5 +1,6 @@
 package de.lmu.ifi.dbs.knowing.ui.interal;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -45,6 +46,10 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public static Activator getDefault() {
 		return plugin;
+	}
+	
+	public static ImageDescriptor getImageDescriptor(String imageFilePath) {
+		return imageDescriptorFromPlugin(PLUGIN_ID, imageFilePath);
 	}
 
 }
