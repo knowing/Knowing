@@ -16,7 +16,13 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
   private var classLabels: Array[String] = Array()
   private var currentFold: Int = 0
 
+  private var first_run = true
+
   def this() = this(null, 10, new Properties)
+
+  override def customReceive = {
+    case status: Status => statusChanged(status)
+  }
 
   def build(instances: Instances) {
     //Init classlabels
@@ -29,12 +35,14 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
     }
     confusionMatrix = ResultsUtil.confusionMatrix(getClassLabels.toList)
     //TODO instantiate CrossValidator-actors
-    val crossValidators = for (i <- 0 until folds; val actor = factory.getInstance.start) yield actor;
+    val crossValidators = for (i <- 0 until folds; val actor = factory.getInstance) yield actor;
     debug(this, "Fold-Actors created!")
     for (j <- 0 until folds) {
+      self startLink crossValidators(j)
       crossValidators(j) !! Register(self, None)
       crossValidators(j) !! Configure(configureProperties(validator_properties, j))
       crossValidators(j) ! Results(instances.trainCV(folds, j))
+      crossValidators(j) ! Queries(instances.testCV(folds, j))
     }
     debug(this, "Fold-Actors configured and training started")
 
@@ -43,6 +51,24 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
   def result(result: Instances, query: Instance) {
     if (!result.equalHeaders(confusionMatrix))
       warning(this, "Model ConfusionMatrix doesn't fit Result ConfusionMatrix")
+    first_run match {
+      case true =>
+        confusionMatrix = result
+        first_run = false
+      case false => addToConfusionMatrix(result)
+    }
+
+    currentFold += 1
+    if (currentFold == folds) {
+      sendEvent(Results(confusionMatrix))
+      currentFold = 0
+    } else {
+      debug(this, "Fold " + currentFold + " results arrived")
+    }
+
+  }
+
+  private def addToConfusionMatrix(result: Instances) {
     for (i <- 0 until confusionMatrix.numInstances) {
       for (j <- 0 until confusionMatrix.numAttributes) {
         val valResult = result get (i) value (j)
@@ -55,14 +81,6 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
         }
       }
     }
-    currentFold += 1
-    if (currentFold == folds) {
-      sendEvent(Results(confusionMatrix))
-      currentFold = 0
-    } else {
-      debug(this, "Fold " + currentFold + " results arrived")
-    }
-
   }
 
   def configure(properties: Properties) = {
@@ -81,6 +99,7 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
     val returns = new Properties
     returns.putAll(properties)
     returns.setProperty(CrossValidatorFactory.FOLD, fold.toString)
+    returns.setProperty(CrossValidatorFactory.STANDALONE, "false")
     returns
   }
 

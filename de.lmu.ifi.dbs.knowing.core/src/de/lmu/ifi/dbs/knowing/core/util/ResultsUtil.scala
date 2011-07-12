@@ -243,6 +243,10 @@ object ResultsUtil {
   /* ========================= */
   /* === Result validation === */
   /* ========================= */
+  
+  def isEmptyResult(dataset: Instances): Boolean = {
+    dataset.relationName.equals(NAME_EMPTY) || (dataset.numAttributes == 0 && dataset.numInstances == 0)
+  }
 
   /**
    * @param dataset
