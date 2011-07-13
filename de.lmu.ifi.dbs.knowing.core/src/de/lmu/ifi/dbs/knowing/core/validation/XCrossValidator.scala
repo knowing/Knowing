@@ -12,7 +12,8 @@ import weka.core.{ Instance, Instances }
 
 class XCrossValidator(var factory: TFactory, var folds: Int, var validator_properties: Properties) extends TProcessor {
 
-  private var confusionMatrix: Instances = _
+  private var confusionMatrices: List[Instances] = Nil
+  private var confusionMatrixHeader: Instances = _
   private var classLabels: Array[String] = Array()
   private var currentFold: Int = 0
 
@@ -33,7 +34,7 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
         warning(this, "No classLabel found in " + instances.relationName)
       case x => classLabels = classLables(instances.attribute(x))
     }
-    confusionMatrix = ResultsUtil.confusionMatrix(getClassLabels.toList)
+    confusionMatrixHeader = ResultsUtil.confusionMatrix(getClassLabels.toList)
     //TODO instantiate CrossValidator-actors
     val crossValidators = for (i <- 0 until folds; val actor = factory.getInstance) yield actor;
     debug(this, "Fold-Actors created!")
@@ -49,18 +50,14 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
   }
 
   def result(result: Instances, query: Instance) {
-    if (!result.equalHeaders(confusionMatrix))
+    if (!result.equalHeaders(confusionMatrixHeader))
       warning(this, "Model ConfusionMatrix doesn't fit Result ConfusionMatrix")
-    first_run match {
-      case true =>
-        confusionMatrix = result
-        first_run = false
-      case false => addToConfusionMatrix(result)
-    }
+
+    confusionMatrices = result :: confusionMatrices
 
     currentFold += 1
     if (currentFold == folds) {
-      sendEvent(Results(confusionMatrix))
+      sendEvent(Results(mergeMatrices))
       currentFold = 0
     } else {
       debug(this, "Fold " + currentFold + " results arrived")
@@ -68,19 +65,36 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
 
   }
 
-  private def addToConfusionMatrix(result: Instances) {
-    for (i <- 0 until confusionMatrix.numInstances) {
-      for (j <- 0 until confusionMatrix.numAttributes) {
-        val valResult = result get (i) value (j)
-        val valMatrix = confusionMatrix get (i) value (j)
-        val values = (valResult, valMatrix)
-        values match {
-          case (0, matrix) => //change nothing
-          case (result, 0) => confusionMatrix get (i) setValue (j, result)
-          case (v1, v2) => confusionMatrix get (i) setValue (j, (v1 + v2) / 2.0)
+  private def mergeMatrices: Instances = {
+    val rows = confusionMatrixHeader.numInstances
+    val cols = confusionMatrixHeader.numAttributes
+    val nums = Array.fill(rows)(Array.fill(cols)(1))
+
+    val merge = (inst1: Instances, inst2: Instances) => {
+      for (i <- 0 until confusionMatrixHeader.numInstances) {
+        for (j <- 0 until confusionMatrixHeader.numAttributes) {
+          val valResult = inst1 get (i) value (j)
+          val valMatrix = inst2 get (i) value (j)
+          val values = (valResult, valMatrix)
+          values match {
+            case (0, v2) => inst2 get (i) setValue (j, v2)
+            case (v1, 0) => inst2 get (i) setValue (j, v1)
+            case (v1, v2) =>
+              inst2 get (i) setValue (j, (v1 + v2))
+              nums(i)(j) = nums(i)(j) + 1
+          }
         }
       }
+      inst2
     }
+    val result = confusionMatrices reduceLeft ((inst1, inst2) => merge(inst1, inst2))
+    for (i <- 0 until confusionMatrixHeader.numInstances) {
+      for (j <- 0 until confusionMatrixHeader.numAttributes) {
+        val valResult = result get (i) value (j)
+        confusionMatrixHeader get (i) setValue (j, valResult / nums(i)(j))
+      }
+    }
+    new Instances(confusionMatrixHeader)
   }
 
   def configure(properties: Properties) = {
