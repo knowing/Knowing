@@ -2,7 +2,14 @@ package de.lmu.ifi.dbs.knowing.ui.editor.pages;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -14,6 +21,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IManagedForm;
@@ -22,8 +31,10 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
+import de.lmu.ifi.dbs.knowing.core.graph.Edge;
+import de.lmu.ifi.dbs.knowing.core.graph.PersistentNode;
 import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit;
-import de.lmu.ifi.dbs.knowing.core.graph.*;
+import de.lmu.ifi.dbs.knowing.ui.interal.Activator;
 import de.lmu.ifi.dbs.knowing.ui.viewer.EdgeTableViewer;
 import de.lmu.ifi.dbs.knowing.ui.viewer.NodeTableViewer;
 
@@ -163,8 +174,30 @@ public class ConfigurationMasterDetailBlock extends MasterDetailsBlock implement
 	 * @param managedForm
 	 */
 	@Override
-	protected void createToolBarActions(IManagedForm managedForm) {
-		// Create the toolbar actions
+	protected void createToolBarActions(final IManagedForm managedForm) {
+		Action export = new Action("Export", Action.AS_PUSH_BUTTON) {
+			@Override
+			public void run() {
+				try {
+					Shell shell = managedForm.getForm().getShell();
+					FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+					dialog.setFileName(dpu.name());
+					dialog.setFilterExtensions(new String[] { "*.dpu" });
+					String path = dialog.open();
+					if(path == null || path.isEmpty())
+						return;
+					JAXBContext context = JAXBContext.newInstance(DataProcessingUnit.class);
+					Marshaller m = context.createMarshaller();
+					m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+					m.marshal(dpu, new File(path));
+					MessageDialog.openInformation(shell, "Export successful", "Exported DPU " + dpu.name());
+				} catch (JAXBException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		export.setImageDescriptor(Activator.getImageDescriptor("icons/export_16.png"));
+		managedForm.getForm().getToolBarManager().add(export);
 	}
 
 	public void setInput(DataProcessingUnit dpu) {

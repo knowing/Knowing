@@ -21,7 +21,7 @@ import de.lmu.ifi.dbs.knowing.core.graph.xml.*;
 public class EdgeTableViewer  extends TableViewer {
 
 	private static final String[] columns = new String[] { "Name", "Source", "Port", "Target", "Port", "W" };
-	private static final int[] width = new int[] { 150, 150, 50, 150, 50, 30};
+	private static final int[] width = new int[] { 150, 130, 70, 130, 70, 30};
 	
 	private EdgeEditingSupport[] edgeEditingSupport = new EdgeEditingSupport[6];
 	private DataProcessingUnit dpu;

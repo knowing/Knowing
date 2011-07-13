@@ -5,12 +5,10 @@ import java.beans.PropertyChangeListener;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -25,13 +23,14 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit;
+import de.lmu.ifi.dbs.knowing.ui.editor.DPUEditor;
 
 /**
  * 
  * @author Nepomuk Seiler
  * @version 0.5
  * @since 28.06.2011
- *
+ * 
  */
 public class ConfigurationPage extends FormPage implements PropertyChangeListener {
 
@@ -41,7 +40,7 @@ public class ConfigurationPage extends FormPage implements PropertyChangeListene
 	private ConfigurationMasterDetailBlock block;
 	private DataProcessingUnit dpu;
 	private IFile file;
-	
+
 	private boolean dirty;
 	private IManagedForm managedForm;
 
@@ -81,7 +80,6 @@ public class ConfigurationPage extends FormPage implements PropertyChangeListene
 		form.setText("Configuration");
 		Composite body = form.getBody();
 		block.createContent(managedForm);
-		getSite().setSelectionProvider(block.getNodeTableViewer());
 		block.getNodeTableViewer().addPropertyChangeListener(this);
 		block.getEdgeTableViewer().addPropertyChangeListener(this);
 		toolkit.decorateFormHeading(form.getForm());
@@ -99,55 +97,27 @@ public class ConfigurationPage extends FormPage implements PropertyChangeListene
 	public boolean isDirty() {
 		return dirty || super.isDirty();
 	}
-	
+
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		super.doSave(monitor);
-		if (dpu == null || file == null)
-			return;
-		try {
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			JAXBContext context = JAXBContext.newInstance(DataProcessingUnit.class);
-			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			marshaller.marshal(dpu, bos);
-			bos.close();
-			byte[] data = bos.toByteArray();
-			ByteArrayInputStream source = new ByteArrayInputStream(data);
-			file.setContents(source, IFile.FORCE, null);
-			block.refresh();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (CoreException e) {
-			e.printStackTrace();
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
+		DPUEditor.doSave(dpu, file);
 		dirty = false;
 		managedForm.dirtyStateChanged();
 	}
 
 	public void update(IEditorInput input) {
 		file = (IFile) input.getAdapter(IFile.class);
-		InputStream in = null;
 		try {
-			JAXBContext context = JAXBContext.newInstance(DataProcessingUnit.class);
-			Unmarshaller um = context.createUnmarshaller();
-			in = file.getContents();
-			dpu = (DataProcessingUnit) um.unmarshal(in);
+			dpu = DPUEditor.convert(input);
 			block.setInput(dpu);
-
+			block.refresh();
 		} catch (CoreException e) {
 			e.printStackTrace();
 		} catch (JAXBException e) {
 			e.printStackTrace();
-		} finally {
-			if (in != null)
-				try {
-					in.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
