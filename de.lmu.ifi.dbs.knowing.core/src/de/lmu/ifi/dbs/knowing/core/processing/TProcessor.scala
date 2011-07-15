@@ -93,22 +93,22 @@ trait TProcessor extends Actor with TSender with TConfigurable {
   def query(query: Instance): Instances
 
   //TODO live/deadlock!?!?
-//  def queries(queries: Instances): Instances = {
-//    val enum = queries.enumerateInstances
-//    var results: Instances = null
-//    var i = 0
-//    while (enum.hasMoreElements) {
-//      val instance = enum.nextElement.asInstanceOf[Instance]
-//      results match {
-//        case null => results = query(instance)
-//        case _ => results.addAll(results)
-//      }
-//      statusChanged(Progress(queries.relationName, i, queries.numInstances))
-//      i += 1
-//    }
-//    statusChanged(Ready())
-//    results
-//  }
+  //  def queries(queries: Instances): Instances = {
+  //    val enum = queries.enumerateInstances
+  //    var results: Instances = null
+  //    var i = 0
+  //    while (enum.hasMoreElements) {
+  //      val instance = enum.nextElement.asInstanceOf[Instance]
+  //      results match {
+  //        case null => results = query(instance)
+  //        case _ => results.addAll(results)
+  //      }
+  //      statusChanged(Progress(queries.relationName, i, queries.numInstances))
+  //      i += 1
+  //    }
+  //    statusChanged(Ready())
+  //    results
+  //  }
 
   /**
    * <p>After the processor sending a query, this method
@@ -128,8 +128,9 @@ trait TProcessor extends Actor with TSender with TConfigurable {
   /**
    *  <p>Checks the dataset for class attribute in this order
    *  <li> {@link Instances#classIndex()} -> if >= 0 returns index</li>
-   *  <li> returns index of the attribute named "class" if exists</li>
-   *  <li> returns index of the first nominal attribute</li>
+   *  <li> returns index of attribute named "class" if exists</li>
+   *  <li> returns index of first nominal attribute</li>
+   *  <li> returns index of last attribute </li>
    *  </p>
    *
    * @param dataset
@@ -146,20 +147,8 @@ trait TProcessor extends Actor with TSender with TConfigurable {
     }
   }
 
-  /**
-   * <p>Sends the status change to the actors supervisor</p>
-   */
-  protected def statusChanged(status: Status) {
-    if (this.status.equals(status))
-      return
-    this.status = status
-    self.supervisor match {
-      case Some(s) => s ! status
-      case None => warning(this, "No supervisor defined!")
-    }
-  }
-
-  private def guessClassLabel(dataset: Instances): Int = {
+  def guessClassLabel(dataset: Instances): Int = {
+    //TODO TProcessor.guesClassLabel -> guess class labels in relational datasets
     val classAttribute = dataset.attribute("class")
     if (classAttribute != null)
       return classAttribute.index
@@ -169,7 +158,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
     val nominal = attributes filter (a => a.asInstanceOf[Attribute].isNominal)
     nominal.headOption match {
       case Some(x) => x.asInstanceOf[Attribute].index
-      case None => -1
+      case None => dataset.numAttributes - 1
 
     }
   }
@@ -182,5 +171,18 @@ trait TProcessor extends Actor with TSender with TConfigurable {
       labels = label :: labels
     }
     labels.reverse.toArray
+  }
+
+  /**
+   * <p>Sends the status change to the actors supervisor</p>
+   */
+  protected def statusChanged(status: Status) {
+    if (this.status.equals(status))
+      return
+    this.status = status
+    self.supervisor match {
+      case Some(s) => s ! status
+      case None => warning(this, "No supervisor defined!")
+    }
   }
 }

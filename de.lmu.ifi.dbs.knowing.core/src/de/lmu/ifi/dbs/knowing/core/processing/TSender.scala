@@ -69,7 +69,7 @@ trait TSender { this: Actor =>
   protected def sendEvent(event: Event, output: String) {
     val entry = outputListeners.get(output)
     entry match {
-      case Some(e) => e foreach { case (_, actor) => sendToActor(actor, event) }
+      case Some(e) => e foreach { case (_, actor) => sendToActor(actor, event.clone) }
       case None => warning(this, "Event " + event + " could not be send")
     }
   }

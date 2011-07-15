@@ -30,8 +30,8 @@ abstract class JProcessor extends TProcessor {
 
   override def sendEvent(event:Event, port:String ) {
     port match {
-      case null => sendEvent(event)
-      case _ => sendEvent(event, port)
+      case null => super.sendEvent(event)
+      case _ => super.sendEvent(event, port)
     }
   }
 }
