@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DataProcessingUnit name="arff-cross-validation">
+<DataProcessingUnit name="arff-10fold-cross-validation">
 	<description>Cross Validation with NaiveBayes output to TablePresenter
 	</description>
 	<tags>Cross, Validation, Cross Validation, ARFF, NaiveBayes</tags>

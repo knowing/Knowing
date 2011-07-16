@@ -7,6 +7,8 @@ import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import java.io.IOException
 import java.util.Properties
 import weka.core.{ Instances, Instance }
+import java.net.URL
+import java.net.URI
 
 trait TLoader extends TProcessor {
 
@@ -46,6 +48,7 @@ trait TLoader extends TProcessor {
 }
 
 object TLoader {
+
   /* ==== Properties to configure TLoader ==== */
   val ABSOLUTE_PATH = "absolute-path"
   val FILE = "file"
@@ -58,12 +61,24 @@ object TLoader {
     val absolute = properties.getProperty(ABSOLUTE_PATH, "false").toBoolean
     absolute match {
       case true => properties.getProperty(FILE)
+      case false => getInputURL(properties).getPath
+    }
+  }
+
+  def getInputURL(properties: Properties): URI = {
+    val sep = System.getProperty("file.separator")
+    val absolute = properties.getProperty(ABSOLUTE_PATH, "false").toBoolean
+    absolute match {
+      case true => new URI(properties.getProperty(URL))
       case false =>
-        val path = properties.getProperty(DPU_PATH)
-        if (path == null || path.isEmpty)
-          properties.getProperty(FILE)
-        else
-          path + properties.getProperty(FILE)
+        val pathURI = properties.getProperty(DPU_PATH)
+        if (pathURI == null || pathURI.isEmpty) {
+          new URI("file", properties.getProperty(FILE), null)
+        } else {
+          val dpuURI = new URI(pathURI)
+          val filename = properties.getProperty(FILE)
+          dpuURI.resolve("." + sep + filename)
+        }
     }
   }
 }

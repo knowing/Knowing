@@ -4,6 +4,7 @@ import akka.actor.{ Actor, ActorRef, Scheduler }
 import akka.event.EventHandler.{ debug, info, warning, error }
 import akka.config.Supervision.AllForOneStrategy
 import com.eaio.uuid.UUID
+import java.net.URI
 import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.util._
 import de.lmu.ifi.dbs.knowing.core.processing.{ TPresenter, TSender, TLoader }
@@ -15,7 +16,8 @@ import scala.collection.mutable.{ Map => MutableMap, LinkedList }
 import System.{ currentTimeMillis => systemTime }
 import org.osgi.framework.FrameworkUtil
 
-class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuDir: String) extends Actor with TSender {
+
+class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI) extends Actor with TSender {
 
   self.faultHandler = AllForOneStrategy(List(classOf[Throwable]), 5, 5000)
 
@@ -71,7 +73,7 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuDir: Str
    * Adds the DPU_PATH property to the property configuration
    */
   private def configureProperties(properties: Properties): Properties = {
-    properties setProperty (TLoader.DPU_PATH, dpuDir)
+    properties setProperty (TLoader.DPU_PATH, dpuURI.toString)
     properties
   }
 

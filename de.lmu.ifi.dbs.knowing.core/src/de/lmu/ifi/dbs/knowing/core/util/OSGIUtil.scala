@@ -4,7 +4,11 @@ import org.osgi.framework.BundleContext
 import org.osgi.framework.ServiceRegistration
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import de.lmu.ifi.dbs.knowing.core.processing._
+import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit
 import OSGIUtil._
+import de.lmu.ifi.dbs.knowing.core.internal.Activator
+import de.lmu.ifi.dbs.knowing.core.provider.IDPUProvider
+
 
 /**
  * <p>Util for (de)register DataMining-Factory-Services</p>
@@ -72,4 +76,11 @@ object OSGIUtil {
   val LOADER_CLASS = classOf[TLoader].getName
   val PROCESSOR_CLASS = classOf[TProcessor].getName
   val PRESENTER_CLASS = classOf[TPresenter[_]].getName
+  
+  def registeredDPUs: Array[DataProcessingUnit] = {
+    val provider = Activator.tracker.getServices map(_.asInstanceOf[IDPUProvider])
+    val f = (p1:List[DataProcessingUnit],p2:IDPUProvider) => p1 ::: p2.getDataProcessingUnits.toList
+    val dpus = (List[DataProcessingUnit]() /: provider)(f)
+    dpus toArray
+  }
 }

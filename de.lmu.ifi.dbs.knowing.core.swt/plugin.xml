@@ -28,7 +28,7 @@
             locationURI="toolbar:de.lmu.ifi.dbs.knowing.core.swt.presenterView">
          <command
                commandId="de.lmu.ifi.dbs.knowing.core.swt.EvaluateDPU"
-               label="Evaluate DPU"
+               label="from File"
                style="push">
          </command>
       </menuContribution>
