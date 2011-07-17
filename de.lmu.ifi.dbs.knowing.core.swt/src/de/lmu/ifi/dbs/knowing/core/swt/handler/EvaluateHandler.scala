@@ -16,8 +16,10 @@ import de.lmu.ifi.dbs.knowing.core.graph.GraphSupervisor
 import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.swt.view.PresenterView
+import de.lmu.ifi.dbs.knowing.core.swt.wizard.SelectDPUWizard
 import akka.actor.Actor.actorOf
 import java.net.{ URL, URI }
+import org.eclipse.jface.wizard.WizardDialog
 
 /**
  * @author Nepomuk Seiler
@@ -28,11 +30,14 @@ import java.net.{ URL, URI }
 class EvaluateHandler extends AbstractHandler {
 
   def execute(event: ExecutionEvent): Object = {
-    val pathname = openDPU(event)
-    if (pathname == null || pathname.isEmpty())
-      return null;
-    val dpu = unmarshallDPU(pathname)
-    EvaluateHandler.evaluate(dpu, getDirectory(pathname))
+    val wizard = new SelectDPUWizard
+    val dialog = new WizardDialog(HandlerUtil.getActiveShell(event), wizard)
+    val ret = dialog.open
+    //    val pathname = openDPU(event)
+    //    if (pathname == null || pathname.isEmpty())
+    //      return null;
+    //    val dpu = unmarshallDPU(pathname)
+    //    EvaluateHandler.evaluate(dpu, getDirectory(pathname))
     null;
   }
 

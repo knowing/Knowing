@@ -34,7 +34,7 @@ abstract class AbstractChartPresenter(val name: String) extends SWTPresenter {
   private var progressListener: List[ChartProgressListener] = Nil
   private var changeListener: List[ChartChangeListener] = Nil
 
-  override def customReceive = {
+  override def presenterReceive = {
     case ChartProgressListenerRegister(l) => addProgressListener(l)
     case ChartChangeListenerRegister(l) => addChangeListener(l)
     case SWTListener(typ, listener) => super.customReceive { SWTListener(typ, listener) }

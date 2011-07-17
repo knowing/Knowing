@@ -30,9 +30,8 @@ class WekaArffLoader extends TLoader {
   def getDataSet(): Instances = loader.getDataSet
 
   def configure(properties: Properties) = {
-    var file = TLoader.getFilePath(properties)
-    val fin = new FileInputStream(file)
-    loader.setSource(fin)
+    val uri = TLoader.getInputURI(properties)
+    loader.setSource(uri.toURL)
   }
 
   def reset = loader.reset

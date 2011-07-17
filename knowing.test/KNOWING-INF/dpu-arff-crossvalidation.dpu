@@ -15,7 +15,7 @@
         </node>
         <node nodeType="loader" factoryId="weka.core.converters.ArffLoader" id="ARFF">
             <properties>
-                <item value="iris.arff" key="file"/>
+                <item value="iris.arff" key="url"/>
             </properties>
         </node>
         <node nodeType="presenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" id="TablePresenter">

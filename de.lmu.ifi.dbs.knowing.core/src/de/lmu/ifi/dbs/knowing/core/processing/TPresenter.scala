@@ -19,9 +19,11 @@ trait TPresenter[T] extends TProcessor {
 
   val name: String
 
-  protected def presenterReceive: Receive = customReceive
+  override final protected def customReceive: Receive = presenterReceive orElse defaultReceive
+  
+  protected def presenterReceive: Receive = defaultReceive
 
-  override protected def customReceive = {
+  private def defaultReceive: Receive = {
     case UIFactoryEvent(factory, node) =>
       statusChanged(Running())
       val parent = factory createContainer (node)

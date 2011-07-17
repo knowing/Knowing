@@ -73,7 +73,7 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI
    * Adds the DPU_PATH property to the property configuration
    */
   private def configureProperties(properties: Properties): Properties = {
-    properties setProperty (TLoader.DPU_PATH, dpuURI.toString)
+    properties setProperty (TLoader.EXE_PATH, dpuURI.toString)
     properties
   }
 

@@ -55,30 +55,39 @@ object TLoader {
   val URL = "url"
 
   /** Points to the dpu directory. Ends with a file.seperator */
-  val DPU_PATH = "path-to-dpu" // this properties is created by the GraphSupervisor-Caller
+  val EXE_PATH = "execution" // this properties is created by the GraphSupervisor-Caller
 
   def getFilePath(properties: Properties): String = {
     val absolute = properties.getProperty(ABSOLUTE_PATH, "false").toBoolean
     absolute match {
       case true => properties.getProperty(FILE)
-      case false => getInputURL(properties).getPath
+      case false => getInputURI(properties).getPath
     }
   }
 
-  def getInputURL(properties: Properties): URI = {
+  def getInputURI(properties: Properties): URI = {
     val sep = System.getProperty("file.separator")
+    val exePath = properties.getProperty(EXE_PATH)
+    val file = properties.getProperty(FILE)
     val absolute = properties.getProperty(ABSOLUTE_PATH, "false").toBoolean
-    absolute match {
-      case true => new URI(properties.getProperty(URL))
-      case false =>
-        val pathURI = properties.getProperty(DPU_PATH)
-        if (pathURI == null || pathURI.isEmpty) {
-          new URI("file", properties.getProperty(FILE), null)
-        } else {
-          val dpuURI = new URI(pathURI)
-          val filename = properties.getProperty(FILE)
-          dpuURI.resolve("." + sep + filename)
-        }
+    val url = properties.getProperty(URL)
+    
+    (url, absolute) match {
+      case (null, true) | ("", true) => new URI("file", file, null)
+      case (null, false) | ("", false) => resolveFile(exePath,file) getOrElse new URI("file",file, null)
+      case (_, true) => new URI(properties.getProperty(URL))
+      case (_, false) => resolveFile(exePath, url) getOrElse new URI(url)
+      case _ => new URI("")
+    }
+  }
+
+  def resolveFile(exePath: String, filename: String): Option[URI] = {
+    val sep = System.getProperty("file.separator")
+    exePath match {
+      case null | "" => None
+      case _ =>
+        val exeURI = new URI(exePath)
+        Some(exeURI.resolve("." + sep + filename))
     }
   }
 }

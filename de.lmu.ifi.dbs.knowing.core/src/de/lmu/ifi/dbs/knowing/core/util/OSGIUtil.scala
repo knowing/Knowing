@@ -8,7 +8,7 @@ import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit
 import OSGIUtil._
 import de.lmu.ifi.dbs.knowing.core.internal.Activator
 import de.lmu.ifi.dbs.knowing.core.provider.IDPUProvider
-
+import java.net.URL
 
 /**
  * <p>Util for (de)register DataMining-Factory-Services</p>
@@ -76,11 +76,27 @@ object OSGIUtil {
   val LOADER_CLASS = classOf[TLoader].getName
   val PROCESSOR_CLASS = classOf[TProcessor].getName
   val PRESENTER_CLASS = classOf[TPresenter[_]].getName
-  
+
   def registeredDPUs: Array[DataProcessingUnit] = {
-    val provider = Activator.tracker.getServices map(_.asInstanceOf[IDPUProvider])
-    val f = (p1:List[DataProcessingUnit],p2:IDPUProvider) => p1 ::: p2.getDataProcessingUnits.toList
+    val provider = Activator.tracker.getServices map (_.asInstanceOf[IDPUProvider])
+    //FoldLeft function
+    val f = (p1: List[DataProcessingUnit], p2: IDPUProvider) => p1 ::: p2.getDataProcessingUnits.toList
+    //Actual foldLeft
     val dpus = (List[DataProcessingUnit]() /: provider)(f)
     dpus toArray
+  }
+
+  def registeredDPU(name: String): DataProcessingUnit = {
+    val provider = Activator.tracker.getServices map (_.asInstanceOf[IDPUProvider])
+    val dpus = for (p <- provider if (p.getDataProcessingUnit(name) != null)) yield p.getDataProcessingUnit(name)
+    if (dpus.nonEmpty) dpus(0)
+    else null
+  }
+
+  def registeredURLtoDPU(name: String): URL = {
+    val provider = Activator.tracker.getServices map (_.asInstanceOf[IDPUProvider])
+    val urls = for (p <- provider if (p.getURL(name) != null)) yield p.getURL(name)
+    if (urls.nonEmpty) urls(0)
+    else null
   }
 }
