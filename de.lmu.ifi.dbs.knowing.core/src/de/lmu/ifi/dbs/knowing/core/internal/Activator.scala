@@ -6,7 +6,6 @@ import org.osgi.framework.ServiceReference
 import org.osgi.framework.ServiceRegistration
 import org.osgi.util.tracker.ServiceTracker
 import org.osgi.util.tracker.ServiceTrackerCustomizer
-
 import de.lmu.ifi.dbs.knowing.core.provider.BundleDPUProvider
 import de.lmu.ifi.dbs.knowing.core.provider.IDPUProvider
 import de.lmu.ifi.dbs.knowing.core.util.OSGIUtil
@@ -16,8 +15,8 @@ import de.lmu.ifi.dbs.knowing.core.weka.NaiveBayesFactory
 import de.lmu.ifi.dbs.knowing.core.weka.OneRFactory
 import de.lmu.ifi.dbs.knowing.core.weka.WekaArffLoaderFactory
 import de.lmu.ifi.dbs.knowing.core.weka.WekaArffSaverFactory
-
 import Activator._
+import de.lmu.ifi.dbs.knowing.core.weka.ExtendedWekaArffLoaderFactory
 
 class Activator extends BundleActivator {
 
@@ -38,6 +37,7 @@ class Activator extends BundleActivator {
   }
 
   private def registerServices {
+    osgiUtil.registerLoader(new ExtendedWekaArffLoaderFactory, ExtendedWekaArffLoaderFactory.id)
     osgiUtil.registerLoader(new WekaArffLoaderFactory, WekaArffLoaderFactory.id)
     osgiUtil.registerSaver(new WekaArffSaverFactory, WekaArffSaverFactory.id)
     osgiUtil.registerProcessor(new NaiveBayesFactory, classOf[weka.classifiers.bayes.NaiveBayes].getName)
