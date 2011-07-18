@@ -9,6 +9,7 @@ import java.util.Properties
 import weka.core.{ Instances, Instance }
 import java.net.URL
 import java.net.URI
+import java.io.File
 
 trait TLoader extends TProcessor {
 
@@ -65,8 +66,7 @@ object TLoader {
     }
   }
 
-  def getInputURI(properties: Properties): URI = {
-    val sep = System.getProperty("file.separator")
+  def getInputURI(properties: Properties): URI = {    
     val exePath = properties.getProperty(EXE_PATH)
     val file = properties.getProperty(FILE)
     val absolute = properties.getProperty(ABSOLUTE_PATH, "false").toBoolean
@@ -82,12 +82,19 @@ object TLoader {
   }
 
   def resolveFile(exePath: String, filename: String): Option[URI] = {
-    val sep = System.getProperty("file.separator")
+    var sep = System.getProperty("file.separator")
+    if(sep.equals("\\")){
+      sep = "/"; //resolve methods doesn't like a backslash...
+    }
     exePath match {
       case null | "" => None
-      case _ =>
-        val exeURI = new URI(exePath)
-        Some(exeURI.resolve("." + sep + filename))
+      case _ =>                        
+        //Some(exeURI.resolve("." + sep + filename))
+        //val exeURI = new URI("file", null,exePath.replace("file:",""),null)
+        val file = new File(exePath.replace("file:","").replace("%5C","/"))
+        val path = file.getPath.replace(file.getName,"")        
+        val newSome = Some(new URI("file:" + path.replace("\\","/")+filename))
+        newSome
     }
   }
 }
