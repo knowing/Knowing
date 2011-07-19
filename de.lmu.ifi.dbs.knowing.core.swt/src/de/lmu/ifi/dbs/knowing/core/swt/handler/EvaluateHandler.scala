@@ -41,37 +41,6 @@ class EvaluateHandler extends AbstractHandler {
     null;
   }
 
-  /**
-   * @param pathname
-   */
-  def unmarshallDPU(pathname: String): DataProcessingUnit = {
-    try {
-      val context = JAXBContext.newInstance(classOf[DataProcessingUnit])
-      val um = context.createUnmarshaller()
-      um.unmarshal(new File(pathname)).asInstanceOf[DataProcessingUnit]
-    } catch {
-      case jaxb: JAXBException =>
-        jaxb.printStackTrace
-        null
-      case e: Exception =>
-        e.printStackTrace()
-        null
-    }
-  }
-
-  /**
-   * @param event
-   * @return
-   */
-  private def openDPU(event: ExecutionEvent): String = {
-    val dialog = new FileDialog(HandlerUtil.getActiveShell(event))
-    dialog.setFilterExtensions(Array("*.dpu"))
-    dialog.setFilterNames(Array("DPU DataProcessingUnit"))
-    dialog.open()
-  }
-
-  private def getDirectory(dpuPath: String): URI = new URI("file", dpuPath, null)
-
 }
 
 object EvaluateHandler {

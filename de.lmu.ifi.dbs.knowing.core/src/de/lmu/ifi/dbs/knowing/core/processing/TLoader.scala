@@ -82,19 +82,15 @@ object TLoader {
   }
 
   def resolveFile(exePath: String, filename: String): Option[URI] = {
-    var sep = System.getProperty("file.separator")
-    if(sep.equals("\\")){
-      sep = "/"; //resolve methods doesn't like a backslash...
-    }
     exePath match {
       case null | "" => None
-      case _ =>                        
-        //Some(exeURI.resolve("." + sep + filename))
-        //val exeURI = new URI("file", null,exePath.replace("file:",""),null)
-        val file = new File(exePath.replace("file:","").replace("%5C","/"))
-        val path = file.getPath.replace(file.getName,"")        
-        val newSome = Some(new URI("file:" + path.replace("\\","/")+filename))
-        newSome
+      case _ =>           
+        val exeURI = new URI(exePath)
+        Some(exeURI.resolve("./" + filename))
+//        val exeURI = new URI("file", null,exePath.replace("file:",""),null)
+//        val file = new File(exePath.replace("file:","").replace("%5C","/"))
+//        val path = file.getPath.replace(file.getName,"")        
+//        Some(new URI("file" + path.replace("\\","/")+filename))
     }
   }
 }

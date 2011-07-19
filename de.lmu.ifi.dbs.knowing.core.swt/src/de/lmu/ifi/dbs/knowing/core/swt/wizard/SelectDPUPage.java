@@ -177,13 +177,21 @@ public class SelectDPUPage extends WizardPage {
 
 	public URI getExecutionPath() throws URISyntaxException {
 		if (!tExePath.getText().isEmpty()) {
-			return new URI("file", tExePath.getText(), null);
+			return new URI("file", formURI(tExePath.getText()), null);
 		} else if (bFile.getSelection()) {
-			return new URI("file", tFile.getText(), null);
+			return new URI("file", formURI(tFile.getText()), null);
 		} else if (bRegistry.getSelection()) {
 			return OSGIUtil.registeredURLtoDPU(tRegistry.getText()).toURI();
 		}
 		return null;
+	}
+	
+	private String formURI(String path) {
+		String step1 = path.replace("\\","/");
+		if( step1.startsWith("/"))
+			return step1;
+		else
+			return "/" + step1;
 	}
 
 }
