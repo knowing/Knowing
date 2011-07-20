@@ -8,13 +8,24 @@ import weka.core.Instance
 
 import java.util.Properties
 
-trait Event
+trait Event {
+  /**
+   * Default returns the same object!
+   */
+  override def clone = this
+}
 trait Status extends Event
 
 /* ======================== */
 /* == Data Exchange ======= */
 /* ======================== */
-case class Results(instances: Instances) extends Event
+case class Results(instances: Instances) extends Event {
+  override def clone = {
+    val copy = new Instances(instances)
+    copy.setClassIndex(instances.classIndex)
+    new Results(copy)
+  }
+}
 case class QueryResults(instances: Instances, query: Instance )extends Event
 case class Query(query: Instance) extends Event
 case class Queries(queries: Instances) extends Event
@@ -27,8 +38,9 @@ case class Created extends Status	//processor created
 case class Waiting extends Status	//waiting for first messages
 case class Ready extends Status		//process already one message and is ready to do more
 case class Running extends Status	//is currently running
-case class Progress(task:String, worked:Int, work:Int) extends Status
+case class Progress(task:String, worked:Int, work:Int = 100) extends Status
 case class Finished extends Status	//all work is done, not ready for more messages
+case class Shutdown extends Status 	// UIfactory can shutdown, all done
 
 /* ======================== */
 /* == Runtime Commands ==== */
@@ -42,5 +54,5 @@ case class UpdateUI extends Status
 /* ========================= */
 /* == Actor Communication == */
 /* ========================= */
-case class Register(actor: ActorRef, port:Option[String]) extends Event
-case class Registered(success: Boolean) extends Event
+case class Register(actor: ActorRef, port:Option[String] = None) extends Event
+case class Registered(success: Boolean = true) extends Event

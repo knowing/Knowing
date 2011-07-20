@@ -4,6 +4,7 @@ import akka.actor.{ Actor, ActorRef, Scheduler }
 import akka.event.EventHandler.{ debug, info, warning, error }
 import akka.config.Supervision.AllForOneStrategy
 import com.eaio.uuid.UUID
+import java.net.URI
 import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.util._
 import de.lmu.ifi.dbs.knowing.core.processing.{ TPresenter, TSender, TLoader }
@@ -15,7 +16,8 @@ import scala.collection.mutable.{ Map => MutableMap, LinkedList }
 import System.{ currentTimeMillis => systemTime }
 import org.osgi.framework.FrameworkUtil
 
-class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuDir: String) extends Actor with TSender {
+
+class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI) extends Actor with TSender {
 
   self.faultHandler = AllForOneStrategy(List(classOf[Throwable]), 5, 5000)
 
@@ -31,7 +33,7 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuDir: Str
   def receive = {
     case Register(actor, port) => addListener(actor, port)
     case Start | Start() => evaluate
-    case UpdateUI | UpdateUI() => uifactory update
+    case UpdateUI | UpdateUI() => uifactory update(UpdateUI())
     case status: Status => handleStatus(status)
     case event: Event => events + event.getClass().getSimpleName
     case msg => debug(this, "Unkown Message: " + msg)
@@ -45,6 +47,7 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuDir: Str
   }
 
   private def initialize {
+    uifactory update(Progress("initialize", 0,dpu.nodes.length))
     dpu.nodes foreach (node => {
       val factory = Util.getFactoryService(node.factoryId)
       factory match {
@@ -62,6 +65,7 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuDir: Str
           //Add to internal map
           actors += (node.id -> actor)
           statusMap += (actor.getUuid -> (actor, Created(), systemTime))
+          uifactory update(Progress("initialize", 1,dpu.nodes.length))
         case None => warning(this, "No factory found for: " + node.factoryId)
       }
     })
@@ -71,7 +75,7 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuDir: Str
    * Adds the DPU_PATH property to the property configuration
    */
   private def configureProperties(properties: Properties): Properties = {
-    properties setProperty (TLoader.DPU_PATH, dpuDir)
+    properties setProperty (TLoader.EXE_PATH, dpuURI.toString)
     properties
   }
 
@@ -105,6 +109,7 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuDir: Str
   }
 
   private def handleStatus(status: Status) {
+    uifactory update(status)
     self.sender match {
       case Some(a) => statusMap update (a.getUuid, (a, status, systemTime))
       case None => warning(this, "Unkown status message: " + status)
@@ -114,6 +119,7 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuDir: Str
         info(this, "Evaluation finished. Stopping schedules and supervisor")
         //schedules foreach (future => future.cancel(true))
         actors foreach { case (_, actor) => actor stop }
+        uifactory update(Shutdown())
         self stop
       }
       case _ => //nothing happens

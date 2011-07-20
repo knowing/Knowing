@@ -4,17 +4,14 @@ import java.net.URL
 import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory._
 import de.lmu.ifi.dbs.knowing.core.processing.TLoader
-
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
-
 import java.io.{ FileInputStream, File }
 import java.util.Properties
-
 import weka.core.converters.ArffLoader
 import weka.core.Instances
-
 import WekaArffLoader._
+import java.net.URI
 
 /**
  * <p>Wrapping the standard WEKA ARFF Loader</p>
@@ -27,12 +24,13 @@ class WekaArffLoader extends TLoader {
 
   lazy val loader = new ArffLoader()
 
+  var uri:URI = null;
+  
   def getDataSet(): Instances = loader.getDataSet
 
   def configure(properties: Properties) = {
-    var file = TLoader.getFilePath(properties)
-    val fin = new FileInputStream(file)
-    loader.setSource(fin)
+    uri = TLoader.getInputURI(properties)
+    loader.setSource(uri.toURL)
   }
 
   def reset = loader.reset

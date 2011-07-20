@@ -62,6 +62,7 @@ class DataProcessingUnit(@XmlAttributeField var name: String,
 
   def node(typ: String, factory: String): Array[_ <: Node] = nodes filter (node => node.nodeType.equals(typ) && node.factoryId.equals(factory))
 
+  override def toString = name
 }
 
 object DataProcessingUnit {

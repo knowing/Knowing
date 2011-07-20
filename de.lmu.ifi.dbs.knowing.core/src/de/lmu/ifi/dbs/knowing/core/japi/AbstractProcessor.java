@@ -1,5 +1,6 @@
 package de.lmu.ifi.dbs.knowing.core.japi;
 
+import weka.core.Instances;
 import de.lmu.ifi.dbs.knowing.core.events.Event;
 import de.lmu.ifi.dbs.knowing.core.events.Status;
 
@@ -19,6 +20,10 @@ public abstract class AbstractProcessor implements IProcessor {
 	@Override
 	public void setStatus(Status status) {
 		wrapper.status_$eq(status);		
+	}
+	
+	protected int guessAndSetClassLabel(Instances dataset) {
+		return wrapper.guessAndSetClassLabel(dataset);
 	}
 	
 }
