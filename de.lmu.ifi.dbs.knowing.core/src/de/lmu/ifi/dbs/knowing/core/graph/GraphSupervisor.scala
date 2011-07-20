@@ -33,7 +33,7 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI
   def receive = {
     case Register(actor, port) => addListener(actor, port)
     case Start | Start() => evaluate
-    case UpdateUI | UpdateUI() => uifactory update
+    case UpdateUI | UpdateUI() => uifactory update(UpdateUI())
     case status: Status => handleStatus(status)
     case event: Event => events + event.getClass().getSimpleName
     case msg => debug(this, "Unkown Message: " + msg)
@@ -47,6 +47,7 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI
   }
 
   private def initialize {
+    uifactory update(Progress("initialize", 0,dpu.nodes.length))
     dpu.nodes foreach (node => {
       val factory = Util.getFactoryService(node.factoryId)
       factory match {
@@ -64,6 +65,7 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI
           //Add to internal map
           actors += (node.id -> actor)
           statusMap += (actor.getUuid -> (actor, Created(), systemTime))
+          uifactory update(Progress("initialize", 1,dpu.nodes.length))
         case None => warning(this, "No factory found for: " + node.factoryId)
       }
     })
@@ -107,6 +109,7 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI
   }
 
   private def handleStatus(status: Status) {
+    uifactory update(status)
     self.sender match {
       case Some(a) => statusMap update (a.getUuid, (a, status, systemTime))
       case None => warning(this, "Unkown status message: " + status)
@@ -116,6 +119,7 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI
         info(this, "Evaluation finished. Stopping schedules and supervisor")
         //schedules foreach (future => future.cancel(true))
         actors foreach { case (_, actor) => actor stop }
+        uifactory update(Shutdown())
         self stop
       }
       case _ => //nothing happens

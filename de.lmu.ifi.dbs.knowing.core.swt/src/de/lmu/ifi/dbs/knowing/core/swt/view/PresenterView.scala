@@ -4,16 +4,21 @@ import akka.actor.{ ActorRef, Actor, TypedActor }
 import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
 import java.util.concurrent.SynchronousQueue
+import java.util.concurrent.ArrayBlockingQueue
 import org.eclipse.swt.layout.FillLayout
 import org.eclipse.swt.SWT
-import org.eclipse.swt.widgets.Composite 
+import org.eclipse.swt.widgets.Composite
 import org.eclipse.swt.graphics.Image
-import org.eclipse.swt.custom.{ CTabFolder , CTabItem }
+import org.eclipse.swt.custom.{ CTabFolder, CTabItem }
 import org.eclipse.ui.part.ViewPart
 import org.eclipse.ui.IPropertyListener
 import de.lmu.ifi.dbs.knowing.core.graph.Node
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
-
+import de.lmu.ifi.dbs.knowing.core.events._
+import org.eclipse.core.runtime.jobs.Job
+import org.eclipse.core.runtime.IProgressMonitor
+import org.eclipse.core.runtime.IStatus
+import org.eclipse.core.runtime.{ Status => JobStatus }
 
 /**
  * @author Nepomuk Seiler
@@ -75,6 +80,33 @@ object PresenterView { val ID = "de.lmu.ifi.dbs.knowing.core.swt.presenterView" 
 
 class PresenterUIFactory(view: PresenterView) extends TypedActor with UIFactory {
 
+  val statusQueue = new ArrayBlockingQueue[Status](100)
+  var started = false
+
+  private val job = new Job("Run") {
+
+    def run(monitor: IProgressMonitor): IStatus = {
+      var status = statusQueue.poll()
+      while (status != null) {
+        status match {
+          case Created() =>
+          case Running() =>
+          case Waiting() =>
+          case Progress(task, worked, work) =>
+            debug(this, "Progress with status: " + status)
+            monitor.beginTask(task, work)
+          case Finished() => monitor.done
+          case Shutdown() => 
+            debug(this, "Shutdown with status: " + status)
+            return JobStatus.OK_STATUS
+          case _ =>
+        }
+        status = statusQueue.take()
+      }
+      JobStatus.OK_STATUS
+    }
+  }
+
   def createContainer(node: Node): Composite = {
     debug(this, "CreateContainer with " + node)
     view.createNodeTab(node)
@@ -84,5 +116,18 @@ class PresenterUIFactory(view: PresenterView) extends TypedActor with UIFactory 
     parent
   }
 
-  def update = view update
+  def update(status: Status) = {
+    statusQueue.put(status)
+    status match {
+      case UpdateUI() => view update
+      case _ =>
+    }
+    if (!started) {
+      job.setUser(true)
+      job.schedule
+      started = true
+    }
+
+  }
+
 }

@@ -40,6 +40,7 @@ case class Ready extends Status		//process already one message and is ready to d
 case class Running extends Status	//is currently running
 case class Progress(task:String, worked:Int, work:Int = 100) extends Status
 case class Finished extends Status	//all work is done, not ready for more messages
+case class Shutdown extends Status 	// UIfactory can shutdown, all done
 
 /* ======================== */
 /* == Runtime Commands ==== */
