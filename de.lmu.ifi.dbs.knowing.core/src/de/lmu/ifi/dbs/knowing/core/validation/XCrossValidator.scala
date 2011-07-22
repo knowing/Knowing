@@ -22,7 +22,7 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
   def this() = this(null, 10, new Properties)
 
   override def customReceive = {
-    case status: Status => statusChanged(status)
+    case status: Status => //statusChanged(status) handle it!
   }
 
   def build(instances: Instances) {
@@ -35,9 +35,9 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
       case x => classLabels = classLables(instances.attribute(x))
     }
     confusionMatrixHeader = ResultsUtil.confusionMatrix(getClassLabels.toList)
-    //TODO instantiate CrossValidator-actors
     val crossValidators = for (i <- 0 until folds; val actor = factory.getInstance) yield actor;
     debug(this, "Fold-Actors created!")
+    statusChanged(Progress("validation",0,folds))
     for (j <- 0 until folds) {
       self startLink crossValidators(j)
       crossValidators(j) !! Register(self, None)
@@ -60,6 +60,7 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
       sendEvent(Results(mergeMatrices))
       currentFold = 0
     } else {
+      statusChanged(Progress("validation",1,folds))
       debug(this, "Fold " + currentFold + " results arrived")
     }
 
