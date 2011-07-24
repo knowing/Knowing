@@ -13,7 +13,6 @@ trait TSender { this: Actor =>
 
   val listeners = Map.empty[UUID, ActorRef]
   val outputListeners = Map.empty[String, Map[UUID, ActorRef]]
-  
 
   /* ================================ */
   /* == Generic input/output ports == */
@@ -67,9 +66,16 @@ trait TSender { this: Actor =>
   }
 
   protected def sendEvent(event: Event, output: String) {
+    //Make instances immutable
+    val immutableEvent = event match {
+      case Results(inst) =>
+        if (inst.isInstanceOf[ImmutableInstances]) event
+        else Results(new ImmutableInstances(inst))
+      case e => e
+    }
     val entry = outputListeners.get(output)
     entry match {
-      case Some(e) => e foreach { case (_, actor) => sendToActor(actor, event.clone) }
+      case Some(e) => e foreach { case (_, actor) => sendToActor(actor, immutableEvent) }
       case None => warning(this, "Event " + event + " could not be send")
     }
   }

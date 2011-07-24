@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.TableItem
 import org.eclipse.swt.custom.TableEditor
 import com.eaio.uuid.UUID
 
-class ProgressDialog(shell: Shell) extends Dialog(shell) {
+class ProgressDialog(shell: Shell, var disposed:Boolean = false) extends Dialog(shell) {
 
   import ProgressDialog._
 
@@ -55,6 +55,11 @@ class ProgressDialog(shell: Shell) extends Dialog(shell) {
   override protected def createButtonsForButtonBar(parent: Composite) {
     //		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
     //		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+  }
+  
+  override protected def close:Boolean = {
+    disposed = true
+    super.close
   }
 
   /**

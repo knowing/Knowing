@@ -61,3 +61,8 @@ class BundleDPUProvider(bundle: Bundle, dir: String = "/KNOWING-INF") extends ID
     }
   }
 }
+
+object BundleDPUProvider {
+  
+  def newInstance(bundle: Bundle): BundleDPUProvider = new BundleDPUProvider(bundle)
+}

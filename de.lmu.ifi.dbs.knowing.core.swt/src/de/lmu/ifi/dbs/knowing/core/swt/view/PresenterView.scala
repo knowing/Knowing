@@ -95,7 +95,7 @@ class PresenterUIFactory(view: PresenterView) extends TypedActor with UIFactory 
 
   def update(actor: ActorRef, status: Status) {
     //Create ProgressDialog on first status
-    if (!started) {
+    if (!started || dialog == null || dialog.disposed) {
       dialog = new ProgressDialog(view.getSite.getShell)
       view.getSite.getShell.getDisplay.asyncExec(
         new Runnable {
@@ -112,8 +112,7 @@ class PresenterUIFactory(view: PresenterView) extends TypedActor with UIFactory 
     //Handle special status events
     status match {
       case UpdateUI() => view update
-      case Shutdown() => 
-        started = false
+      case Shutdown() => started = false
       case _ =>
     }
 
