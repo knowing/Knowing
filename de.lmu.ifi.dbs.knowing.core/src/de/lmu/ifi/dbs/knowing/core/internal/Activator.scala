@@ -26,12 +26,11 @@ class Activator extends BundleActivator {
     registerServices
     tracker = new ServiceTracker(context, classOf[IDPUProvider].getName, new DPUProviderServiceTracker(context))
     tracker.open
-
   }
 
   def stop(context: BundleContext) = {
     Activator.context = null;
-    osgiUtil.deregisterAll
+    osgiUtil.unregisterAll
     osgiUtil = null
     tracker.close
   }

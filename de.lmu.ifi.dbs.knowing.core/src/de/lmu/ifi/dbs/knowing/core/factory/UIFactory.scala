@@ -15,6 +15,6 @@ trait UIFactory {
   
   def createContainer(node: Node):AnyRef
   
-  def update(status: Status)
+  def update(actor: ActorRef, status: Status)
   
 }

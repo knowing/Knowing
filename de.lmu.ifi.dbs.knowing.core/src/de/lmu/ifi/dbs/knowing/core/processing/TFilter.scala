@@ -15,8 +15,10 @@ trait TFilter extends TProcessor {
   
   override def customReceive = {
     case Results(instances) =>
+      statusChanged(Running())
       val returns = filter(instances)
       sendEvent(Results(returns))
+      statusChanged(Ready())
   }
 
   def filter(instances: Instances): Instances

@@ -24,14 +24,14 @@ class Activator extends BundleActivator {
     util.registerProcessor(new TestLoaderFactory)
     util.registerProcessor(new SplitProcessorFactory)
     util.registerProcessor(new TestJavaProcessorFactory)
-    dpuService = context.registerService(classOf[IDPUProvider].getName, new BundleDPUProvider(context.getBundle), null)
+    dpuService = context.registerService(classOf[IDPUProvider].getName, BundleDPUProvider.newInstance(context.getBundle), null)
     val dpus = OSGIUtil.registeredDPUs
     dpus foreach (dpu => println(dpu.name))
   }
 
   def stop(context: BundleContext) = {
     Activator.context = null
-    util.deregisterAll
+    util.unregisterAll
     util = null
     dpuService.unregister
   }

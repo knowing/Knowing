@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.IStatus
 import org.eclipse.core.runtime.{ Status => JobStatus }
+import de.lmu.ifi.dbs.knowing.core.swt.dialog.ProgressDialog
 
 /**
  * @author Nepomuk Seiler
@@ -80,32 +81,8 @@ object PresenterView { val ID = "de.lmu.ifi.dbs.knowing.core.swt.presenterView" 
 
 class PresenterUIFactory(view: PresenterView) extends TypedActor with UIFactory {
 
-  val statusQueue = new ArrayBlockingQueue[Status](100)
   var started = false
-
-  private val job = new Job("Run") {
-
-    def run(monitor: IProgressMonitor): IStatus = {
-      var status = statusQueue.poll()
-      while (status != null) {
-        status match {
-          case Created() =>
-          case Running() =>
-          case Waiting() =>
-          case Progress(task, worked, work) =>
-            debug(this, "Progress with status: " + status)
-            monitor.beginTask(task, work)
-          case Finished() => monitor.done
-          case Shutdown() => 
-            debug(this, "Shutdown with status: " + status)
-            return JobStatus.OK_STATUS
-          case _ =>
-        }
-        status = statusQueue.take()
-      }
-      JobStatus.OK_STATUS
-    }
-  }
+  var dialog: ProgressDialog = _
 
   def createContainer(node: Node): Composite = {
     debug(this, "CreateContainer with " + node)
@@ -116,16 +93,27 @@ class PresenterUIFactory(view: PresenterView) extends TypedActor with UIFactory 
     parent
   }
 
-  def update(status: Status) = {
-    statusQueue.put(status)
+  def update(actor: ActorRef, status: Status) {
+    //Create ProgressDialog on first status
+    if (!started || dialog == null || dialog.disposed) {
+      dialog = new ProgressDialog(view.getSite.getShell)
+      view.getSite.getShell.getDisplay.asyncExec(
+        new Runnable {
+          def run = dialog.open
+        })
+      started = true
+    }
+    //Update Dialog in UI Thread
+    view.getSite.getShell.getDisplay.asyncExec(
+      new Runnable {
+        def run = dialog.update(actor, status)
+      })
+
+    //Handle special status events
     status match {
       case UpdateUI() => view update
+      case Shutdown() => started = false
       case _ =>
-    }
-    if (!started) {
-      job.setUser(true)
-      job.schedule
-      started = true
     }
 
   }

@@ -8,24 +8,13 @@ import weka.core.Instance
 
 import java.util.Properties
 
-trait Event {
-  /**
-   * Default returns the same object!
-   */
-  override def clone = this
-}
+trait Event 
 trait Status extends Event
 
 /* ======================== */
 /* == Data Exchange ======= */
 /* ======================== */
-case class Results(instances: Instances) extends Event {
-  override def clone = {
-    val copy = new Instances(instances)
-    copy.setClassIndex(instances.classIndex)
-    new Results(copy)
-  }
-}
+case class Results(instances: Instances) extends Event 
 case class QueryResults(instances: Instances, query: Instance )extends Event
 case class Query(query: Instance) extends Event
 case class Queries(queries: Instances) extends Event
