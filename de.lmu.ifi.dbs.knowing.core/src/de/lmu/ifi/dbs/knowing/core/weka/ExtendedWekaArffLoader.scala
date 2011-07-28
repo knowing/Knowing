@@ -16,9 +16,10 @@ import java.util.Properties
 class ExtendedWekaArffLoader extends WekaArffLoader {
   		
 	override def getDataSet(): Instances = { 
-    	var inst:Instances = loader.getDataSet
+    	var inst:Instances = super.getDataSet
     	  
-    	val filepath = uri.getRawSchemeSpecificPart
+//    	val filepath = uri.getRawSchemeSpecificPart
+    	val filepath = ""
     	
     	var filename:String = null
     	if(filepath.contains('/')){
@@ -28,18 +29,18 @@ class ExtendedWekaArffLoader extends WekaArffLoader {
     	  filename = filepath
     	}
     	
-    	val list = new ArrayList[String]
-    	list.add(filename)
-    	inst.insertAttributeAt(new Attribute(SOURCE_ATTRIBUTE,list), inst.numAttributes)    	
+    	val filenames = new ArrayList[String]
+    	filenames.add(filename)
+    	inst.insertAttributeAt(new Attribute(SOURCE_ATTRIBUTE,filenames), inst.numAttributes)    	
     	
     	var actClass:String = null
     	if(assignClassFromFilename){
     	  val splits:Array[String] = filename.split(splitChar)
     	  if(splits!=null && splitPosition<splits.length){
 	    	actClass = splits(splitPosition)	   
-	    	val list = new ArrayList[String]
-	    	list.add(actClass)    	
-	    	inst.insertAttributeAt(new Attribute(CLASS_ATTRIBUTE,list), inst.numAttributes)
+	    	val classes = new ArrayList[String]
+	    	classes.add(actClass)    	
+	    	inst.insertAttributeAt(new Attribute(CLASS_ATTRIBUTE,classes), inst.numAttributes)
 	    	inst.setClassIndex(inst.numAttributes-1);	    	
     	  }
     	}

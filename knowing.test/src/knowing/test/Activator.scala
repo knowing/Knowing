@@ -8,6 +8,7 @@ import org.osgi.framework.BundleContext
 import org.osgi.framework.BundleActivator
 import knowing.test.loader._
 import knowing.test.processor._
+import knowing.test.filter._
 import org.osgi.util.tracker.ServiceTrackerCustomizer
 import org.osgi.framework.ServiceReference
 import org.osgi.util.tracker.ServiceTracker
@@ -24,6 +25,7 @@ class Activator extends BundleActivator {
     util.registerProcessor(new TestLoaderFactory)
     util.registerProcessor(new SplitProcessorFactory)
     util.registerProcessor(new TestJavaProcessorFactory)
+    util.registerProcessor(new SourceSplitFilterFactory)
     dpuService = context.registerService(classOf[IDPUProvider].getName, BundleDPUProvider.newInstance(context.getBundle), null)
     val dpus = OSGIUtil.registeredDPUs
     dpus foreach (dpu => println(dpu.name))

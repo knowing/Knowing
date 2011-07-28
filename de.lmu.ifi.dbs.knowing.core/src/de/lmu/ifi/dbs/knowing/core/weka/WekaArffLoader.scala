@@ -1,39 +1,85 @@
 package de.lmu.ifi.dbs.knowing.core.weka
 
-import java.net.URL
+import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory._
 import de.lmu.ifi.dbs.knowing.core.processing.TLoader
+import de.lmu.ifi.dbs.knowing.core.processing.TLoader._
+import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
 import java.io.{ FileInputStream, File }
 import java.util.Properties
+import java.net.{ URI, URL }
 import weka.core.converters.ArffLoader
-import weka.core.Instances
+import weka.core.{ Instances, Instance, Attribute }
 import WekaArffLoader._
-import java.net.URI
+
+import scala.collection.JavaConversions.asList
 
 /**
  * <p>Wrapping the standard WEKA ARFF Loader</p>
- * 
+ *
  * @autor Nepomuk Seiler
  * @version 0.7
  * @since 2011-04-xx
  */
 class WekaArffLoader extends TLoader {
 
-  lazy val loader = new ArffLoader()
+  var loaders: List[(String, ArffLoader)] = Nil
+  var source: Boolean = false
 
-  var uri:URI = null;
-  
-  def getDataSet(): Instances = loader.getDataSet
+  private var single = true
 
-  def configure(properties: Properties) = {
-    uri = TLoader.getInputURI(properties)
-    loader.setSource(uri.toURL)
+  def getDataSet(): Instances = {
+    val filenames = asList(loaders.par map (_._1) toList)
+    val datasets = loaders.par map { case (file, loader) => (file, loader.getDataSet) } toList;
+    //Check datasets length to generate output
+    datasets.length match {
+      case 0 => ResultsUtil.emptyResult // Nothing generated
+      case 1 => datasets.head._2 // Just one input
+      case _ => // hell yeah, more than one input
+        val head = datasets.head._2
+        val header = new Instances(head, 0)
+        source match {
+          case true =>
+            val filter: (String, Instances) => Instances = { (file, inst) =>
+              inst.insertAttributeAt(new Attribute(SOURCE_ATTRIBUTE, filenames), inst.numAttributes)
+              for (i <- 0 until inst.numInstances) inst.get(i).setValue(inst.attribute(SOURCE_ATTRIBUTE), file)
+              inst
+            }
+            header.insertAttributeAt(new Attribute(TLoader.SOURCE_ATTRIBUTE, filenames), head.numAttributes)
+            ResultsUtil.appendInstancesTupel(header, datasets, filter)
+          case false => ResultsUtil.appendInstances(header, datasets map (_._2))
+        }
+
+    }
   }
 
-  def reset = loader.reset
+  def configure(properties: Properties) = {
+    source = properties.getProperty(SOURCE_ATTRIBUTE, "false") toBoolean
+    val uris = TLoader.getInputURIs(properties)
+    uris map {
+      case uri =>
+        val loader = new ArffLoader
+        loader.setSource(uri.toURL)
+        loaders = (extractFilename(uri), loader) :: loaders
+    }
+  }
+
+  def reset = loaders foreach (_._2.reset)
+
+  /**
+   * Forward if there were multiple loaders
+   */
+  override def build(inst: Instances) = sendEvent(new Results(inst))
+
+  private def extractFilename(uri: URI): String = {
+    val sep = System.getProperty("file.separator")
+    val path = uri.getPath
+    val index = path.lastIndexOf(sep)
+    path.substring(index + 1, path.length)
+  }
 
 }
 
@@ -41,7 +87,7 @@ object WekaArffLoader {
   val PROP_ABSOLUTE_PATH = TLoader.ABSOLUTE_PATH
   val PROP_FILE = TLoader.FILE
   val PROP_URL = TLoader.URL
-
+  val PROP_DIR = TLoader.DIR
 }
 
 class WekaArffLoaderFactory extends TFactory {
