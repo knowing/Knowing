@@ -1,6 +1,6 @@
 package de.lmu.ifi.dbs.knowing.core.util
 
-import java.util.{ ArrayList, Arrays, Collections, List => JList, Properties }
+import java.util.{ ArrayList, Arrays, Collections, List => JList, Properties , Map => JMap}
 import scala.collection.JavaConversions._
 import weka.core.{ Attribute, DenseInstance, Instances, Instance, ProtectedProperties, WekaException }
 
@@ -416,4 +416,5 @@ object ResultsUtil {
     }
   }
 
+  def splitInstanceBySourceJava(instances: Instances):JMap[String, Instances] = asMap(splitInstanceBySource(instances))
 }
