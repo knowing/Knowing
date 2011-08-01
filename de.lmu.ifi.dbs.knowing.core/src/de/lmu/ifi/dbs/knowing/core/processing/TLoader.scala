@@ -111,7 +111,7 @@ object TLoader {
     val dir = absolute match {
       case true => new File(dirPath)
       case false =>
-        val sep = System.getProperty("file.separator")
+        val sep = "/";//System.getProperty("file.separator")
         // If exe path is path to dpu, remove the dpu-filename
         val lastIndex = exePath.lastIndexOf(sep)
         //Get the directory path
