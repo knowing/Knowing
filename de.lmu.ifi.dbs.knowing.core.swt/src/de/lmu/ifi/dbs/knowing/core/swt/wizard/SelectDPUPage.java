@@ -42,6 +42,7 @@ public class SelectDPUPage extends WizardPage {
 	
 	private static String lastExecutionPath = "";
 	private static String lastDPU = "";
+	private static boolean fileSelected = true;
 
 	/**
 	 * Create the wizard.
@@ -63,15 +64,17 @@ public class SelectDPUPage extends WizardPage {
 		setControl(container);
 		container.setLayout(new GridLayout(3, false));
 
-		bFile = new Button(container, SWT.RADIO);		
+		bFile = new Button(container, SWT.RADIO);
+		bFile.setSelection(fileSelected);
 		bFile.setText("File:");
 
 		tFile = new Text(container, SWT.BORDER);
+		tFile.setEnabled(fileSelected);
 		tFile.setText(lastDPU);
 		tFile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		final Button bBrowseFile = new Button(container, SWT.NONE);
-		bBrowseFile.setEnabled(false);
+		bBrowseFile.setEnabled(fileSelected);
 		bBrowseFile.setText("Browse");
 		bBrowseFile.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -89,16 +92,16 @@ public class SelectDPUPage extends WizardPage {
 		});
 
 		bRegistry = new Button(container, SWT.RADIO);
-		bRegistry.setSelection(true);
+		bRegistry.setSelection(!fileSelected);
 		bRegistry.setText("Registry: ");
 
 		tRegistry = new Text(container, SWT.BORDER);
 		tRegistry.setEditable(false);
-		tRegistry.setEnabled(false);
+		tRegistry.setEnabled(!fileSelected);
 		tRegistry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		final Button bBrowseRegistry = new Button(container, SWT.NONE);
-		bBrowseRegistry.setEnabled(true);
+		bBrowseRegistry.setEnabled(!fileSelected);
 		bBrowseRegistry.setText("Browse");
 
 		bBrowseRegistry.addSelectionListener(new SelectionAdapter() {
@@ -155,17 +158,20 @@ public class SelectDPUPage extends WizardPage {
 		bFile.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				fileSelected = true;
 				tFile.setEnabled(true);
 				bBrowseFile.setEnabled(true);
 
 				tRegistry.setEnabled(false);
 				bBrowseRegistry.setEnabled(false);
+				
 			}
 		});
 
 		bRegistry.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				fileSelected = false;
 				tFile.setEnabled(false);
 				bBrowseFile.setEnabled(false);
 
@@ -173,6 +179,11 @@ public class SelectDPUPage extends WizardPage {
 				bBrowseRegistry.setEnabled(true);
 			}
 		});
+		
+		if(fileSelected)
+			bBrowseFile.setFocus();
+		else
+			bBrowseRegistry.setFocus();
 	}
 
 	public DataProcessingUnit getDPU() throws JAXBException {

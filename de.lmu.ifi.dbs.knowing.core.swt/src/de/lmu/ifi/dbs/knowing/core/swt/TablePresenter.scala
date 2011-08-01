@@ -86,7 +86,10 @@ class TablePresenter extends SWTPresenter {
     debug(this, "createColumns...")
     instances.setClassIndex(-1); //WekaEnumeration skips the class attribute, so the class index has to be unset...
     val eAttr = instances.enumerateAttributes    
-    val weight = 100 / instances.numAttributes
+    val weight = instances.numInstances match {
+      case 0 => 100
+      case x => 100 / x
+    }
     viewer.getTable().setHeaderVisible(true);
     viewer.getTable().setLinesVisible(true);
     while (eAttr.hasMoreElements) {
