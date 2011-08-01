@@ -27,6 +27,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 
   //Current status of processor
   protected var status: Status = Created()
+  protected val properties: Properties = new Properties
 
   //Default lifeCylce 
   self.lifeCycle = Permanent
@@ -45,9 +46,11 @@ trait TProcessor extends Actor with TSender with TConfigurable {
     case Register(actor, port) => addListener(actor, port)
     case Configure(p) =>
       configure(p)
+      properties.clear
+      properties.putAll(p)
       if (self.getSender.isDefined) self reply Ready
       statusChanged(Waiting())
-    case Start | Start() => debug(this, "Running " + self.getActorClassName)
+    case Start | Start() => start
     case Results(inst) =>
       statusChanged(Running())
       build(inst)
@@ -77,6 +80,8 @@ trait TProcessor extends Actor with TSender with TConfigurable {
   override def postRestart(reason: Throwable) {
     // reinit stable state after restart
   }
+  
+  def start = debug(this, "Running " + self.getActorClassName)
 
   def build(instances: Instances)
 

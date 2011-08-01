@@ -18,11 +18,13 @@ trait TLoader extends TProcessor {
    * <p>Override for special behaviour</p>
    */
   override protected def customReceive = {
-    case Start | Start() =>
-      val dataset = getDataSet
-      sendEvent(Results(dataset))
-      statusChanged(Finished())
     case Reset => reset
+  }
+
+  override def start {
+    val dataset = getDataSet
+    sendEvent(Results(dataset))
+    statusChanged(Finished())
   }
 
   /**
@@ -65,7 +67,7 @@ object TLoader {
   /**
    * This attribute is added, when using dir-option, so
    * each source can be identified.
-   * 
+   *
    * property values: true | false
    */
   val SOURCE_ATTRIBUTE = ResultsUtil.ATTRIBUTE_SOURCE
@@ -111,7 +113,7 @@ object TLoader {
     val dir = absolute match {
       case true => new File(dirPath)
       case false =>
-        val sep = "/";//System.getProperty("file.separator")
+        val sep = "/"; //System.getProperty("file.separator")
         // If exe path is path to dpu, remove the dpu-filename
         val lastIndex = exePath.lastIndexOf(sep)
         //Get the directory path

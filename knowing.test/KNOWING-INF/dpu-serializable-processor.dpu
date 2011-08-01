@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DataProcessingUnit name="processor-serialize-test">
+	<description>Serialize processor model</description>
+	<tags>Serialize</tags>
+	<nodes>
+		<node nodeType="processor" factoryId="knowing.test.processor.SerializableProcessor"
+			id="processor">
+			<properties>
+				<item value="model.mdl" key="serialize" />
+				<item value="model.mdl" key="deserialize" />
+			</properties>
+		</node>
+	</nodes>
+	<edges>
+	</edges>
+</DataProcessingUnit>
+

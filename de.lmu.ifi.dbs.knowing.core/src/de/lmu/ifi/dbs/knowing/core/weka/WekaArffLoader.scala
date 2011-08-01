@@ -90,14 +90,12 @@ object WekaArffLoader {
   val PROP_DIR = TLoader.DIR
 }
 
-class WekaArffLoaderFactory extends TFactory {
+class WekaArffLoaderFactory extends ProcessorFactory(classOf[WekaArffLoader]) {
 
-  val name: String = WekaArffLoaderFactory.name
-  val id: String = WekaArffLoaderFactory.id
+  override val name: String = WekaArffLoaderFactory.name
+  override val id: String = WekaArffLoaderFactory.id
 
-  def getInstance: ActorRef = actorOf[WekaArffLoader]
-
-  def createDefaultProperties: Properties = {
+  override def createDefaultProperties: Properties = {
     val returns = new Properties
     returns setProperty (PROP_FILE, System.getProperty("user.home"))
     returns setProperty (PROP_URL, "file://" + System.getProperty("user.home"))
@@ -105,13 +103,13 @@ class WekaArffLoaderFactory extends TFactory {
     returns
   }
 
-  def createPropertyValues: Map[String, Array[_ <: Any]] = {
+  override def createPropertyValues: Map[String, Array[_ <: Any]] = {
     Map(PROP_FILE -> Array(new File(System.getProperty("user.home"))),
       PROP_URL -> Array(new URL("file", "", System.getProperty("user.home"))),
       PROP_ABSOLUTE_PATH -> boolean_property)
   }
 
-  def createPropertyDescription: Map[String, String] = {
+  override def createPropertyDescription: Map[String, String] = {
     Map(PROP_FILE -> "ARFF file destination",
       PROP_URL -> "ARFF file URL",
       PROP_ABSOLUTE_PATH -> "Search file in absolute or relative path")

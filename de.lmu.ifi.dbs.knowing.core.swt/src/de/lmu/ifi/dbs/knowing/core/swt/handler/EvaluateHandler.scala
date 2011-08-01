@@ -20,6 +20,7 @@ import de.lmu.ifi.dbs.knowing.core.swt.wizard.SelectDPUWizard
 import akka.actor.Actor.actorOf
 import java.net.{ URL, URI }
 import org.eclipse.jface.wizard.WizardDialog
+import akka.actor.ActorRef
 
 /**
  * @author Nepomuk Seiler
@@ -45,14 +46,14 @@ class EvaluateHandler extends AbstractHandler {
 
 object EvaluateHandler {
 
-  def evaluate(dpu: DataProcessingUnit, dpuPath: URI) {
+  def evaluate(dpu: DataProcessingUnit, dpuPath: URI): ActorRef = {
     try {
       val view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(PresenterView.ID)
       val pView = view.asInstanceOf[PresenterView]
       pView.clearTabs
       val supervisor = actorOf(new GraphSupervisor(dpu, pView.uifactory, dpuPath)).start
       supervisor ! Start
-      null
+      supervisor
     } catch {
       case pEx: PartInitException =>
         pEx.printStackTrace

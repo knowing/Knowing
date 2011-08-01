@@ -3,13 +3,11 @@ package knowing.test.processor
 import java.util.Properties
 import de.lmu.ifi.dbs.knowing.core.events.Results
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
-import de.lmu.ifi.dbs.knowing.core.factory.TFactory
+import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
 import weka.core.Instance
 import weka.core.Instances
-
 import akka.actor.ActorRef
 import akka.actor.Actor
-
 import SplitProcessorFactory._
 
 class SplitProcessor extends TProcessor {
@@ -30,19 +28,7 @@ class SplitProcessor extends TProcessor {
 
 }
 
-class SplitProcessorFactory extends TFactory {
-
-  val id = classOf[SplitProcessor].getName
-  val name = "Split Procesor"
-
-  def getInstance(): ActorRef = Actor.actorOf[SplitProcessor]
-
-  def createDefaultProperties: Properties = new Properties
-
-  def createPropertyValues: Map[String, Array[_ <: Any]] = Map()
-
-  def createPropertyDescription: Map[String, String] = Map()
-}
+class SplitProcessorFactory extends ProcessorFactory(classOf[SplitProcessor])
 
 object SplitProcessorFactory {
   val OUTPUT1 = "output1"
