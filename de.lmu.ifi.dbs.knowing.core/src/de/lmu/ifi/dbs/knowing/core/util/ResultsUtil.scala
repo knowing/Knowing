@@ -29,6 +29,8 @@ object ResultsUtil {
   val META_ATTRIBUTE_NAME = "name"
 
   val DATETIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss:SSS"
+    
+  val ORIGINAL_INSTANCES = "original"
 
   /* ========================= */
   /* ==== Result Creation ==== */
@@ -402,11 +404,18 @@ object ResultsUtil {
   }
 
   /**
-   * Splits a instances object with SOURCE_ATTRIBUTE into a map of source -> Instances
+   * <p>Splits a instances object with SOURCE_ATTRIBUTE into a map of source -> Instances
+   * If no SOURCE_ATTRIBUTE is defined, the method returns ORIGINAL_INSTANCES -> instances</p>
+   * 
+   * @param instances - Instances to split
+   * @returns source -> Instances
+   * 
    */
   def splitInstanceBySource(instances: Instances): Map[String, Instances] = {
     val sourceAttr = instances.attribute(ATTRIBUTE_SOURCE)
-    val instList = instances toList;
+    if(sourceAttr == null)
+      return Map(ORIGINAL_INSTANCES -> instances)
+    val instList = instances toList
     val classMap = instList.groupBy(inst => sourceAttr.value(inst.value(sourceAttr) toInt))
     classMap map {
       case (clazz, list) =>

@@ -29,6 +29,8 @@ import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit;
 import de.lmu.ifi.dbs.knowing.core.util.OSGIUtil;
 
 public class SelectDPUPage extends WizardPage {
+	
+	
 	private Text tFile;
 	private Text tRegistry;
 	private Button bFile;
@@ -37,6 +39,9 @@ public class SelectDPUPage extends WizardPage {
 	private Label lExePath;
 	private Text tExePath;
 	private Button bBrowseExePath;
+	
+	private static String lastExecutionPath = "";
+	private static String lastDPU = "";
 
 	/**
 	 * Create the wizard.
@@ -63,6 +68,7 @@ public class SelectDPUPage extends WizardPage {
 		bFile.setText("File:");
 
 		tFile = new Text(container, SWT.BORDER);
+		tFile.setText(lastDPU);
 		tFile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		final Button bBrowseFile = new Button(container, SWT.NONE);
@@ -74,8 +80,11 @@ public class SelectDPUPage extends WizardPage {
 				dialog.setFilterExtensions(new String[] { "*.dpu" });
 				dialog.setFilterNames(new String[] { "Data Processing Unit" });
 				String path = dialog.open();
-				if (path != null)
+				if (path != null) {
 					tFile.setText(path);
+					lastDPU = path;
+				}
+					
 			}
 		});
 
@@ -119,6 +128,7 @@ public class SelectDPUPage extends WizardPage {
 		lExePath.setText("Execution path");
 
 		tExePath = new Text(gConfiguration, SWT.BORDER);
+		tExePath.setText(lastExecutionPath);
 		tExePath.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		bBrowseExePath = new Button(gConfiguration, SWT.NONE);
@@ -136,7 +146,7 @@ public class SelectDPUPage extends WizardPage {
 				if (!dir.endsWith(sep))
 					dir = dir + sep;
 				tExePath.setText(dir);
-
+				lastExecutionPath = dir;
 			}
 		});
 
