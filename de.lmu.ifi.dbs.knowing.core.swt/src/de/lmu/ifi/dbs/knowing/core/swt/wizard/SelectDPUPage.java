@@ -63,8 +63,7 @@ public class SelectDPUPage extends WizardPage {
 		setControl(container);
 		container.setLayout(new GridLayout(3, false));
 
-		bFile = new Button(container, SWT.RADIO);
-		bFile.setSelection(true);
+		bFile = new Button(container, SWT.RADIO);		
 		bFile.setText("File:");
 
 		tFile = new Text(container, SWT.BORDER);
@@ -72,6 +71,7 @@ public class SelectDPUPage extends WizardPage {
 		tFile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		final Button bBrowseFile = new Button(container, SWT.NONE);
+		bBrowseFile.setEnabled(false);
 		bBrowseFile.setText("Browse");
 		bBrowseFile.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -89,6 +89,7 @@ public class SelectDPUPage extends WizardPage {
 		});
 
 		bRegistry = new Button(container, SWT.RADIO);
+		bRegistry.setSelection(true);
 		bRegistry.setText("Registry: ");
 
 		tRegistry = new Text(container, SWT.BORDER);
@@ -97,7 +98,7 @@ public class SelectDPUPage extends WizardPage {
 		tRegistry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		final Button bBrowseRegistry = new Button(container, SWT.NONE);
-		bBrowseRegistry.setEnabled(false);
+		bBrowseRegistry.setEnabled(true);
 		bBrowseRegistry.setText("Browse");
 
 		bBrowseRegistry.addSelectionListener(new SelectionAdapter() {
