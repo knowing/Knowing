@@ -22,6 +22,7 @@ trait Node extends Serializable {
   var factoryId: String
   var nodeType: String
   var properties: Properties
+  
 }
 
 case class LoaderNode(var id: String, var factoryId: String, var properties: Properties) extends Node {

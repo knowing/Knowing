@@ -17,4 +17,6 @@ trait UIFactory {
   
   def update(actor: ActorRef, status: Status)
   
+  def setSupervisor(supervisor: ActorRef)
+  
 }

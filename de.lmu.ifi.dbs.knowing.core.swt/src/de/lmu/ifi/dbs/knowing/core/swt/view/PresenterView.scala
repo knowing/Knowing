@@ -81,8 +81,9 @@ object PresenterView { val ID = "de.lmu.ifi.dbs.knowing.core.swt.presenterView" 
 
 class PresenterUIFactory(view: PresenterView) extends TypedActor with UIFactory {
 
-  var started = false
-  var dialog: ProgressDialog = _
+  private var started = false
+  private var dialog: ProgressDialog = _
+  var supervisor: ActorRef = _
 
   def createContainer(node: Node): Composite = {
     debug(this, "CreateContainer with " + node)
@@ -97,6 +98,7 @@ class PresenterUIFactory(view: PresenterView) extends TypedActor with UIFactory 
     //Create ProgressDialog on first status
     if (!started || dialog == null || dialog.disposed) {
       dialog = new ProgressDialog(view.getSite.getShell)
+      dialog.supervisor = this.supervisor
       view.getSite.getShell.getDisplay.asyncExec(
         new Runnable {
           def run = dialog.open
@@ -117,5 +119,6 @@ class PresenterUIFactory(view: PresenterView) extends TypedActor with UIFactory 
     }
 
   }
-
+  
+  def setSupervisor(supervisor: ActorRef) = this.supervisor = supervisor
 }

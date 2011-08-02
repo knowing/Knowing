@@ -46,6 +46,7 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI
   }
 
   private def initialize {
+    uifactory setSupervisor(self)
     uifactory update (self, Created())
     uifactory update (self, Progress("initialize", 0, dpu.nodes.length))
     dpu.nodes foreach (node => {
@@ -78,7 +79,7 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI
    */
   private def configureProperties(properties: Properties): Properties = {
     properties setProperty (TLoader.EXE_PATH, dpuURI.toString)
-    properties
+    new ImmutableProperties(properties)
   }
 
   /**

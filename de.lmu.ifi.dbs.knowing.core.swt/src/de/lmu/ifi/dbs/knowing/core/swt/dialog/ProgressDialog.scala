@@ -21,6 +21,8 @@ class ProgressDialog(shell: Shell, var disposed:Boolean = false) extends Dialog(
 
   import ProgressDialog._
 
+  var supervisor: ActorRef = _
+  
   private var table: Table = _
   private val rows: Map[UUID, (TableItem, ProgressBar)] = Map()
   
@@ -58,6 +60,11 @@ class ProgressDialog(shell: Shell, var disposed:Boolean = false) extends Dialog(
   }
   
   override protected def close:Boolean = {
+    if(supervisor != null) {
+      if(supervisor.isRunning) {
+        supervisor.stop
+      }
+    }
     disposed = true
     super.close
   }

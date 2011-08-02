@@ -137,13 +137,13 @@ class CrossValidator extends TProcessor {
     folds = properties.getProperty(CrossValidatorFactory.FOLDS, "10").toInt
     fold = properties.getProperty(CrossValidatorFactory.FOLD, "1").toInt
     standalone = properties.getProperty(CrossValidatorFactory.STANDALONE, "true").toBoolean
-
+    
     //Remove used properties
-    properties.remove(CrossValidatorFactory.CLASSIFIER)
-    properties.remove(CrossValidatorFactory.FOLDS)
-    properties.remove(CrossValidatorFactory.FOLD)
-    properties.remove(CrossValidatorFactory.STANDALONE)
-    classifierProperties = properties
+    classifierProperties.putAll(properties)
+    classifierProperties.remove(CrossValidatorFactory.CLASSIFIER)
+    classifierProperties.remove(CrossValidatorFactory.FOLDS)
+    classifierProperties.remove(CrossValidatorFactory.FOLD)
+    classifierProperties.remove(CrossValidatorFactory.STANDALONE)
   }
 
   private def highestProbability(instances: Instances): Int = {
