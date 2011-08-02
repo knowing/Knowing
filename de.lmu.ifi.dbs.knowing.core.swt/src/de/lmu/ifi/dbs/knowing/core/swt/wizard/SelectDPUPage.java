@@ -12,6 +12,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -40,9 +42,9 @@ public class SelectDPUPage extends WizardPage {
 	private Text tExePath;
 	private Button bBrowseExePath;
 	
-	private static String lastExecutionPath = "";
-	private static String lastDPU = "";
-	private static boolean fileSelected = true;
+	public static String lastExecutionPath = "";
+	public static String lastDPU = "";
+	public static boolean fileSelected = true;
 
 	/**
 	 * Create the wizard.
@@ -134,6 +136,13 @@ public class SelectDPUPage extends WizardPage {
 		tExePath = new Text(gConfiguration, SWT.BORDER);
 		tExePath.setText(lastExecutionPath);
 		tExePath.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		tExePath.addModifyListener(new ModifyListener() {
+			
+			@Override
+			public void modifyText(ModifyEvent e) {
+				lastExecutionPath = tExePath.getText();
+			}
+		});
 
 		bBrowseExePath = new Button(gConfiguration, SWT.NONE);
 		bBrowseExePath.setText("Browse");
