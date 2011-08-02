@@ -54,7 +54,7 @@ trait TLoader extends TProcessor {
 object TLoader {
 
   /* ==== Properties to configure TLoader ==== */
-  val ABSOLUTE_PATH = "absolute-path"
+  val ABSOLUTE_PATH = TProcessor.ABSOLUTE_PATH
   val FILE = "file"
 
   /**

@@ -15,35 +15,49 @@ trait TSerializable { this: TProcessor =>
 
   @throws(classOf[IOException])
   def getInputStream(): Option[InputStream] = {
-    val file = properties.getProperty(DESERIALIZE, "empty")
+    val file = properties.getProperty(DESERIALIZE, "<empty>")
     val exePath = properties.getProperty(EXE_PATH, "")
-    val uri = file match {
-      case "empty" => None
+    val absolute = properties.getProperty(ABSOLUTE_PATH, "false").toBoolean
+    val uri = (file, absolute) match {
+      case ("<empty>", _) => None
+      case (f, true) => Some(new URI(f))
       case _ => resolveFile(exePath, file)
     }
     uri match {
       case None => None
-      case Some(u) => 
+      case Some(u) =>
         debug(this, "Resolved URI: " + u)
         Some(u.toURL.openStream)
     }
   }
 
   def getOutputStream(): Option[OutputStream] = {
-    val file = properties.getProperty(SERIALIZE, "empty")
+    val file = properties.getProperty(SERIALIZE, "<empty>")
     val exePath = properties.getProperty(EXE_PATH, "")
-    val url = new URI(exePath + file).toURL
-    debug(this, "URL: " + url)
-    url.getProtocol match {
-      case "file" => Some(new FileOutputStream(url.getFile))
-      case _ =>
-        val con = url.openConnection
-        debug(this, "Opend connection: " + con)
-        con.setDoOutput(true)
-        Some(con.getOutputStream)
+    val absolute = properties.getProperty(ABSOLUTE_PATH, "false").toBoolean
+    //Resolve uri, absolute, relative or not set
+    val uri = (file, absolute) match {
+      case ("<empty>", _) => None
+      case (f, true) => Some(new URI(f))
+      case _ => resolveFile(exePath, file)
+    }
+    uri match {
+      case None => None
+      case Some(u) =>
+        val url = u.toURL
+        debug(this, "URL: " + url)
+        url.getProtocol match {
+          case "file" => Some(new FileOutputStream(url.getFile))
+          case _ =>
+            val con = url.openConnection
+            debug(this, "Opend connection: " + con)
+            con.setDoOutput(true)
+            Some(con.getOutputStream)
+        }
     }
 
   }
+
 }
 
 object TSerializable {

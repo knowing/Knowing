@@ -20,6 +20,7 @@ import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
 
 class SerializableProcessor extends TProcessor with TSerializable {
 
+  //These values get stored in our serializable model
   private var randomNumber = 0.0
   private var randomString = "empty"
 
@@ -27,7 +28,7 @@ class SerializableProcessor extends TProcessor with TSerializable {
     try {
       val in = getInputStream
       in match {
-        case None => //nothing
+        case None => warning(this, "No InputStream defined")
         case Some(i) =>
           debug(this, "Trying to open InputStream")
           val reader = new LineNumberReader(new InputStreamReader(i))
@@ -39,9 +40,10 @@ class SerializableProcessor extends TProcessor with TSerializable {
           reader.close
       }
     } catch {
-      case e: IOException => //error(this, e.getStackTraceString)
+      case e: IOException => warning(this, e.getMessage)
     }
     debug(this, "Start Serializable Processor with: " + randomNumber + " / " + randomString)
+    //Normally you'll send here no statusChanged, this is just for test purpose so the process terminates
     statusChanged(Finished())
   }
 
@@ -50,7 +52,7 @@ class SerializableProcessor extends TProcessor with TSerializable {
     randomString = new Date toString
     val out = getOutputStream
     out match {
-      case None => //nothing
+      case None => warning(this, "No OutputStream defined")
       case Some(o) =>
         debug(this, "Trying to open OutputStream")
         val writer = new PrintWriter(o)
@@ -59,7 +61,7 @@ class SerializableProcessor extends TProcessor with TSerializable {
         writer.flush
         writer.close
     }
-    debug(this, "Stop Serializable Processor with: " + randomNumber + " / " + randomString)
+    debug(this, "Stop Serializable Processor and save model: " + randomNumber + " / " + randomString)
   }
 
   def build(instances: Instances) {}
