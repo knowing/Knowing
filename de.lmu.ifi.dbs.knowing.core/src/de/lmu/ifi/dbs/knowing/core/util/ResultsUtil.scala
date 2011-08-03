@@ -1,6 +1,6 @@
 package de.lmu.ifi.dbs.knowing.core.util
 
-import java.util.{ ArrayList, Arrays, Collections, List => JList, Properties , Map => JMap}
+import java.util.{ ArrayList, Arrays, Collections, List => JList, Properties, Map => JMap }
 import scala.collection.JavaConversions._
 import weka.core.{ Attribute, DenseInstance, Instances, Instance, ProtectedProperties, WekaException }
 
@@ -29,7 +29,7 @@ object ResultsUtil {
   val META_ATTRIBUTE_NAME = "name"
 
   val DATETIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss:SSS"
-    
+
   val ORIGINAL_INSTANCES = "original"
 
   /* ========================= */
@@ -404,19 +404,20 @@ object ResultsUtil {
   }
 
   /**
-   * <p>Splits a instances object with SOURCE_ATTRIBUTE into a map of source -> Instances
-   * If no SOURCE_ATTRIBUTE is defined, the method returns ORIGINAL_INSTANCES -> instances</p>
-   * 
+   * <p>Splits a instances object with the given attribute into a map of source -> Instances
+   * If 'attribute' is not defined, the method returns ORIGINAL_INSTANCES -> instances</p>
+   *
    * @param instances - Instances to split
+   * @param attribute - name of the attribute, the split should be performed on
    * @returns source -> Instances
-   * 
+   *
    */
-  def splitInstanceBySource(instances: Instances): Map[String, Instances] = {
-    val sourceAttr = instances.attribute(ATTRIBUTE_SOURCE)
-    if(sourceAttr == null)
+  def splitInstanceByAttribute(instances: Instances, attribute: String): Map[String, Instances] = {
+    val splitAttr = instances.attribute(attribute)
+    if (splitAttr == null)
       return Map(ORIGINAL_INSTANCES -> instances)
     val instList = instances toList
-    val classMap = instList.groupBy(inst => sourceAttr.value(inst.value(sourceAttr) toInt))
+    val classMap = instList.groupBy(inst => splitAttr.value(inst.value(splitAttr) toInt))
     classMap map {
       case (clazz, list) =>
         val ret = new Instances(instances, list.length)
@@ -425,5 +426,23 @@ object ResultsUtil {
     }
   }
 
-  def splitInstanceBySourceJava(instances: Instances):JMap[String, Instances] = asMap(splitInstanceBySource(instances))
+  /**
+   * @see splitInstanceByAttribute
+   */
+  def splitInstanceByAttributeJava(instances: Instances, attribute: String): JMap[String, Instances] = asMap(splitInstanceByAttribute(instances, attribute))
+
+  /**
+   * <p>Splits a instances object with SOURCE_ATTRIBUTE into a map of source -> Instances
+   * If no SOURCE_ATTRIBUTE is defined, the method returns ORIGINAL_INSTANCES -> instances</p>
+   *
+   * @param instances - Instances to split
+   * @returns source -> Instances
+   *
+   */
+  def splitInstanceBySource(instances: Instances): Map[String, Instances] = splitInstanceByAttribute(instances, ATTRIBUTE_SOURCE)
+
+  /**
+   * @see splitInstanceBySource
+   */
+  def splitInstanceBySourceJava(instances: Instances): JMap[String, Instances] = splitInstanceByAttributeJava(instances, ATTRIBUTE_SOURCE)
 }

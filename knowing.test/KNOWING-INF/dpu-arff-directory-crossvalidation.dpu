@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DataProcessingUnit name="ARFF Directory Validator DPU">
+	<description>Simple Description here</description>
+	<tags>Tag1, Tag2</tags>
+	<nodes>
+		<node nodeType="loader" factoryId="weka.core.converters.ArffLoader"
+			id="ARFF">
+			<properties>
+				<item value="." key="dir" />
+				<item value="arff" key="extensions" />
+				<item value="true" key="source" />
+			</properties>
+		</node>
+		<node nodeType="processor"
+			factoryId="de.lmu.ifi.dbs.knowing.core.validation.AttributeCrossValidator"
+			id="AttributeValidator">
+			<properties>
+				<item value="weka.classifiers.bayes.NaiveBayes" key="classifier" />
+
+				<item value="false" key="kernel-estimator" />
+				<item value="false" key="supervised-discretization" />
+			</properties>
+		</node>
+		<node nodeType="presenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter"
+			id="TablePresenterInput">
+			<properties />
+		</node>
+		<node nodeType="presenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter"
+			id="TablePresenterValidation">
+			<properties />
+		</node>
+	</nodes>
+	<edges>
+		<edge weight="1" targetId="TablePresenterInput" sourceId="ARFF" id="arff_TablePresenter" />
+		<edge weight="1" targetId="AttributeValidator" sourceId="ARFF"	id="arff_validator" />
+		<edge weight="1" targetId="TablePresenterValidation" sourceId="AttributeValidator"	id="validator_TablePresenter" />
+	</edges>
+</DataProcessingUnit>

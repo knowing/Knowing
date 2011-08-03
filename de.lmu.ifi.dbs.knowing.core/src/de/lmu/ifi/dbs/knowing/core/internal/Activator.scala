@@ -9,14 +9,10 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer
 import de.lmu.ifi.dbs.knowing.core.provider.BundleDPUProvider
 import de.lmu.ifi.dbs.knowing.core.provider.IDPUProvider
 import de.lmu.ifi.dbs.knowing.core.util.OSGIUtil
-import de.lmu.ifi.dbs.knowing.core.validation.CrossValidatorFactory
-import de.lmu.ifi.dbs.knowing.core.validation.XCrossValidatorFactory
-import de.lmu.ifi.dbs.knowing.core.weka.NaiveBayesFactory
-import de.lmu.ifi.dbs.knowing.core.weka.OneRFactory
-import de.lmu.ifi.dbs.knowing.core.weka.WekaArffLoaderFactory
-import de.lmu.ifi.dbs.knowing.core.weka.WekaArffSaverFactory
+import de.lmu.ifi.dbs.knowing.core.validation._
+import de.lmu.ifi.dbs.knowing.core.weka._
 import Activator._
-import de.lmu.ifi.dbs.knowing.core.weka.ExtendedWekaArffLoaderFactory
+
 
 class Activator extends BundleActivator {
 
@@ -43,6 +39,7 @@ class Activator extends BundleActivator {
     osgiUtil.registerProcessor(new OneRFactory, classOf[weka.classifiers.rules.OneR].getName)
     osgiUtil.registerProcessor(new CrossValidatorFactory, CrossValidatorFactory.id)
     osgiUtil.registerProcessor(new XCrossValidatorFactory, XCrossValidatorFactory.id)
+    osgiUtil.registerProcessor(new AttributeCrossValidatorFactory)
   }
 
 }

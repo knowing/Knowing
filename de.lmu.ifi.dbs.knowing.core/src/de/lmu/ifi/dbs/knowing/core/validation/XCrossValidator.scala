@@ -12,10 +12,10 @@ import weka.core.{ Instance, Instances }
 
 class XCrossValidator(var factory: TFactory, var folds: Int, var validator_properties: Properties) extends TProcessor {
 
-  private var confusionMatrices: List[Instances] = Nil
-  private var confusionMatrixHeader: Instances = _
-  private var classLabels: Array[String] = Array()
-  private var currentFold: Int = 0
+  protected var confusionMatrices: List[Instances] = Nil
+  protected var confusionMatrixHeader: Instances = _
+  protected var classLabels: Array[String] = Array()
+  protected var currentFold: Int = 0
 
   private var first_run = true
 
@@ -35,9 +35,35 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
       case x => classLabels = classLables(instances.attribute(x))
     }
     confusionMatrixHeader = ResultsUtil.confusionMatrix(getClassLabels.toList)
-    val crossValidators = for (i <- 0 until folds; val actor = factory.getInstance) yield actor;
+    val crossValidators = initCrossValidators(folds)
     debug(this, "Fold-Actors created!")
-    statusChanged(Progress("validation",0,folds))
+    statusChanged(Progress("validation", 0, folds))
+    startCrossValidation(crossValidators, instances)
+    debug(this, "Fold-Actors configured and training started")
+
+  }
+
+  def result(result: Instances, query: Instance) {
+    if (!result.equalHeaders(confusionMatrixHeader))
+      warning(this, "Model ConfusionMatrix doesn't fit ResuClt ConfusionMatrix")
+
+    confusionMatrices = result :: confusionMatrices
+
+    currentFold += 1
+    if (currentFold == folds) {
+      debug(this, "Last Fold " + currentFold + " results arrived")
+      sendEvent(Results(mergeMatrices))
+      currentFold = 0
+    } else {
+      statusChanged(Progress("validation", 1, folds))
+      debug(this, "Fold " + currentFold + " results arrived")
+    }
+
+  }
+
+  protected def initCrossValidators(folds: Int) = for (i <- 0 until folds; val actor = factory.getInstance) yield actor
+
+  protected def startCrossValidation(crossValidators: IndexedSeq[ActorRef], instances: Instances) {
     for (j <- 0 until folds) {
       self startLink crossValidators(j)
       crossValidators(j) !! Register(self, None)
@@ -45,28 +71,9 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
       crossValidators(j) ! Results(instances.trainCV(folds, j))
       crossValidators(j) ! Queries(instances.testCV(folds, j))
     }
-    debug(this, "Fold-Actors configured and training started")
-
   }
 
-  def result(result: Instances, query: Instance) {
-    if (!result.equalHeaders(confusionMatrixHeader))
-      warning(this, "Model ConfusionMatrix doesn't fit Result ConfusionMatrix")
-
-    confusionMatrices = result :: confusionMatrices
-
-    currentFold += 1
-    if (currentFold == folds) {
-      sendEvent(Results(mergeMatrices))
-      currentFold = 0
-    } else {
-      statusChanged(Progress("validation",1,folds))
-      debug(this, "Fold " + currentFold + " results arrived")
-    }
-
-  }
-
-  private def mergeMatrices: Instances = {
+  protected def mergeMatrices: Instances = {
     val rows = confusionMatrixHeader.numInstances
     val cols = confusionMatrixHeader.numAttributes
     val nums = Array.fill(rows)(Array.fill(cols)(1))
@@ -110,7 +117,7 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
     validator_properties = properties
   }
 
-  private def configureProperties(properties: Properties, fold: Int): Properties = {
+  protected def configureProperties(properties: Properties, fold: Int): Properties = {
     val returns = new Properties
     returns.putAll(properties)
     returns.setProperty(CrossValidatorFactory.FOLD, fold.toString)
