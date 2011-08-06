@@ -17,7 +17,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.wst.xml.core;bundle-version="1.1.503",
  org.eclipse.wst.xml.ui;bundle-version="1.1.103",
  org.eclipse.zest.core;bundle-version="1.2.0",
- org.eclipse.zest.layouts;bundle-version="1.1.0"
+ org.eclipse.zest.layouts;bundle-version="1.1.0",
+ org.eclipse.jdt.ui;bundle-version="3.6.2",
+ org.eclipse.jdt.core;bundle-version="3.6.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: scala;version="2.9.0.1",

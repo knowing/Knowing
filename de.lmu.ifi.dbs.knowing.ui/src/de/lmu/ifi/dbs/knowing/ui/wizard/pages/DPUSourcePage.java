@@ -1,9 +1,16 @@
 package de.lmu.ifi.dbs.knowing.ui.wizard.pages;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IJavaModel;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
@@ -19,8 +26,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
+import org.eclipse.ui.dialogs.SelectionDialog;
 
-public class SourcePage extends WizardPage {
+public class DPUSourcePage extends WizardPage {
 
 	private Text containerText;
 
@@ -32,7 +40,7 @@ public class SourcePage extends WizardPage {
 	/**
 	 * Create the wizard.
 	 */
-	public SourcePage(ISelection selection ) {
+	public DPUSourcePage(ISelection selection ) {
 		super("wizardPage");
 		setTitle("Wizard Page title");
 		setDescription("Wizard Page description");
@@ -114,6 +122,22 @@ public class SourcePage extends WizardPage {
 	 */
 
 	private void handleBrowse() {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IJavaModel model = JavaCore.create(root);
+		try {
+			System.out.println("Workspace root: " + root);
+			System.out.println("Model: " + model);
+			System.out.println("Project: " + model.getJavaProjects()[0]);
+			SelectionDialog dialog = JavaUI.createPackageDialog(getShell(), model.getJavaProjects()[0], SWT.NONE);
+			int ret = dialog.open();
+			Object[] result = dialog.getResult();
+			for(Object r : result) {
+				System.out.println("Result: " + result + " [" + result.getClass() + "]");
+			}
+		} catch (JavaModelException e) {
+			e.printStackTrace();
+		}
+		
 		ContainerSelectionDialog dialog = new ContainerSelectionDialog(
 				getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
 				"Select new file container");

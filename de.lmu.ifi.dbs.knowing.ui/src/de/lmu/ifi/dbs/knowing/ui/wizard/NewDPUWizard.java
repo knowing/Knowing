@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 
+import javax.xml.bind.JAXBException;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -29,7 +31,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 import org.eclipse.ui.ide.IDE;
 
-import de.lmu.ifi.dbs.knowing.ui.wizard.pages.SourcePage;
+import de.lmu.ifi.dbs.knowing.ui.util.DPUUtil;
 
 public class NewDPUWizard extends Wizard implements INewWizard {
 
@@ -44,7 +46,10 @@ public class NewDPUWizard extends Wizard implements INewWizard {
 
 	@Override
 	public void addPages() {
-		addPage(page = new WizardNewFileCreationPage("Name", (IStructuredSelection) selection));
+		addPage(page = new WizardNewFileCreationPage("DPU Source", (IStructuredSelection) selection));
+		page.setFileExtension("dpu");
+		page.setFileName("datamining");
+		
 	}
 	
 	/**
@@ -85,11 +90,7 @@ public class NewDPUWizard extends Wizard implements INewWizard {
 	 * the editor on the newly created file.
 	 */
 
-	private void doFinish(
-		String containerName,
-		String fileName,
-		IProgressMonitor monitor)
-		throws CoreException {
+	private void doFinish(String containerName, String fileName,IProgressMonitor monitor) throws CoreException {
 		// create a sample file
 		monitor.beginTask("Creating " + fileName, 2);
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -100,7 +101,7 @@ public class NewDPUWizard extends Wizard implements INewWizard {
 		IContainer container = (IContainer) resource;
 		final IFile file = container.getFile(new Path(fileName));
 		try {
-			InputStream stream = openContentStream();
+			InputStream stream = DPUUtil.createDPUInputStream();
 			if (file.exists()) {
 				file.setContents(stream, true, true, monitor);
 			} else {
@@ -108,6 +109,9 @@ public class NewDPUWizard extends Wizard implements INewWizard {
 			}
 			stream.close();
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JAXBException e) {
+			e.printStackTrace();
 		}
 		monitor.worked(1);
 		monitor.setTaskName("Opening file for editing...");
@@ -124,19 +128,8 @@ public class NewDPUWizard extends Wizard implements INewWizard {
 		monitor.worked(1);
 	}
 	
-	/**
-	 * We will initialize file contents with a sample text.
-	 */
-
-	private InputStream openContentStream() {
-		String contents =
-			"This is the initial file contents for *.mpe file that should be word-sorted in the Preview page of the multi-page editor";
-		return new ByteArrayInputStream(contents.getBytes());
-	}
-
 	private void throwCoreException(String message) throws CoreException {
-		IStatus status =
-			new Status(IStatus.ERROR, "de.mukis.editor.test", IStatus.OK, message, null);
+		IStatus status = new Status(IStatus.ERROR, "de.mukis.editor.test", IStatus.OK, message, null);
 		throw new CoreException(status);
 	}
 

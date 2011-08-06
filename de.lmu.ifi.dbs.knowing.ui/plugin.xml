@@ -20,6 +20,7 @@
             name="Knowing">
       </category>
       <wizard
+            category="Knowing"
             class="de.lmu.ifi.dbs.knowing.ui.wizard.NewDPUWizard"
             id="de.lmu.ifi.dbs.knowing.ui.NewDPUWizard"
             name="New DataProcessingUnit">

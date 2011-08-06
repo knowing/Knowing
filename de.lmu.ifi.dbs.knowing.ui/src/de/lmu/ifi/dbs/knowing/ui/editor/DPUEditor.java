@@ -1,13 +1,11 @@
 package de.lmu.ifi.dbs.knowing.ui.editor;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.eclipse.core.resources.IFile;
@@ -23,6 +21,7 @@ import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit;
 import de.lmu.ifi.dbs.knowing.ui.editor.pages.ConfigurationPage;
 import de.lmu.ifi.dbs.knowing.ui.editor.pages.GraphicPage;
 import de.lmu.ifi.dbs.knowing.ui.editor.pages.MainPage;
+import de.lmu.ifi.dbs.knowing.ui.util.DPUUtil;
 
 public class DPUEditor extends FormEditor {
 
@@ -100,14 +99,7 @@ public class DPUEditor extends FormEditor {
 
 	public static void doSave(DataProcessingUnit dpu, IFile file) {
 		try {
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			JAXBContext context = JAXBContext.newInstance(DataProcessingUnit.class);
-			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			marshaller.marshal(dpu, bos);
-			bos.close();
-			byte[] data = bos.toByteArray();
-			ByteArrayInputStream source = new ByteArrayInputStream(data);
+			InputStream source = DPUUtil.createDPUInputStream(dpu);
 			file.setContents(source, IFile.FORCE, null);
 		} catch (IOException e) {
 			e.printStackTrace();
