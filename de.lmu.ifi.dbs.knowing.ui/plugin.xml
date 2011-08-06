@@ -20,10 +20,17 @@
             name="Knowing">
       </category>
       <wizard
-            category="Knowing"
+            category="de.lmu.ifi.dbs.knowing.ui.knowing"
             class="de.lmu.ifi.dbs.knowing.ui.wizard.NewDPUWizard"
+            icon="icons/dpu_16.png"
             id="de.lmu.ifi.dbs.knowing.ui.NewDPUWizard"
             name="New DataProcessingUnit">
+      </wizard>
+      <wizard
+            category="de.lmu.ifi.dbs.knowing.ui.knowing"
+            class="de.lmu.ifi.dbs.knowing.ui.wizard.NewProcessorWizard"
+            id="de.lmu.ifi.dbs.knowing.ui.NewProcessorWizard"
+            name="New Processor">
       </wizard>
    </extension>
    <extension

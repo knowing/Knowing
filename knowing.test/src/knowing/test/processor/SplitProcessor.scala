@@ -1,14 +1,14 @@
 package knowing.test.processor
 
 import java.util.Properties
+
+import SplitProcessorFactory.OUTPUT1
+import SplitProcessorFactory.OUTPUT2
 import de.lmu.ifi.dbs.knowing.core.events.Results
-import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
+import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 import weka.core.Instance
 import weka.core.Instances
-import akka.actor.ActorRef
-import akka.actor.Actor
-import SplitProcessorFactory._
 
 class SplitProcessor extends TProcessor {
 

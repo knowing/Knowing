@@ -122,22 +122,6 @@ public class DPUSourcePage extends WizardPage {
 	 */
 
 	private void handleBrowse() {
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IJavaModel model = JavaCore.create(root);
-		try {
-			System.out.println("Workspace root: " + root);
-			System.out.println("Model: " + model);
-			System.out.println("Project: " + model.getJavaProjects()[0]);
-			SelectionDialog dialog = JavaUI.createPackageDialog(getShell(), model.getJavaProjects()[0], SWT.NONE);
-			int ret = dialog.open();
-			Object[] result = dialog.getResult();
-			for(Object r : result) {
-				System.out.println("Result: " + result + " [" + result.getClass() + "]");
-			}
-		} catch (JavaModelException e) {
-			e.printStackTrace();
-		}
-		
 		ContainerSelectionDialog dialog = new ContainerSelectionDialog(
 				getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
 				"Select new file container");
