@@ -4,7 +4,7 @@ Bundle-Name: Knowing UI
 Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.lmu.ifi.dbs.knowing.ui.interal.Activator
-Bundle-Vendor: http://www.dbs.ifi.lmu.de
+Bundle-Vendor: LMU Munich - Database Systems Group
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.forms;bundle-version="3.5.2",
