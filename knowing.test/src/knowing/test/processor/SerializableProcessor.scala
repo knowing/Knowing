@@ -11,8 +11,7 @@ import de.lmu.ifi.dbs.knowing.core.processing.TSerializable
 import de.lmu.ifi.dbs.knowing.core.events._
 import weka.core.Instance
 import weka.core.Instances
-import akka.actor.ActorRef
-import akka.actor.Actor
+import akka.actor.{Actor, ActorRef }
 import akka.event.EventHandler.{ debug, info, warning, error }
 import java.io.IOException
 import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory

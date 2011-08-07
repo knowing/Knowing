@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="de.lmu.ifi.dbs.knowing.ui.feature"
+      label="Knowing Feature"
+      version="1.0.0.qualifier"
+      provider-name="LMU Munich - Database Systems Group">
+
+   <description url="https://github.com/knowing/Knowing">
+      Knowing Editor to help creating
+ + DataProcessingUnits (DPUs)
+ + Processors
+   </description>
+
+   <copyright url="https://github.com/knowing/Knowing">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="https://github.com/knowing/Knowing">
+      Copyright 2001 LMU Munich - Database Systems Group
+
+   Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   </license>
+
+   <requires>
+      <import feature="org.eclipse.jdt" version="3.6.2.r362_v20101117-0800-7z8XFW6FLFlmjJcvz03jyeFBLS_F"/>
+      <import feature="org.scala-ide.sdt.feature" version="2.0.0.beta09-29-201107201639-529111d"/>
+   </requires>
+
+   <plugin
+         id="de.lmu.ifi.dbs.knowing.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.lmu.ifi.dbs.knowing.core.swt"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.lmu.ifi.dbs.knowing.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="nz.ac.waikato.cs.weka"
+         download-size="0"
+         install-size="0"
+         version="3.7.3"
+         unpack="false"/>
+
+   <plugin
+         id="org.codehaus.aspectwerkz"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
