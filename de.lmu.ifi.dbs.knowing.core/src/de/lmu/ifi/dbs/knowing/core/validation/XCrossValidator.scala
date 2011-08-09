@@ -5,7 +5,7 @@ import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
-import de.lmu.ifi.dbs.knowing.core.util.{ Util, ResultsUtil }
+import de.lmu.ifi.dbs.knowing.core.util.{ OSGIUtil, ResultsUtil }
 import de.lmu.ifi.dbs.knowing.core.events._
 import java.util.Properties
 import weka.core.{ Instance, Instances }
@@ -34,7 +34,9 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
         warning(this, "No classLabel found in " + instances.relationName)
       case x => classLabels = classLables(instances.attribute(x))
     }
+    //Generate confusionMatrix with classLabels
     confusionMatrixHeader = ResultsUtil.confusionMatrix(getClassLabels.toList)
+    //Create crossValidator actors for each fold
     val crossValidators = initCrossValidators(folds)
     debug(this, "Fold-Actors created!")
     statusChanged(Progress("validation", 0, folds))
@@ -65,14 +67,17 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
 
   protected def startCrossValidation(crossValidators: IndexedSeq[ActorRef], instances: Instances) {
     for (j <- 0 until folds) {
-      self startLink crossValidators(j)
-      crossValidators(j) !! Register(self, None)
-      crossValidators(j) !! Configure(configureProperties(validator_properties, j))
-      crossValidators(j) ! Results(instances.trainCV(folds, j))
-      crossValidators(j) ! Queries(instances.testCV(folds, j))
+      self startLink crossValidators(j)				//Start actors and link yourself as supervisor
+      crossValidators(j) !! Register(self, None)	//Register so results/status events are send to us
+      crossValidators(j) !! Configure(configureProperties(validator_properties, j))	//Configure actor
+      crossValidators(j) ! Results(instances.trainCV(folds, j))	//Send the train set
+      crossValidators(j) ! Queries(instances.testCV(folds, j))	//Query the trained crossValidator instance
     }
   }
 
+  /**
+   * Merge two matrices. Skips zero-values
+   */
   protected def mergeMatrices: Instances = {
     val rows = confusionMatrixHeader.numInstances
     val cols = confusionMatrixHeader.numAttributes
@@ -106,17 +111,21 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
   }
 
   def configure(properties: Properties) = {
-    debug(this, "configure with: " + properties)
-    val factory = Util.getFactoryService(CrossValidatorFactory.id)
+    //Retrieve CrossValidator factory
+    val factory = OSGIUtil.getFactoryService(CrossValidatorFactory.id)
     factory match {
       case Some(f) => this.factory = f
       case None => throw new Exception("No Factory with " + CrossValidatorFactory.id + " found!")
     }
+    //Set properties for this XCrossValidator
     val strFolds = properties.getProperty(CrossValidatorFactory.FOLDS, "10")
     folds = strFolds.toInt
     validator_properties = properties
   }
 
+  /**
+   * Creates properties for each CrossValidator-fold
+   */
   protected def configureProperties(properties: Properties, fold: Int): Properties = {
     val returns = new Properties
     returns.putAll(properties)

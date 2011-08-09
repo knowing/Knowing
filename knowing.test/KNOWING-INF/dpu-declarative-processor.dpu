@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DataProcessingUnit name="Declarative Processor Factory">
+    <description>Declarative Processor Factory</description>
+    <tags></tags>
+    <nodes>
+        <node nodeType="processor" factoryId="knowing.test.processor.DeclarativeProcessor" id="ds-processor">
+            <properties>
+            </properties>
+        </node>
+        <node nodeType="loader" factoryId="weka.core.converters.ArffLoader" id="ARFF">
+            <properties>
+                <item value="iris.arff" key="url"/>
+            </properties>
+        </node>
+
+    </nodes>
+    <edges>
+        <edge weight="1" targetId="ds-processor" sourceId="ARFF" id="arff_processor"/>
+    </edges>
+</DataProcessingUnit>

@@ -4,7 +4,8 @@ Bundle-Name: Test
 Bundle-SymbolicName: knowing.test;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: knowing.test.Activator
-Import-Package: scala;version="2.9.0.1",
+Import-Package: org.osgi.service.component;version="1.1.0",
+ scala;version="2.9.0.1",
  scala.collection;version="2.9.0.1",
  scala.collection.generic;version="2.9.0.1",
  scala.collection.immutable;version="2.9.0.1",
@@ -49,3 +50,4 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.0",
  nz.ac.waikato.cs.weka;bundle-version="3.7.3"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Service-Component: OSGI-INF/dsProcessor.xml

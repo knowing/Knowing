@@ -50,7 +50,7 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI
     uifactory update (self, Created())
     uifactory update (self, Progress("initialize", 0, dpu.nodes.length))
     dpu.nodes foreach (node => {
-      val factory = Util.getFactoryService(node.factoryId)
+      val factory = OSGIUtil.getFactoryService(node.factoryId)
       factory match {
         case Some(f) =>
           //Create actor
