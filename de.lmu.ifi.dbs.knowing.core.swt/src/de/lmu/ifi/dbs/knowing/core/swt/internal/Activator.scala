@@ -3,18 +3,21 @@
  */
 package de.lmu.ifi.dbs.knowing.core.swt.internal
 
-import org.osgi.framework.ServiceRegistration
-import de.lmu.ifi.dbs.knowing.core.swt._
-import de.lmu.ifi.dbs.knowing.core.factory.TFactory
-import org.osgi.framework.BundleContext
-import org.eclipse.ui.plugin.AbstractUIPlugin
-import java.io.PrintWriter
-import java.io.LineNumberReader
-import java.io.InputStreamReader
-import java.io.FileInputStream
-import de.lmu.ifi.dbs.knowing.core.swt.wizard.SelectDPUPage
 import java.io.File
+import java.io.FileInputStream
 import java.io.IOException
+import java.io.InputStreamReader
+import java.io.LineNumberReader
+import java.io.PrintWriter
+import org.eclipse.ui.plugin.AbstractUIPlugin
+import org.osgi.framework.BundleContext
+import org.osgi.framework.ServiceRegistration
+import de.lmu.ifi.dbs.knowing.core.factory.TFactory
+import de.lmu.ifi.dbs.knowing.core.util.OSGIUtil
+import de.lmu.ifi.dbs.knowing.core.swt.wizard.SelectDPUPage
+import de.lmu.ifi.dbs.knowing.core.swt._
+import org.osgi.util.tracker.ServiceTracker
+import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
 
 /**
  * @author Nepomuk Seiler
@@ -24,16 +27,19 @@ import java.io.IOException
  */
 class Activator extends AbstractUIPlugin {
 
-  var services: List[ServiceRegistration] = Nil
+  private var osgi: OSGIUtil = _
 
   /**
    * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
    */
   override def start(context: BundleContext) = {
-    super.start(context);
-    Activator.plugin = this;
-    services = context.registerService(classOf[TFactory].getName, new TablePresenterFactory, null) :: services
-    services = context.registerService(classOf[TFactory].getName, new MultiTablePresenterFactory, null) :: services
+    super.start(context)
+    Activator.plugin = this
+    Activator.directoryTracker = new ServiceTracker(context, classOf[IFactoryDirectory].getName, null)
+    Activator.directoryTracker.open
+    osgi = new OSGIUtil(context)
+    osgi.registerPresenter(new TablePresenterFactory)
+    osgi.registerPresenter(new MultiTablePresenterFactory)
     loadDPUWizardProperties
   }
 
@@ -41,10 +47,13 @@ class Activator extends AbstractUIPlugin {
    * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
    */
   override def stop(context: BundleContext) = {
-    services foreach (registration => registration.unregister)
+    Activator.directoryTracker.close
+    osgi.unregisterAll
     saveDPUWizardProperties
-    Activator.plugin = null;
-    super.stop(context);
+    Activator.plugin = null
+    osgi = null
+    Activator.directoryTracker = null
+    super.stop(context)
   }
 
   private def saveDPUWizardProperties {
@@ -88,7 +97,9 @@ object Activator {
   val PLUGIN_ID = "de.lmu.ifi.dbs.knowing.core.swt"; //$NON-NLS-1$
 
   // The shared instance
-  var plugin: Activator = _;
+  var plugin: Activator = _
+
+  var directoryTracker: ServiceTracker = _
 
   /**
    * Returns the shared instance
@@ -96,4 +107,6 @@ object Activator {
    * @return the shared instance
    */
   def getDefault: Activator = plugin
+
+  def directoryService: IFactoryDirectory = directoryTracker.getService.asInstanceOf[IFactoryDirectory]
 }

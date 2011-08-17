@@ -1,26 +1,24 @@
 package de.lmu.ifi.dbs.knowing.core.swt.handler
 
-import org.eclipse.ui.PlatformUI
-import org.eclipse.swt.widgets.Composite
-import java.io.File
-import javax.xml.bind.JAXBContext
-import javax.xml.bind.JAXBException
-import javax.xml.bind.Unmarshaller
-import org.eclipse.core.commands.{ AbstractHandler, ExecutionEvent, ExecutionException }
-import org.eclipse.swt.widgets.FileDialog
+import java.net.URI
+
+import org.eclipse.core.commands.AbstractHandler
+import org.eclipse.core.commands.ExecutionEvent
+import org.eclipse.jface.wizard.WizardDialog
+import org.eclipse.ui.handlers.HandlerUtil
 import org.eclipse.ui.IViewPart
 import org.eclipse.ui.PartInitException
-import org.eclipse.ui.handlers.HandlerUtil
+import org.eclipse.ui.PlatformUI
+
+import akka.actor.Actor.actorOf
+import akka.actor.ActorRef
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
-import de.lmu.ifi.dbs.knowing.core.graph.GraphSupervisor
 import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit
+import de.lmu.ifi.dbs.knowing.core.graph.GraphSupervisor
 import de.lmu.ifi.dbs.knowing.core.events._
+import de.lmu.ifi.dbs.knowing.core.swt.internal.Activator
 import de.lmu.ifi.dbs.knowing.core.swt.view.PresenterView
 import de.lmu.ifi.dbs.knowing.core.swt.wizard.SelectDPUWizard
-import akka.actor.Actor.actorOf
-import java.net.{ URL, URI }
-import org.eclipse.jface.wizard.WizardDialog
-import akka.actor.ActorRef
 
 /**
  * @author Nepomuk Seiler
@@ -34,12 +32,7 @@ class EvaluateHandler extends AbstractHandler {
     val wizard = new SelectDPUWizard
     val dialog = new WizardDialog(HandlerUtil.getActiveShell(event), wizard)
     val ret = dialog.open
-    //    val pathname = openDPU(event)
-    //    if (pathname == null || pathname.isEmpty())
-    //      return null;
-    //    val dpu = unmarshallDPU(pathname)
-    //    EvaluateHandler.evaluate(dpu, getDirectory(pathname))
-    null;
+    null
   }
 
 }
@@ -51,7 +44,7 @@ object EvaluateHandler {
       val view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(PresenterView.ID)
       val pView = view.asInstanceOf[PresenterView]
       pView.clearTabs
-      val supervisor = actorOf(new GraphSupervisor(dpu, pView.uifactory, dpuPath)).start
+      val supervisor = actorOf(new GraphSupervisor(dpu, pView.uifactory, dpuPath, Activator.directoryService)).start
       supervisor ! Start
       supervisor
     } catch {

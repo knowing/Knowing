@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="de.lmu.ifi.dbs.knowing.core.DirectoryService">
+   <implementation class="de.lmu.ifi.dbs.knowing.core.service.impl.FactoryDirectory"/>
+   <service>
+      <provide interface="de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory"/>
+   </service>
+   <reference bind="bindFactoryService" cardinality="0..n" interface="de.lmu.ifi.dbs.knowing.core.factory.TFactory" name="TFactory" policy="dynamic" unbind="unbindFactoryService"/>
+</scr:component>

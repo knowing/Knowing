@@ -10,13 +10,14 @@ import de.lmu.ifi.dbs.knowing.core.util._
 import de.lmu.ifi.dbs.knowing.core.processing.{ TPresenter, TSender, TLoader }
 import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit
 import de.lmu.ifi.dbs.knowing.core.events._
+import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
 import java.util.Properties
 import java.util.concurrent.{ TimeUnit, ScheduledFuture }
 import scala.collection.mutable.{ Map => MutableMap, LinkedList }
 import System.{ currentTimeMillis => systemTime }
 import org.osgi.framework.FrameworkUtil
 
-class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI) extends Actor with TSender {
+class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI, directory: IFactoryDirectory) extends Actor with TSender {
 
   self.faultHandler = AllForOneStrategy(List(classOf[Throwable]), 5, 5000)
 
@@ -50,7 +51,8 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI
     uifactory update (self, Created())
     uifactory update (self, Progress("initialize", 0, dpu.nodes.length))
     dpu.nodes foreach (node => {
-      val factory = OSGIUtil.getFactoryService(node.factoryId)
+//      val factory = OSGIUtil.getFactoryService()
+      val factory = directory.getFactory(node.factoryId)
       factory match {
         case Some(f) =>
           //Create actor
