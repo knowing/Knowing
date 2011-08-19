@@ -19,6 +19,7 @@ import weka.core.{ Attribute, Instance, Instances }
  */
 class CrossValidator extends TProcessor {
 
+  var filterFactory: TFactory = _
   var classifierFactory: TFactory = _
   var classifierProperties = new Properties
 
@@ -29,6 +30,7 @@ class CrossValidator extends TProcessor {
   private var confusionMatrix: Instances = _
   private var classLabels: Array[String] = Array()
   private var classifier: Option[ActorRef] = None
+  private var filter: Option[ActorRef] = None
 
   private var numInstances: Int = 0
   private var currentInst: Int = 0
@@ -95,11 +97,11 @@ class CrossValidator extends TProcessor {
 
       entry.setValue(column.toInt, value)
     }
-//    debug(this,  currentInst + "/" + numInstances + " of [" + fold + "/" + folds + "]")
+    //    debug(this,  currentInst + "/" + numInstances + " of [" + fold + "/" + folds + "]")
     currentInst += 1
     if (currentInst == numInstances) {
       sendEvent(QueryResults(confusionMatrix, query))
-//      debug(this,"[" + fold + "/" + folds + "]" + confusionMatrix)
+      //      debug(this,"[" + fold + "/" + folds + "]" + confusionMatrix)
       numInstances = 0
       currentInst = 0
       statusChanged(Ready())
@@ -108,7 +110,7 @@ class CrossValidator extends TProcessor {
 
   def queries(queries: Instances) {
     statusChanged(Running())
-    numInstances = queries.numInstances 
+    numInstances = queries.numInstances
     val enum = queries.enumerateInstances
     while (enum.hasMoreElements)
       query(enum.nextElement.asInstanceOf[Instance])
@@ -137,10 +139,11 @@ class CrossValidator extends TProcessor {
     folds = properties.getProperty(CrossValidatorFactory.FOLDS, "10").toInt
     fold = properties.getProperty(CrossValidatorFactory.FOLD, "1").toInt
     standalone = properties.getProperty(CrossValidatorFactory.STANDALONE, "true").toBoolean
-    
+
     //Remove used properties
     classifierProperties.putAll(properties)
     classifierProperties.remove(CrossValidatorFactory.CLASSIFIER)
+    classifierProperties.remove(CrossValidatorFactory.FILTER)
     classifierProperties.remove(CrossValidatorFactory.FOLDS)
     classifierProperties.remove(CrossValidatorFactory.FOLD)
     classifierProperties.remove(CrossValidatorFactory.STANDALONE)
@@ -173,6 +176,7 @@ class CrossValidatorFactory extends TFactory {
   def createDefaultProperties: Properties = {
     val props = new Properties();
     props.setProperty(CrossValidatorFactory.CLASSIFIER, "")
+    props.setProperty(CrossValidatorFactory.FILTER, "")
     props.setProperty(CrossValidatorFactory.FOLD, "1")
     props.setProperty(CrossValidatorFactory.FOLDS, "2")
     props
@@ -188,6 +192,7 @@ object CrossValidatorFactory {
   val name: String = "CrossValidator"
   val id: String = classOf[CrossValidator].getName
   val CLASSIFIER = "classifier"
+  val FILTER = "filter"
   val FOLD = "fold"
   val FOLDS = "folds"
   val STANDALONE = "standalone"

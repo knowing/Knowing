@@ -2,6 +2,7 @@ package de.lmu.ifi.dbs.knowing.core.processing
 
 import java.util.Properties
 import scala.collection.JavaConversions._
+import scala.collection.mutable.Queue
 
 import akka.actor.Actor
 import akka.event.EventHandler.{ debug, info, warning, error }
@@ -27,7 +28,11 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 
   //Current status of processor
   protected var status: Status = Created()
+  protected var isBuild = false
   protected val properties: Properties = new Properties
+
+  //Stored Queries
+  private val queries = Queue[Query]()
 
   //Default lifeCylce 
   self.lifeCycle = Permanent
@@ -51,20 +56,38 @@ trait TProcessor extends Actor with TSender with TConfigurable {
       if (self.getSender.isDefined) self reply Ready
       statusChanged(Waiting())
     case Start | Start() => start
+
+    //Process results
     case Results(inst) =>
       statusChanged(Running())
       build(inst)
+      isBuild = true
+      processStoredQueries
       statusChanged(Ready())
-    case Query(q) =>
-      statusChanged(Running())
-      self reply QueryResults(query(q), q)
-      statusChanged(Ready())
+
+    //Process single query
+    case Query(q) => isBuild match {
+      case true =>
+        statusChanged(Running())
+        processStoredQueries
+        self reply QueryResults(query(q), q)
+        statusChanged(Ready())
+      case false => queries += Query(q)
+    }
+
+    //Process multiple queries
     case Queries(q) =>
       val enum = q.enumerateInstances
-      while (enum.hasMoreElements) {
-        val instance = enum.nextElement.asInstanceOf[Instance]
-        self reply QueryResults(query(instance), instance)
+      isBuild match {
+        case true =>
+          while (enum.hasMoreElements) {
+            val instance = enum.nextElement.asInstanceOf[Instance]
+            self reply QueryResults(query(instance), instance)
+          }
+        case false => while (enum.hasMoreElements) queries += Query(enum.nextElement.asInstanceOf[Instance])
       }
+
+    //Process query result
     case QueryResults(r, q) =>
       statusChanged(Running())
       result(r, q)
@@ -80,7 +103,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
   override def postRestart(reason: Throwable) {
     // reinit stable state after restart
   }
-  
+
   def start = debug(this, "Running " + self.getActorClassName)
 
   def build(instances: Instances)
@@ -178,6 +201,8 @@ trait TProcessor extends Actor with TSender with TConfigurable {
     labels.reverse.toArray
   }
 
+  protected def processStoredQueries = while (queries.nonEmpty) query(queries.dequeue.query)
+
   /**
    * <p>Sends the status change to the actors supervisor</p>
    */
@@ -193,6 +218,6 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 }
 
 object TProcessor {
-  
+
   val ABSOLUTE_PATH = "absolute-path"
 }
