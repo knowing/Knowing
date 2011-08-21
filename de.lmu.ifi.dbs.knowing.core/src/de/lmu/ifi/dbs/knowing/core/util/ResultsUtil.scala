@@ -379,7 +379,10 @@ object ResultsUtil {
     if (!first.equalHeaders(append))
       throw new WekaException("Instances headers are not equal")
     val enum = append.enumerateInstances
-    while (enum.hasMoreElements) first.add(enum.nextElement.asInstanceOf[Instance])
+    while (enum.hasMoreElements) {
+      println("Append: " + first.relationName + " to " + append.relationName)
+      first.add(enum.nextElement.asInstanceOf[Instance])
+    }
     first
   }
 
