@@ -32,8 +32,8 @@ trait TProcessor extends Actor with TSender with TConfigurable {
   protected val properties: Properties = new Properties
 
   //Stored Queries
-  private val queryQueue = Queue[(Option[ActorRef], Query)]()
-  private val queriesQueue = Queue[(Option[ActorRef], Queries)]()
+  protected val queryQueue = Queue[(Option[ActorRef], Query)]()
+  protected val queriesQueue = Queue[(Option[ActorRef], Queries)]()
 
   //Default lifeCylce 
   self.lifeCycle = Permanent
@@ -64,6 +64,10 @@ trait TProcessor extends Actor with TSender with TConfigurable {
       build(inst)
       isBuild = true
       processStoredQueries
+      self.sender match {
+        case Some(s) => s ! Ready()
+        case None => //Nothing
+      }
       statusChanged(Ready())
 
     //Process single query
@@ -198,6 +202,10 @@ trait TProcessor extends Actor with TSender with TConfigurable {
     }
     labels.reverse.toArray
   }
+  
+  protected def cacheQuery(q: Instance) = queryQueue += ((self.sender, Query(q)))
+  
+  protected def cacheQuery(q: Instances) = queriesQueue += ((self.sender, Queries(q)))
 
   protected def processStoredQueries {
     //Does not respect arrival time

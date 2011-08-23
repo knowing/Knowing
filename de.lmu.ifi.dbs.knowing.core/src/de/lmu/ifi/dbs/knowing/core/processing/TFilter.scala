@@ -13,10 +13,14 @@ import de.lmu.ifi.dbs.knowing.core.events._
  */
 trait TFilter extends TProcessor {
   
+  //Filter is always build. Set this to false if filter has to be trained
+  isBuild = true
+  
   override def customReceive = {
     case Results(instances) =>
       statusChanged(Running())
       val returns = filter(instances)
+      isBuild = true
       sendEvent(Results(returns))
       statusChanged(Ready())
   }

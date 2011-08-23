@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DataProcessingUnit name="arff-filtered-10fold-cross-validation">
+	<description>Cross Validation with NaiveBayes output to TablePresenter
+	</description>
+	<tags>Cross, Validation, Cross Validation, ARFF, NaiveBayes, Filter</tags>
+	<nodes>
+		<node nodeType="processor" factoryId="de.lmu.ifi.dbs.knowing.core.validation.XCrossValidator" id="validator">
+			<properties>
+				<item value="knowing.test.filter.BypassFilter" key="filter" />
+				<item value="weka.classifiers.bayes.NaiveBayes" key="classifier" />
+				<item value="10" key="folds" />
+
+				<item value="false" key="kernel-estimator" />
+				<item value="false" key="supervised-discretization" />
+			</properties>
+		</node>
+		<node nodeType="loader" factoryId="weka.core.converters.ArffLoader"
+			id="ARFF">
+			<properties>
+				<item value="iris.arff" key="file" />
+			</properties>
+		</node>
+		<node nodeType="presenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter"
+			id="TablePresenter">
+			<properties>
+				<item value="100" key="rows" />
+			</properties>
+		</node>
+	</nodes>
+	<edges>
+		<edge weight="1" targetId="validator" sourceId="ARFF" id="arff_validator" />
+		<edge weight="1" targetId="TablePresenter" sourceId="validator"	id="validator_presenter" />
+	</edges>
+</DataProcessingUnit>
