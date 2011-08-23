@@ -372,18 +372,20 @@ object ResultsUtil {
    * Just appends one 'append' to 'first' without changing attributes.
    *
    * @throws WekaException - if headers are not equal
-   * @returns first  - with 'append'-Instances added
+   * @returns Instances - new instances object with first -> append added
    */
   @throws(classOf[WekaException])
   def appendInstances(first: Instances, append: Instances): Instances = {
+    println("First: " + first)
+    println("Append: " + append)
     if (!first.equalHeaders(append))
       throw new WekaException("Instances headers are not equal")
-    val enum = append.enumerateInstances
-    while (enum.hasMoreElements) {
-      println("Append: " + first.relationName + " to " + append.relationName)
-      first.add(enum.nextElement.asInstanceOf[Instance])
-    }
-    first
+    val ret = new Instances(first, first.numInstances + append.numInstances)
+    val firstEnum = first.enumerateInstances
+    while (firstEnum.hasMoreElements) ret.add(firstEnum.nextElement.asInstanceOf[Instance])
+    val appendEnum = append.enumerateInstances
+    while (appendEnum.hasMoreElements) ret.add(appendEnum.nextElement.asInstanceOf[Instance])
+    ret
   }
 
   /**
@@ -415,7 +417,7 @@ object ResultsUtil {
    * @returns source -> Instances
    *
    */
-  def splitInstanceByAttribute(instances: Instances, attribute: String): Map[String, Instances] = {
+  def splitInstanceByAttribute(instances: Instances, attribute: String, removeAttr: Boolean = true): Map[String, Instances] = {
     val splitAttr = instances.attribute(attribute)
     if (splitAttr == null)
       return Map(ORIGINAL_INSTANCES -> instances)
@@ -425,6 +427,8 @@ object ResultsUtil {
       case (clazz, list) =>
         val ret = new Instances(instances, list.length)
         list foreach (ret.add(_))
+        if (removeAttr) ret.deleteAttributeAt(splitAttr.index)
+        //println("splitted: " + ret)
         (clazz, ret)
     }
   }

@@ -17,16 +17,6 @@ trait TFilter extends TProcessor {
   //Filter is always build. Set this to false if filter has to be trained
   isBuild = true
   
-  override def customReceive = {
-    case Results(instances) =>
-      statusChanged(Running())
-      val returns = filter(instances)
-      isBuild = true
-      //Filter sends results to listeners
-      sendEvent(Results(returns))
-      statusChanged(Ready())
-  }
-
   /**
    * Default implementation uses the query method. Override
    * this method for performance issues or if the input is need as a whole.
@@ -39,7 +29,10 @@ trait TFilter extends TProcessor {
   /**
    * Delegates to filter method
    */
-  def build(instances: Instances) = filter(instances)
+  def build(instances: Instances)  {
+    val filtered = filter(instances)
+    sendEvent(Results(filtered))
+  }
   
   protected def mergeResults(results: List[(Instances, Instance)]): Instances = {
     val instances = results map(_._1)

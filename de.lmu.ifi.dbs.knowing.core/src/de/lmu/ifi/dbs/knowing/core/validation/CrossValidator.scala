@@ -104,7 +104,7 @@ class CrossValidator extends TProcessor {
     // If training data isn't completly filtered yet
     if (numInstancesTrain != currentInstTrain && !classifierTrained) {
       //Create if not existed
-      if (filteredTrainData == null) filteredTrainData = new Instances(result, 0)
+      if (filteredTrainData == null) filteredTrainData = new Instances(result, numInstancesTrain)
 
       val enum = result.enumerateInstances
       while (enum.hasMoreElements) filteredTrainData.add(enum.nextElement.asInstanceOf[Instance])

@@ -26,7 +26,6 @@ class AttributeCrossValidator extends XCrossValidator {
     val instMaps = ResultsUtil.splitInstanceByAttribute(instances, splitAttr)
     //Map test-data -> train-data 
     val instMap = for (e <- instMaps) yield instMaps.partition(e2 => e._1.equals(e2._1))
-
     folds = instMap.size
     debug(this, "Fold-Actors created!")
     statusChanged(Progress("validation", 0, folds))
@@ -42,13 +41,16 @@ class AttributeCrossValidator extends XCrossValidator {
         train foreach (elem => sb.append(elem._1 + ","))
         debug(this, sb.toString)
         
-        val trainData = ResultsUtil.appendInstances(new Instances(instances, 0), train map (_._2) toList )
+        val testData = test.head._2
+        val trainData = ResultsUtil.appendInstances(new Instances(testData, 0), train map (_._2) toList)
+        guessAndSetClassLabel(testData)
+        guessAndSetClassLabel(trainData)
         //Logic
         self startLink crossValidators(i)
         crossValidators(i) !! Register(self, None)
         crossValidators(i) !! Configure(configureProperties(validator_properties, i))
         crossValidators(i) ! Results(trainData)
-        crossValidators(i) ! Queries(test.head._2)
+        crossValidators(i) ! Queries(testData)
         i += 1
     }
 
