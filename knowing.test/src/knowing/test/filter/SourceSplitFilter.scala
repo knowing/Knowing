@@ -13,7 +13,7 @@ class SourceSplitFilter extends TFilter {
   /**
    * Just prints out the map and returns the head of the map or emptyResult
    */
-  def filter(instances: Instances): Instances = {
+  override def filter(instances: Instances): Instances = {
     val map = ResultsUtil.splitInstanceBySource(instances)
     println(map)
     val ret = map.headOption getOrElse (("empty",ResultsUtil.emptyResult))
@@ -24,7 +24,10 @@ class SourceSplitFilter extends TFilter {
 
   }
 
-  def query(query: Instance): Instances = null
+  /**
+   * Cannot split a single Instance
+   */
+  def query(query: Instance): Instances = throw new UnsupportedOperationException
 
   def result(result: Instances, query: Instance) = null
 }

@@ -20,7 +20,7 @@ class WekaFilter(protected val filter: Filter) extends TFilter {
   /**
    * <p>Code mainly from weka.filters.Filter</p>
    */
-  def filter(instances: Instances): Instances = {
+  override def filter(instances: Instances): Instances = {
     val header = new Instances(instances, 0)
     guessAndSetClassLabel(header)
     filter.setInputFormat(header)
