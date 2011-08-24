@@ -379,8 +379,8 @@ object ResultsUtil {
     println("First: " + first)
     println("Append: " + append)
     if (!first.equalHeaders(append))
-      throw new WekaException("Instances headers are not equal")
-    val ret = new Instances(first, first.numInstances + append.numInstances)
+      throw new WekaException("Instances headers are not equal")    
+    val ret = new Instances(first, first.numInstances + append.numInstances)    
     val firstEnum = first.enumerateInstances
     while (firstEnum.hasMoreElements) ret.add(firstEnum.nextElement.asInstanceOf[Instance])
     val appendEnum = append.enumerateInstances
@@ -436,7 +436,7 @@ object ResultsUtil {
   /**
    * @see splitInstanceByAttribute
    */
-  def splitInstanceByAttributeJava(instances: Instances, attribute: String): JMap[String, Instances] = asMap(splitInstanceByAttribute(instances, attribute))
+  def splitInstanceByAttributeJava(instances: Instances, attribute: String,removeAttr: Boolean = true): JMap[String, Instances] = asMap(splitInstanceByAttribute(instances, attribute,removeAttr))
 
   /**
    * <p>Splits a instances object with SOURCE_ATTRIBUTE into a map of source -> Instances
@@ -446,10 +446,10 @@ object ResultsUtil {
    * @returns source -> Instances
    *
    */
-  def splitInstanceBySource(instances: Instances): Map[String, Instances] = splitInstanceByAttribute(instances, ATTRIBUTE_SOURCE)
+  def splitInstanceBySource(instances: Instances,removeAttr: Boolean = true): Map[String, Instances] = splitInstanceByAttribute(instances, ATTRIBUTE_SOURCE,removeAttr)     
 
   /**
    * @see splitInstanceBySource
    */
-  def splitInstanceBySourceJava(instances: Instances): JMap[String, Instances] = splitInstanceByAttributeJava(instances, ATTRIBUTE_SOURCE)
+  def splitInstanceBySourceJava(instances: Instances,removeAttr: Boolean = true): JMap[String, Instances] = splitInstanceByAttributeJava(instances, ATTRIBUTE_SOURCE,removeAttr)
 }
