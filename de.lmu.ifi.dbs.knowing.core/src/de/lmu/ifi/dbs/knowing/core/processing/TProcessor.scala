@@ -124,7 +124,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
   def query(query: Instance): Instances
 
   /**
-   * 
+   *
    */
   def queries(queries: Instances): List[(Instances, Instance)] = {
     val enum = queries.enumerateInstances
@@ -166,13 +166,16 @@ trait TProcessor extends Actor with TSender with TConfigurable {
    * @param dataset
    * @return class attribute index or -1
    */
-  def guessAndSetClassLabel(dataset: Instances): Int = {
+  def guessAndSetClassLabel(dataset: Instances, default: Int = -1): Int = {
     val index = dataset.classIndex
     index match {
       case -1 =>
         val cIndex = guessClassLabel(dataset)
-        dataset.setClassIndex(cIndex)
-        cIndex
+        (cIndex, default) match {
+          case (-1, -1) => -1
+          case (-1, d) => dataset.setClassIndex(d); d
+          case (guess, -1) => dataset.setClassIndex(guess); guess
+        }
       case x => x
     }
   }
@@ -188,8 +191,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
     val nominal = attributes filter (a => a.asInstanceOf[Attribute].isNominal)
     nominal.headOption match {
       case Some(x) => x.asInstanceOf[Attribute].index
-      case None => dataset.numAttributes - 1
-
+      case None => -1
     }
   }
 
@@ -202,9 +204,9 @@ trait TProcessor extends Actor with TSender with TConfigurable {
     }
     labels.reverse.toArray
   }
-  
+
   protected def cacheQuery(q: Instance) = queryQueue += ((self.sender, Query(q)))
-  
+
   protected def cacheQuery(q: Instances) = queriesQueue += ((self.sender, Queries(q)))
 
   protected def processStoredQueries {

@@ -54,7 +54,7 @@ class CrossValidator extends TProcessor {
   }
 
   def build(instances: Instances) {
-    debug(this, "Build CrossValidator" + instances.relationName)
+    debug(this, "Build CrossValidator " + instances.relationName)
     val index = guessAndSetClassLabel(instances)
     index match {
       case -1 =>
@@ -180,9 +180,9 @@ class CrossValidator extends TProcessor {
     (filter, filterTrained, classifier, classifierTrained) match {
       case (_, _, None, _) => warning(this, "No classifier found")
       //cache if filtered isn't trained yet
-      case (Some(f), false, Some(_), _) => cacheQuery(query)
+      case (Some(f), false, Some(_), _) => //cacheQuery(query)
       //forward to filter if exists
-      case (Some(f), true, Some(c), false) => f ! Query(query)
+      case (Some(f), true, Some(c), false) => f ! Query(query) 
       //forward directly to classifier
       case (_, _, Some(c), true) => c ! Query(query)
     }

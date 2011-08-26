@@ -23,7 +23,11 @@ public abstract class AbstractProcessor implements IProcessor {
 	}
 	
 	protected int guessAndSetClassLabel(Instances dataset) {
-		return wrapper.guessAndSetClassLabel(dataset);
+		return wrapper.guessAndSetClassLabel(dataset, -1);
+	}
+	
+	protected int guessAndSetClassLabel(Instances dataset, int defaultClassIndex) {
+		return wrapper.guessAndSetClassLabel(dataset, defaultClassIndex);
 	}
 	
 }

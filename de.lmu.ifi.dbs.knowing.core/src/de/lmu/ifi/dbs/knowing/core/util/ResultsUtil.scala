@@ -376,8 +376,8 @@ object ResultsUtil {
    */
   @throws(classOf[WekaException])
   def appendInstances(first: Instances, append: Instances): Instances = {
-    println("First: " + first)
-    println("Append: " + append)
+//    println("First: " + first)
+//    println("Append: " + append)
     if (!first.equalHeaders(append))
       throw new WekaException("Instances headers are not equal")    
     val ret = new Instances(first, first.numInstances + append.numInstances)    
