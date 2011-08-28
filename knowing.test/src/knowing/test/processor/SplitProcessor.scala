@@ -16,8 +16,8 @@ class SplitProcessor extends TProcessor {
     val toCopy = inst.numInstances / 2
     val one = new Instances(inst, 0, toCopy)
     val two = new Instances(inst, inst.numInstances / 2, toCopy - 1)
-    sendEvent(Results(one), OUTPUT1)
-    sendEvent(Results(two), OUTPUT2)
+    sendEvent(Results(one), Some(OUTPUT1))
+    sendEvent(Results(two), Some(OUTPUT2))
   }
 
   def query(query: Instance): Instances = { null }

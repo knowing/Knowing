@@ -12,7 +12,7 @@ import de.lmu.ifi.dbs.knowing.core.events._
 trait TClassifier extends TProcessor {
 
   override def customReceive = {
-    case Results(instances) => build(instances)
+    case Results(instances, _) => build(instances)
   }
 
   /**

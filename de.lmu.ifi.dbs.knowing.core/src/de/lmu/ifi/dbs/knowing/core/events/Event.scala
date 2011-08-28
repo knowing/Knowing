@@ -14,7 +14,7 @@ trait Status extends Event
 /* ======================== */
 /* == Data Exchange ======= */
 /* ======================== */
-case class Results(instances: Instances) extends Event
+case class Results(instances: Instances, port: Option[String] = None) extends Event
 case class QueryResults(instances: Instances, query: Instance) extends Event
 case class QueriesResults(results: List[(Instances, Instance)])
 case class Query(query: Instance) extends Event
@@ -44,5 +44,5 @@ case class UpdateUI extends Status
 /* ========================= */
 /* == Actor Communication == */
 /* ========================= */
-case class Register(actor: ActorRef, port: Option[String] = None) extends Event
+case class Register(actor: ActorRef, in: Option[String] = None, out: Option[String] = None) extends Event
 case class Registered(success: Boolean = true) extends Event

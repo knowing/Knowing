@@ -69,10 +69,10 @@ public interface IProcessor {
 	 * </p>
 	 * 
 	 * @param event
-	 * @param port
-	 *            - can be null
+	 * @param output (port) - can be null
+	 *            
 	 */
-	void sendEvent(Event event, String port);
+	void sendEvent(Event event, String output);
 	
 	/**
 	 * 

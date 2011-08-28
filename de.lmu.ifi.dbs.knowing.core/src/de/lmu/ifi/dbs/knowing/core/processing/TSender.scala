@@ -4,79 +4,115 @@ import akka.actor.{ Actor, ActorRef }
 import akka.event.EventHandler.{ debug, info, warning, error }
 import com.eaio.uuid.UUID
 import scala.collection.mutable.Map
+import scala.collection.mutable.Set
 import de.lmu.ifi.dbs.knowing.core.events._
+import TSender._
+import weka.core.Instances
 
 /**
  * <p>This actor is able to send Events to registered actors</p>
  */
 trait TSender { this: Actor =>
 
-  val listeners = Map.empty[UUID, ActorRef]
-  val outputListeners = Map.empty[String, Map[UUID, ActorRef]]
+  /**
+   * OUTPUT_PORT -> INPUT_PORT > Map[UUID -> Actor]
+   *
+   */
+  val listeners = Map.empty[String, Map[UUID, (ActorRef, Set[String])]]
+  //Add default ports
+  listeners += (DEFAULT_PORT -> Map())
+
+  /* ================================= */
+  /* == Register listeners to ports == */
+  /* ================================= */
+
+  def register(listener: ActorRef, output: Option[String], input: Option[String]) {
+    val uuid = listener.getUuid
+    (output, input) match {
+      //Default input/output == no ports
+      case (None, None) =>
+        listeners(DEFAULT_PORT).get(uuid) match {
+          //Listener is registered, just add new port
+          case Some(entry) => entry._2 += DEFAULT_PORT
+          //Listener isn't registered yet
+          case None => listeners(DEFAULT_PORT) += (uuid -> (listener, Set(DEFAULT_PORT)))
+        }
+
+      //Only output port defined
+      case (Some(out), None) =>
+        listeners.get(out) match {
+          case Some(outputs) =>
+            outputs.get(uuid) match {
+              case Some(entry) => entry._2 += DEFAULT_PORT
+              case None => outputs += (uuid -> (listener, Set(DEFAULT_PORT)))
+            }
+
+          case None =>
+            val entry = Map.empty[UUID, (ActorRef, Set[String])]
+            entry += (uuid -> (listener, Set(DEFAULT_PORT)))
+            listeners += (out -> entry)
+        }
+
+      //Only input port defined
+      case (None, Some(in)) => listeners(DEFAULT_PORT).get(uuid) match {
+        case Some(entry) => entry._2 += DEFAULT_PORT
+        case None => listeners(DEFAULT_PORT) += (uuid -> (listener, Set(in)))
+      }
+
+      //Both ports defined
+      case (Some(out), Some(in)) => listeners.get(out) match {
+        case Some(output) => output.get(uuid) match {
+          //Output exists, input exists
+          case Some(entry) => entry._2 += DEFAULT_PORT
+          //Output exists, input has to be created
+          case None => output += (uuid -> (listener, Set(in)))
+        }
+        //Create output and input entry
+        case None =>
+          val entry = Map(uuid -> (listener, Set(in)))
+          listeners += (out -> entry)
+      }
+    }
+  }
 
   /* ================================ */
-  /* == Generic input/output ports == */
+  /* === Send events to listeners === */
   /* ================================ */
 
-  def addListener(listener: ActorRef) {
-    listeners += (listener.getUuid -> listener)
-    if (self.getSender.isDefined)
-      self reply Registered(true)
-  }
-
-  def removeListener(listener: ActorRef) = listeners remove (listener.getUuid)
-
-  protected def sendEvent(event: Event) = listeners foreach { case (_, actor) => sendToActor(actor, event) }
-
-  /* =============================== */
-  /* == Custom input/output ports == */
-  /* =============================== */
-
-  def addListener(listener: ActorRef, port: Option[String]) {
-    port match {
-      case Some(p) => addListener(listener, p)
-      case None => addListener(listener)
-    }
-  }
-
-  def removeListener(listener: ActorRef, port: Option[String]) {
-    port match {
-      case Some(p) => removeListener(listener, p)
-      case None => removeListener(listener)
-    }
-  }
-
-  protected def addListener(listener: ActorRef, port: String) {
-    val entry = outputListeners.get(port)
-    val value = (listener.getUuid -> listener)
-    entry match {
-      case Some(e) => e += value
-      case None => outputListeners += (port -> Map(value))
-    }
-    if (self.getSender.isDefined)
-      self reply Registered(true)
-  }
-
-  protected def removeListener(listener: ActorRef, port: String) {
-    val entry = outputListeners.get(port)
-    entry match {
-      case Some(e) => e.remove(listener.getUuid)
-      case None => warning(this, "Listener " + listener + " could not be removed")
-    }
+  protected def sendEvent(event: Event, output: Option[String] = None) {
+    sendEvent(event, output getOrElse DEFAULT_PORT)
   }
 
   protected def sendEvent(event: Event, output: String) {
-    //Make instances immutable
-    val immutableEvent = event match {
-      case Results(inst) =>
-        if (inst.isInstanceOf[ImmutableInstances]) event
-        else Results(new ImmutableInstances(inst))
-      case e => e
+    event match {
+      case Results(results, _) => sendResults(results, Some(output))
+      case _ => listeners.get(output) match {
+        case Some(e) => e foreach { case (_, (listener,_)) => sendToActor(listener, event)}
+        case None => warning(this, "Event " + event + " could not be send")
+      }
     }
-    val entry = outputListeners.get(output)
-    entry match {
-      case Some(e) => e foreach { case (_, actor) => sendToActor(actor, immutableEvent) }
-      case None => warning(this, "Event " + event + " could not be send")
+  }
+
+  protected def sendResults(results: Instances, output: Option[String] = None) {
+    //Make instances immutable
+    val Immutable = classOf[ImmutableInstances] //to pattern match on
+    val immutableInstances = results.getClass match {
+      case Immutable => results
+      case _ => new ImmutableInstances(results)
+    }
+
+    // [1] Take all listeners of specified output port
+    // [2] Go through all listeners and send Results with specified input 
+    val out = output getOrElse DEFAULT_PORT
+    listeners.get(out) match {
+      case None => warning(this, "Event could not be send to port " + out)
+      //Send Results to all inputs for each listener
+      case Some(outs) => outs foreach {
+        case (_, (listener, inputs)) =>
+          inputs foreach {
+            case DEFAULT_PORT => sendToActor(listener, new Results(immutableInstances, None))
+            case in =>  sendToActor(listener, new Results(immutableInstances, Some(in)))}
+      }
     }
   }
 
@@ -84,4 +120,8 @@ trait TSender { this: Actor =>
     if (actor.isRunning)
       actor ! event
   }
+}
+
+object TSender {
+  val DEFAULT_PORT = "default"
 }

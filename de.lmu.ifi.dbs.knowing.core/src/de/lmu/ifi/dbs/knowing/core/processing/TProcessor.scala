@@ -12,6 +12,8 @@ import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import weka.core.{ Attribute, Instance, Instances }
 
+import TSender.DEFAULT_PORT
+
 /**
  * <p>An IProcessor encapsulates a data processing algorithm.
  * The main purpose is to ensure a highly parallel and robust
@@ -49,7 +51,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
    * <p>Default behaviour</p>
    */
   private def defaultReceive: Receive = {
-    case Register(actor, port) => addListener(actor, port)
+    case Register(actor, in, out) => register(actor, in, out)
     case Configure(p) =>
       configure(p)
       properties.clear
@@ -59,9 +61,9 @@ trait TProcessor extends Actor with TSender with TConfigurable {
     case Start | Start() => start
 
     //Process results
-    case Results(inst) =>
+    case Results(inst, port) =>
       statusChanged(Running())
-      build(inst)
+      build(inst, port)
       isBuild = true
       processStoredQueries
       self.sender match {
@@ -108,7 +110,9 @@ trait TProcessor extends Actor with TSender with TConfigurable {
   }
 
   def start = debug(this, "Running " + self.getActorClassName)
-
+  
+  def build: PartialFunction[(Instances, Option[String]), Unit] = { case (instances, _) => build(instances) }
+  
   def build(instances: Instances)
 
   /**

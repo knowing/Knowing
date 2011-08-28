@@ -13,8 +13,12 @@ public abstract class AbstractProcessor implements IProcessor {
 	}
 	
 	@Override
-	public void sendEvent(Event event, String port) {
-		wrapper.sendEvent(event, port);
+	public void sendEvent(Event event, String output) {
+		wrapper.sendEvent(event, output);
+	}
+		
+	public void sendEvent(Event event) {
+		sendEvent(event, null);
 	}
 	
 	@Override

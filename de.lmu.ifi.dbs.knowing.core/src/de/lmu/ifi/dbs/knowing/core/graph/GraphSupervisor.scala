@@ -31,7 +31,7 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI
   private val ttl = 2500L
 
   def receive = {
-    case Register(actor, port) => addListener(actor, port)
+    case Register(actor, in, out) => register(actor, in, out)
     case Start | Start() => evaluate
     case UpdateUI | UpdateUI() => uifactory update (self.sender.getOrElse(null), UpdateUI())
     case status: Status => handleStatus(status)
@@ -47,11 +47,11 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI
   }
 
   private def initialize {
-    uifactory setSupervisor(self)
+    uifactory setSupervisor (self)
     uifactory update (self, Created())
     uifactory update (self, Progress("initialize", 0, dpu.nodes.length))
     dpu.nodes foreach (node => {
-//      val factory = OSGIUtil.getFactoryService()
+      //      val factory = OSGIUtil.getFactoryService()
       val factory = directory.getFactory(node.factoryId)
       factory match {
         case Some(f) =>
@@ -62,9 +62,9 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI
           actor ! Register(self, None)
           //Check for presenter and init
           if (node.nodeType.equals(Node.PRESENTER))
-            actor !! UIFactoryEvent(uifactory, node)
+            actor ! UIFactoryEvent(uifactory, node)
           //Configure with properties
-          actor !! Configure(configureProperties(node.properties))
+          actor ! Configure(configureProperties(node.properties))
           //Add to internal map
           actors += (node.id -> actor)
           statusMap += (actor.getUuid -> (actor, Created(), systemTime))
@@ -85,21 +85,27 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI
   }
 
   /**
-   *
+   * 
    */
   private def connectActors {
     dpu.edges foreach (edge => {
       val sid = edge.sourceId.split(":")
+      val tid = edge.targetId.split(":")
       val source = actors(sid(0))
-      val target = actors(edge.targetId)
-      val length = sid.length
-      length match {
-        case 1 =>
-          source !! Register(target, None)
+      val target = actors(tid(0))
+      (sid.length, tid.length) match {
+        case (1, 1) =>
+          source ! Register(target)
           debug(this, source.getActorClassName + " -> " + target.getActorClassName)
-        case 2 =>
-          source !! Register(target, Some(sid(1)))
+        case (2, 1) =>
+          source ! Register(target, Some(sid(1)))
           debug(this, source.getActorClassName + " -> " + target.getActorClassName + ":" + sid(1))
+        case (1, 2) =>
+          source ! Register(target, None, Some(tid(1)))
+          debug(this, source.getActorClassName  + ":" + tid(1) + " -> " + target.getActorClassName)
+        case (2, 2) =>
+          source ! Register(target, Some(sid(1)), Some(tid(1)))
+          debug(this, source.getActorClassName  + ":" + tid(1) + " -> " + target.getActorClassName + ":" + sid(1))
       }
     })
   }
