@@ -15,9 +15,9 @@ import MultipleInputsProcessorFactory._
 class MultipleInputsProcessor extends TProcessor {
 
   override def build = {
-    case (inst, None) => debug(this, "Default build is called")
-    case (inst, Some(INPUT_TEST)) => debug(this, "INPUT_TEST build is called")
-    case (inst, Some(INPUT_TRAIN)) => debug(this, "INPUT_TRAIN build is called")
+    case (inst, None) => debug(this, "Default build is called " + inst)
+    case (inst, Some(INPUT_TEST)) => debug(this, "INPUT_TEST build is called " + inst)
+    case (inst, Some(INPUT_TRAIN)) => debug(this, "INPUT_TRAIN build is called " + inst)
     case (x, y) => warning(this, "Bullshit! " + x.relationName + " / " + y)
   }
   

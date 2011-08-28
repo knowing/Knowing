@@ -17,8 +17,6 @@ import akka.event.EventHandler.{ debug, info, warning, error }
  */
 class WekaFilter(protected val filter: Filter) extends TFilter {
 
-  private var inputSet = false;
-
   /**
    * <p>Code mainly from weka.filters.Filter</p>
    */
@@ -26,21 +24,19 @@ class WekaFilter(protected val filter: Filter) extends TFilter {
     val header = new Instances(instances, 0)
     guessAndSetClassLabel(header)
     filter.setInputFormat(header)
-    inputSet = true
     Filter.useFilter(instances, filter)
   }
 
   def query(query: Instance): Instances = {
-    if (!inputSet) {
-      filter.setInputFormat(query.dataset)
-      inputSet = true
-    }
     filter.input(query)
-    
+	filter.batchFinished
+
     val returns = new Instances(filter.getOutputFormat, 1)
     returns.add(filter.output)
     returns
   }
+  
+  //TODO override queries
 
   def result(result: Instances, query: Instance) = {}
 

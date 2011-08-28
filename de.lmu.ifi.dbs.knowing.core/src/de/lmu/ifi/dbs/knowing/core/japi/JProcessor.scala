@@ -1,7 +1,7 @@
 package de.lmu.ifi.dbs.knowing.core.japi
 
 import java.util.Properties
-import akka.actor.ScalaActorRef
+import akka.event.EventHandler.{debug, info, warning, error} 
 import weka.core.{Instances, Instance}
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 import de.lmu.ifi.dbs.knowing.core.processing.TSender._
@@ -29,10 +29,4 @@ abstract class JProcessor extends TProcessor {
   
   def configure(properties: Properties) = processor.configure(properties)
 
-  override def sendEvent(event:Event, out:String ) {
-    out match {
-      case null => super.sendEvent(event)
-      case _ => super.sendEvent(event, Some(out))
-    }
-  }
 }
