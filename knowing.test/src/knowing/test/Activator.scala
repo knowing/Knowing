@@ -1,7 +1,6 @@
 package knowing.test
 
-import de.lmu.ifi.dbs.knowing.core.provider.IDPUProvider
-import de.lmu.ifi.dbs.knowing.core.provider.BundleDPUProvider
+import de.lmu.ifi.dbs.knowing.core.service._
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import de.lmu.ifi.dbs.knowing.core.util.OSGIUtil
 import org.osgi.framework.BundleContext

@@ -8,7 +8,7 @@ import de.lmu.ifi.dbs.knowing.core.processing._
 import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit
 import OSGIUtil._
 import de.lmu.ifi.dbs.knowing.core.internal.Activator
-import de.lmu.ifi.dbs.knowing.core.provider.IDPUProvider
+import de.lmu.ifi.dbs.knowing.core.service.IDPUProvider
 import java.net.URL
 
 /**

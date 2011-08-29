@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.knowing.core.provider
+package de.lmu.ifi.dbs.knowing.core.service
 import java.net.URL
 
 import org.osgi.framework.Bundle

@@ -6,8 +6,7 @@ import org.osgi.framework.ServiceReference
 import org.osgi.framework.ServiceRegistration
 import org.osgi.util.tracker.ServiceTracker
 import org.osgi.util.tracker.ServiceTrackerCustomizer
-import de.lmu.ifi.dbs.knowing.core.provider.BundleDPUProvider
-import de.lmu.ifi.dbs.knowing.core.provider.IDPUProvider
+import de.lmu.ifi.dbs.knowing.core.service._
 import de.lmu.ifi.dbs.knowing.core.util.OSGIUtil
 import de.lmu.ifi.dbs.knowing.core.validation._
 import de.lmu.ifi.dbs.knowing.core.weka._
