@@ -32,7 +32,12 @@ class BundleDPUProvider(bundle: Bundle, dir: String = "/KNOWING-INF") extends ID
   /**
    * Doesn't handle non existing DPUs yet!
    */
-  def getDataProcessingUnit(name: String): DataProcessingUnit = dpuMap(name)._1
+  def getDataProcessingUnit(name: String): DataProcessingUnit = {
+    dpuMap.get(name) match {
+      case None => null
+      case Some(e) => e._1
+    }
+  }
   
   /**
    * Doesn't handle non existing DPUs yet!
