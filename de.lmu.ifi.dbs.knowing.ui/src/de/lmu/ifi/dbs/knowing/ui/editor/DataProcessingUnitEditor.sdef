@@ -1,78 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definition>
-    <import>
-        <package>de.mukis.sapphire.model</package>
-    </import>
-    <editor-page>
-        <id>de.mukis.sapphire.dpu.masterDetail</id>
-        <page-name>Design</page-name>
-        <page-header-text>Design View</page-header-text>
-    </editor-page>
-    <dialog>
-        <id>de.mukis.sapphire.dpu.dialog</id>
-        <label>DPU Dialog</label>
-        <content>
-            <include>de.mukis.sapphire.dpu.composite</include>
-        </content>
-    </dialog>
-    <composite>
-        <id>de.mukis.sapphire.dpu.composite</id>
-        <content>
-            <property-editor>name</property-editor>
+	<editor-page>
+		<id>de.mukis.sapphire.dpu.masterDetail</id>
+		<page-name>Design</page-name>
+		<page-header-text>Design View</page-header-text>
+	</editor-page>
+	<dialog>
+		<id>de.mukis.sapphire.dpu.dialog</id>
+		<label>DPU Dialog</label>
+		<content>
+			<include>de.mukis.sapphire.dpu.composite</include>
+		</content>
+	</dialog>
+	<composite>
+		<id>de.mukis.sapphire.dpu.composite</id>
+		<content>
+			<property-editor>name</property-editor>
             <property-editor>nodes</property-editor>
-            <property-editor>edges</property-editor>
-        </content>
-    </composite>
-    <editor-page>
-        <id>dpu.editor.page</id>
-        <root-node>
-            <node>
-                <label>DPU</label>
-                <section>
-                    <label>DataProcessingUnit</label>
-                    <content>
-                        <label>DPU Content Editor</label>
-                    </content>
-                </section>
-                <node-factory>
-                    <property>DPUs</property>
-                    <case>
-                        <label>DPU Name here</label>
-                        <section>
-                            <label>DPU Name comes here too</label>
-                            <content>
-                                <include>de.mukis.sapphire.dpu.composite</include>
-                            </content>
-                        </section>
-                    </case>
-                </node-factory>
-            </node>
-        </root-node>
-    </editor-page>
+			<property-editor>edges</property-editor>
+		</content>
+	</composite>
+	<editor-page>
+		<id>dpu.editor.page</id>
+		<root-node>
+			<node>
+				<label>DPU</label>
+				<section>
+					<label>DataProcessingUnit</label>
+					<content>
+						<label>DPU Content Editor</label>
+					</content>
+				</section>
+				<node-factory>
+					<property>DPUs</property>
+					<case>
+						<label>DPU Name here</label>
+						<section>
+							<label>DPU Name comes here too</label>
+							<content>
+								<include>de.mukis.sapphire.dpu.composite</include>
+							</content>
+						</section>
+					</case>
+				</node-factory>
+			</node>
+		</root-node>
+	</editor-page>
     <wizard>
         <id>dpu.wizard</id>
         <label>Sapphire DPU</label>
         <page>
          	<id>DataProcessingUnitPageID</id>
             <label>DataProcessingUnit</label>
-            <content>
-                <with>
-                    <path>DataProcessingUnit</path>
-                    <default-panel>
-                        <content>
-                            <include>de.mukis.sapphire.dpu.composite</include>
-                        </content>
-                    </default-panel>
-                    <label>DataProcessingUnit Label</label>
-                </with>
-            </content>
             <description>Create DataProcessingUnit</description>
             <initial-focus>Title</initial-focus>
             <hint>
                 <name>expand.vertically</name>
                 <value>true</value>
             </hint>
+            <content>
+                <include>de.mukis.sapphire.dpu.composite</include>
+            </content>
         </page>
         <description>This is my Description</description>
     </wizard>
+	<import>
+		<package>de.lmu.ifi.dbs.knowing.core.model</package>
+		<package>de.lmu.ifi.dbs.knowing.ui.handler</package>
+		<package>de.lmu.ifi.dbs.knowing.ui.editor</package>
+	</import>
 </definition>

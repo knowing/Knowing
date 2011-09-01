@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.knowing.core.graph;
+package de.lmu.ifi.dbs.knowing.core.model;
 
 import org.eclipse.sapphire.modeling.IModelElement;
 import org.eclipse.sapphire.modeling.ModelElementType;

@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.knowing.core.graph;
+package de.lmu.ifi.dbs.knowing.core.model;
 
 import org.eclipse.sapphire.modeling.IModelElement;
 import org.eclipse.sapphire.modeling.ListProperty;
@@ -20,15 +20,40 @@ public interface INode extends IModelElement {
 
 	/* === Node ID === */
 
-	@XmlBinding(path = "nodeId")
-	@Label(standard = "NodeId")
+	@XmlBinding(path = "id")
+	@Label(standard = "id")
 	@Required
-	ValueProperty PROP_NODE_ID = new ValueProperty(TYPE, "nodeId");
+	ValueProperty PROP_ID = new ValueProperty(TYPE, "id");
 
-	Value<String> getNodeId();
+	Value<String> getId();
 
-	void setNodeId(String value);
-		
+	void setId(String value);
+	
+	/* === Factory ID === */
+
+	@XmlBinding(path = "factoryId")
+	@Label(standard = "factoryId")
+	@Required
+	ValueProperty PROP_FACTORY_ID = new ValueProperty(TYPE, "factoryId");
+
+	Value<String> getFactoryId();
+
+	void setFactoryId(String value);
+	
+	/* === Type === */
+
+	@Type( base = NodeType.class )
+	@XmlBinding(path = "type")
+	@Label(standard = "type")
+	@Required
+	ValueProperty PROP_TYPE = new ValueProperty(TYPE, "type");
+
+	Value<NodeType> getType();
+
+	void setType(String value);
+	void setType(NodeType value);
+	
+    
 	/* === Properties === */
 
     @Type( base = IProperty.class )

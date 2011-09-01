@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.knowing.core.graph;
+package de.lmu.ifi.dbs.knowing.core.model;
 
 import org.eclipse.sapphire.modeling.IExecutableModelElement;
 import org.eclipse.sapphire.modeling.ImpliedElementProperty;
@@ -12,7 +12,7 @@ import org.eclipse.sapphire.modeling.annotations.Type;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlBinding;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlRootBinding;
 
-import de.lmu.ifi.dbs.knowing.core.graph.internal.IDataProcessingUnitOp;
+import de.lmu.ifi.dbs.knowing.core.model.internal.IFileDataProcessingUnitOp;
 
 @GenerateImpl
 @XmlRootBinding( elementName = "Units" )
@@ -33,8 +33,7 @@ public interface IFileDataProcessingUnit extends IExecutableModelElement {
     
     // *** Method: execute ***
     
-    @DelegateImplementation( IDataProcessingUnitOp.class )
-    
+    @DelegateImplementation( IFileDataProcessingUnitOp.class )
     Status execute( ProgressMonitor monitor );
     
 }
