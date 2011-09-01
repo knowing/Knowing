@@ -15,6 +15,8 @@ public class Activator extends AbstractUIPlugin {
 	// The shared instance
 	private static Activator plugin;
 	
+	public static String DPU_SDEF = "/de/lmu/ifi/dbs/knowing/ui/editor/DataProcessingUnitEditor.sdef";
+	
 	/**
 	 * The constructor
 	 */
