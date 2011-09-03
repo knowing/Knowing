@@ -16,7 +16,7 @@ public interface IEdge extends IModelElement {
 	
 	/* === Edge ID === */
 
-	@XmlBinding(path = "edgeId")
+	@XmlBinding(path = "@edgeId")
 	@Label(standard = "EdgeId")
 	@Required
 	ValueProperty PROP_EDGE_ID = new ValueProperty(TYPE, "edgeId");
@@ -28,7 +28,7 @@ public interface IEdge extends IModelElement {
 
 	/* === Source ID === */
 
-	@XmlBinding(path = "sourceId")
+	@XmlBinding(path = "@sourceId")
 	@Label(standard = "SourceId")
 	@Required
 	ValueProperty PROP_SOURCE_ID = new ValueProperty(TYPE, "sourceId");
@@ -40,7 +40,7 @@ public interface IEdge extends IModelElement {
 	
 	/* === Target ID === */
 
-	@XmlBinding(path = "targetId")
+	@XmlBinding(path = "@targetId")
 	@Label(standard = "TargetId")
 	@Required
 	ValueProperty PROP_TARGET_ID = new ValueProperty(TYPE, "targetId");

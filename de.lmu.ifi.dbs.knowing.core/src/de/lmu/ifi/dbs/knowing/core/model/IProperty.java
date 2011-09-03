@@ -16,7 +16,7 @@ public interface IProperty extends IModelElement {
 
 	/* === Key === */
 
-	@XmlBinding(path = "key")
+	@XmlBinding(path = "@key")
 	@Label(standard = "key")
 	@Required
 	ValueProperty PROP_KEY = new ValueProperty(TYPE, "key");
@@ -27,7 +27,7 @@ public interface IProperty extends IModelElement {
 	
 	/* === Value === */
 
-	@XmlBinding(path = "value")
+	@XmlBinding(path = "@value")
 	@Label(standard = "value")
 	@Required
 	ValueProperty PROP_VALUE = new ValueProperty(TYPE, "value");

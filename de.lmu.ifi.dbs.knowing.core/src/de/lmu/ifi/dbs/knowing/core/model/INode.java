@@ -20,7 +20,7 @@ public interface INode extends IModelElement {
 
 	/* === Node ID === */
 
-	@XmlBinding(path = "id")
+	@XmlBinding(path = "@id")
 	@Label(standard = "id")
 	@Required
 	ValueProperty PROP_ID = new ValueProperty(TYPE, "id");
@@ -57,7 +57,7 @@ public interface INode extends IModelElement {
 	/* === Properties === */
 
     @Type( base = IProperty.class )
-    @XmlListBinding( mappings = { @XmlListBinding.Mapping( element = "property", type = IProperty.class ) } )
+    @XmlListBinding(path = "properties", mappings = { @XmlListBinding.Mapping( element = "property", type = IProperty.class ) } )
     @Label( standard = "Properties" )
 
     ListProperty PROP_PROPERTIES = new ListProperty( TYPE, "properties" );

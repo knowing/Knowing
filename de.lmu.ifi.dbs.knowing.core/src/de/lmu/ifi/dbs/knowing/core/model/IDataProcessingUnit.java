@@ -20,14 +20,14 @@ import org.eclipse.sapphire.modeling.xml.annotations.XmlRootBinding;
 import de.lmu.ifi.dbs.knowing.core.model.internal.IDataProcessingUnitOp;
 
 @GenerateImpl
-@XmlRootBinding( elementName = "DataProcessingUnit" )
+@XmlRootBinding(elementName = "DataProcessingUnit")
 public interface IDataProcessingUnit extends IExecutableModelElement {
 
 	ModelElementType TYPE = new ModelElementType(IDataProcessingUnit.class);
 
 	/* === Name === */
 
-	@XmlBinding(path = "name")
+	@XmlBinding(path = "@name")
 	@Label(standard = "Name")
 	@Required
 	ValueProperty PROP_NAME = new ValueProperty(TYPE, "name");
@@ -35,7 +35,7 @@ public interface IDataProcessingUnit extends IExecutableModelElement {
 	Value<String> getName();
 
 	void setName(String value);
-	
+
 	/* === Description === */
 
 	@XmlBinding(path = "description")
@@ -46,7 +46,7 @@ public interface IDataProcessingUnit extends IExecutableModelElement {
 	Value<String> getDescription();
 
 	void setDescription(String value);
-	
+
 	/* ===Tags === */
 
 	@XmlBinding(path = "tags")
@@ -57,30 +57,27 @@ public interface IDataProcessingUnit extends IExecutableModelElement {
 	Value<String> getTags();
 
 	void setTags(String value);
-	
+
 	/* === Nodes === */
 
-    @Type( base = INode.class )
-    @XmlListBinding( mappings = { @XmlListBinding.Mapping( element = "node", type = INode.class ) } )
-    @Label( standard = "Nodes" )
+	@Type(base = INode.class)
+	@XmlListBinding(path = "nodes", mappings = { @XmlListBinding.Mapping(element = "node", type = INode.class) })
+	@Label(standard = "Nodes")
+	ListProperty PROP_NODES = new ListProperty(TYPE, "nodes");
 
-    ListProperty PROP_NODES = new ListProperty( TYPE, "nodes" );
+	ModelElementList<INode> getNodes();
 
-    ModelElementList<INode> getNodes();
-    
 	/* === Edges === */
 
-    @Type( base = IEdge.class )
-    @XmlListBinding( mappings = { @XmlListBinding.Mapping( element = "edge", type = IEdge.class ) } )
-    @Label( standard = "Edges" )
+	@Type(base = IEdge.class)
+	@XmlListBinding(path = "edges", mappings = { @XmlListBinding.Mapping(element = "edge", type = IEdge.class) })
+	@Label(standard = "Edges")
+	ListProperty PROP_EDGES = new ListProperty(TYPE, "edges");
 
-    ListProperty PROP_EDGES = new ListProperty( TYPE, "edges" );
+	ModelElementList<IEdge> getEdges();
 
-    ModelElementList<IEdge> getEdges();
-
-    
-    /* == == */
-    @DelegateImplementation( IDataProcessingUnitOp.class )
-    Status execute( ProgressMonitor monitor );
+	/* == == */
+	@DelegateImplementation(IDataProcessingUnitOp.class)
+	Status execute(ProgressMonitor monitor);
 
 }

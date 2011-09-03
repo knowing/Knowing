@@ -63,10 +63,33 @@
             </content>
         </page>
         <description>This is my Description</description>
+        <page>
+            <label>Node properties</label>
+            <description>Configure node properties</description>
+            <content>
+                <with>
+                    <path>node</path>
+                    <default-panel>
+                        <content>
+                            <include>dpu.node.page</include>
+                        </content>
+                    </default-panel>
+                </with>
+            </content>
+        </page>
     </wizard>
 	<import>
 		<package>de.lmu.ifi.dbs.knowing.core.model</package>
 		<package>de.lmu.ifi.dbs.knowing.ui.handler</package>
 		<package>de.lmu.ifi.dbs.knowing.ui.editor</package>
 	</import>
+    <composite>
+        <id>dpu.node.page</id>
+        <content>
+            <property-editor>id</property-editor>
+            <property-editor>factoryId</property-editor>
+            <property-editor>type</property-editor>
+            <property-editor>properties</property-editor>
+        </content>
+    </composite>
 </definition>

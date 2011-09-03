@@ -9,7 +9,6 @@ public final class IDataProcessingUnitOp {
 
 	public static final Status execute(final IDataProcessingUnit context, final ProgressMonitor monitor) {
 		// Do something here.
-		System.out.println("Store it!");
 		return Status.createOkStatus();
 	}
 
