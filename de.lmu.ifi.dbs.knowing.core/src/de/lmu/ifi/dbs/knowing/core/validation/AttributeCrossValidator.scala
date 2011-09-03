@@ -47,8 +47,8 @@ class AttributeCrossValidator extends XCrossValidator {
         guessAndSetClassLabel(trainData)
         //Logic
         self startLink crossValidators(i)
-        crossValidators(i) !! Register(self, None)
-        crossValidators(i) !! Configure(configureProperties(validator_properties, i))
+        crossValidators(i) ! Register(self, None)
+        crossValidators(i) ! Configure(configureProperties(validator_properties, i))
         crossValidators(i) ! Results(trainData)
         crossValidators(i) ! Queries(testData)
         i += 1
