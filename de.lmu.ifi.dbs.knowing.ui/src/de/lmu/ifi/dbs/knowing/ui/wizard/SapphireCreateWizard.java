@@ -8,6 +8,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.sapphire.modeling.IModelElement;
 import org.eclipse.sapphire.modeling.ResourceStoreException;
 import org.eclipse.sapphire.modeling.xml.RootXmlResource;
 import org.eclipse.sapphire.modeling.xml.XmlResourceStore;
@@ -24,21 +25,31 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
-import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit;
-import de.lmu.ifi.dbs.knowing.core.model.IEdge;
-import de.lmu.ifi.dbs.knowing.core.model.INode;
-
-public class SapphireCustomWizard extends Wizard implements INewWizard {
-
-	private WizardNewFileCreationPage createFilePage;
-	private IStructuredSelection selection;
-
-	private IDataProcessingUnit element;
+/**
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.1
+ * @since 2011-08-04
+ *
+ */
+public abstract class SapphireCreateWizard<M extends IModelElement> extends Wizard implements INewWizard {
+	//TODO This class could inherit from org.eclipse.sapphire.ui.swt.SapphireWizard, but addPages and performFinish are final
+	
+	//Sapphire specific
+	private final M element;
+	private final ISapphireWizardDef definition;
 	private final SapphireWizardPart part;
 	private final SapphirePartListener listener;
-	private final ISapphireWizardDef definition;
 
-	public SapphireCustomWizard(IDataProcessingUnit element, final String wizardDefPath) {
+	//Wizard specific
+	private IStructuredSelection selection;
+	private WizardNewFileCreationPage createFilePage;
+
+	/**
+	 * @param element
+	 * @param wizardDefPath
+	 */
+	public SapphireCreateWizard(M element, final String wizardDefPath) {
 		this.element = element;
 		definition = SapphireUiDefFactory.getWizardDef(wizardDefPath);
 
@@ -63,23 +74,31 @@ public class SapphireCustomWizard extends Wizard implements INewWizard {
 
 	@Override
 	public void addPages() {
-		if(selection == null )
+		// If the Wizard wasn't called via Strg+n
+		if (selection == null)
 			selection = new StructuredSelection();
-		addPage(createFilePage = new WizardNewFileCreationPage("DPU Source", (IStructuredSelection) selection));
+
+		// Add WizardNewFileCreationPage
+		String title = "Create " + element.getClass().getSimpleName();
+		createFilePage = new WizardNewFileCreationPage(title, (IStructuredSelection) selection);
+		addPage(createFilePage);
+
+		// Add declared sapphire pages
 		for (SapphireWizardPagePart pagePart : part.getPages())
 			addPage(new SapphireWizardPage(pagePart));
 	}
 
-
 	@Override
 	public boolean performFinish() {
+		// Create file, WorkspaceResourceStore and copy content to
+		// RootXmlResource handle by the store
 		try {
 			IFile file = createFilePage.createNewFile();
 			try {
 				XmlResourceStore store = new XmlResourceStore(new WorkspaceFileResourceStore(file));
 				RootXmlResource resource = new RootXmlResource(store);
-				IDataProcessingUnit dpu = element.TYPE.instantiate(resource);
-				copyContents(element, dpu);
+				M newElement = element.getModelElementType().instantiate(resource);
+				copyContents(element, newElement);
 				store.save();
 			} catch (ResourceStoreException e) {
 				e.printStackTrace();
@@ -87,6 +106,7 @@ public class SapphireCustomWizard extends Wizard implements INewWizard {
 			element.resource().save();
 		} catch (ResourceStoreException e) {
 			e.printStackTrace();
+			return false;
 		}
 		return true;
 	}
@@ -99,23 +119,13 @@ public class SapphireCustomWizard extends Wizard implements INewWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.selection = selection;
 	}
-	
-	protected void copyContents(IDataProcessingUnit source, IDataProcessingUnit destination) {
-		destination.setName(source.getName().getContent());
-		destination.setDescription(source.getDescription().getContent());
-		destination.setTags(source.getTags().getContent());
-		for(INode node : source.getNodes()) {
-			INode nodeNew = destination.getNodes().addNewElement();
-			nodeNew.setId(node.getId().getContent());
-			nodeNew.setFactoryId(node.getFactoryId().getContent());
-			nodeNew.setType(node.getType().getContent());
-		}
-		for(IEdge edge : source.getEdges()) {
-			IEdge edgeNew = destination.getEdges().addNewElement();
-			edgeNew.setEdgeId(edge.getEdgeId().getContent());
-			edgeNew.setSourceID(edge.getSourceId().getContent());
-			edgeNew.setTargetID(edge.getTargetId().getContent());
-		}
-	}
+
+	/**
+	 * <p>Found now way how to copy contents from one to another IModelElement,
+	 * so this method will do the work</p>
+	 * @param source
+	 * @param destination
+	 */
+	abstract protected void copyContents(M source, M destination);
 
 }

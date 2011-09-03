@@ -29,6 +29,19 @@ public interface INode extends IModelElement {
 
 	void setId(String value);
 	
+	/* === Type === */
+
+	@Type( base = NodeType.class )
+	@XmlBinding(path = "@type")
+	@Label(standard = "type")
+	@Required
+	ValueProperty PROP_TYPE = new ValueProperty(TYPE, "type");
+
+	Value<NodeType> getType();
+
+	void setType(String value);
+	void setType(NodeType value);
+	
 	/* === Factory ID === */
 
 	@XmlBinding(path = "factoryId")
@@ -39,19 +52,6 @@ public interface INode extends IModelElement {
 	Value<String> getFactoryId();
 
 	void setFactoryId(String value);
-	
-	/* === Type === */
-
-	@Type( base = NodeType.class )
-	@XmlBinding(path = "type")
-	@Label(standard = "type")
-	@Required
-	ValueProperty PROP_TYPE = new ValueProperty(TYPE, "type");
-
-	Value<NodeType> getType();
-
-	void setType(String value);
-	void setType(NodeType value);
 	
     
 	/* === Properties === */

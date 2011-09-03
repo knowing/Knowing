@@ -63,20 +63,6 @@
             </content>
         </page>
         <description>This is my Description</description>
-        <page>
-            <label>Node properties</label>
-            <description>Configure node properties</description>
-            <content>
-                <with>
-                    <path>node</path>
-                    <default-panel>
-                        <content>
-                            <include>dpu.node.page</include>
-                        </content>
-                    </default-panel>
-                </with>
-            </content>
-        </page>
     </wizard>
 	<import>
 		<package>de.lmu.ifi.dbs.knowing.core.model</package>
