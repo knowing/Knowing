@@ -31,7 +31,7 @@ public interface IDataProcessingUnit extends IExecutableModelElement {
 	@XmlBinding(path = "@name")
 	@Label(standard = "Name")
 	@Required
-	ValueProperty PROP_NAME = new ValueProperty(TYPE, "name");
+	ValueProperty PROP_NAME = new ValueProperty(TYPE, "Name");
 
 	Value<String> getName();
 
@@ -42,7 +42,7 @@ public interface IDataProcessingUnit extends IExecutableModelElement {
 	@XmlBinding(path = "description")
 	@Label(standard = "Description")
 	@LongString
-	ValueProperty PROP_DESCRIPTION = new ValueProperty(TYPE, "description");
+	ValueProperty PROP_DESCRIPTION = new ValueProperty(TYPE, "Description");
 
 	Value<String> getDescription();
 
@@ -52,7 +52,7 @@ public interface IDataProcessingUnit extends IExecutableModelElement {
 
 	@XmlBinding(path = "tags")
 	@Label(standard = "Tags")
-	ValueProperty PROP_TAGS = new ValueProperty(TYPE, "tags");
+	ValueProperty PROP_TAGS = new ValueProperty(TYPE, "Tags");
 
 	Value<String> getTags();
 
@@ -63,7 +63,7 @@ public interface IDataProcessingUnit extends IExecutableModelElement {
 	@Type(base = INode.class)
 	@XmlListBinding(path = "nodes", mappings = { @XmlListBinding.Mapping(element = "node", type = INode.class) })
 	@Label(standard = "Nodes")
-	ListProperty PROP_NODES = new ListProperty(TYPE, "nodes");
+	ListProperty PROP_NODES = new ListProperty(TYPE, "Nodes");
 
 	ModelElementList<INode> getNodes();
 
@@ -72,7 +72,7 @@ public interface IDataProcessingUnit extends IExecutableModelElement {
 	@Type(base = IEdge.class)
 	@XmlListBinding(path = "edges", mappings = { @XmlListBinding.Mapping(element = "edge", type = IEdge.class) })
 	@Label(standard = "Edges")
-	ListProperty PROP_EDGES = new ListProperty(TYPE, "edges");
+	ListProperty PROP_EDGES = new ListProperty(TYPE, "Edges");
 
 	ModelElementList<IEdge> getEdges();
 

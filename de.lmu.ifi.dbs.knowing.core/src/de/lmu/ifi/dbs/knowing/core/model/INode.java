@@ -15,7 +15,7 @@ import org.eclipse.sapphire.modeling.xml.annotations.XmlListBinding;
 
 @GenerateImpl
 public interface INode extends IModelElement {
-
+	
 	ModelElementType TYPE = new ModelElementType(INode.class);
 
 	/* === Node ID === */
@@ -64,13 +64,5 @@ public interface INode extends IModelElement {
 
     ModelElementList<IProperty> getProperties();
     
-	/* === Edges === */
-
-	@Type(base = IEdge.class)
-	@XmlListBinding(path = "/edges", mappings = { @XmlListBinding.Mapping(element = "edge", type = IEdge.class) })
-	@Label(standard = "Edges")
-	ListProperty PROP_EDGES = new ListProperty(TYPE, "edges");
-
-	ModelElementList<IEdge> getEdges();
 	
 }

@@ -1,12 +1,13 @@
 package de.lmu.ifi.dbs.knowing.core.util
 
-import de.lmu.ifi.dbs.knowing.core.model.NodeType
-import de.lmu.ifi.dbs.knowing.core.model.INode
-import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
-
+import de.lmu.ifi.dbs.knowing.core.model._
 import scala.collection.JavaConversions._
 
 object DPUUtil {
+
+  /* =========================== */
+  /* ==== Node util methods ==== */
+  /* =========================== */
 
   /**
    *
@@ -37,9 +38,15 @@ object DPUUtil {
   def processorNodes(dpu: IDataProcessingUnit): Array[INode] = nodesOfType(NodeType.PROCESSOR, dpu)
 
   /**
-   * 
+   *
    */
   def node(typ: String, factory: String, dpu: IDataProcessingUnit): Array[INode] = {
     dpu.getNodes.toList filter (node => node.getType.equals(typ) && node.getFactoryId.equals(factory)) toArray
   }
+
+  /* =========================== */
+  /* ==== Edge util methods ==== */
+  /* =========================== */
+
+  
 }

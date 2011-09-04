@@ -5,6 +5,7 @@ import static de.lmu.ifi.dbs.knowing.ui.interal.Activator.PLUGIN_ID;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.sapphire.modeling.IModelElement;
 import org.eclipse.sapphire.modeling.xml.RootXmlResource;
@@ -24,16 +25,13 @@ import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit;
 public class DPUSapphireEditor extends SapphireEditor {
 
 	private StructuredTextEditor sourceEditor;
-	private MasterDetailsEditorPage detailsPage;
+	private MasterDetailsEditorPage overviewPage;
 	private SapphireDiagramEditor diagramPage;
 
 	private IModelElement dpuModel;
 
 	public DPUSapphireEditor() {
 		super("de.lmu.ifi.dbs.knowing.ui.editor");
-
-		// setRootModelElementType(IDataProcessingUnit.TYPE);
-		// setEditorDefinitionPath(PLUGIN_ID + DPU_SDEF+ "/dpu.editor.page");
 	}
 
 	@Override
@@ -55,9 +53,11 @@ public class DPUSapphireEditor extends SapphireEditor {
 
 	@Override
 	protected void createFormPages() throws PartInitException {
-		IPath path = new Path(PLUGIN_ID + DPU_SDEF + "/dpu.editor.detail");
-		detailsPage = new MasterDetailsEditorPage(this, dpuModel, path);
-		addPage(0, this.detailsPage);
+		IPath path = new Path(PLUGIN_ID + DPU_SDEF + "/dpu.editor.overview");
+		overviewPage = new MasterDetailsEditorPage(this, dpuModel, path);
+		addPage(1, overviewPage);
+		setPageText(1, "overview");
+		setPageId(pages.get(1), "Overview", overviewPage.getPart());
 	}
 
 	@Override
@@ -74,8 +74,14 @@ public class DPUSapphireEditor extends SapphireEditor {
 
 		if (diagramEditorInput != null) {
 			addPage(0, diagramPage, diagramEditorInput);
-			setPageText(0, "Diagram");
-			setPageId(this.pages.get(0), "diagram", diagramPage.getPart());
+			setPageText(0, "diagram");
+			setPageId(pages.get(0), "diagram", diagramPage.getPart());
 		}
+	}
+	
+	@Override
+	public void doSave(final IProgressMonitor monitor) {
+		super.doSave(monitor);
+		diagramPage.doSave(monitor);
 	}
 }

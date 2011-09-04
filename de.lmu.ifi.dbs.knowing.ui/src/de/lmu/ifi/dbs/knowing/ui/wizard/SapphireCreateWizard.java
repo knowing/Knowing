@@ -23,25 +23,31 @@ import org.eclipse.sapphire.ui.swt.SapphireWizardPage;
 import org.eclipse.sapphire.workspace.WorkspaceFileResourceStore;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
+import org.eclipse.ui.ide.IDE;
 
 /**
  * 
  * @author Nepomuk Seiler
  * @version 0.1
  * @since 2011-08-04
- *
+ * 
  */
 public abstract class SapphireCreateWizard<M extends IExecutableModelElement> extends Wizard implements INewWizard {
-	//TODO This class could inherit from org.eclipse.sapphire.ui.swt.SapphireWizard, but addPages and performFinish are final
-	
-	//Sapphire specific
+	// TODO This class could inherit from
+	// org.eclipse.sapphire.ui.swt.SapphireWizard, but addPages and
+	// performFinish are final
+
+	// Sapphire specific
 	private final M element;
 	private final ISapphireWizardDef definition;
 	private final SapphireWizardPart part;
 	private final SapphirePartListener listener;
 
-	//Wizard specific
+	// Wizard specific
 	private IStructuredSelection selection;
 	private WizardNewFileCreationPage createFilePage;
 
@@ -93,21 +99,28 @@ public abstract class SapphireCreateWizard<M extends IExecutableModelElement> ex
 		// Create file, WorkspaceResourceStore and copy content to
 		// RootXmlResource handle by the store
 		try {
-			IFile file = createFilePage.createNewFile();
-			try {
-				XmlResourceStore store = new XmlResourceStore(new WorkspaceFileResourceStore(file));
-				RootXmlResource resource = new RootXmlResource(store);
-				M newElement = element.getModelElementType().instantiate(resource);
-				copyContents(element, newElement);
-				store.save();
-			} catch (ResourceStoreException e) {
-				e.printStackTrace();
-			}
-			element.resource().save();
+			final IFile file = createFilePage.createNewFile();
+			XmlResourceStore store = new XmlResourceStore(new WorkspaceFileResourceStore(file));
+			RootXmlResource resource = new RootXmlResource(store);
+			M newElement = element.getModelElementType().instantiate(resource);
+			copyContents(element, newElement);
+			store.save();
+			
+			getShell().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					IWorkbenchPage page =
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+					try {
+						IDE.openEditor(page, file, true);
+					} catch (PartInitException e) {
+					}
+				}
+			});
 		} catch (ResourceStoreException e) {
 			e.printStackTrace();
 			return false;
 		}
+
 		return true;
 	}
 
@@ -121,8 +134,11 @@ public abstract class SapphireCreateWizard<M extends IExecutableModelElement> ex
 	}
 
 	/**
-	 * <p>Found no way how to copy contents from one to another IModelElement,
-	 * so this method will do the work</p>
+	 * <p>
+	 * Found no way how to copy contents from one to another IModelElement, so
+	 * this method will do the work
+	 * </p>
+	 * 
 	 * @param source
 	 * @param destination
 	 */

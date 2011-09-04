@@ -9,17 +9,17 @@ public class NodeReferenceService extends ReferenceService {
 
 	@Override
 	public Object resolve(String reference) {
-		System.out.println("Trying to resolve: " + reference);
-		if (reference != null) {
-			final IDataProcessingUnit dpu = element().nearest(IDataProcessingUnit.class);
+		if (reference == null)
+			return null;
 
-			for (INode node : dpu.getNodes()) {
-				if (reference.equals(node.getId().getText())) {
-					return node;
-				}
-			}
+		final IDataProcessingUnit dpu = element().nearest(IDataProcessingUnit.class);
+		for (INode node : dpu.getNodes()) {
+			if (reference.equals(node.getId().getText()))
+				return node;
 		}
+		//non found
 		return null;
+
 	}
 
 }

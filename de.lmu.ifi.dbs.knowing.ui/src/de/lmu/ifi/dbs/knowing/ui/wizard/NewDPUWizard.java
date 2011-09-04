@@ -25,11 +25,10 @@ public class NewDPUWizard extends SapphireCreateWizard<IDataProcessingUnit> {
 		}
 		for(IEdge edge : source.getEdges()) {
 			IEdge edgeNew = destination.getEdges().addNewElement();
-			edgeNew.setEdgeId(edge.getEdgeId().getContent());
-			edgeNew.setSourceID(edge.getSourceId().getContent());
-			edgeNew.setTargetID(edge.getTargetId().getContent());
+			edgeNew.setId(edge.getId().getContent());
+			edgeNew.setSource(edge.getSource().getContent());
+			edgeNew.setTarget(edge.getTarget().getContent());
 		}
-		
 	}
 
 }
