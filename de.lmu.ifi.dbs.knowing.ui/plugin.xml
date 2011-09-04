@@ -4,16 +4,8 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="de.lmu.ifi.dbs.knowing.ui.editor.DPUEditor"
-            contributorClass="de.lmu.ifi.dbs.knowing.ui.editor.DPUActionBarContributor"
-            default="true"
-            extensions="dpu, xml"
-            filenames="dpu, dpu.xml"
-            id="de.lmu.ifi.dbs.knowing.ui.editor.DPUEditor"
-            name="DPU Edtior">
-      </editor>
-      <editor
             class="de.lmu.ifi.dbs.knowing.ui.editor.DPUSapphireEditor"
+            contributorClass="de.lmu.ifi.dbs.knowing.ui.editor.DPUActionBarContributor"
             default="true"
             extensions="dpu, xml"
             id="de.lmu.ifi.dbs.knowing.ui.editor"
@@ -72,25 +64,5 @@
                type="org.eclipse.ui.model.IWorkbenchAdapter">
          </adapter>
       </factory>
-   </extension>
-   <extension
-         point="org.eclipse.ui.commands">
-      <command
-            defaultHandler="de.lmu.ifi.dbs.knowing.ui.handler.DPUSapphireWizardHandler"
-            id="de.lmu.ifi.dbs.knowing.ui.dpu.wizard"
-            name="New Sapphire DPU">
-      </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="menu:org.eclipse.ui.main.menu">
-         <command
-               commandId="de.lmu.ifi.dbs.knowing.ui.dpu.wizard"
-               label="Sapphire DPU Wizard"
-               style="push">
-         </command>
-      </menuContribution>
    </extension>
 </plugin>

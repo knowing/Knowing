@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definition>
-	<editor-page>
-		<id>de.mukis.sapphire.dpu.masterDetail</id>
-		<page-name>Design</page-name>
-		<page-header-text>Design View</page-header-text>
-	</editor-page>
 	<dialog>
 		<id>de.mukis.sapphire.dpu.dialog</id>
 		<label>DPU Dialog</label>
@@ -21,31 +16,129 @@
 		</content>
 	</composite>
 	<editor-page>
-		<id>dpu.editor.page</id>
+		<id>dpu.editor.detail</id>
 		<root-node>
 			<node>
-				<label>DPU</label>
+				<label>${ Name == null ? &quot;&lt;DataProcessingUnit&gt;&quot; : Name }</label>
 				<section>
-					<label>DataProcessingUnit</label>
+					<label>General</label>
 					<content>
-						<label>DPU Content Editor</label>
+                        <property-editor>name</property-editor>
+                        <property-editor>
+                            <property>Description</property>
+                            <hint>
+                                <name>expand.vertically</name>
+                                <value>true</value>
+                            </hint>
+                        </property-editor>
+                        <property-editor>tags</property-editor>
 					</content>
 				</section>
 				<node-factory>
-					<property>DPUs</property>
 					<case>
-						<label>DPU Name here</label>
+						<label>${ Id == null ? &quot;&lt;node&gt;&quot; : Id }</label>
 						<section>
-							<label>DPU Name comes here too</label>
-							<content>
-								<include>de.mukis.sapphire.dpu.composite</include>
-							</content>
+							<label>Node</label>
+                            <content>
+                                <property-editor>id</property-editor>
+                                <property-editor>properties</property-editor>
+                            </content>
 						</section>
 					</case>
+                    <property>nodes</property>
 				</node-factory>
+
+				<node-factory>
+					<case>
+						<label>${ edgeId == null ? &quot;&lt;edge&gt;&quot; : edgeId }</label>
+						<section>
+							<label>Edge</label>
+                            <content>
+                                <property-editor>edgeId</property-editor>
+                                <property-editor>sourceId</property-editor>
+                                <property-editor>targetId</property-editor>
+                            </content>
+						</section>
+					</case>
+                    <property>edges</property>
+				</node-factory>
+                <section>
+                    <label>Nodes configuration</label>
+                    <collapsible>true</collapsible>
+                    <content>
+                        <property-editor>
+                            <property>nodes</property>
+                            <hint>
+                                <name>show.label</name>
+                                <value>false</value>
+                            </hint>
+                        </property-editor>
+                    </content>
+                </section>
+                <section>
+                    <label>Edges configuration</label>
+                    <content>
+                        <property-editor>
+                            <property>edges</property>
+                            <hint>
+                                <name>show.label</name>
+                                <value>false</value>
+                            </hint>
+                        </property-editor>
+                    </content>
+                    <collapsible>true</collapsible>
+                </section>
 			</node>
 		</root-node>
+        <page-name>details</page-name>
+        <page-header-text>detail view</page-header-text>
+        <initial-selection>DataProcessingUnit</initial-selection>
 	</editor-page>
+    <diagram-page>
+        <id>dpu.editor.diagram</id>
+        <node>
+            <id>node</id>
+            <instance-id>${ id }</instance-id>
+            <tool-palette-label>node</tool-palette-label>
+            <property>nodes</property>
+           <connection-binding>
+                <connection-id>Edge</connection-id>
+                <property>Edges</property>
+                <instance-id>${ edgeId }</instance-id>
+                <label>${ edgeId }</label>
+                <endpoint2>
+                    <property>edgeId</property>
+                    <value>myId</value>
+                </endpoint2>
+                <properties-view>
+                    <page>
+                        <label>Connections</label>
+                        <content>
+                            <property-editor>targetId</property-editor>
+                        </content>
+                    </page>
+                </properties-view>
+            </connection-binding>
+            <label>${ id == null ? &quot;&lt;noId&gt;&quot; : id }</label>
+        </node>
+        <grid>
+            <visible>true</visible>
+        </grid>
+        <connection>
+            <tool-palette-label>edge</tool-palette-label>
+            <id>Edge</id>
+            <endpoint2>
+                <type>arrow</type>
+            </endpoint2>
+        </connection>
+        <page-name>diagram</page-name>
+        <page-header-text>diagramm view</page-header-text>
+    </diagram-page>
+	<import>
+		<package>de.lmu.ifi.dbs.knowing.core.model</package>
+		<package>de.lmu.ifi.dbs.knowing.ui.handler</package>
+		<package>de.lmu.ifi.dbs.knowing.ui.editor</package>
+	</import>
     <wizard>
         <id>dpu.wizard</id>
         <label>Sapphire DPU</label>
@@ -64,18 +157,4 @@
         </page>
         <description>This is my Description</description>
     </wizard>
-	<import>
-		<package>de.lmu.ifi.dbs.knowing.core.model</package>
-		<package>de.lmu.ifi.dbs.knowing.ui.handler</package>
-		<package>de.lmu.ifi.dbs.knowing.ui.editor</package>
-	</import>
-    <composite>
-        <id>dpu.node.page</id>
-        <content>
-            <property-editor>id</property-editor>
-            <property-editor>factoryId</property-editor>
-            <property-editor>type</property-editor>
-            <property-editor>properties</property-editor>
-        </content>
-    </composite>
 </definition>

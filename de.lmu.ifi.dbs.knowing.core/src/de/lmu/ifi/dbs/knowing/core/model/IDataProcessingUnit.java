@@ -11,6 +11,7 @@ import org.eclipse.sapphire.modeling.ValueProperty;
 import org.eclipse.sapphire.modeling.annotations.DelegateImplementation;
 import org.eclipse.sapphire.modeling.annotations.GenerateImpl;
 import org.eclipse.sapphire.modeling.annotations.Label;
+import org.eclipse.sapphire.modeling.annotations.LongString;
 import org.eclipse.sapphire.modeling.annotations.Required;
 import org.eclipse.sapphire.modeling.annotations.Type;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlBinding;
@@ -40,7 +41,7 @@ public interface IDataProcessingUnit extends IExecutableModelElement {
 
 	@XmlBinding(path = "description")
 	@Label(standard = "Description")
-	@Required
+	@LongString
 	ValueProperty PROP_DESCRIPTION = new ValueProperty(TYPE, "description");
 
 	Value<String> getDescription();
@@ -51,7 +52,6 @@ public interface IDataProcessingUnit extends IExecutableModelElement {
 
 	@XmlBinding(path = "tags")
 	@Label(standard = "Tags")
-	@Required
 	ValueProperty PROP_TAGS = new ValueProperty(TYPE, "tags");
 
 	Value<String> getTags();

@@ -44,7 +44,7 @@ public interface INode extends IModelElement {
 	
 	/* === Factory ID === */
 
-	@XmlBinding(path = "factoryId")
+	@XmlBinding(path = "@factoryId")
 	@Label(standard = "factoryId")
 	@Required
 	ValueProperty PROP_FACTORY_ID = new ValueProperty(TYPE, "factoryId");
@@ -63,5 +63,14 @@ public interface INode extends IModelElement {
     ListProperty PROP_PROPERTIES = new ListProperty( TYPE, "properties" );
 
     ModelElementList<IProperty> getProperties();
+    
+	/* === Edges === */
+
+	@Type(base = IEdge.class)
+	@XmlListBinding(path = "/edges", mappings = { @XmlListBinding.Mapping(element = "edge", type = IEdge.class) })
+	@Label(standard = "Edges")
+	ListProperty PROP_EDGES = new ListProperty(TYPE, "edges");
+
+	ModelElementList<IEdge> getEdges();
 	
 }

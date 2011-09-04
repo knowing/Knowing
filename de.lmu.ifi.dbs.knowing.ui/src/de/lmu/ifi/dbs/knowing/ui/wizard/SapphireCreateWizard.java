@@ -8,7 +8,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.sapphire.modeling.IModelElement;
+import org.eclipse.sapphire.modeling.IExecutableModelElement;
 import org.eclipse.sapphire.modeling.ResourceStoreException;
 import org.eclipse.sapphire.modeling.xml.RootXmlResource;
 import org.eclipse.sapphire.modeling.xml.XmlResourceStore;
@@ -32,7 +32,7 @@ import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
  * @since 2011-08-04
  *
  */
-public abstract class SapphireCreateWizard<M extends IModelElement> extends Wizard implements INewWizard {
+public abstract class SapphireCreateWizard<M extends IExecutableModelElement> extends Wizard implements INewWizard {
 	//TODO This class could inherit from org.eclipse.sapphire.ui.swt.SapphireWizard, but addPages and performFinish are final
 	
 	//Sapphire specific
@@ -121,7 +121,7 @@ public abstract class SapphireCreateWizard<M extends IModelElement> extends Wiza
 	}
 
 	/**
-	 * <p>Found now way how to copy contents from one to another IModelElement,
+	 * <p>Found no way how to copy contents from one to another IModelElement,
 	 * so this method will do the work</p>
 	 * @param source
 	 * @param destination
