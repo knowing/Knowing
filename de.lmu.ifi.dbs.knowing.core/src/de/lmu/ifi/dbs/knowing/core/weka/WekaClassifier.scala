@@ -35,6 +35,7 @@ class WekaClassifier(protected val classifier: Classifier) extends TProcessor {
     }
     classifier.buildClassifier(instances)
     debug(this, "... build successfull for " + name)
+    processStoredQueries
   }
 
   def query(query: Instance): Instances = {

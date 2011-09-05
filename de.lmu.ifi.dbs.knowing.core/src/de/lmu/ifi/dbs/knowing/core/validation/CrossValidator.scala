@@ -54,7 +54,7 @@ class CrossValidator extends TProcessor {
   }
 
   def build(instances: Instances) {
-    debug(this, "Build CrossValidator " + instances.relationName)
+//    debug(this, "Build CrossValidator " + instances.relationName)
     val index = guessAndSetClassLabel(instances)
     index match {
       case -1 =>
@@ -77,7 +77,7 @@ class CrossValidator extends TProcessor {
       case f =>
         filter = Some(filterFactory.getInstance)
         self startLink filter.get
-        filter.get !! Configure(classifierProperties)
+        filter.get ! Configure(classifierProperties)
     }
 
     //Init classifier
@@ -89,9 +89,11 @@ class CrossValidator extends TProcessor {
     filterTrained match {
       case true =>
         //No filter, classifier gets trained directly
+        debug(this, "Build CrossValidator[unfiltered] with " + instances.relationName)
         classifierTrained = true
         startValidation(instances, classifier.get)
       case false =>
+        debug(this, "Build CrossValidator[filtered] with" + instances.relationName)
         startValidation(instances, filter.get, true)
     }
     confusionMatrix = ResultsUtil.confusionMatrix(getClassLabels.toList)
@@ -180,7 +182,7 @@ class CrossValidator extends TProcessor {
     (filter, filterTrained, classifier, classifierTrained) match {
       case (_, _, None, _) => warning(this, "No classifier found")
       //cache if filtered isn't trained yet
-      case (Some(f), false, Some(_), _) => //cacheQuery(query)
+      case (Some(f), false, Some(_), _) => cacheQuery(query)
       //forward to filter if exists
       case (Some(f), true, Some(c), false) => f ! Query(query) 
       //forward directly to classifier
