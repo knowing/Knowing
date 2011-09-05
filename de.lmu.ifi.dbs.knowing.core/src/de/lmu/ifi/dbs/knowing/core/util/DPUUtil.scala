@@ -2,6 +2,7 @@ package de.lmu.ifi.dbs.knowing.core.util
 
 import de.lmu.ifi.dbs.knowing.core.model._
 import scala.collection.JavaConversions._
+import java.util.Properties
 
 object DPUUtil {
 
@@ -44,9 +45,16 @@ object DPUUtil {
     dpu.getNodes.toList filter (node => node.getType.equals(typ) && node.getFactoryId.equals(factory)) toArray
   }
 
+  def nodeProperties(node: INode): Properties = {
+    val props = new Properties
+    node.getProperties.foldLeft(props) { (properties, p) =>
+      properties.setProperty(p.getKey.getContent, p.getValue.getContent)
+      properties
+    }
+  }
+
   /* =========================== */
   /* ==== Edge util methods ==== */
   /* =========================== */
 
-  
 }

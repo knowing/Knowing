@@ -7,8 +7,9 @@ Bundle-Activator: de.lmu.ifi.dbs.knowing.core.internal.Activator
 Require-Bundle: nz.ac.waikato.cs.weka;bundle-version="3.7.3";visibility:=reexport,
  org.codehaus.aspectwerkz;bundle-version="2.2.3";visibility:=reexport,
  slf4j.api;bundle-version="1.6.1",
- org.eclipse.sapphire.modeling;bundle-version="0.3.0",
- org.eclipse.sapphire.modeling.xml;bundle-version="0.3.0"
+ org.eclipse.sapphire.modeling;bundle-version="0.3.0";visibility:=reexport,
+ org.eclipse.sapphire.modeling.xml;bundle-version="0.3.0";visibility:=reexport,
+ org.eclipse.sapphire.java;bundle-version="0.3.0";visibility:=reexport
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: akka,

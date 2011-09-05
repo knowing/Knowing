@@ -5,8 +5,8 @@ import de.lmu.ifi.dbs.knowing.core.graph.Node
 import akka.actor.ActorRef
 import weka.core.Instances
 import weka.core.Instance
-
 import java.util.Properties
+import de.lmu.ifi.dbs.knowing.core.model.INode
 
 trait Event
 trait Status extends Event
@@ -19,7 +19,7 @@ case class QueryResults(instances: Instances, query: Instance) extends Event
 case class QueriesResults(results: List[(Instances, Instance)])
 case class Query(query: Instance) extends Event
 case class Queries(queries: Instances, id: String = "") extends Event
-case class UIFactoryEvent(factory: UIFactory, node: Node) extends Event
+case class UIFactoryEvent(factory: UIFactory, node: INode) extends Event
 
 /* ======================== */
 /* == Status Commands ===== */

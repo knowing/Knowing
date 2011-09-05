@@ -1,44 +1,46 @@
 package de.lmu.ifi.dbs.knowing.core.service
 import java.net.URL
-
 import org.osgi.framework.Bundle
-
-import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit
 import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlRootElement
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.JAXBException
+import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
+import org.eclipse.sapphire.modeling.xml.XmlResourceStore
+import org.eclipse.sapphire.modeling.UrlResourceStore
+import org.eclipse.sapphire.modeling.ResourceStoreException
+import org.eclipse.sapphire.modeling.xml.RootXmlResource
 
 trait IDPUProvider {
 
-  def getDataProcessingUnits: Array[DataProcessingUnit]
+  def getDataProcessingUnits: Array[IDataProcessingUnit]
 
-  def getDataProcessingUnit(name: String): DataProcessingUnit
-  
+  def getDataProcessingUnit(name: String): IDataProcessingUnit
+
   def getURL(name: String): URL
 
 }
 
 class BundleDPUProvider(bundle: Bundle, dir: String = "/KNOWING-INF") extends IDPUProvider {
 
-  private var dpuMap: Map[String, (DataProcessingUnit, URL)] = Map()
+  private var dpuMap: Map[String, (IDataProcessingUnit, URL)] = Map()
   init
 
   /**
-   * 
+   *
    */
-  def getDataProcessingUnits: Array[DataProcessingUnit] = dpuMap map { case (_, (dpu, _)) => dpu } toArray
+  def getDataProcessingUnits: Array[IDataProcessingUnit] = dpuMap map { case (_, (dpu, _)) => dpu } toArray
 
   /**
    * Doesn't handle non existing DPUs yet!
    */
-  def getDataProcessingUnit(name: String): DataProcessingUnit = {
+  def getDataProcessingUnit(name: String): IDataProcessingUnit = {
     dpuMap.get(name) match {
       case None => null
       case Some(e) => e._1
     }
   }
-  
+
   /**
    * Doesn't handle non existing DPUs yet!
    */
@@ -49,25 +51,27 @@ class BundleDPUProvider(bundle: Bundle, dir: String = "/KNOWING-INF") extends ID
     if (entries == null)
       return
 
-      
     var urls: List[URL] = Nil
     while (entries.hasMoreElements)
       urls = entries.nextElement.asInstanceOf[URL] :: urls
 
     try {
-      val context = JAXBContext.newInstance(classOf[DataProcessingUnit])
-      val um = context.createUnmarshaller
-      val dpus = urls map (url => (um.unmarshal(url).asInstanceOf[DataProcessingUnit], url))
+      val dpus = urls map { url =>
+        val store = new XmlResourceStore(new UrlResourceStore(url));
+        val resource = new RootXmlResource(store)
+        val dpu: IDataProcessingUnit = IDataProcessingUnit.TYPE.instantiate(resource)
+        (dpu, url)
+      }
       //TODO BundleDPUProvider => handle dpu's with identical name
-      dpuMap = dpus map {case (dpu, url) => (dpu.name, (dpu, url))} toMap
+      dpuMap = dpus map { case (dpu, url) => (dpu.getName.getContent, (dpu, url)) } toMap
     } catch {
-      case e: JAXBException => e.printStackTrace
+      case e: ResourceStoreException => e.printStackTrace
       case e: Exception => e.printStackTrace
     }
   }
 }
 
 object BundleDPUProvider {
-  
+
   def newInstance(bundle: Bundle): BundleDPUProvider = new BundleDPUProvider(bundle)
 }

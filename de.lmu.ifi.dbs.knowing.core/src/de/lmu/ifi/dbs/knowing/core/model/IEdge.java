@@ -14,6 +14,7 @@ import org.eclipse.sapphire.modeling.annotations.Required;
 import org.eclipse.sapphire.modeling.annotations.Service;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlBinding;
 
+
 import de.lmu.ifi.dbs.knowing.core.model.internal.NodeReferenceService;
 
 @GenerateImpl

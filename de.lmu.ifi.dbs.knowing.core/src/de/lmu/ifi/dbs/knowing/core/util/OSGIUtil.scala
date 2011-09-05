@@ -5,11 +5,11 @@ import org.osgi.framework.ServiceRegistration
 import org.osgi.framework.InvalidSyntaxException
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import de.lmu.ifi.dbs.knowing.core.processing._
-import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit
 import OSGIUtil._
 import de.lmu.ifi.dbs.knowing.core.internal.Activator
 import de.lmu.ifi.dbs.knowing.core.service.IDPUProvider
 import java.net.URL
+import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
 
 /**
  * <p>Util for (de)register DataMining-Factory-Services</p>
@@ -78,19 +78,19 @@ object OSGIUtil {
   val PROCESSOR_CLASS = classOf[TProcessor].getName
   val PRESENTER_CLASS = classOf[TPresenter[_]].getName
 
-  def registeredDPUs: Array[DataProcessingUnit] = {
+  def registeredDPUs: Array[IDataProcessingUnit] = {
     val services = Activator.tracker.getServices
     if(services == null)
       return Array()
     val provider = services map (_.asInstanceOf[IDPUProvider])
     //FoldLeft function
-    val f = (p1: List[DataProcessingUnit], p2: IDPUProvider) => p1 ::: p2.getDataProcessingUnits.toList
+    val f = (p1: List[IDataProcessingUnit], p2: IDPUProvider) => p1 ::: p2.getDataProcessingUnits.toList
     //Actual foldLeft
-    val dpus = (List[DataProcessingUnit]() /: provider)(f)
+    val dpus = (List[IDataProcessingUnit]() /: provider)(f)
     dpus toArray
   }
 
-  def registeredDPU(name: String): DataProcessingUnit = {
+  def registeredDPU(name: String): IDataProcessingUnit = {
     val provider = Activator.tracker.getServices map (_.asInstanceOf[IDPUProvider])
     val dpus = for (p <- provider if (p.getDataProcessingUnit(name) != null)) yield p.getDataProcessingUnit(name)
     if (dpus.nonEmpty) dpus(0)

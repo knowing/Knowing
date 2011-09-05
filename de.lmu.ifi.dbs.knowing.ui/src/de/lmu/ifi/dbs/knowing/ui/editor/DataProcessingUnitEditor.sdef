@@ -132,7 +132,7 @@
 		</node>
 		<connection>
 			<id>node_node_connection</id>
-			<tool-palette-label>node connection</tool-palette-label>
+			<tool-palette-label>Edge</tool-palette-label>
 			<endpoint2>
 				<type>arrow</type>
 			</endpoint2>

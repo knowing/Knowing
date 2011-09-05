@@ -1,4 +1,7 @@
-#Wed Aug 31 11:28:52 CEST 2011
+#Mon Sep 05 23:29:45 CEST 2011
+=\=\=\=\=\=\=
+<<<<<<<=HEAD
+>>>>>>>=refs/heads/master
 eclipse.preferences.version=1
 org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=enabled
 org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.6

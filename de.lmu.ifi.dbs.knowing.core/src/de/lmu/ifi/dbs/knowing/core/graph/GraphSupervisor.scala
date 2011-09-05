@@ -11,13 +11,17 @@ import de.lmu.ifi.dbs.knowing.core.processing.{ TPresenter, TSender, TLoader }
 import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
+import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
+import de.lmu.ifi.dbs.knowing.core.util.DPUUtil.{ nodeProperties }
 import java.util.Properties
 import java.util.concurrent.{ TimeUnit, ScheduledFuture }
 import scala.collection.mutable.{ Map => MutableMap, LinkedList }
+import scala.collection.JavaConversions._
 import System.{ currentTimeMillis => systemTime }
 import org.osgi.framework.FrameworkUtil
+import de.lmu.ifi.dbs.knowing.core.model.NodeType
 
-class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI, directory: IFactoryDirectory) extends Actor with TSender {
+class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, dpuURI: URI, directory: IFactoryDirectory) extends Actor with TSender {
 
   self.faultHandler = AllForOneStrategy(List(classOf[Throwable]), 5, 5000)
 
@@ -35,8 +39,7 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI
     case Start | Start() => evaluate
     case UpdateUI | UpdateUI() => uifactory update (self.sender.getOrElse(null), UpdateUI())
     case status: Status => handleStatus(status)
-    case event: Event => events + event.getClass().getSimpleName
-    case msg => debug(this, "Unkown Message: " + msg)
+    case msg => debug(this, "Unhandled Message: " + msg)
   }
 
   def evaluate {
@@ -49,10 +52,10 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI
   private def initialize {
     uifactory setSupervisor (self)
     uifactory update (self, Created())
-    uifactory update (self, Progress("initialize", 0, dpu.nodes.length))
-    dpu.nodes foreach (node => {
+    uifactory update (self, Progress("initialize", 0, dpu.getNodes.size))
+    dpu.getNodes foreach (node => {
       //      val factory = OSGIUtil.getFactoryService()
-      val factory = directory.getFactory(node.factoryId)
+      val factory = directory.getFactory(node.getFactoryId.getText)
       factory match {
         case Some(f) =>
           //Create actor
@@ -61,16 +64,16 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI
           //Register and link the supervisor
           actor ! Register(self, None)
           //Check for presenter and init
-          if (node.nodeType.equals(Node.PRESENTER))
+          if (node.getType.getContent.equals(NodeType.PRESENTER))
             actor ! UIFactoryEvent(uifactory, node)
           //Configure with properties
-          actor ! Configure(configureProperties(node.properties))
+          actor ! Configure(configureProperties(nodeProperties(node)))
           //Add to internal map
-          actors += (node.id -> actor)
+          actors += (node.getId.getContent -> actor)
           statusMap += (actor.getUuid -> (actor, Created(), systemTime))
           uifactory update (actor, Created())
-          uifactory update (self, Progress("initialize", 1, dpu.nodes.length))
-        case None => warning(this, "No factory found for: " + node.factoryId)
+          uifactory update (self, Progress("initialize", 1, dpu.getNodes.size))
+        case None => warning(this, "No factory found for: " + node.getFactoryId.getText)
       }
     })
     uifactory update (self, Finished())
@@ -85,28 +88,33 @@ class GraphSupervisor(dpu: DataProcessingUnit, uifactory: UIFactory, dpuURI: URI
   }
 
   /**
-   * 
+   *
    */
   private def connectActors {
-    dpu.edges foreach (edge => {
-      val sid = edge.sourceId.split(":")
-      val tid = edge.targetId.split(":")
-      val source = actors(sid(0))
-      val target = actors(tid(0))
-      (sid.length, tid.length) match {
-        case (1, 1) =>
-          source ! Register(target)
-          debug(this, source.getActorClassName + " -> " + target.getActorClassName)
-        case (2, 1) =>
-          source ! Register(target, Some(sid(1)))
-          debug(this, source.getActorClassName + " -> " + target.getActorClassName + ":" + sid(1))
-        case (1, 2) =>
-          source ! Register(target, None, Some(tid(1)))
-          debug(this, source.getActorClassName  + ":" + tid(1) + " -> " + target.getActorClassName)
-        case (2, 2) =>
-          source ! Register(target, Some(sid(1)), Some(tid(1)))
-          debug(this, source.getActorClassName  + ":" + tid(1) + " -> " + target.getActorClassName + ":" + sid(1))
-      }
+    dpu.getEdges foreach (edge => {
+      val source = actors(edge.getSource.getContent)
+      val sourcePort = Some(edge.getSourcePort.getContent)
+      val target = actors(edge.getTarget.getContent)
+      val targetPort = Some(edge.getTargetPort.getContent)
+      source ! Register(target, sourcePort, targetPort)
+      //      val sid = edge.sourceId.split(":")
+      //      val tid = edge.targetId.split(":")
+      //      val source = actors(sid(0))
+      //      val target = actors(tid(0))
+      //      (sid.length, tid.length) match {
+      //        case (1, 1) =>
+      //          source ! Register(target)
+      //          debug(this, source.getActorClassName + " -> " + target.getActorClassName)
+      //        case (2, 1) =>
+      //          source ! Register(target, Some(sid(1)))
+      //          debug(this, source.getActorClassName + " -> " + target.getActorClassName + ":" + sid(1))
+      //        case (1, 2) =>
+      //          source ! Register(target, None, Some(tid(1)))
+      //          debug(this, source.getActorClassName  + ":" + tid(1) + " -> " + target.getActorClassName)
+      //        case (2, 2) =>
+      //          source ! Register(target, Some(sid(1)), Some(tid(1)))
+      //          debug(this, source.getActorClassName  + ":" + tid(1) + " -> " + target.getActorClassName + ":" + sid(1))
+      //      }
     })
   }
 

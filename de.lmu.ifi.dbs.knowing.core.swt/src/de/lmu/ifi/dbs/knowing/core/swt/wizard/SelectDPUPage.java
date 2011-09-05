@@ -4,13 +4,12 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.sapphire.modeling.ResourceStoreException;
+import org.eclipse.sapphire.modeling.xml.RootXmlResource;
+import org.eclipse.sapphire.modeling.xml.XmlResourceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -28,6 +27,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit;
+import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit;
 import de.lmu.ifi.dbs.knowing.core.util.OSGIUtil;
 
 public class SelectDPUPage extends WizardPage {
@@ -119,7 +119,7 @@ public class SelectDPUPage extends WizardPage {
 
 				Object[] result = dialog.getResult();
 				for (Object dpu : result)
-					tRegistry.setText(((DataProcessingUnit) dpu).name());
+					tRegistry.setText(((IDataProcessingUnit) dpu).getName().getContent());
 
 			}
 		});
@@ -195,11 +195,11 @@ public class SelectDPUPage extends WizardPage {
 			bBrowseRegistry.setFocus();
 	}
 
-	public DataProcessingUnit getDPU() throws JAXBException {
+	public IDataProcessingUnit getDPU() throws ResourceStoreException {
 		if (bFile.getSelection()) {
-			JAXBContext context = JAXBContext.newInstance(DataProcessingUnit.class);
-			Unmarshaller um = context.createUnmarshaller();
-			return (DataProcessingUnit) um.unmarshal(new File(tFile.getText()));
+			XmlResourceStore store = new XmlResourceStore(new File(tFile.getText()));
+			RootXmlResource resource = new RootXmlResource(store);
+			return (IDataProcessingUnit) IDataProcessingUnit.TYPE.instantiate(resource);
 		} else if (bRegistry.getSelection()) {
 			return OSGIUtil.registeredDPU(tRegistry.getText());
 		}

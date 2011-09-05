@@ -8,6 +8,7 @@ import scala.collection.mutable.Set
 import de.lmu.ifi.dbs.knowing.core.events._
 import TSender._
 import weka.core.Instances
+import de.lmu.ifi.dbs.knowing.core.model.IEdge
 
 /**
  * <p>This actor is able to send Events to registered actors</p>
@@ -137,5 +138,5 @@ trait TSender { this: Actor =>
 }
 
 object TSender {
-  val DEFAULT_PORT = "default"
+  val DEFAULT_PORT = IEdge.DEFAULT_PORT
 }

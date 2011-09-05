@@ -61,7 +61,7 @@ class DPUProviderServiceTracker(context: BundleContext) extends ServiceTrackerCu
   }
 
   def modifiedService(reference: ServiceReference, service: Object) {
-    service.asInstanceOf[IDPUProvider].getDataProcessingUnits foreach (dpu => println("# " + dpu.name))
+    service.asInstanceOf[IDPUProvider].getDataProcessingUnits foreach (dpu => println("# " + dpu.getName.getContent))
   }
 
   def removedService(reference: ServiceReference, service: Object) {
