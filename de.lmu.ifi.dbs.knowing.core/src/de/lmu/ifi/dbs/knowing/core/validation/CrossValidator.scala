@@ -27,6 +27,8 @@ class CrossValidator extends TProcessor {
   var fold = 0
   var standalone = true
 
+  //TODO flags are not really perfect. Some have double meaning.
+  
   private var confusionMatrix: Instances = _
   private var nonZeroValues: Array[Array[Int]] = Array()
   private var classLabels: Array[String] = Array()
@@ -34,6 +36,7 @@ class CrossValidator extends TProcessor {
   private var classifierTrained = false
   private var filter: Option[ActorRef] = None
   private var filterTrained = false
+  private var queriesFiltered = false
 
   /** Instances to train classifier with filtered train-data */
   private var numInstancesTrain = 0
@@ -42,6 +45,7 @@ class CrossValidator extends TProcessor {
 
   private var numInstancesTest = 0
   private var currentInstTest = 0
+  private var filteredTestData: Instances = _
 
   private var first_run = true
 
@@ -54,7 +58,7 @@ class CrossValidator extends TProcessor {
   }
 
   def build(instances: Instances) {
-//    debug(this, "Build CrossValidator " + instances.relationName)
+    //    debug(this, "Build CrossValidator " + instances.relationName)
     val index = guessAndSetClassLabel(instances)
     index match {
       case -1 =>
@@ -91,116 +95,13 @@ class CrossValidator extends TProcessor {
         //No filter, classifier gets trained directly
         debug(this, "Build CrossValidator[unfiltered] with " + instances.relationName)
         classifierTrained = true
+        queriesFiltered = true
         startValidation(instances, classifier.get)
       case false =>
         debug(this, "Build CrossValidator[filtered] with" + instances.relationName)
         startValidation(instances, filter.get, true)
     }
     confusionMatrix = ResultsUtil.confusionMatrix(getClassLabels.toList)
-  }
-
-  /**
-   * <p> Process results. Merge with confusionMatrix </p>
-   */
-  def result(result: Instances, query: Instance) {
-    // If training data isn't completly filtered yet
-    if (numInstancesTrain != currentInstTrain && !classifierTrained) {
-      //Create if not existed
-      if (filteredTrainData == null) filteredTrainData = new Instances(result, numInstancesTrain)
-
-      val enum = result.enumerateInstances
-      while (enum.hasMoreElements) filteredTrainData.add(enum.nextElement.asInstanceOf[Instance])
-      currentInstTrain += 1
-    }
-
-    var lastTrainResult = false
-    //Training data completely filtered, train classifier
-    if (numInstancesTrain == currentInstTrain && !classifierTrained) {
-      classifier.get ! Results(filteredTrainData)
-      filterTrained = true
-      classifierTrained = true
-      lastTrainResult = true
-      processStoredQueries
-    }
-
-    if (classifierTrained && !lastTrainResult) {
-      //Assume n*n matrix, |labels|==|instances|
-      if (result.size != classLabels.length)
-        warning(this, "ConfusionMatrix doesn't fit to result data")
-      val prob_attribute = result.attribute(ResultsUtil.ATTRIBUTE_PROBABILITY)
-
-      val classIndex = query.classIndex
-      val col = query.value(classIndex) toInt
-
-      for (row <- 0 until result.size) {
-        val entry = confusionMatrix.instance(row)
-        val new_value = result.instance(row).value(prob_attribute)
-        val old_value = entry.value(col)
-        val value = new_value match {
-          case 0 => old_value
-          case x =>
-            nonZeroValues(row)(col) = nonZeroValues(row)(col) + 1
-            x + old_value
-        }
-        entry.setValue(col, value)
-      }
-      // debug(this, currentInst + "/" + numInstances + " of [" + fold + "/" + folds + "]")
-      currentInstTest += 1
-      //Send Results if currentInst processed is the total numInstances
-      if (currentInstTest == numInstancesTest) {
-        sendEvent(QueryResults(mergeResults, query))
-        // debug(this, "[" + fold + "/" + folds + "]" + confusionMatrix)
-        numInstancesTest = 0
-        currentInstTest = 0
-        statusChanged(Ready())
-      }
-    }
-
-  }
-
-  /**
-   * <p>Override queries, because query is forwarded to classifier</p>
-   *
-   * @param queries - queries forwared to classifier
-   * @return always Nil (empty list)
-   */
-  override def queries(queries: Instances): List[(Instances, Instance)] = {
-    statusChanged(Running())
-    numInstancesTest = queries.numInstances
-    val enum = queries.enumerateInstances
-    while (enum.hasMoreElements) query(enum.nextElement.asInstanceOf[Instance])
-    Nil
-  }
-
-  /**
-   * <p>Forward query to classifier and process results in result method</p>
-   *
-   * @param query - forwarded to classifier
-   * @returns Instances - ConfusionMatrix
-   */
-  def query(query: Instance): Instances = {
-    (filter, filterTrained, classifier, classifierTrained) match {
-      case (_, _, None, _) => warning(this, "No classifier found")
-      //cache if filtered isn't trained yet
-      case (Some(f), false, Some(_), _) => cacheQuery(query)
-      //forward to filter if exists
-      case (Some(f), true, Some(c), false) => f ! Query(query) 
-      //forward directly to classifier
-      case (_, _, Some(c), true) => c ! Query(query)
-    }
-    confusionMatrix
-  }
-
-  private def mergeResults: Instances = {
-    val size = confusionMatrix.numInstances
-    for (row <- 0 until size) {
-      val entry = confusionMatrix.instance(row)
-      for (col <- 0 until size) {
-        val value = (entry.value(col) / nonZeroValues(row)(col)) * 100
-        entry.setValue(col, value)
-      }
-    }
-    confusionMatrix
   }
 
   /**
@@ -227,6 +128,152 @@ class CrossValidator extends TProcessor {
   }
 
   /**
+   * Process results. Merge with confusionMatrix.
+   *
+   * The results identified by the flags classifierTrained, queriesFiltered and
+   * the number of train and test instances have been received.
+   * If no filter is specified, filterTrained and queriesFiltered are automatically true.
+   * 
+   * Data flow [unfiltered / no standalone]
+   * [1] classifier ! Results(train)
+   * [2] forward all queries directly to the classifier, without caching. Store numInstancesTest
+   * [3] Receive results, wait for the last instances to arrive, merge and send Results
+   * 
+   * Data flow [filtered / no standalone]
+   * [1] filter ! Results(train) -> train filter
+   * [2] filter ! Queries(train) -> filter classifier train data. Store numInstancesTrain
+   * [3] Receive results, wait for last trained instances and than filter testInstances.
+   * [4] Receive results, wait for last trained instances and then query classifier.
+   * [5] Receive results, wait for last classified instance, merge and send Results
+   * 
+   *
+   */
+  def result(result: Instances, query: Instance) {
+
+    val CurrentTrain = currentInstTrain + 1
+    val CurrentTest = currentInstTest + 1
+    (classifierTrained, queriesFiltered) match {
+
+      // Nothing trained or filtered yet
+      case (false, false) => numInstancesTrain match {
+        case CurrentTrain =>
+          debug(this, " [" + self.uuid + "] classifier train " + numInstancesTest)
+          classifier.get ! Results(filteredTrainData)
+          filterTrained = true
+          classifierTrained = true
+          numInstancesTrain = cacheSize
+          processStoredQueries
+        case _ =>
+          // If training data isn't completely filtered yet
+          // Create if not existed
+          if (filteredTrainData == null) filteredTrainData = new Instances(result, numInstancesTrain)
+
+          val enum = result.enumerateInstances
+          while (enum.hasMoreElements) filteredTrainData.add(enum.nextElement.asInstanceOf[Instance])
+          currentInstTrain += 1
+        // If training data isn't completely filtered yet
+      }
+
+      // Classifier was trained with filtered data, filter test data
+      case (true, false) => numInstancesTest match {
+        case CurrentTest =>
+          debug(this, " [" + self.uuid + "] classifier query " + numInstancesTrain)
+          queriesFiltered = true
+          currentInstTest = 0
+          numInstancesTest = filteredTestData.numInstances
+          classifier.get ! Queries(filteredTestData)
+        case _ =>
+          // If testing data isn't completely filtered yet
+          // Create if not existed
+          if (filteredTestData == null) filteredTestData = new Instances(result, numInstancesTest)
+
+          val enum = result.enumerateInstances
+          while (enum.hasMoreElements) filteredTestData.add(enum.nextElement.asInstanceOf[Instance])
+          currentInstTest += 1
+      }
+
+      // Classifier trained and test data filtered
+      case (true, true) =>
+        debug(this, "classifier result " + currentInstTest + " / " + numInstancesTest)
+        // Assume n*n matrix, |labels|==|instances|
+        if (result.size != classLabels.length)
+          warning(this, "ConfusionMatrix doesn't fit to result data")
+        val prob_attribute = result.attribute(ResultsUtil.ATTRIBUTE_PROBABILITY)
+
+        val classIndex = query.classIndex
+        val col = query.value(classIndex) toInt
+
+        for (row <- 0 until result.size) {
+          val entry = confusionMatrix.instance(row)
+          val new_value = result.instance(row).value(prob_attribute)
+          val old_value = entry.value(col)
+          val value = new_value match {
+            case 0 => old_value
+            case x =>
+              nonZeroValues(row)(col) = nonZeroValues(row)(col) + 1
+              x + old_value
+          }
+          entry.setValue(col, value)
+        }
+        currentInstTest += 1
+        // Send Results if currentInst processed is the total numInstances
+        if (currentInstTest == numInstancesTest) {
+          sendEvent(QueryResults(mergeResults, query))
+          numInstancesTest = 0
+          currentInstTest = 1
+          statusChanged(Ready())
+        }
+    }
+
+  }
+
+  /**
+   * <p>Override queries, because query is forwarded to classifier</p>
+   *
+   * @param queries - queries forwared to classifier
+   * @return always Nil (empty list)
+   */
+  override def queries(queries: Instances): List[(Instances, Instance)] = {
+    statusChanged(Running())
+    numInstancesTest = queries.numInstances
+    val enum = queries.enumerateInstances
+    while (enum.hasMoreElements) query(enum.nextElement.asInstanceOf[Instance])
+    Nil
+  }
+
+  /**
+   * <p>Forward query to classifier and process results in result method</p>
+   *
+   * @param query - forwarded to classifier
+   * @returns Instances - ConfusionMatrix
+   */
+  def query(query: Instance): Instances = {
+    (filter, filterTrained, classifier, classifierTrained, queriesFiltered) match {
+      case (_, _, None, _, _) => warning(this, "No classifier found")
+      //cache if filtered isn't trained yet
+      case (Some(f), false, Some(_), _, _) => cacheQuery(query)
+      //forward to filter if exists
+      case (Some(f), true, Some(c), false, _) => f ! Query(query)
+      case (Some(f), true, Some(c), _, false) => f ! Query(query)
+      //forward directly to classifier
+      case (_, _, Some(c), true, true) => c ! Query(query)
+    }
+    confusionMatrix
+  }
+
+  private def mergeResults: Instances = {
+    val size = confusionMatrix.numInstances
+    for (row <- 0 until size) {
+      val entry = confusionMatrix.instance(row)
+      for (col <- 0 until size) {
+        val value = (entry.value(col) / nonZeroValues(row)(col)) * 100
+        entry.setValue(col, value)
+      }
+    }
+    confusionMatrix
+  }
+
+  /**
    * Queries stored are forwared to the classifier specified
    */
   override def processStoredQueries {
@@ -243,7 +290,7 @@ class CrossValidator extends TProcessor {
       e._1 match {
         case None => //nothing
         //TODO Id must be send 
-        case Some(_) =>  queries(e._2.queries)
+        case Some(_) => queries(e._2.queries)
       }
     }
   }
@@ -291,6 +338,12 @@ class CrossValidator extends TProcessor {
       }
     }
     index
+  }
+
+  private def cacheSize: Int = {
+    val size = queriesQueue.foldLeft(0)((size, q) => size + q._2.queries.numInstances)
+    val completeSize = size + queryQueue.size
+    completeSize
   }
 
 }

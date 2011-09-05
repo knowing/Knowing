@@ -157,7 +157,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
    * <p>Just puts a warning on the console and prints out the message</p>
    *
    */
-  def messageException(message: Any) = warning(this, "Unkown Message " + message)
+  def messageException(message: Any) = {} //warning(this, "Unkown Message " + message)
 
   /**
    *  <p>Checks the dataset for class attribute in this order
