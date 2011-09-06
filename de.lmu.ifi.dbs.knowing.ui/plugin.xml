@@ -35,7 +35,7 @@
    <extension
          point="org.eclipse.core.runtime.adapters">
       <factory
-            adaptableType="de.lmu.ifi.dbs.knowing.core.graph.Node"
+            adaptableType="de.lmu.ifi.dbs.knowing.core.model.INode"
             class="de.lmu.ifi.dbs.knowing.ui.adapter.NodeAdapterFactory">
          <adapter
                type="de.lmu.ifi.dbs.knowing.ui.adapter.IWorkbenchColumnAdapter">
@@ -45,7 +45,7 @@
          </adapter>
       </factory>
       <factory
-            adaptableType="de.lmu.ifi.dbs.knowing.core.graph.Edge"
+            adaptableType="de.lmu.ifi.dbs.knowing.core.model.IEdge"
             class="de.lmu.ifi.dbs.knowing.ui.adapter.EdgeAdapterFactory">
          <adapter
                type="de.lmu.ifi.dbs.knowing.ui.adapter.IWorkbenchColumnAdapter">
@@ -55,7 +55,7 @@
          </adapter>
       </factory>
       <factory
-            adaptableType="de.lmu.ifi.dbs.knowing.core.graph.xml.Property"
+            adaptableType="de.lmu.ifi.dbs.knowing.core.model.IProperty"
             class="de.lmu.ifi.dbs.knowing.ui.adapter.PropertyAdapterFactory">
          <adapter
                type="de.lmu.ifi.dbs.knowing.ui.adapter.IWorkbenchColumnAdapter">

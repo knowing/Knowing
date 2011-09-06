@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.knowing.core.graph
+package de.lmu.ifi.dbs.knowing.core.processing
 
 import akka.actor.{ Actor, ActorRef, Scheduler }
 import akka.event.EventHandler.{ debug, info, warning, error }
@@ -7,8 +7,6 @@ import com.eaio.uuid.UUID
 import java.net.URI
 import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.util._
-import de.lmu.ifi.dbs.knowing.core.processing.{ TPresenter, TSender, TLoader }
-import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit

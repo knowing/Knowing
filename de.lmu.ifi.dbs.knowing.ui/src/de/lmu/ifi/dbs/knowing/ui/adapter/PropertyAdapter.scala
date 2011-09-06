@@ -2,7 +2,7 @@ package de.lmu.ifi.dbs.knowing.ui.adapter
 
 import org.eclipse.jface.resource.ImageDescriptor
 import org.eclipse.swt.graphics.Image
-import de.lmu.ifi.dbs.knowing.core.graph.xml.Property
+import de.lmu.ifi.dbs.knowing.core.model.IProperty
 
 /**
  * @author Nepomuk Seiler
@@ -13,10 +13,10 @@ import de.lmu.ifi.dbs.knowing.core.graph.xml.Property
 class PropertyAdapter extends IWorkbenchColumnAdapter {
 
   def getColumnText(element: Object, columnIndex: Int): String = {
-    val property = element.asInstanceOf[Property]
+    val property = element.asInstanceOf[IProperty]
     columnIndex match {
-      case 0 => property.key
-      case 1 => property.value
+      case 0 => property.getKey.getContent
+      case 1 => property.getValue.getContent
       case _ => "-"
     }
   }
@@ -27,7 +27,7 @@ class PropertyAdapter extends IWorkbenchColumnAdapter {
 
   def getImageDescriptor(obj: Object): ImageDescriptor = null
 
-  def getLabel(o: Object): String = o.asInstanceOf[Property].key
+  def getLabel(o: Object): String = o.asInstanceOf[IProperty].getKey.getContent
 
   def getParent(o: Object): Object = null
 
