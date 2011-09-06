@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DataProcessingUnit name="ARFF Directory Loader DPU">
+	<description>Simple Description here</description>
+	<tags>Tag1, Tag2</tags>
+	<nodes>
+		<node id="ARFF" factoryId="weka.core.converters.ArffLoader" type="loader" >
+			<properties>
+				<property value="." key="dir" />
+				<property value="arff" key="extensions" />
+				<property value="true" key="source" />
+			</properties>
+		</node>
+		<node id="TablePresenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" type="presenter"	>
+			<properties />
+		</node>
+		<node id="SourceSplitFilter" factoryId="knowing.test.filter.SourceSplitFilter" type="processor" >
+			<properties />
+		</node>
+	</nodes>
+	<edges>
+		<edge id="arff_TablePresenter" target="TablePresenter" source="ARFF"  />
+		<edge id="arff_SourceSplitFilter" target="SourceSplitFilter" source="ARFF" />
+	</edges>
+</DataProcessingUnit>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DataProcessingUnit name="processor-serialize-test">
+	<description>Serialize processor model</description>
+	<tags>Serialize</tags>
+	<nodes>
+		<node id="processor" factoryId="knowing.test.processor.SerializableProcessor" type="processor" >
+			<properties>
+				<!-- file is resolved absolute
+				<property value="true" key="absolute-path" />
+				<property value="file:/home/muki/model.mdl" key="serialize" />
+				<property value="file:/home/muki/model.mdl" key="deserialize" /> 
+				-->
+				<!-- file is resolved relative to execution path -->
+				<property key="serialize" value="model.mdl" />
+				<property key="deserialize" value="model.mdl" />
+			</properties>
+		</node>
+	</nodes>
+	<edges />
+</DataProcessingUnit>
+

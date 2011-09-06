@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DataProcessingUnit name="Spitprocessor test">
+    <description>Cross Validation with NaiveBayes output to TablePresenter</description>
+    <tags>Cross, Validation, Cross Validation, ARFF, NaiveBayes</tags>
+    <nodes>
+        <node id="splitter" factoryId="knowing.test.processor.SplitProcessor" type="processor" >
+            <properties>
+                <properties key="ratio" value="0.5" />
+            </properties>
+        </node>
+        <node id="ARFF" factoryId="weka.core.converters.ArffLoader" type="loader" >
+            <properties>
+                <property key="file" value="iris.arff" />
+            </properties>
+        </node>
+        <node id="TablePresenter1" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" type="presenter" >
+            <properties>
+                <property value="100" key="rows"/>
+            </properties>
+        </node>
+        <node id="TablePresenter2" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" type="presenter" >
+            <properties>
+                <property value="100" key="rows"/>
+            </properties>
+        </node>
+    </nodes>
+    <edges>
+        <edge id="arff_validator" source="ARFF" target="splitter"  />
+		<edge id="validator_presenter" source="splitter" sourcePort="output1" target="TablePresenter1"  />
+		<edge id="validator_presenter" source="splitter" sourcePort="output2" target="TablePresenter2"  />
+    </edges>
+</DataProcessingUnit>
+

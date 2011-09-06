@@ -109,7 +109,12 @@ public class SelectDPUPage extends WizardPage {
 		bBrowseRegistry.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), new LabelProvider());
+				ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), new LabelProvider() {
+					@Override
+					public String getText(Object element) {
+						return ((IDataProcessingUnit)element).getName().getContent();
+					}
+				});
 				dialog.setMultipleSelection(false);
 				dialog.setElements(OSGIUtil.registeredDPUs());
 				dialog.setTitle("Select Data Processing Unit");

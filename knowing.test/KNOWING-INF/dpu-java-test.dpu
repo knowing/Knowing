@@ -3,19 +3,19 @@
     <description>Cross Validation with NaiveBayes output to TablePresenter</description>
     <tags>Cross, Validation, Cross Validation, ARFF, NaiveBayes</tags>
     <nodes>
-        <node nodeType="processor" factoryId="knowing.test.processor.TestJavaProcessor" id="java">
+        <node id="java" factoryId="knowing.test.processor.TestJavaProcessor" type="processor" >
             <properties>
-                <item value="0.5" key="ratio"/>
+                <property key="ratio" value="0.5" />
             </properties>
         </node>
-        <node nodeType="loader" factoryId="weka.core.converters.ArffLoader" id="ARFF">
+        <node id="ARFF" factoryId="weka.core.converters.ArffLoader" type="loader" >
             <properties>
-                <item value="iris.arff" key="file"/>
+                <property key="file" value="iris.arff" />
             </properties>
         </node>
     </nodes>
     <edges>
-        <edge weight="1" targetId="java" sourceId="ARFF" id="arff_validator"/>
+        <edge id="arff_validator" source="ARFF" target="java" />
     </edges>
 </DataProcessingUnit>
 

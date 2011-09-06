@@ -42,8 +42,7 @@ class PresenterView extends ViewPart {
     tabFolder.getDisplay.asyncExec(new Runnable {
       def run {
         debug(uifactory, "Trying to create tab... ")
-        //node.getId.getContent
-        val composite = createTab("")
+        val composite = createTab(node.getId.getContent)
         rendevouz put (composite)
       }
     })

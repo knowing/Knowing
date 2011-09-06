@@ -194,7 +194,6 @@ class CrossValidator extends TProcessor {
 
       // Classifier trained and test data filtered
       case (true, true) =>
-        debug(this, "classifier result " + currentInstTest + " / " + numInstancesTest)
         // Assume n*n matrix, |labels|==|instances|
         if (result.size != classLabels.length)
           warning(this, "ConfusionMatrix doesn't fit to result data")
@@ -220,7 +219,7 @@ class CrossValidator extends TProcessor {
         if (currentInstTest == numInstancesTest) {
           sendEvent(QueryResults(mergeResults, query))
           numInstancesTest = 0
-          currentInstTest = 1
+          currentInstTest = 0
           statusChanged(Ready())
         }
     }

@@ -97,24 +97,6 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, dpuURI: UR
       val target = actors(edge.getTarget.getContent)
       val targetPort = Some(edge.getTargetPort.getContent)
       source ! Register(target, sourcePort, targetPort)
-      //      val sid = edge.sourceId.split(":")
-      //      val tid = edge.targetId.split(":")
-      //      val source = actors(sid(0))
-      //      val target = actors(tid(0))
-      //      (sid.length, tid.length) match {
-      //        case (1, 1) =>
-      //          source ! Register(target)
-      //          debug(this, source.getActorClassName + " -> " + target.getActorClassName)
-      //        case (2, 1) =>
-      //          source ! Register(target, Some(sid(1)))
-      //          debug(this, source.getActorClassName + " -> " + target.getActorClassName + ":" + sid(1))
-      //        case (1, 2) =>
-      //          source ! Register(target, None, Some(tid(1)))
-      //          debug(this, source.getActorClassName  + ":" + tid(1) + " -> " + target.getActorClassName)
-      //        case (2, 2) =>
-      //          source ! Register(target, Some(sid(1)), Some(tid(1)))
-      //          debug(this, source.getActorClassName  + ":" + tid(1) + " -> " + target.getActorClassName + ":" + sid(1))
-      //      }
     })
   }
 
