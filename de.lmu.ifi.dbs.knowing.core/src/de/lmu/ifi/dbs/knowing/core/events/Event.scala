@@ -1,12 +1,12 @@
 package de.lmu.ifi.dbs.knowing.core.events
 
-import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
-import de.lmu.ifi.dbs.knowing.core.graph.Node
-import akka.actor.ActorRef
-import weka.core.Instances
-import weka.core.Instance
 import java.util.Properties
+
+import akka.actor.ActorRef
+import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
 import de.lmu.ifi.dbs.knowing.core.model.INode
+import weka.core.Instance
+import weka.core.Instances
 
 trait Event
 trait Status extends Event

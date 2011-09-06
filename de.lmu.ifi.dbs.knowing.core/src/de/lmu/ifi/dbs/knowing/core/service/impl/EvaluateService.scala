@@ -5,10 +5,11 @@ import akka.actor.Actor.actorOf
 import akka.actor.ActorRef
 import de.lmu.ifi.dbs.knowing.core.events.Start
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
-import de.lmu.ifi.dbs.knowing.core.graph.GraphSupervisor
+import de.lmu.ifi.dbs.knowing.core.processing.GraphSupervisor
 import de.lmu.ifi.dbs.knowing.core.service.IEvaluateService
 import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
+
 
 class EvaluateService extends IEvaluateService {
 
