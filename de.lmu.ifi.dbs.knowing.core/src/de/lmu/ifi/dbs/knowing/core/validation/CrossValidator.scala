@@ -10,6 +10,8 @@ import de.lmu.ifi.dbs.knowing.core.util.OSGIUtil.getFactoryService
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import java.util.Properties
 import weka.core.{ Attribute, Instance, Instances }
+import scala.collection.mutable.{ Map => MutableMap }
+import java.util.ArrayList
 
 /**
  * @author Nepomuk Seiler
@@ -28,8 +30,8 @@ class CrossValidator extends TProcessor {
   var standalone = true
 
   //TODO flags are not really perfect. Some have double meaning.
-  
-  private var confusionMatrix: Instances = _
+
+  private var resultInstances = MutableMap[Instance, Instances]()
   private var nonZeroValues: Array[Array[Int]] = Array()
   private var classLabels: Array[String] = Array()
   private var classifier: Option[ActorRef] = None
@@ -101,7 +103,6 @@ class CrossValidator extends TProcessor {
         debug(this, "Build CrossValidator[filtered] with" + instances.relationName)
         startValidation(instances, filter.get, true)
     }
-    confusionMatrix = ResultsUtil.confusionMatrix(getClassLabels.toList)
   }
 
   /**
@@ -133,19 +134,19 @@ class CrossValidator extends TProcessor {
    * The results identified by the flags classifierTrained, queriesFiltered and
    * the number of train and test instances have been received.
    * If no filter is specified, filterTrained and queriesFiltered are automatically true.
-   * 
+   *
    * Data flow [unfiltered / no standalone]
    * [1] classifier ! Results(train)
    * [2] forward all queries directly to the classifier, without caching. Store numInstancesTest
    * [3] Receive results, wait for the last instances to arrive, merge and send Results
-   * 
+   *
    * Data flow [filtered / no standalone]
    * [1] filter ! Results(train) -> train filter
    * [2] filter ! Queries(train) -> filter classifier train data. Store numInstancesTrain
    * [3] Receive results, wait for last trained instances and than filter testInstances.
    * [4] Receive results, wait for last trained instances and then query classifier.
    * [5] Receive results, wait for last classified instance, merge and send Results
-   * 
+   *
    *
    */
   def result(result: Instances, query: Instance) {
@@ -194,32 +195,17 @@ class CrossValidator extends TProcessor {
 
       // Classifier trained and test data filtered
       case (true, true) =>
-        // Assume n*n matrix, |labels|==|instances|
-        if (result.size != classLabels.length)
-          warning(this, "ConfusionMatrix doesn't fit to result data")
-        val prob_attribute = result.attribute(ResultsUtil.ATTRIBUTE_PROBABILITY)
+        resultInstances += (query -> result)
 
-        val classIndex = query.classIndex
-        val col = query.value(classIndex) toInt
-
-        for (row <- 0 until result.size) {
-          val entry = confusionMatrix.instance(row)
-          val new_value = result.instance(row).value(prob_attribute)
-          val old_value = entry.value(col)
-          val value = new_value match {
-            case 0 => old_value
-            case x =>
-              nonZeroValues(row)(col) = nonZeroValues(row)(col) + 1
-              x + old_value
-          }
-          entry.setValue(col, value)
-        }
         currentInstTest += 1
         // Send Results if currentInst processed is the total numInstances
         if (currentInstTest == numInstancesTest) {
-          sendEvent(QueryResults(mergeResults, query))
+          val header = new Instances(query.dataset, numInstancesTest)
+          val results = ResultsUtil.appendClassDistribution(header, resultInstances.toMap)
+          sendEvent(QueryResults(results, query))
           numInstancesTest = 0
           currentInstTest = 0
+          resultInstances = MutableMap()
           statusChanged(Ready())
         }
     }
@@ -257,19 +243,7 @@ class CrossValidator extends TProcessor {
       //forward directly to classifier
       case (_, _, Some(c), true, true) => c ! Query(query)
     }
-    confusionMatrix
-  }
-
-  private def mergeResults: Instances = {
-    val size = confusionMatrix.numInstances
-    for (row <- 0 until size) {
-      val entry = confusionMatrix.instance(row)
-      for (col <- 0 until size) {
-        val value = (entry.value(col) / nonZeroValues(row)(col)) * 100
-        entry.setValue(col, value)
-      }
-    }
-    confusionMatrix
+    null
   }
 
   /**
@@ -292,6 +266,21 @@ class CrossValidator extends TProcessor {
         case Some(_) => queries(e._2.queries)
       }
     }
+  }
+
+  private def createHeader(query: Instance, result: Instances): Instances = {
+    //Generate AttributeList
+    val attr = new ArrayList[Attribute](query.numAttributes + result.numAttributes)
+    val qAttr = query.enumerateAttributes
+    while (qAttr.hasMoreElements) {
+      attr.add(qAttr.nextElement.asInstanceOf[Attribute])
+    }
+
+    val ret = new Instances(ResultsUtil.NAME_CLASS_DISTRIBUTION, attr, numInstancesTest)
+    debug(this, "Attributes: " + query.numAttributes + " / " + result.numAttributes)
+    debug(this, "Header: " + ret)
+    guessAndSetClassLabel(ret)
+    ret
   }
 
   def getClassLabels(): Array[String] = classLabels

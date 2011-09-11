@@ -18,6 +18,10 @@
 				<property key="supervised-discretization" value="false" />
 			</properties>
 		</node>
+		<node id="confusionMatrix" factoryId="de.lmu.ifi.dbs.knowing.core.validation.ConfusionMatrix" type="processor">
+			<properties>
+			</properties>
+		</node>
 		<node id="TablePresenterInput" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" type="presenter" >
 			<properties />
 		</node>
@@ -28,6 +32,7 @@
 	<edges>
 		<edge id="arff_TablePresenter" source="ARFF" target="TablePresenterInput" />
 		<edge id="arff_validator" source="ARFF"	target="AttributeValidator" />
-		<edge id="validator_TablePresenter" source="AttributeValidator" target="TablePresenterValidation" />
+		<edge id="validator_confusion" source="AttributeValidator" target="confusionMatrix" />
+		<edge id="confusion_presenter" source="confusionMatrix" target="TablePresenterValidation" />
 	</edges>
 </DataProcessingUnit>

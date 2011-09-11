@@ -22,7 +22,6 @@ class AttributeCrossValidator extends XCrossValidator {
         warning(this, "No classLabel found in " + instances.relationName)
       case x => classLabels = classLables(instances.attribute(x))
     }
-    confusionMatrixHeader = ResultsUtil.confusionMatrix(getClassLabels.toList)
     val instMaps = ResultsUtil.splitInstanceByAttribute(instances, splitAttr)
     //Map test-data -> train-data 
     val instMap = for (e <- instMaps) yield instMaps.partition(e2 => e._1.equals(e2._1))

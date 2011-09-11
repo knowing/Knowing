@@ -4,6 +4,7 @@ import akka.event.EventHandler.{ debug, info, warning, error }
 import java.util.Properties
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
+import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import weka.core.Instance
 import weka.core.Instances
 

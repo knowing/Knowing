@@ -3,6 +3,7 @@ package de.lmu.ifi.dbs.knowing.core.util
 import java.util.{ ArrayList, Arrays, Collections, List => JList, Properties, Map => JMap }
 import scala.collection.JavaConversions._
 import weka.core.{ Attribute, DenseInstance, Instances, Instance, ProtectedProperties, WekaException }
+import weka.core.SparseInstance
 
 /**
  * @author Nepomuk Seiler
@@ -12,6 +13,7 @@ import weka.core.{ Attribute, DenseInstance, Instances, Instance, ProtectedPrope
  */
 object ResultsUtil {
   val ATTRIBUTE_CLASS = "class"
+  val ATTRIBUTE_CLASS_DISTRIBUTION = "class_distribution"
   val ATTRIBUTE_PROBABILITY = "probability"
   val ATTRIBUTE_TIMESTAMP = "timestamp"
   val ATTRIBUTE_VALUE = "y"
@@ -23,6 +25,7 @@ object ResultsUtil {
   val NAME_CLASS_ONLY = "class_only"
   val NAME_CLASS_AND_PROBABILITY = "class_and_probability"
   val NAME_CROSS_VALIDATION = "cross_validation"
+  val NAME_CLASS_DISTRIBUTION = "class_distribution"
   val NAME_TIME_INTERVAL = "time_interval"
   val NAME_TIME_SERIES = "time_series"
 
@@ -111,7 +114,7 @@ object ResultsUtil {
    */
   def classAndProbabilityResult(labels: List[String], distribution: Array[Double]): Instances = {
     val returns = classAndProbabilityResult(labels)
-    if (distribution.length > returns.numClasses())
+    if (distribution.length > returns.numClasses)
       return returns
 
     val classAttribute = returns.attribute(ATTRIBUTE_CLASS)
@@ -195,12 +198,12 @@ object ResultsUtil {
    * @param names - class label names
    * @return
    */
-  def confusionMatrix(names: List[String]): Instances = {
+  def confusionMatrix(classes: List[String]): Instances = {
     val attributes = new ArrayList[Attribute]
-    names foreach (name => attributes.add(new Attribute(name)))
-    val dataset = new Instances(NAME_CROSS_VALIDATION, attributes, names.length)
-    for (i <- 0 until names.length)
-      dataset.add(i, new DenseInstance(1.0, Array.fill(names.length) { 0.0 }))
+    classes foreach (name => attributes.add(new Attribute(name)))
+    val dataset = new Instances(NAME_CROSS_VALIDATION, attributes, classes.length)
+    for (i <- 0 until classes.length)
+      dataset.add(i, new DenseInstance(1.0, Array.fill(classes.length) { 0.0 }))
     dataset
   }
 
@@ -213,7 +216,7 @@ object ResultsUtil {
    * @param names - class label names
    * @return
    */
-  def crossValidation(names: JList[String]): Instances = confusionMatrix(names.toList)
+  def confusionMatrix(classes: JList[String]): Instances = confusionMatrix(classes.toList)
 
   /**
    * <p>Creates a Result-Instance for TimeInterval data</p>
@@ -376,11 +379,11 @@ object ResultsUtil {
    */
   @throws(classOf[WekaException])
   def appendInstances(first: Instances, append: Instances): Instances = {
-//    println("First: " + first)
-//    println("Append: " + append)
+    //    println("First: " + first)
+    //    println("Append: " + append)
     if (!first.equalHeaders(append))
-      throw new WekaException("Instances headers are not equal")    
-    val ret = new Instances(first, first.numInstances + append.numInstances)    
+      throw new WekaException("Instances headers are not equal")
+    val ret = new Instances(first, first.numInstances + append.numInstances)
     val firstEnum = first.enumerateInstances
     while (firstEnum.hasMoreElements) ret.add(firstEnum.nextElement.asInstanceOf[Instance])
     val appendEnum = append.enumerateInstances
@@ -436,7 +439,7 @@ object ResultsUtil {
   /**
    * @see splitInstanceByAttribute
    */
-  def splitInstanceByAttributeJava(instances: Instances, attribute: String,removeAttr: Boolean = true): JMap[String, Instances] = asMap(splitInstanceByAttribute(instances, attribute,removeAttr))
+  def splitInstanceByAttributeJava(instances: Instances, attribute: String, removeAttr: Boolean = true): JMap[String, Instances] = asMap(splitInstanceByAttribute(instances, attribute, removeAttr))
 
   /**
    * <p>Splits a instances object with SOURCE_ATTRIBUTE into a map of source -> Instances
@@ -446,10 +449,53 @@ object ResultsUtil {
    * @returns source -> Instances
    *
    */
-  def splitInstanceBySource(instances: Instances,removeAttr: Boolean = true): Map[String, Instances] = splitInstanceByAttribute(instances, ATTRIBUTE_SOURCE,removeAttr)     
+  def splitInstanceBySource(instances: Instances, removeAttr: Boolean = true): Map[String, Instances] = splitInstanceByAttribute(instances, ATTRIBUTE_SOURCE, removeAttr)
 
   /**
    * @see splitInstanceBySource
    */
-  def splitInstanceBySourceJava(instances: Instances,removeAttr: Boolean = true): JMap[String, Instances] = splitInstanceByAttributeJava(instances, ATTRIBUTE_SOURCE,removeAttr)
+  def splitInstanceBySourceJava(instances: Instances, removeAttr: Boolean = true): JMap[String, Instances] = splitInstanceByAttributeJava(instances, ATTRIBUTE_SOURCE, removeAttr)
+
+  /**
+   *
+   */
+  def highestProbability(distribution: Instance): (Double, String) = {
+    val classAttr = distribution.enumerateAttributes.toList filter {
+      case a: Attribute => a.name.size > 5 && a.name.startsWith("class")
+    }
+
+    classAttr.foldLeft((0.0, "")) {
+      case ((max, clazz), a: Attribute) =>
+        val value = distribution.value(a)
+        if (value > max) (value, a.name.substring(5))
+        else (max, clazz)
+    }
+  }
+
+  /**
+   * class_and_probability must contain ALL class labels.
+   *
+   * Appends classDistribution as follows: Instances-Attributes + class + classA + classB + classC..
+   * TODO class is set to highestProbability
+   *
+   * @param header - is used for dataset creation
+   * @param inst - contains query -> class_and_probability
+   * @return new Instances object with appended classDistribution
+   */
+  def appendClassDistribution(header: Instances, inst: Map[Instance, Instances]): Instances = {
+    val head = new Instances(header, inst.size)
+    val labels = header.classAttribute.enumerateValues.toList
+    labels foreach (l => head.insertAttributeAt(new Attribute("class" + l), head.numAttributes))
+    inst.foldLeft(head) {
+      case (head, (query, dist)) =>
+        val inst = new DenseInstance(head.numAttributes)
+        val numAttr = query.numAttributes
+        //Copy values
+        for (i <- 0 until numAttr) inst.setValue(i, query.value(i))
+        //Fill in distribution
+        for (i <- numAttr until (numAttr + labels.size)) inst.setValue(i, dist.get(i - numAttr).value(1))
+        head.add(inst)
+        head
+    }
+  }
 }

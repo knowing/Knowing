@@ -39,6 +39,7 @@ class Activator extends BundleActivator {
     osgiUtil.registerProcessor(new CrossValidatorFactory, CrossValidatorFactory.id)
     osgiUtil.registerProcessor(new XCrossValidatorFactory, XCrossValidatorFactory.id)
     osgiUtil.registerProcessor(new AttributeCrossValidatorFactory)
+    osgiUtil.registerProcessor(new ConfusionMatrixFactory)
   }
 
 }

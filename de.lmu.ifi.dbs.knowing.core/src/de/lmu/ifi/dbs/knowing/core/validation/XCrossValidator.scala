@@ -12,8 +12,7 @@ import weka.core.{ Instance, Instances }
 
 class XCrossValidator(var factory: TFactory, var folds: Int, var validator_properties: Properties) extends TProcessor {
 
-  protected var confusionMatrices: List[Instances] = Nil
-  protected var confusionMatrixHeader: Instances = _
+  protected var results: List[Instances] = Nil
   protected var classLabels: Array[String] = Array()
   protected var currentFold: Int = 0
 
@@ -34,8 +33,6 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
         warning(this, "No classLabel found in " + instances.relationName)
       case x => classLabels = classLables(instances.attribute(x))
     }
-    //Generate confusionMatrix with classLabels
-    confusionMatrixHeader = ResultsUtil.confusionMatrix(getClassLabels.toList)
     //Create crossValidator actors for each fold
     val crossValidators = initCrossValidators(folds)
     debug(this, "Fold-Actors created!")
@@ -46,21 +43,18 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
   }
 
   def result(result: Instances, query: Instance) {
-    if (!result.equalHeaders(confusionMatrixHeader))
-      warning(this, "Model ConfusionMatrix doesn't fit ResuClt ConfusionMatrix")
-
-    confusionMatrices = result :: confusionMatrices
+    results = result :: results
 
     currentFold += 1
     if (currentFold == folds) {
       debug(this, "Last Fold " + currentFold + " results arrived")
-      sendEvent(Results(mergeMatrices))
+      sendEvent(Results(mergeResults))
       currentFold = 0
     } else {
       statusChanged(Progress("validation", 1, folds))
       debug(this, "Fold " + currentFold + " results arrived")
     }
-
+	
   }
 
   protected def initCrossValidators(folds: Int) = for (i <- 0 until folds; val actor = factory.getInstance) yield actor
@@ -78,37 +72,8 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
   /**
    * Merge two matrices. Skips zero-values
    */
-  protected def mergeMatrices: Instances = {
-    val rows = confusionMatrixHeader.numInstances
-    val cols = confusionMatrixHeader.numAttributes
-    val nums = Array.fill(rows)(Array.fill(cols)(1))
+  protected def mergeResults: Instances = ResultsUtil.appendInstances(new Instances(results(0),results.size * 100),results)
 
-    val merge = (inst1: Instances, inst2: Instances) => {
-      for (i <- 0 until confusionMatrixHeader.numInstances) {
-        for (j <- 0 until confusionMatrixHeader.numAttributes) {
-          val valResult = inst1 get (i) value (j)
-          val valMatrix = inst2 get (i) value (j)
-          val values = (valResult, valMatrix)
-          values match {
-            case (0, v2) => inst2 get (i) setValue (j, v2)
-            case (v1, 0) => inst2 get (i) setValue (j, v1)
-            case (v1, v2) =>
-              inst2 get (i) setValue (j, (v1 + v2))
-              nums(i)(j) = nums(i)(j) + 1
-          }
-        }
-      }
-      inst2
-    }
-    val result = confusionMatrices reduceLeft ((inst1, inst2) => merge(inst1, inst2))
-    for (i <- 0 until confusionMatrixHeader.numInstances) {
-      for (j <- 0 until confusionMatrixHeader.numAttributes) {
-        val valResult = result get (i) value (j)
-        confusionMatrixHeader get (i) setValue (j, valResult / nums(i)(j))
-      }
-    }
-    new Instances(confusionMatrixHeader)
-  }
 
   def configure(properties: Properties) = {
     //Retrieve CrossValidator factory
