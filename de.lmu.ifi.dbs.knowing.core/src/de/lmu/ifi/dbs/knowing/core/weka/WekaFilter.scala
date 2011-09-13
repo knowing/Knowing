@@ -1,13 +1,15 @@
 package de.lmu.ifi.dbs.knowing.core.weka
 
 import java.util.Properties
-import de.lmu.ifi.dbs.knowing.core.processing.TFilter
 import weka.core.{ Instance, Instances }
 import weka.filters.Filter
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
+import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties
+import de.lmu.ifi.dbs.knowing.core.processing.TFilter
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
+
 
 /**
  * @author Nepomuk Seiler
@@ -74,5 +76,5 @@ class WekaFilterFactory[T <: WekaFilter, S <: Filter](wrapper: Class[T], clazz: 
 }
 
 object WekaFilterFactory {
-  val DEBUG = "debug"
+  val DEBUG = INodeProperties.DEBUG
 }

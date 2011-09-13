@@ -6,6 +6,7 @@ import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
+import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
@@ -15,7 +16,7 @@ import weka.core.{ Instance, Instances }
 /**
  *
  * @author Nepomuk Seiler
- * @version 0.1
+ * @version 0.2
  * @since 21.04.2011
  *
  */
@@ -84,7 +85,7 @@ class WekaClassifierFactory[T <: WekaClassifier, S <: Classifier](wrapper: Class
 }
 
 object WekaClassifierFactory {
-  val DEBUG = "debug"
+  val DEBUG = INodeProperties.DEBUG
 }
 
 /* =========================== */

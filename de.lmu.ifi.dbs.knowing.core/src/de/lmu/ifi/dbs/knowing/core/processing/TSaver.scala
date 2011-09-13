@@ -63,17 +63,14 @@ trait TSaver extends TProcessor {
 
 object TSaver {
   /* ==== Properties to configure TSaver ==== */
-  val ABSOLUTE_PATH = "absolute-path"
-  val FILE = "file"
-  val URL = "url"
+  val ABSOLUTE_PATH = INodeProperties.ABSOLUTE_PATH
+  val FILE = INodeProperties.FILE
+  val URL = INodeProperties.URL
 
-  val WRITE_MODE = "mode"
-  val WRITE_MODE_NONE = "none"
-  val WRITE_MODE_BATCH = "batch"
-  val WRITE_MODE_INCREMENTAL = "incremental"
-
-  /** Points to the dpu directory. Ends with a file.seperator */
-  val DPU_PATH = "path-to-dpu" // this properties is created by the GraphSupervisor-Caller
+  val WRITE_MODE = INodeProperties.WRITE_MODE
+  val WRITE_MODE_NONE = INodeProperties.WRITE_MODE_NONE
+  val WRITE_MODE_BATCH = INodeProperties.WRITE_MODE_BATCH
+  val WRITE_MODE_INCREMENTAL = INodeProperties.WRITE_MODE_INCREMENTAL
 
   def getFilePath(properties: Properties): String = TLoader.getFilePath(properties)
 }

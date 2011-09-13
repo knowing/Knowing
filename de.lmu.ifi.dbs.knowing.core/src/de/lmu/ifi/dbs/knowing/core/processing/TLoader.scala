@@ -54,31 +54,31 @@ trait TLoader extends TProcessor {
 object TLoader {
 
   /* ==== Properties to configure TLoader ==== */
-  val ABSOLUTE_PATH = TProcessor.ABSOLUTE_PATH
-  val FILE = "file"
+  val ABSOLUTE_PATH = INodeProperties.ABSOLUTE_PATH
+  val FILE = INodeProperties.FILE
 
   /**
    * [scheme:][//authority][path][?query][#fragment]
    * default scheme: file
    */
-  val URL = "url"
-  val DIR = "dir"
-  val FILE_EXTENSIONS = "extensions"
+  val URL = INodeProperties.URL
+  val DIR = INodeProperties.DIR
+  val FILE_EXTENSIONS = INodeProperties.FILE_EXTENSIONS
   /**
    * This attribute is added, when using dir-option, so
    * each source can be identified.
    *
    * property values: true | false
    */
-  val SOURCE_ATTRIBUTE = ResultsUtil.ATTRIBUTE_SOURCE
+  val SOURCE_ATTRIBUTE = INodeProperties.SOURCE_ATTRIBUTE
 
   /** Options: single | multiple **/
-  val OUTPUT = "output"
-  val OUTPUT_SINGLE = "single"
-  val OUTPUT_MULTIPLE = "multiple"
+  val OUTPUT = INodeProperties.OUTPUT
+  val OUTPUT_SINGLE = INodeProperties.OUTPUT_SINGLE
+  val OUTPUT_MULTIPLE = INodeProperties.OUTPUT_MULTIPLE
 
   /** Points to the dpu directory. Ends with a file.seperator */
-  val EXE_PATH = "execution" // this properties is created by the GraphSupervisor-Caller
+  val EXE_PATH = INodeProperties.EXE_PATH // this properties is created by the GraphSupervisor-Caller
 
   def getFilePath(properties: Properties): String = {
     val absolute = properties.getProperty(ABSOLUTE_PATH, "false").toBoolean

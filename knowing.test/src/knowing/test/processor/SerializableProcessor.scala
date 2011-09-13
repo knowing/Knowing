@@ -25,7 +25,7 @@ class SerializableProcessor extends TProcessor with TSerializable {
 
   override def start {
     try {
-      val in = getInputStream
+      val in = inputStream
       in match {
         case None => warning(this, "No InputStream defined")
         case Some(i) =>
@@ -49,7 +49,7 @@ class SerializableProcessor extends TProcessor with TSerializable {
   override def postStop() {
     randomNumber = Math.random
     randomString = new Date toString
-    val out = getOutputStream
+    val out = outputStream
     out match {
       case None => warning(this, "No OutputStream defined")
       case Some(o) =>

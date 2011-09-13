@@ -1,5 +1,8 @@
 package de.lmu.ifi.dbs.knowing.core.japi;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 
 import akka.actor.ActorRef;
@@ -12,11 +15,24 @@ import de.lmu.ifi.dbs.knowing.core.events.Status;
 /**
  * 
  * @author Nepomuk Seiler
- * @version 0.1
+ * @version 1.1
  * @since 04.07.2011
  */
 public interface IProcessor {
 
+	/**
+	 * <p>Is called, when the processor is started.
+	 * You can load models in here via getInputStream and
+	 * initialize your internal state</p>
+	 */
+	void start();
+	
+	/**
+	 * <p>Is called, when the processor (the actor) is
+	 * shutdown. Internal states can be saved via getOutputStrea,</p>
+	 */
+	void stop();
+	
 	/**
 	 * <p>
 	 * Input instances from source-nodes
@@ -79,4 +95,16 @@ public interface IProcessor {
 	 * @param status - Ready | Running | Progress(task, worked, work) | Finished
 	 */
 	void setStatus(Status status);
+	
+	/**
+	 * <p>If property INodeProperties.DESERIALIZE is set,
+	 * this methods creates an @InputStream </p>
+	 */
+	InputStream getInputStream() throws IOException;
+	
+	/**
+	 * <p>If property INodeProperties.SERIALIZE is set,
+	 * this methods creates an @OutputStream </p>
+	 */
+	OutputStream getOutputStream() throws IOException;
 }

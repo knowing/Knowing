@@ -98,6 +98,7 @@ abstract class AbstractChartPresenter(val name: String) extends SWTPresenter {
       val chartComposite = parent
     }
     chartComposite.addMouseWheelListener(handler)
+    chartComposite.addChartMouseListener(handler)
     chart.addChangeListener(handler)
     chart.addProgressListener(handler)
   }
@@ -111,7 +112,7 @@ abstract class AbstractChartPresenter(val name: String) extends SWTPresenter {
 class SWTMouseListenerProxy(typ: Int, listener: Listener) extends ChartMouseListener {
 
   def chartMouseClicked(event: ChartMouseEvent) {
-    
+
     if (typ != SWT.MouseDown)
       return
     listener.handleEvent(convert(event))

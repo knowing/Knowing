@@ -248,5 +248,5 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 
 object TProcessor {
 
-  val ABSOLUTE_PATH = "absolute-path"
+  val ABSOLUTE_PATH = INodeProperties.ABSOLUTE_PATH
 }
