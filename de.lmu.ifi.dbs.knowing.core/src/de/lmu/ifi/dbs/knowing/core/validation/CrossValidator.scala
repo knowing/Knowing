@@ -158,7 +158,6 @@ class CrossValidator extends TProcessor {
       // Nothing trained or filtered yet
       case (false, false) => numInstancesTrain match {
         case CurrentTrain =>
-          debug(this, " [" + self.uuid + "] classifier train " + numInstancesTest)
           classifier.get ! Results(filteredTrainData)
           filterTrained = true
           classifierTrained = true
@@ -178,7 +177,6 @@ class CrossValidator extends TProcessor {
       // Classifier was trained with filtered data, filter test data
       case (true, false) => numInstancesTest match {
         case CurrentTest =>
-          debug(this, " [" + self.uuid + "] classifier query " + numInstancesTrain)
           queriesFiltered = true
           currentInstTest = 0
           numInstancesTest = filteredTestData.numInstances
