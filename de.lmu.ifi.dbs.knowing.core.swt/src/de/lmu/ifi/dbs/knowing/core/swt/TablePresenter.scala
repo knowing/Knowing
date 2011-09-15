@@ -14,6 +14,7 @@ import org.eclipse.jface.layout.TableColumnLayout
 import org.eclipse.jface.viewers.ColumnWeightData
 import weka.core.{ Instances, Attribute }
 import org.eclipse.swt.widgets.Listener
+import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
 
 
 
@@ -86,7 +87,10 @@ class TablePresenter extends SWTPresenter {
     debug(this, "createColumns...")
     instances.setClassIndex(-1); //WekaEnumeration skips the class attribute, so the class index has to be unset...
     val eAttr = instances.enumerateAttributes    
-    val weight = 100 / instances.numAttributes
+    val weight = instances.numInstances match {
+      case 0 => 100
+      case x => 100 / x
+    }
     viewer.getTable().setHeaderVisible(true);
     viewer.getTable().setLinesVisible(true);
     while (eAttr.hasMoreElements) {
@@ -127,20 +131,17 @@ object TablePresenter {
   val ROWS_PER_PAGE = "rows"
 }
 
-class TablePresenterFactory extends TFactory {
+class TablePresenterFactory extends ProcessorFactory(classOf[TablePresenter]) {
 
-  val name: String = TablePresenter.name
-  val id: String = classOf[TablePresenter].getName
+  override val name: String = TablePresenter.name
 
-  def getInstance(): ActorRef = actorOf[TablePresenter]
-
-  def createDefaultProperties: Properties = {
+  override def createDefaultProperties: Properties = {
     val properties = new Properties
     properties.setProperty(TablePresenter.ROWS_PER_PAGE, "100");
     properties
   }
 
-  def createPropertyValues: Map[String, Array[Any]] = Map(TablePresenter.ROWS_PER_PAGE -> Array(0, 1000))
+  override def createPropertyValues: Map[String, Array[Any]] = Map(TablePresenter.ROWS_PER_PAGE -> Array(0, 1000))
 
-  def createPropertyDescription: Map[String, String] = Map(TablePresenter.ROWS_PER_PAGE -> "How much rows to show")
+  override def createPropertyDescription: Map[String, String] = Map(TablePresenter.ROWS_PER_PAGE -> "How much rows to show")
 }

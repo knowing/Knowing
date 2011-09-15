@@ -1,35 +1,26 @@
 package de.lmu.ifi.dbs.knowing.core.processing
 
-import java.util.Properties
+
 import akka.actor.Actor
 import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.processing.TSaver._
-import weka.core.Instances
+import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
+import java.util.Properties
+import weka.core.{Instances, Instance}
 
-trait TSaver extends Actor with TSender with TConfigurable {
+trait TSaver extends TProcessor {
 
-  private var _mode = WRITE_MODE_NONE
-  private var _file = "<no file>"
-  private var _url = "<no url>"
+  protected var _mode = WRITE_MODE_NONE
+  protected var _file = "<no file>"
+  protected var _url = "<no url>"
 
-  def receive: Receive = customReceive orElse defaultReceive
-  
   /**
    * <p>Override for special behaviour</p>
    */
-  protected def customReceive: Receive = defaultReceive
-
-  /**
-   * <p>Default behaviour</p>
-   */
-  private def defaultReceive: Receive = {
-    case Start | Start() => debug(this, "Saver started")
-    case Results(instances) => write(instances)
-    case Register(actor, port) => addListener(actor, port)
+  override protected def customReceive = {
     case Configure(p) => saverConfiguration(p)
     case Reset => reset
-    case msg => warning(this, "<----> " )
   }
 
   def write(instances: Instances)
@@ -48,6 +39,12 @@ trait TSaver extends Actor with TSender with TConfigurable {
       self reply Ready
   }
 
+  /**
+   * <p>Just delegating to write(instances)</p>
+   */
+  def build(instances: Instances) = write(instances)
+
+  /* === Getter Methods === */
   def url: String = _url
 
   def file: String = _file
@@ -57,21 +54,23 @@ trait TSaver extends Actor with TSender with TConfigurable {
   def isBatch = _mode equals (WRITE_MODE_BATCH)
 
   def isIncremental = _mode equals (WRITE_MODE_INCREMENTAL)
+
+  /* == Doesn't needed by TSaver == */
+  def query(instance: Instance): Instances = ResultsUtil.emptyResult
+
+  def result(results: Instances, query: Instance) = {}
 }
 
 object TSaver {
   /* ==== Properties to configure TSaver ==== */
-  val ABSOLUTE_PATH = "absolute-path"
-  val FILE = "file"
-  val URL = "url"
+  val ABSOLUTE_PATH = INodeProperties.ABSOLUTE_PATH
+  val FILE = INodeProperties.FILE
+  val URL = INodeProperties.URL
 
-  val WRITE_MODE = "mode"
-  val WRITE_MODE_NONE = "none"
-  val WRITE_MODE_BATCH = "batch"
-  val WRITE_MODE_INCREMENTAL = "incremental"
-
-  /** Points to the dpu directory. Ends with a file.seperator */
-  val DPU_PATH = "path-to-dpu" // this properties is created by the GraphSupervisor-Caller
+  val WRITE_MODE = INodeProperties.WRITE_MODE
+  val WRITE_MODE_NONE = INodeProperties.WRITE_MODE_NONE
+  val WRITE_MODE_BATCH = INodeProperties.WRITE_MODE_BATCH
+  val WRITE_MODE_INCREMENTAL = INodeProperties.WRITE_MODE_INCREMENTAL
 
   def getFilePath(properties: Properties): String = TLoader.getFilePath(properties)
 }

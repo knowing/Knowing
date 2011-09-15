@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definition>
+	<import>
+		<package>de.lmu.ifi.dbs.knowing.core.model</package>
+		<package>de.lmu.ifi.dbs.knowing.ui.handler</package>
+		<package>de.lmu.ifi.dbs.knowing.ui.editor</package>
+	</import>
+	<dialog>
+		<id>de.mukis.sapphire.dpu.dialog</id>
+		<label>DPU Dialog</label>
+		<content>
+			<include>de.mukis.sapphire.dpu.composite</include>
+		</content>
+	</dialog>
+	<composite>
+		<id>de.mukis.sapphire.dpu.composite</id>
+		<content>
+			<property-editor>name</property-editor>
+			<property-editor>nodes</property-editor>
+			<property-editor>edges</property-editor>
+		</content>
+	</composite>
+	<editor-page>
+		<id>dpu.editor.overview</id>
+		<root-node>
+			<node>
+				<label>${ Name == null ? &quot;&lt;DataProcessingUnit&gt;&quot; :Name }</label>
+				<section>
+					<label>General</label>
+					<content>
+						<property-editor>name</property-editor>
+						<property-editor>
+							<property>Description</property>
+							<hint>
+								<name>expand.vertically</name>
+								<value>true</value>
+							</hint>
+						</property-editor>
+						<property-editor>tags</property-editor>
+					</content>
+				</section>
+				<node-factory>
+					<case>
+						<label>${ Id == null ? &quot;&lt;node&gt;&quot; : Id }</label>
+						<section>
+							<label>Node</label>
+							<content>
+								<property-editor>id</property-editor>
+								<property-editor>factoryId</property-editor>
+								<property-editor>type</property-editor>
+								<property-editor>properties</property-editor>
+							</content>
+						</section>
+                        <image>/icons/node_16.png</image>
+					</case>
+					<property>nodes</property>
+				</node-factory>
+
+				<node-factory>
+					<case>
+						<label>${ id == null ? &quot;&lt;edge&gt;&quot; : id }</label>
+						<section>
+							<label>Edge</label>
+							<content>
+								<property-editor>id</property-editor>
+								<property-editor>
+									<property>source</property>
+									<related-content>
+										<property-editor>
+											<property>sourcePort</property>
+										</property-editor>
+									</related-content>
+								</property-editor>
+								<property-editor>
+									<property>target</property>
+									<related-content>
+										<property-editor>
+											<property>targetPort</property>
+
+										</property-editor>
+									</related-content>
+								</property-editor>
+								<property-editor>weight</property-editor>
+							</content>
+						</section>
+                        <image>/icons/edge_16.png</image>
+					</case>
+					<property>edges</property>
+				</node-factory>
+				<section>
+					<label>Nodes configuration</label>
+					<collapsible>true</collapsible>
+					<content>
+						<property-editor>
+							<property>nodes</property>
+							<hint>
+								<name>show.label</name>
+								<value>false</value>
+							</hint>
+						</property-editor>
+					</content>
+				</section>
+				<section>
+					<label>Edges configuration</label>
+					<content>
+						<property-editor>
+							<property>edges</property>
+							<hint>
+								<name>show.label</name>
+								<value>false</value>
+							</hint>
+						</property-editor>
+					</content>
+					<collapsible>true</collapsible>
+				</section>
+			</node>
+		</root-node>
+		<page-name>overview</page-name>
+		<page-header-text>overview page</page-header-text>
+	</editor-page>
+	<diagram-page>
+		<id>dpu.editor.diagram</id>
+		<page-name>diagram</page-name>
+		<page-header-text>diagram view</page-header-text>
+		<node>
+			<id>nodes</id>
+			<instance-id>${ id }</instance-id>
+			<tool-palette-label>nodes</tool-palette-label>
+			<tool-palette-desc>node to connect to</tool-palette-desc>
+			<property>Nodes</property>
+			<label>${id == null ? &quot;&lt;node&gt;&quot; : id}</label>
+		</node>
+		<connection>
+			<id>node_node_connection</id>
+			<tool-palette-label>Edge</tool-palette-label>
+			<endpoint2>
+				<type>arrow</type>
+			</endpoint2>
+		</connection>
+		<connection-binding>
+			<connection-id>node_node_connection</connection-id>
+			<property>Edges</property>
+			<instance-id>${id}</instance-id>
+			<label>${id == null ? &quot;&lt;id&gt;&quot; : id}</label>
+			<endpoint1>
+				<property>source</property>
+				<value>${id}</value>
+			</endpoint1>
+			<endpoint2>
+				<property>target</property>
+				<value>${id}</value>
+			</endpoint2>
+		</connection-binding>
+		<grid>
+			<visible>true</visible>
+		</grid>
+	</diagram-page>
+	<wizard>
+		<id>dpu.wizard</id>
+		<label>Sapphire DPU</label>
+		<page>
+			<id>DataProcessingUnitPageID</id>
+			<label>DataProcessingUnit</label>
+			<description>Create DataProcessingUnit</description>
+			<initial-focus>Title</initial-focus>
+			<hint>
+				<name>expand.vertically</name>
+				<value>true</value>
+			</hint>
+			<content>
+				<include>de.mukis.sapphire.dpu.composite</include>
+			</content>
+		</page>
+		<description>This is my Description</description>
+	</wizard>
+</definition>

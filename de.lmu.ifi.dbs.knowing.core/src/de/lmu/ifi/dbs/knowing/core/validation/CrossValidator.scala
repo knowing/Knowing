@@ -6,10 +6,12 @@ import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
-import de.lmu.ifi.dbs.knowing.core.util.Util.getFactoryService
+import de.lmu.ifi.dbs.knowing.core.util.OSGIUtil.getFactoryService
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import java.util.Properties
 import weka.core.{ Attribute, Instance, Instances }
+import scala.collection.mutable.{ Map => MutableMap }
+import java.util.ArrayList
 
 /**
  * @author Nepomuk Seiler
@@ -17,74 +19,298 @@ import weka.core.{ Attribute, Instance, Instances }
  * @since 13.05.2011
  *
  */
-class CrossValidator(var factory: TFactory, var folds: Int, var fold: Int, var classifier_properties: Properties) extends TProcessor {
+class CrossValidator extends TProcessor {
 
-  private var confusionMatrix: Instances = _
+  var filterFactory: TFactory = _
+  var classifierFactory: TFactory = _
+  var classifierProperties = new Properties
+
+  var folds = 2
+  var fold = 0
+  var standalone = true
+
+  //TODO flags are not really perfect. Some have double meaning.
+
+  private var resultInstances = MutableMap[Instance, Instances]()
+  private var nonZeroValues: Array[Array[Int]] = Array()
   private var classLabels: Array[String] = Array()
   private var classifier: Option[ActorRef] = None
-  private var numInstances: Int = 0
-  private var currentInst: Int = 0
+  private var classifierTrained = false
+  private var filter: Option[ActorRef] = None
+  private var filterTrained = false
+  private var queriesFiltered = false
+
+  /** Instances to train classifier with filtered train-data */
+  private var numInstancesTrain = 0
+  private var currentInstTrain = 0
+  private var filteredTrainData: Instances = _
+
+  private var numInstancesTest = 0
+  private var currentInstTest = 0
+  private var filteredTestData: Instances = _
 
   private var first_run = true
 
-  def this() = this(null, 2, 1, new Properties)
-
-  def build(instances: Instances) = buildClassifier(instances) //Input data
-
-  def result(result: Instances, query: Instance) {
-    //Assume n*n matrix, |lables|==|instances|
-    if (result.size != classLabels.length)
-      warning(this, "ConfusionMatrix doesn't fit to result data")
-    val prob_attribute = result.attribute(ResultsUtil.ATTRIBUTE_PROBABILITY)
-
-    val classIndex = query.classIndex
-    val column = query.value(classIndex)
-
-    for (i <- 0 until result.size) {
-      val entry = confusionMatrix.instance(i)
-      val new_value = result.instance(i).value(prob_attribute)
-      val old_value = entry.value(column.toInt) / 100
-      var value = 0.0
-      first_run match {
-        case true =>
-          value = new_value
-          first_run = false
-        case false => value = ((new_value + old_value) / 2) * 100
-      }
-
-      entry.setValue(column.toInt, value)
-    }
-    //debug(this,  currentInst + "/" + numInstances)
-    currentInst += 1
-    if (currentInst == numInstances) {
-      sendEvent(QueryResults(confusionMatrix, query))
-      numInstances = 0
-      currentInst = 0
-    }
+  override def customReceive = {
+    case Query(q) =>
+      numInstancesTest = 1
+      statusChanged(Running())
+      query(q)
+    case status: Status => statusChanged(status)
   }
 
-  /**
-   *
-   */
-  private def buildClassifier(instances: Instances) {
+  def build(instances: Instances) {
+    //    debug(this, "Build CrossValidator " + instances.relationName)
     val index = guessAndSetClassLabel(instances)
     index match {
       case -1 =>
         classLabels = Array()
         warning(this, "No classLabel found in " + instances.relationName)
-      case x => classLabels = classLables(instances.attribute(x))
+      case x =>
+        classLabels = classLables(instances.attribute(x))
+        nonZeroValues = new Array(classLabels.length)
+        for (i <- 0 until classLabels.length) nonZeroValues(i) = new Array[Int](classLabels.length).map(_ => 1)
     }
-    classifier match {
-      case Some(c) => c stop
-      case None =>
+    //Clean up
+    (classifier, filter) match {
+      case (Some(c), Some(f)) => c stop; f stop
+      case (Some(c), None) => c stop
+      case (None, None) =>
     }
-    classifier = Some(factory.getInstance.start)
-    classifier.get !! Configure(classifier_properties)
-    classifier.get ! Results(instances.trainCV(folds, fold))
-    confusionMatrix = ResultsUtil.confusionMatrix(getClassLabels.toList)
-    val testSet = instances.testCV(folds, fold)
-    numInstances = testSet.numInstances
-    classifier.get ! Queries(testSet)
+    //Init filter if available
+    filterFactory match {
+      case null => filterTrained = true
+      case f =>
+        filter = Some(filterFactory.getInstance)
+        self startLink filter.get
+        filter.get ! Configure(classifierProperties)
+    }
+
+    //Init classifier
+    classifier = Some(classifierFactory.getInstance)
+    self startLink classifier.get
+    classifier.get ! Configure(classifierProperties)
+
+    //Start with filter or directly the classifier
+    filterTrained match {
+      case true =>
+        //No filter, classifier gets trained directly
+        debug(this, "Build CrossValidator[unfiltered] with " + instances.relationName)
+        classifierTrained = true
+        queriesFiltered = true
+        startValidation(instances, classifier.get)
+      case false =>
+        debug(this, "Build CrossValidator[filtered] with" + instances.relationName)
+        startValidation(instances, filter.get, true)
+    }
+  }
+
+  /**
+   * Standalone = true => Splits instances, train and test actor
+   * Standalone = false => Trains actor with instances
+   */
+  private def startValidation(instances: Instances, processor: ActorRef, filtered: Boolean = false) {
+    standalone match {
+      case true =>
+        val train = instances.trainCV(folds, fold)
+        //Train filter
+        processor ! Results(train)
+        //Filter training data with trained filter
+        if (filtered) { processor ! Queries(train) }
+        val testSet = instances.testCV(folds, fold)
+        numInstancesTest = testSet.numInstances
+        processor ! Queries(testSet)
+      case false =>
+        processor ! Results(instances)
+        numInstancesTrain = instances.numInstances
+        //Filter training data with trained filter
+        if (filtered) { processor ! Queries(instances) }
+    }
+  }
+
+  /**
+   * Process results. Merge with confusionMatrix.
+   *
+   * The results identified by the flags classifierTrained, queriesFiltered and
+   * the number of train and test instances have been received.
+   * If no filter is specified, filterTrained and queriesFiltered are automatically true.
+   *
+   * Data flow [unfiltered / no standalone]
+   * [1] classifier ! Results(train)
+   * [2] forward all queries directly to the classifier, without caching. Store numInstancesTest
+   * [3] Receive results, wait for the last instances to arrive, merge and send Results
+   *
+   * Data flow [filtered / no standalone]
+   * [1] filter ! Results(train) -> train filter
+   * [2] filter ! Queries(train) -> filter classifier train data. Store numInstancesTrain
+   * [3] Receive results, wait for last trained instances and than filter testInstances.
+   * [4] Receive results, wait for last trained instances and then query classifier.
+   * [5] Receive results, wait for last classified instance, merge and send Results
+   *
+   *
+   */
+  def result(result: Instances, query: Instance) {
+
+    val CurrentTrain = currentInstTrain + 1
+    val CurrentTest = currentInstTest + 1
+    (classifierTrained, queriesFiltered) match {
+
+      // Nothing trained or filtered yet
+      case (false, false) => numInstancesTrain match {
+        case CurrentTrain =>
+          debug(this, " [" + self.uuid + "] classifier train " + numInstancesTest)
+          classifier.get ! Results(filteredTrainData)
+          filterTrained = true
+          classifierTrained = true
+          numInstancesTrain = cacheSize
+          processStoredQueries
+        case _ =>
+          // If training data isn't completely filtered yet
+          // Create if not existed
+          if (filteredTrainData == null) filteredTrainData = new Instances(result, numInstancesTrain)
+
+          val enum = result.enumerateInstances
+          while (enum.hasMoreElements) filteredTrainData.add(enum.nextElement.asInstanceOf[Instance])
+          currentInstTrain += 1
+        // If training data isn't completely filtered yet
+      }
+
+      // Classifier was trained with filtered data, filter test data
+      case (true, false) => numInstancesTest match {
+        case CurrentTest =>
+          debug(this, " [" + self.uuid + "] classifier query " + numInstancesTrain)
+          queriesFiltered = true
+          currentInstTest = 0
+          numInstancesTest = filteredTestData.numInstances
+          classifier.get ! Queries(filteredTestData)
+        case _ =>
+          // If testing data isn't completely filtered yet
+          // Create if not existed
+          if (filteredTestData == null) filteredTestData = new Instances(result, numInstancesTest)
+
+          val enum = result.enumerateInstances
+          while (enum.hasMoreElements) filteredTestData.add(enum.nextElement.asInstanceOf[Instance])
+          currentInstTest += 1
+      }
+
+      // Classifier trained and test data filtered
+      case (true, true) =>
+        resultInstances += (query -> result)
+
+        currentInstTest += 1
+        // Send Results if currentInst processed is the total numInstances
+        if (currentInstTest == numInstancesTest) {
+          val header = new Instances(query.dataset, numInstancesTest)
+          val results = ResultsUtil.appendClassDistribution(header, resultInstances.toMap)
+          sendEvent(QueryResults(results, query))
+          numInstancesTest = 0
+          currentInstTest = 0
+          resultInstances = MutableMap()
+          statusChanged(Ready())
+        }
+    }
+
+  }
+
+  /**
+   * <p>Override queries, because query is forwarded to classifier</p>
+   *
+   * @param queries - queries forwared to classifier
+   * @return always Nil (empty list)
+   */
+  override def queries(queries: Instances): List[(Instances, Instance)] = {
+    statusChanged(Running())
+    numInstancesTest = queries.numInstances
+    val enum = queries.enumerateInstances
+    while (enum.hasMoreElements) query(enum.nextElement.asInstanceOf[Instance])
+    Nil
+  }
+
+  /**
+   * <p>Forward query to classifier and process results in result method</p>
+   *
+   * @param query - forwarded to classifier
+   * @returns Instances - ConfusionMatrix
+   */
+  def query(query: Instance): Instances = {
+    (filter, filterTrained, classifier, classifierTrained, queriesFiltered) match {
+      case (_, _, None, _, _) => warning(this, "No classifier found")
+      //cache if filtered isn't trained yet
+      case (Some(f), false, Some(_), _, _) => cacheQuery(query)
+      //forward to filter if exists
+      case (Some(f), true, Some(c), false, _) => f ! Query(query)
+      case (Some(f), true, Some(c), _, false) => f ! Query(query)
+      //forward directly to classifier
+      case (_, _, Some(c), true, true) => c ! Query(query)
+    }
+    null
+  }
+
+  /**
+   * Queries stored are forwared to the classifier specified
+   */
+  override def processStoredQueries {
+    //Does not respect arrival time
+    while (queryQueue.nonEmpty) {
+      val e = queryQueue.dequeue
+      e._1 match {
+        case None => //nothing
+        case Some(_) => query(e._2.query)
+      }
+    }
+    while (queriesQueue.nonEmpty) {
+      val e = queriesQueue.dequeue
+      e._1 match {
+        case None => //nothing
+        //TODO Id must be send 
+        case Some(_) => queries(e._2.queries)
+      }
+    }
+  }
+
+  private def createHeader(query: Instance, result: Instances): Instances = {
+    //Generate AttributeList
+    val attr = new ArrayList[Attribute](query.numAttributes + result.numAttributes)
+    val qAttr = query.enumerateAttributes
+    while (qAttr.hasMoreElements) {
+      attr.add(qAttr.nextElement.asInstanceOf[Attribute])
+    }
+
+    val ret = new Instances(ResultsUtil.NAME_CLASS_DISTRIBUTION, attr, numInstancesTest)
+    debug(this, "Attributes: " + query.numAttributes + " / " + result.numAttributes)
+    debug(this, "Header: " + ret)
+    guessAndSetClassLabel(ret)
+    ret
+  }
+
+  def getClassLabels(): Array[String] = classLabels
+
+  def configure(properties: Properties) = {
+    val cFactoryId = properties.getProperty(CrossValidatorFactory.CLASSIFIER)
+    val cFactory = getFactoryService(cFactoryId)
+    cFactory match {
+      case Some(f) => classifierFactory = f
+      case None => throw new Exception("No Factory with " + cFactoryId + " found!")
+    }
+
+    val fFactoryId = properties.getProperty(CrossValidatorFactory.FILTER)
+    val fFactory = getFactoryService(fFactoryId)
+    fFactory match {
+      case Some(f) => filterFactory = f
+      case None => debug(this, "Unfiltered CrossValidation")
+    }
+
+    folds = properties.getProperty(CrossValidatorFactory.FOLDS, "10").toInt
+    fold = properties.getProperty(CrossValidatorFactory.FOLD, "1").toInt
+    standalone = properties.getProperty(CrossValidatorFactory.STANDALONE, "true").toBoolean
+
+    //Remove used properties
+    classifierProperties.putAll(properties)
+    classifierProperties.remove(CrossValidatorFactory.CLASSIFIER)
+    classifierProperties.remove(CrossValidatorFactory.FILTER)
+    classifierProperties.remove(CrossValidatorFactory.FOLDS)
+    classifierProperties.remove(CrossValidatorFactory.FOLD)
+    classifierProperties.remove(CrossValidatorFactory.STANDALONE)
   }
 
   private def highestProbability(instances: Instances): Int = {
@@ -102,35 +328,10 @@ class CrossValidator(var factory: TFactory, var folds: Int, var fold: Int, var c
     index
   }
 
-  /**
-   *
-   */
-  def query(query: Instance): Instances = {
-    classifier match {
-      case None => warning(this, "No classifier found")
-      case Some(c) => c forward Query(query)
-    }
-    confusionMatrix
-  }
-
-  def getClassLabels(): Array[String] = classLabels
-
-  def configure(properties: Properties) = {
-    val factoryId = properties.getProperty(CrossValidatorFactory.CLASSIFIER)
-    val factory = getFactoryService(factoryId)
-    factory match {
-      case Some(f) => this.factory = f
-      case None => throw new Exception("No Factory with " + factoryId + " found!")
-    }
-    val strFolds = properties.getProperty(CrossValidatorFactory.FOLDS, "10")
-    val strFold = properties.getProperty(CrossValidatorFactory.FOLD, "1")
-    folds = strFolds.toInt
-    fold = strFold.toInt
-    //Remove used properties
-    properties.remove(CrossValidatorFactory.CLASSIFIER)
-    properties.remove(CrossValidatorFactory.FOLDS)
-    properties.remove(CrossValidatorFactory.FOLD)
-    classifier_properties = properties
+  private def cacheSize: Int = {
+    val size = queriesQueue.foldLeft(0)((size, q) => size + q._2.queries.numInstances)
+    val completeSize = size + queryQueue.size
+    completeSize
   }
 
 }
@@ -145,6 +346,7 @@ class CrossValidatorFactory extends TFactory {
   def createDefaultProperties: Properties = {
     val props = new Properties();
     props.setProperty(CrossValidatorFactory.CLASSIFIER, "")
+    props.setProperty(CrossValidatorFactory.FILTER, "")
     props.setProperty(CrossValidatorFactory.FOLD, "1")
     props.setProperty(CrossValidatorFactory.FOLDS, "2")
     props
@@ -160,6 +362,8 @@ object CrossValidatorFactory {
   val name: String = "CrossValidator"
   val id: String = classOf[CrossValidator].getName
   val CLASSIFIER = "classifier"
+  val FILTER = "filter"
   val FOLD = "fold"
   val FOLDS = "folds"
+  val STANDALONE = "standalone"
 }

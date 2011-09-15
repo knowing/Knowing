@@ -1,35 +1,30 @@
 package de.lmu.ifi.dbs.knowing.core.processing
 
+import akka.actor.Actor
+import akka.event.EventHandler.{ debug, info, warning, error }
+import de.lmu.ifi.dbs.knowing.core.events._
+import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import java.io.IOException
 import java.util.Properties
-import weka.core.Instances
-import de.lmu.ifi.dbs.knowing.core.events._
-import akka.actor.Actor
-import akka.event.EventHandler.{debug, info, warning, error}
+import weka.core.{ Instances, Instance }
+import java.net.URL
+import java.net.URI
+import java.io.File
+import java.io.FilenameFilter
 
-trait TLoader extends Actor with TSender with TConfigurable {
-
-  def receive: Receive = customReceive orElse defaultReceive
+trait TLoader extends TProcessor {
 
   /**
    * <p>Override for special behaviour</p>
    */
-  protected def customReceive: Receive = defaultReceive
-
-  /**
-   * <p>Default behaviour</p>
-   */
-  private def defaultReceive: Receive = {
-    case Register(actor, port) => addListener(actor, port)
-    case Configure(p) =>
-      configure(p)
-      if (self.getSender.isDefined)
-        self reply Ready
-    case Start | Start() =>
-      val dataset = getDataSet
-      sendEvent(Results(dataset))
+  override protected def customReceive = {
     case Reset => reset
-    case msg => warning(this, "<----> " + msg)
+  }
+
+  override def start {
+    val dataset = getDataSet
+    sendEvent(Results(dataset))
+    statusChanged(Finished())
   }
 
   /**
@@ -47,27 +42,101 @@ trait TLoader extends Actor with TSender with TConfigurable {
    */
   def reset
 
+  /* == Doesn't needed by TLoader == */
+  def build(instances: Instances) = {}
+
+  def query(instance: Instance): Instances = ResultsUtil.emptyResult
+
+  def result(results: Instances, query: Instance) = {}
+
 }
 
 object TLoader {
+
   /* ==== Properties to configure TLoader ==== */
-  val ABSOLUTE_PATH = "absolute-path"
-  val FILE = "file"
-  val URL = "url"
+  val ABSOLUTE_PATH = INodeProperties.ABSOLUTE_PATH
+  val FILE = INodeProperties.FILE
+
+  /**
+   * [scheme:][//authority][path][?query][#fragment]
+   * default scheme: file
+   */
+  val URL = INodeProperties.URL
+  val DIR = INodeProperties.DIR
+  val FILE_EXTENSIONS = INodeProperties.FILE_EXTENSIONS
+  /**
+   * This attribute is added, when using dir-option, so
+   * each source can be identified.
+   *
+   * property values: true | false
+   */
+  val SOURCE_ATTRIBUTE = INodeProperties.SOURCE_ATTRIBUTE
+
+  /** Options: single | multiple **/
+  val OUTPUT = INodeProperties.OUTPUT
+  val OUTPUT_SINGLE = INodeProperties.OUTPUT_SINGLE
+  val OUTPUT_MULTIPLE = INodeProperties.OUTPUT_MULTIPLE
 
   /** Points to the dpu directory. Ends with a file.seperator */
-  val DPU_PATH = "path-to-dpu" // this properties is created by the GraphSupervisor-Caller
+  val EXE_PATH = INodeProperties.EXE_PATH // this properties is created by the GraphSupervisor-Caller
 
   def getFilePath(properties: Properties): String = {
     val absolute = properties.getProperty(ABSOLUTE_PATH, "false").toBoolean
     absolute match {
       case true => properties.getProperty(FILE)
+      case false => getInputURI(properties).getPath
+    }
+  }
+
+  def getInputURI(properties: Properties): URI = {
+    val absolute = properties.getProperty(ABSOLUTE_PATH, "false").toBoolean
+    val exePath = properties.getProperty(EXE_PATH)
+    val file = properties.getProperty(FILE)
+    val url = properties.getProperty(URL)
+    (url, absolute) match {
+      case (null, true) | ("", true) => new URI("file", file, null)
+      case (null, false) | ("", false) => resolveFile(exePath, file) getOrElse new URI("file", file, null)
+      case (_, true) => new URI(url)
+      case (_, false) => resolveFile(exePath, url) getOrElse new URI(url)
+      case _ => new URI("")
+    }
+  }
+
+  def getInputURIs(properties: Properties): Array[URI] = {
+    val dirPath = properties.getProperty(DIR)
+    if (dirPath == null || dirPath.isEmpty)
+      return Array(getInputURI(properties))
+
+    val exePath = properties.getProperty(EXE_PATH)
+    val absolute = properties.getProperty(ABSOLUTE_PATH, "false").toBoolean
+    val extensions = properties.getProperty(FILE_EXTENSIONS, "").split(',')
+    val dir = absolute match {
+      case true => new File(dirPath)
       case false =>
-        val path = properties.getProperty(DPU_PATH)
-        if (path == null || path.isEmpty)
-          properties.getProperty(FILE)
-        else
-          path + properties.getProperty(FILE)
+        val sep = "/"; //System.getProperty("file.separator")
+        // If exe path is path to dpu, remove the dpu-filename
+        val lastIndex = exePath.lastIndexOf(sep)
+        //Get the directory path
+        val exeFile = new URI(exePath.substring(0, lastIndex)).toURL.getFile
+        // `.` means the current directory, so this should be removed
+        val dirPathNew = dirPath.replace(".", "")
+        // Java assumes ./path/ is a file and ./path is a directory
+        if (dirPathNew isEmpty) new File(exeFile)
+        else new File(exeFile + sep + dirPathNew)
+    }
+    val files = dir.listFiles(new FilenameFilter {
+      def accept(dir: File, name: String): Boolean = extensions filter (ext => name.endsWith(ext)) nonEmpty
+    })
+    files match {
+      case null => Array()
+      case _ => files map (_.toURI)
+    }
+  }
+
+  def resolveFile(exePath: String, filename: String): Option[URI] = {
+    exePath match {
+      case null | "" => None
+      case _ => Some(new URI(exePath).resolve("./" + filename))
     }
   }
 }

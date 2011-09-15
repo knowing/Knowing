@@ -4,13 +4,12 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="de.lmu.ifi.dbs.knowing.ui.editor.DPUEditor"
+            class="de.lmu.ifi.dbs.knowing.ui.editor.DPUSapphireEditor"
             contributorClass="de.lmu.ifi.dbs.knowing.ui.editor.DPUActionBarContributor"
             default="true"
             extensions="dpu, xml"
-            filenames="dpu, dpu.xml"
-            id="de.lmu.ifi.dbs.knowing.ui.editor.DPUEditor"
-            name="DPU Edtior">
+            id="de.lmu.ifi.dbs.knowing.ui.editor"
+            name="DPU Sapphire Editor">
       </editor>
    </extension>
    <extension
@@ -20,15 +19,23 @@
             name="Knowing">
       </category>
       <wizard
+            category="de.lmu.ifi.dbs.knowing.ui.knowing"
             class="de.lmu.ifi.dbs.knowing.ui.wizard.NewDPUWizard"
+            icon="icons/dpu_16.png"
             id="de.lmu.ifi.dbs.knowing.ui.NewDPUWizard"
             name="New DataProcessingUnit">
+      </wizard>
+      <wizard
+            category="de.lmu.ifi.dbs.knowing.ui.knowing"
+            class="de.lmu.ifi.dbs.knowing.ui.wizard.NewProcessorWizard"
+            id="de.lmu.ifi.dbs.knowing.ui.NewProcessorWizard"
+            name="New Processor">
       </wizard>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">
       <factory
-            adaptableType="de.lmu.ifi.dbs.knowing.core.graph.Node"
+            adaptableType="de.lmu.ifi.dbs.knowing.core.model.INode"
             class="de.lmu.ifi.dbs.knowing.ui.adapter.NodeAdapterFactory">
          <adapter
                type="de.lmu.ifi.dbs.knowing.ui.adapter.IWorkbenchColumnAdapter">
@@ -38,7 +45,7 @@
          </adapter>
       </factory>
       <factory
-            adaptableType="de.lmu.ifi.dbs.knowing.core.graph.Edge"
+            adaptableType="de.lmu.ifi.dbs.knowing.core.model.IEdge"
             class="de.lmu.ifi.dbs.knowing.ui.adapter.EdgeAdapterFactory">
          <adapter
                type="de.lmu.ifi.dbs.knowing.ui.adapter.IWorkbenchColumnAdapter">
@@ -48,7 +55,7 @@
          </adapter>
       </factory>
       <factory
-            adaptableType="de.lmu.ifi.dbs.knowing.core.graph.xml.Property"
+            adaptableType="de.lmu.ifi.dbs.knowing.core.model.IProperty"
             class="de.lmu.ifi.dbs.knowing.ui.adapter.PropertyAdapterFactory">
          <adapter
                type="de.lmu.ifi.dbs.knowing.ui.adapter.IWorkbenchColumnAdapter">

@@ -3,9 +3,10 @@ package de.lmu.ifi.dbs.knowing.core.weka
 import java.util.Properties
 import scala.collection.JavaConversions._
 import de.lmu.ifi.dbs.knowing.core.factory._
-import de.lmu.ifi.dbs.knowing.core.events.Results
+import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
+import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
@@ -15,7 +16,7 @@ import weka.core.{ Instance, Instances }
 /**
  *
  * @author Nepomuk Seiler
- * @version 0.1
+ * @version 0.2
  * @since 21.04.2011
  *
  */
@@ -35,13 +36,14 @@ class WekaClassifier(protected val classifier: Classifier) extends TProcessor {
     }
     classifier.buildClassifier(instances)
     debug(this, "... build successfull for " + name)
+    processStoredQueries
   }
 
   def query(query: Instance): Instances = {
     val distribution = classifier.distributionForInstance(query)
 
     val distString = for (i <- 0 until distribution.length) yield distribution(i).toString
-    debug(this, "Classified with: " + distString + " # ClassValue: " + query.classValue)
+//    debug(this, "Classified with: " + distString + " # ClassValue: " + query.classValue)
     ResultsUtil.classAndProbabilityResult(getClassLabels.toList, distribution)
   }
 
@@ -83,7 +85,7 @@ class WekaClassifierFactory[T <: WekaClassifier, S <: Classifier](wrapper: Class
 }
 
 object WekaClassifierFactory {
-  val DEBUG = "debug"
+  val DEBUG = INodeProperties.DEBUG
 }
 
 /* =========================== */

@@ -20,6 +20,11 @@
             id="de.lmu.ifi.dbs.knowing.core.swt.EvaluateDPU"
             name="Evaluate DPU">
       </command>
+      <command
+            defaultHandler="de.lmu.ifi.dbs.knowing.core.swt.handler.FactoryDirectoryHandler"
+            id="de.lmu.ifi.dbs.knowing.core.swt.SelectFactory"
+            name="Show factories">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -28,7 +33,15 @@
             locationURI="toolbar:de.lmu.ifi.dbs.knowing.core.swt.presenterView">
          <command
                commandId="de.lmu.ifi.dbs.knowing.core.swt.EvaluateDPU"
-               label="Evaluate DPU"
+               icon="icons/dpu_16.png"
+               label="Evaluate"
+               mode="FORCE_TEXT"
+               style="push">
+         </command>
+         <command
+               commandId="de.lmu.ifi.dbs.knowing.core.swt.SelectFactory"
+               label="Show factories"
+               mode="FORCE_TEXT"
                style="push">
          </command>
       </menuContribution>

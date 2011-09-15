@@ -1,11 +1,9 @@
 package knowing.test.loader
 
 import de.lmu.ifi.dbs.knowing.core.processing.TLoader
-import de.lmu.ifi.dbs.knowing.core.factory.TFactory
-
+import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
 import java.util.Properties
 import weka.core.Instances
-
 import akka.actor.Actor.actorOf
 import akka.actor.ActorRef
 
@@ -25,22 +23,7 @@ class TestLoader extends TLoader {
 
 }
 
-class TestLoaderFactory extends TFactory {
-
-  val name: String = TestLoaderFactory.name
-  val id: String = TestLoaderFactory.id
-
-  def getInstance(): ActorRef = actorOf[TestLoader]
-  
-    
-  def createDefaultProperties: Properties = new Properties
-  
-  def createPropertyValues:Map[String, Array[Any]] = Map()
-  
-  def createPropertyDescription:Map[String, String] = Map()
-  
-  
-}
+class TestLoaderFactory extends ProcessorFactory(classOf[TestLoader])
 
 object TestLoaderFactory {
 

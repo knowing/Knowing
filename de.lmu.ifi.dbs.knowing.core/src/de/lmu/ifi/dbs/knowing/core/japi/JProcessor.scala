@@ -1,10 +1,14 @@
 package de.lmu.ifi.dbs.knowing.core.japi
 
 import java.util.Properties
-import akka.actor.ScalaActorRef
+import akka.event.EventHandler
 import weka.core.{Instances, Instance}
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
+import de.lmu.ifi.dbs.knowing.core.processing.TSender._
 import de.lmu.ifi.dbs.knowing.core.events.Event
+import de.lmu.ifi.dbs.knowing.core.processing.TSerializable
+import java.io.InputStream
+import java.io.OutputStream
 
 /**
  * <p>This wrapper class provides a wrapper for processors developed in Java.
@@ -14,9 +18,13 @@ import de.lmu.ifi.dbs.knowing.core.events.Event
  * @version 0.2
  * @since 04.07.2011
  */
-abstract class JProcessor extends TProcessor {
+abstract class JProcessor extends TProcessor with TSerializable {
   
   val processor: IProcessor
+  
+  override def start = processor.start
+  
+  override def postStop = processor.stop
   
   def build(instances: Instances) = processor.build(instances)
 
@@ -28,10 +36,11 @@ abstract class JProcessor extends TProcessor {
   
   def configure(properties: Properties) = processor.configure(properties)
 
-  override def sendEvent(event:Event, port:String ) {
-    port match {
-      case null => sendEvent(event)
-      case _ => sendEvent(event, port)
-    }
-  }
+  def getInputStream():InputStream = inputStream().getOrElse(null)
+  def getOutputStream():OutputStream = outputStream getOrElse(null)
+  
+  def debug(msg: String) = EventHandler.debug(this, msg)
+  def info(msg: String) = EventHandler.info(this, msg)
+  def warning(msg: String) = EventHandler.warning(this, msg)
+  def error(msg: String) = EventHandler.error(this, msg)
 }

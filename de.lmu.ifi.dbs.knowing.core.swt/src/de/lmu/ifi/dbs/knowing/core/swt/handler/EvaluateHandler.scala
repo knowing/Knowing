@@ -1,26 +1,22 @@
 package de.lmu.ifi.dbs.knowing.core.swt.handler
 
+import java.net.URI
+import org.eclipse.core.commands.AbstractHandler
+import org.eclipse.core.commands.ExecutionEvent
+import org.eclipse.jface.wizard.WizardDialog
+import org.eclipse.ui.handlers.HandlerUtil
+import org.eclipse.ui.IViewPart
+import org.eclipse.ui.PartInitException
 import org.eclipse.ui.PlatformUI
-import org.eclipse.swt.widgets.Composite
-import java.io.File;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
-import org.eclipse.core.commands.{ AbstractHandler, ExecutionEvent, ExecutionException }
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.handlers.HandlerUtil;
-
-import de.lmu.ifi.dbs.knowing.core.factory.UIFactory;
-import de.lmu.ifi.dbs.knowing.core.graph.GraphSupervisor;
-import de.lmu.ifi.dbs.knowing.core.graph.xml.DataProcessingUnit;
-import de.lmu.ifi.dbs.knowing.core.events._
-import de.lmu.ifi.dbs.knowing.core.swt.view.PresenterView;
-
 import akka.actor.Actor.actorOf
+import akka.actor.ActorRef
+import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
+import de.lmu.ifi.dbs.knowing.core.processing.GraphSupervisor
+import de.lmu.ifi.dbs.knowing.core.events._
+import de.lmu.ifi.dbs.knowing.core.swt.internal.Activator
+import de.lmu.ifi.dbs.knowing.core.swt.view.PresenterView
+import de.lmu.ifi.dbs.knowing.core.swt.wizard.SelectDPUWizard
+import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
 
 /**
  * @author Nepomuk Seiler
@@ -31,61 +27,24 @@ import akka.actor.Actor.actorOf
 class EvaluateHandler extends AbstractHandler {
 
   def execute(event: ExecutionEvent): Object = {
-    val pathname = openDPU(event)
-    if (pathname == null || pathname.isEmpty())
-      return null;
-    val dpu = unmarshallDPU(pathname)
-    EvaluateHandler.evaluate(dpu, getDirectory(pathname))
-    null;
-  }
-
-  /**
-   * @param pathname
-   */
-  def unmarshallDPU(pathname: String): DataProcessingUnit = {
-    try {
-      val context = JAXBContext.newInstance(classOf[DataProcessingUnit])
-      val um = context.createUnmarshaller()
-      um.unmarshal(new File(pathname)).asInstanceOf[DataProcessingUnit]
-    } catch {
-      case jaxb: JAXBException =>
-        jaxb.printStackTrace
-        null
-      case e: Exception =>
-        e.printStackTrace()
-        null
-    }
-  }
-
-  /**
-   * @param event
-   * @return
-   */
-  private def openDPU(event: ExecutionEvent): String = {
-    val dialog = new FileDialog(HandlerUtil.getActiveShell(event))
-    dialog.setFilterExtensions(Array("*.dpu"))
-    dialog.setFilterNames(Array("DPU DataProcessingUnit"))
-    dialog.open()
-  }
-  
-  private def getDirectory(dpuPath: String):String = {
-    val sep = System.getProperty("file.separator")
-    val index = dpuPath.lastIndexOf(sep)
-    dpuPath.substring(0,index+1)
+    val wizard = new SelectDPUWizard
+    val dialog = new WizardDialog(HandlerUtil.getActiveShell(event), wizard)
+    val ret = dialog.open
+    null
   }
 
 }
 
 object EvaluateHandler {
 
-  def evaluate(dpu: DataProcessingUnit, dpuPath: String) {
+  def evaluate(dpu: IDataProcessingUnit, dpuPath: URI): ActorRef = {
     try {
       val view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(PresenterView.ID)
       val pView = view.asInstanceOf[PresenterView]
       pView.clearTabs
-      val supervisor = actorOf(new GraphSupervisor(dpu, pView.uifactory, dpuPath)).start
+      val supervisor = actorOf(new GraphSupervisor(dpu, pView.uifactory, dpuPath, Activator.directoryService)).start
       supervisor ! Start
-      null
+      supervisor
     } catch {
       case pEx: PartInitException =>
         pEx.printStackTrace

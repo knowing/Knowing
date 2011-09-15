@@ -17,12 +17,13 @@ import de.lmu.ifi.dbs.knowing.core.swt.handler.SWTListener
 abstract class SWTPresenter extends TPresenter[Composite] {
 
   private var composite: Composite = _
-  
-  override def customReceive = {
-    case SWTListener(typ, listener) => 
+
+  override def presenterReceive = {
+    case SWTListener(typ, listener) =>
       debug(this, "Received SWTListener: " + listener)
       composite.getDisplay.asyncExec(new Runnable() {
-      def run = addListener(typ, listener) })
+        def run = addListener(typ, listener)
+      })
   }
 
   def createContainer(parent: Composite) {
@@ -41,8 +42,8 @@ abstract class SWTPresenter extends TPresenter[Composite] {
   def dispose = composite dispose
 
   def redraw = composite redraw
-  
-  def addListener(typ:Int, listener:Listener)
+
+  def addListener(typ: Int, listener: Listener)
 
   /**
    * <p>Delegates the call to buildContent() and runs it sync <br>

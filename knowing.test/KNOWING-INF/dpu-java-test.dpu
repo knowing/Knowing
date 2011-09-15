@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DataProcessingUnit name="java-wrapper-test">
+	<description>Cross Validation with NaiveBayes output to TablePresenter
+	</description>
+	<tags>Cross, Validation, Cross Validation, ARFF, NaiveBayes</tags>
+	<nodes>
+		<node id="java" factoryId="knowing.test.processor.TestJavaProcessor"
+			type="processor">
+			<properties>
+				<property key="serialize" value="model.mdl" />
+				<property key="deserialize" value="model.mdl" />
+			</properties>
+		</node>
+		<node id="ARFF" factoryId="weka.core.converters.ArffLoader" type="loader">
+			<properties>
+				<property key="file" value="iris.arff" />
+			</properties>
+		</node>
+	</nodes>
+	<edges>
+		<edge id="arff_validator" source="ARFF" target="java" />
+	</edges>
+</DataProcessingUnit>
+

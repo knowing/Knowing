@@ -3,7 +3,8 @@ package de.lmu.ifi.dbs.knowing.ui.adapter;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-import de.lmu.ifi.dbs.knowing.core.graph.Node;
+import de.lmu.ifi.dbs.knowing.core.model.INode;
+
 
 /**
  * @author Nepomuk Seiler
@@ -17,7 +18,7 @@ public class NodeAdapterFactory implements IAdapterFactory {
 	
 	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		if(!(adaptableObject instanceof Node)) 
+		if(!(adaptableObject instanceof INode)) 
 			return null;
 			
 		return new NodeAdapter();

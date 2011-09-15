@@ -2,7 +2,9 @@ package de.lmu.ifi.dbs.knowing.core.factory
 
 import akka.actor.Actor
 import akka.actor.ActorRef
-import de.lmu.ifi.dbs.knowing.core.graph.Node
+import de.lmu.ifi.dbs.knowing.core.events.Status
+import de.lmu.ifi.dbs.knowing.core.model.INode
+
 /**
  * @author Nepomuk Seiler
  * @version 0.1
@@ -11,8 +13,10 @@ import de.lmu.ifi.dbs.knowing.core.graph.Node
  */
 trait UIFactory { 
   
-  def createContainer(node: Node):AnyRef
+  def createContainer(node: INode):AnyRef
   
-  def update
+  def update(actor: ActorRef, status: Status)
+  
+  def setSupervisor(supervisor: ActorRef)
   
 }

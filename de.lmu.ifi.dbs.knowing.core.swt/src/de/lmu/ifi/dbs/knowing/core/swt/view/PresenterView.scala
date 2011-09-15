@@ -4,16 +4,24 @@ import akka.actor.{ ActorRef, Actor, TypedActor }
 import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
 import java.util.concurrent.SynchronousQueue
+import java.util.concurrent.ArrayBlockingQueue
+
 import org.eclipse.swt.layout.FillLayout
 import org.eclipse.swt.SWT
-import org.eclipse.swt.widgets.Composite 
+import org.eclipse.swt.widgets.Composite
 import org.eclipse.swt.graphics.Image
-import org.eclipse.swt.custom.{ CTabFolder , CTabItem }
+import org.eclipse.swt.custom.{ CTabFolder, CTabItem }
 import org.eclipse.ui.part.ViewPart
 import org.eclipse.ui.IPropertyListener
-import de.lmu.ifi.dbs.knowing.core.graph.Node
-import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
+import org.eclipse.core.runtime.jobs.Job
+import org.eclipse.core.runtime.IProgressMonitor
+import org.eclipse.core.runtime.IStatus
+import org.eclipse.core.runtime.{ Status => JobStatus }
 
+import de.lmu.ifi.dbs.knowing.core.swt.dialog.ProgressDialog
+import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
+import de.lmu.ifi.dbs.knowing.core.events._
+import de.lmu.ifi.dbs.knowing.core.model._
 
 /**
  * @author Nepomuk Seiler
@@ -30,11 +38,11 @@ class PresenterView extends ViewPart {
 
   def createPartControl(parent: Composite) = tabFolder = new CTabFolder(parent, SWT.BOTTOM)
 
-  def createNodeTab(node: Node) {
+  def createNodeTab(node: INode) {
     tabFolder.getDisplay.asyncExec(new Runnable {
       def run {
         debug(uifactory, "Trying to create tab... ")
-        val composite = createTab(node.id)
+        val composite = createTab(node.getId.getContent)
         rendevouz put (composite)
       }
     })
@@ -75,7 +83,11 @@ object PresenterView { val ID = "de.lmu.ifi.dbs.knowing.core.swt.presenterView" 
 
 class PresenterUIFactory(view: PresenterView) extends TypedActor with UIFactory {
 
-  def createContainer(node: Node): Composite = {
+  private var started = false
+  private var dialog: ProgressDialog = _
+  var supervisor: ActorRef = _
+
+  def createContainer(node: INode): Composite = {
     debug(this, "CreateContainer with " + node)
     view.createNodeTab(node)
     debug(this, "Waiting for finish...")
@@ -84,5 +96,31 @@ class PresenterUIFactory(view: PresenterView) extends TypedActor with UIFactory 
     parent
   }
 
-  def update = view update
+  def update(actor: ActorRef, status: Status) {
+    //Create ProgressDialog on first status
+    if (!started || dialog == null || dialog.disposed) {
+      dialog = new ProgressDialog(view.getSite.getShell)
+      dialog.supervisor = this.supervisor
+      view.getSite.getShell.getDisplay.asyncExec(
+        new Runnable {
+          def run = dialog.open
+        })
+      started = true
+    }
+    //Update Dialog in UI Thread
+    view.getSite.getShell.getDisplay.asyncExec(
+      new Runnable {
+        def run = dialog.update(actor, status)
+      })
+
+    //Handle special status events
+    status match {
+      case UpdateUI() => view update
+      case Shutdown() => started = false
+      case _ =>
+    }
+
+  }
+  
+  def setSupervisor(supervisor: ActorRef) = this.supervisor = supervisor
 }

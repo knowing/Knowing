@@ -5,26 +5,34 @@ Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.core.swt;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.eclipse.ui;bundle-version="3.6.0",
  org.eclipse.core.runtime,
- de.lmu.ifi.dbs.knowing.core;bundle-version="1.0.0"
+ de.lmu.ifi.dbs.knowing.core;bundle-version="1.0.0",
+ org.eclipse.sapphire.modeling;bundle-version="0.3.0",
+ org.eclipse.sapphire.modeling.xml;bundle-version="0.3.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.lmu.ifi.dbs.knowing.core.swt.internal.Activator
 Export-Package: de.lmu.ifi.dbs.knowing.core.swt,
+ de.lmu.ifi.dbs.knowing.core.swt.dialog,
+ de.lmu.ifi.dbs.knowing.core.swt.factory,
  de.lmu.ifi.dbs.knowing.core.swt.handler,
  de.lmu.ifi.dbs.knowing.core.swt.provider,
- de.lmu.ifi.dbs.knowing.core.swt.view
-Import-Package: org.eclipse.help,
- scala;version="2.9.0.final",
- scala.collection;version="2.9.0.final",
- scala.collection.generic;version="2.9.0.final",
- scala.collection.immutable;version="2.9.0.final",
- scala.collection.interfaces;version="2.9.0.final",
- scala.collection.mutable;version="2.9.0.final",
- scala.io;version="2.9.0.final",
- scala.math;version="2.9.0.final",
- scala.ref;version="2.9.0.final",
- scala.reflect;version="2.9.0.final",
- scala.reflect.generic;version="2.9.0.final",
- scala.runtime;version="2.9.0.final",
- scala.util;version="2.9.0.final"
+ de.lmu.ifi.dbs.knowing.core.swt.view,
+ de.lmu.ifi.dbs.knowing.core.swt.wizard
+Import-Package: akka,
+ akka.actor,
+ akka.event,
+ org.eclipse.help,
+ scala;version="2.9.0.1",
+ scala.collection;version="2.9.0.1",
+ scala.collection.generic;version="2.9.0.1",
+ scala.collection.immutable;version="2.9.0.1",
+ scala.collection.interfaces;version="2.9.0.1",
+ scala.collection.mutable;version="2.9.0.1",
+ scala.io;version="2.9.0.1",
+ scala.math;version="2.9.0.1",
+ scala.ref;version="2.9.0.1",
+ scala.reflect;version="2.9.0.1",
+ scala.reflect.generic;version="2.9.0.1",
+ scala.runtime;version="2.9.0.1",
+ scala.util;version="2.9.0.1"
 Bundle-Vendor: LMU Munich - Database Systems Group

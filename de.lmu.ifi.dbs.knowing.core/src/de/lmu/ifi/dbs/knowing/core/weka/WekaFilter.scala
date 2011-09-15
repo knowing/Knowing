@@ -1,13 +1,15 @@
 package de.lmu.ifi.dbs.knowing.core.weka
 
 import java.util.Properties
-import de.lmu.ifi.dbs.knowing.core.processing.TFilter
 import weka.core.{ Instance, Instances }
 import weka.filters.Filter
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
+import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties
+import de.lmu.ifi.dbs.knowing.core.processing.TFilter
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
+
 
 /**
  * @author Nepomuk Seiler
@@ -20,18 +22,23 @@ class WekaFilter(protected val filter: Filter) extends TFilter {
   /**
    * <p>Code mainly from weka.filters.Filter</p>
    */
-  def filter(instances: Instances): Instances = {
-    guessAndSetClassLabel(instances)
-    filter.setInputFormat(new Instances(instances, 0))
+  override def filter(instances: Instances): Instances = {
+    val header = new Instances(instances, 0)
+    guessAndSetClassLabel(header)
+    filter.setInputFormat(header)
     Filter.useFilter(instances, filter)
   }
 
   def query(query: Instance): Instances = {
     filter.input(query)
-    val returns = filter.getOutputFormat
+	filter.batchFinished
+
+    val returns = new Instances(filter.getOutputFormat, 1)
     returns.add(filter.output)
     returns
   }
+  
+  //TODO override queries
 
   def result(result: Instances, query: Instance) = {}
 
@@ -69,5 +76,5 @@ class WekaFilterFactory[T <: WekaFilter, S <: Filter](wrapper: Class[T], clazz: 
 }
 
 object WekaFilterFactory {
-  val DEBUG = "debug"
+  val DEBUG = INodeProperties.DEBUG
 }
