@@ -12,9 +12,12 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.lmu.ifi.dbs.knowing.core.swt.internal.Activator
 Export-Package: de.lmu.ifi.dbs.knowing.core.swt,
+ de.lmu.ifi.dbs.knowing.core.swt.dialog,
+ de.lmu.ifi.dbs.knowing.core.swt.factory,
  de.lmu.ifi.dbs.knowing.core.swt.handler,
  de.lmu.ifi.dbs.knowing.core.swt.provider,
- de.lmu.ifi.dbs.knowing.core.swt.view
+ de.lmu.ifi.dbs.knowing.core.swt.view,
+ de.lmu.ifi.dbs.knowing.core.swt.wizard
 Import-Package: org.eclipse.help,
  scala;version="2.9.0.1",
  scala.collection;version="2.9.0.1",
