@@ -97,17 +97,13 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
     relAttribute match {
       case -1 => //no relational attribute found
       case _ =>
-        val insts = result.enumerateInstances
-        var index = 0
+        val insts = result.enumerateInstances        
         while (insts.hasMoreElements) {
           val inst = insts.nextElement.asInstanceOf[Instance]
           inst.relationalValue(relAttribute) match {
             case null => //Do nothing
-            case relation => {
-              inst.setValue(relAttribute,resultHeader.attribute(relAttribute).addRelation(relation));
-            }
-          }
-          index += 1
+            case relation => inst.setValue(relAttribute, resultHeader.attribute(relAttribute).addRelation(relation));            
+          }          
         }
     }
   }
