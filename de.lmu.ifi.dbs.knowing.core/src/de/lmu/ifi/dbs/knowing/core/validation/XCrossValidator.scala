@@ -101,11 +101,13 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
         var index = 0
         while (insts.hasMoreElements) {
           val inst = insts.nextElement.asInstanceOf[Instance]
-          inst.attribute(relAttribute).relation(index) match {
+          inst.relationalValue(relAttribute) match {
             case null => //Do nothing
-            case relation => resultHeader.attribute(relAttribute).addRelation(relation)
+            case relation => {
+              inst.setValue(relAttribute,resultHeader.attribute(relAttribute).addRelation(relation));
+            }
           }
-          index += index
+          index += 1
         }
     }
   }
