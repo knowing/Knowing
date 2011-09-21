@@ -6,12 +6,15 @@ import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
+import de.lmu.ifi.dbs.knowing.core.processing.TSerializable
 import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
 import weka.classifiers.Classifier
 import weka.core.{ Instance, Instances }
+import weka.core.SerializationHelper
+
 
 /**
  *
@@ -20,10 +23,29 @@ import weka.core.{ Instance, Instances }
  * @since 21.04.2011
  *
  */
-class WekaClassifier(protected val classifier: Classifier) extends TProcessor {
+class WekaClassifier(protected var classifier: Classifier) extends TProcessor with TSerializable {
 
   private var classLabels: Array[String] = _
   private val name = getClass().getSimpleName;
+  
+  override def start {
+    inputStream match {
+      case None => //no model found
+      case Some(in) =>
+        debug(this, "Deserialize stored classifier")
+        classifier = SerializationHelper.read(in).asInstanceOf[Classifier]
+        isBuild = true
+    }
+  }
+  
+  override def postStop {
+    outputStream match {
+      case None =>
+      case Some(out) => 
+        debug(this, "Serialize classifier")
+        SerializationHelper.write(out, classifier)
+    }
+  }
 
   def build(instances: Instances) {
     debug(this, "Build internal model for " + name + " ...")

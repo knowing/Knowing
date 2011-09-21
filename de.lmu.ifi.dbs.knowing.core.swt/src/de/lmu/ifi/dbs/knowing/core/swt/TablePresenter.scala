@@ -8,15 +8,13 @@ import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import de.lmu.ifi.dbs.knowing.core.swt.provider.{ InstanceContentProvider, InstanceLabelProvider }
 import org.eclipse.jface.viewers.{ TableViewerColumn, TableViewer }
 import org.eclipse.swt.SWT
-import org.eclipse.swt.widgets. {Composite, Button, Label, Spinner }
-import org.eclipse.swt.layout.{ GridData , GridLayout }
+import org.eclipse.swt.widgets.{ Composite, Button, Label, Spinner }
+import org.eclipse.swt.layout.{ GridData, GridLayout }
 import org.eclipse.jface.layout.TableColumnLayout
 import org.eclipse.jface.viewers.ColumnWeightData
 import weka.core.{ Instances, Attribute }
 import org.eclipse.swt.widgets.Listener
 import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
-
-
 
 /**
  * @author Nepomuk Seiler
@@ -86,15 +84,15 @@ class TablePresenter extends SWTPresenter {
 
     debug(this, "createColumns...")
     instances.setClassIndex(-1); //WekaEnumeration skips the class attribute, so the class index has to be unset...
-    val eAttr = instances.enumerateAttributes    
+    val eAttr = instances.enumerateAttributes
     val weight = instances.numInstances match {
       case 0 => 100
       case x => 100 / x
     }
     viewer.getTable().setHeaderVisible(true);
     viewer.getTable().setLinesVisible(true);
-    while (eAttr.hasMoreElements) {
-      val a = eAttr.nextElement().asInstanceOf[Attribute]
+    for (i <- 0 until instances.numAttributes) {
+      val a = instances.attribute(i)
       val viewerColumn = new TableViewerColumn(viewer, SWT.LEAD)
       layout.setColumnData(viewerColumn.getColumn, new ColumnWeightData(weight, 70, true))
       viewerColumn.getColumn.setText(a.name)
@@ -102,6 +100,7 @@ class TablePresenter extends SWTPresenter {
       viewerColumn.getColumn.setResizable(true)
       viewerColumn.getColumn.setMoveable(true)
     }
+
     viewer.setLabelProvider(new InstanceLabelProvider);
     viewer.setContentProvider(new InstanceContentProvider);
     columnsInit = true;
@@ -113,8 +112,8 @@ class TablePresenter extends SWTPresenter {
     val row_string = properties.getProperty(TablePresenter.ROWS_PER_PAGE, "100")
     rows = row_string.toInt
   }
-  
-  def addListener(typ:Int, listener:Listener) = viewer.getTable.addListener(typ, listener)
+
+  def addListener(typ: Int, listener: Listener) = viewer.getTable.addListener(typ, listener)
 
   private def createInput(instances: Instances): Instances = {
     if (instances.numInstances > rows)

@@ -48,3 +48,14 @@ object INodeProperties {
   /* ========================= */
   val DEBUG = "debug"
 }
+
+object IProcessorPorts {
+
+  /* ========================= */
+  /* ====== Classifier ======= */
+  /* ========================= */
+
+  val TRAIN = "train"
+  val TEST = "test"
+
+}

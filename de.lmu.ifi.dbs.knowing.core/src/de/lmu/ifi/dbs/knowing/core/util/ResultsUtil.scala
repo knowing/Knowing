@@ -485,7 +485,7 @@ object ResultsUtil {
   def appendClassDistribution(header: Instances, inst: Map[Instance, Instances]): Instances = {
     val head = new Instances(header, inst.size)
     val labels = header.classAttribute.enumerateValues.toList
-    labels foreach (l => head.insertAttributeAt(new Attribute("class" + l), head.numAttributes))
+    labels foreach (l => head.insertAttributeAt(new Attribute("class" + l), head.numAttributes ))
     inst.foldLeft(head) {
       case (head, (query, dist)) =>
         val inst = new DenseInstance(head.numAttributes)

@@ -3,6 +3,7 @@ package de.lmu.ifi.dbs.knowing.core.processing
 import java.util.Properties
 import weka.core.{ Instance, Instances }
 import de.lmu.ifi.dbs.knowing.core.events._
+import de.lmu.ifi.dbs.knowing.core.processing.IProcessorPorts.{ TRAIN, TEST }
 
 /**
  *  @author Nepomuk Seiler
@@ -11,8 +12,13 @@ import de.lmu.ifi.dbs.knowing.core.events._
  */
 trait TClassifier extends TProcessor {
 
-  override def customReceive = {
-    case Results(instances, _) => build(instances)
+  override def build = {
+    case (instances, Some(TEST)) => 
+      isBuild = false
+      val results = queries(instances)
+    case (instances, Some(TRAIN)) => build(instances)
+    case (instances, None) => build(instances)
+    case (instances, _) => 
   }
 
   /**

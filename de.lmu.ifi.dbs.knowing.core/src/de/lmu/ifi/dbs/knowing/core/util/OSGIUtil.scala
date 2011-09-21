@@ -7,7 +7,7 @@ import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import de.lmu.ifi.dbs.knowing.core.processing._
 import OSGIUtil._
 import de.lmu.ifi.dbs.knowing.core.internal.Activator
-import de.lmu.ifi.dbs.knowing.core.service.IDPUProvider
+import de.lmu.ifi.dbs.knowing.core.service._
 import java.net.URL
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
 
@@ -81,7 +81,7 @@ object OSGIUtil {
 
   def registeredDPUs: Array[IDataProcessingUnit] = {
     val services = Activator.tracker.getServices
-    if(services == null)
+    if(services == null || services.isEmpty)
       return Array()
     val provider = services map (_.asInstanceOf[IDPUProvider])
     //FoldLeft function
