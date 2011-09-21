@@ -34,8 +34,8 @@ trait TFilter extends TProcessor {
     sendEvent(Results(filtered))
   }
   
-  protected def mergeResults(results: List[(Instances, Instance)]): Instances = {
-    val instances = results map(_._1)
+  protected def mergeResults(results: List[(Instance, Instances)]): Instances = {
+    val instances = results map(_._2)
     instances.headOption match {
       case Some(head) => 
         val header = new Instances(head, 0)

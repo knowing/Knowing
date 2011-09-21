@@ -7,7 +7,7 @@ import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import de.lmu.ifi.dbs.knowing.core.processing._
 import OSGIUtil._
 import de.lmu.ifi.dbs.knowing.core.internal.Activator
-import de.lmu.ifi.dbs.knowing.core.service.IDPUProvider
+import de.lmu.ifi.dbs.knowing.core.service._
 import java.net.URL
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
 
@@ -20,7 +20,7 @@ import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
  */
 class OSGIUtil(context: BundleContext) {
 
-  private var registrations: List[ServiceRegistration] = Nil
+  private var registrations: List[ServiceRegistration[_]] = Nil
 
   def registerLoader(factory: TFactory) = registrations = context.registerService(FACTORY_CLASS, factory, null) :: registrations
 
@@ -68,7 +68,7 @@ class OSGIUtil(context: BundleContext) {
 
   def registerPresenter(factory: TFactory, clazz: Class[_ <: TPresenter[_]]): Unit = registerPresenter(factory, clazz.getName)
 
-  def unregisterAll = registrations foreach (r => r.unregister)
+  def deregisterAll = registrations foreach (r => r.unregister)
 
 }
 
@@ -80,7 +80,8 @@ object OSGIUtil {
 
   def registeredDPUs: Array[IDataProcessingUnit] = {
     val services = Activator.tracker.getServices
-    if(services == null)
+
+    if(services == null || services.isEmpty)
       return Array()
     val provider = services map (_.asInstanceOf[IDPUProvider])
     //FoldLeft function
@@ -149,3 +150,4 @@ object OSGIUtil {
     }
   }
 }
+

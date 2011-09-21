@@ -391,8 +391,6 @@ object ResultsUtil {
     ret
   }
   
-  //TODO ResultsUtil.appendInstances -> Doesn't respect relational Attributes
-  
   /**
    * This method merges a list of instances into a given header. The header is normally empty.
    */

@@ -24,7 +24,6 @@ class AttributeCrossValidator extends XCrossValidator {
     }
     val instMaps = ResultsUtil.splitInstanceByAttribute(instances, splitAttr,false)    		    
     
-    
     //Map test-data -> train-data 
     val instMap = for (e <- instMaps) yield instMaps.partition(e2 => e._1.equals(e2._1))
     folds = instMap.size
@@ -46,7 +45,6 @@ class AttributeCrossValidator extends XCrossValidator {
         val trainData = ResultsUtil.appendInstances(new Instances(testData, 0), train map (_._2) toList)
         guessAndSetClassLabel(testData)
         guessAndSetClassLabel(trainData)
-        
         
         //Logic
         self startLink crossValidators(i)

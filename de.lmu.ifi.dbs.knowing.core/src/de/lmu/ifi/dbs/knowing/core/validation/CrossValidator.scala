@@ -158,6 +158,7 @@ class CrossValidator extends TProcessor {
       // Nothing trained or filtered yet
       case (false, false) => numInstancesTrain match {
         case CurrentTrain =>
+
           classifier.get ! Results(filteredTrainData)
           filterTrained = true
           classifierTrained = true
@@ -216,7 +217,7 @@ class CrossValidator extends TProcessor {
    * @param queries - queries forwared to classifier
    * @return always Nil (empty list)
    */
-  override def queries(queries: Instances): List[(Instances, Instance)] = {
+  override def queries(queries: Instances): List[(Instance, Instances)] = {
     statusChanged(Running())
     numInstancesTest = queries.numInstances
     val enum = queries.enumerateInstances

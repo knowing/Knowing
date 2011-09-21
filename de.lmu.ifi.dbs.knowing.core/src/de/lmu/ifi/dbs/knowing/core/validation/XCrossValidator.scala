@@ -44,7 +44,6 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
     debug(this, "Fold-Actors created!")
     statusChanged(Progress("validation", 0, folds))
     startCrossValidation(crossValidators, instances)
-
     debug(this, "Fold-Actors configured and training started")
   }
 
@@ -67,14 +66,13 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
     currentFold += 1
     if (currentFold == folds) {
       debug(this, "Last Fold " + currentFold + " results arrived")
-      debug(this, "Copy relational Attribute from index: " + relAttribute)
       sendEvent(Results(mergeResults))
       currentFold = 0
     } else {
       statusChanged(Progress("validation", 1, folds))
       debug(this, "Fold " + currentFold + " results arrived")
     }
-
+	
   }
 
   protected def initCrossValidators(folds: Int) = for (i <- 0 until folds; val actor = factory.getInstance) yield actor

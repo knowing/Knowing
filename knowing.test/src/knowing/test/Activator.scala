@@ -18,7 +18,7 @@ import org.osgi.util.tracker.ServiceTracker
 class Activator extends BundleActivator {
 
   private var util: OSGIUtil = _
-  private var dpuService: ServiceRegistration = _
+  private var dpuService: ServiceRegistration[_] = _
 
   def start(context: BundleContext) = {
     Activator.context = context
@@ -35,7 +35,7 @@ class Activator extends BundleActivator {
 
   def stop(context: BundleContext) = {
     Activator.context = null
-    util.unregisterAll
+    util.deregisterAll
     util = null
     dpuService.unregister
   }
