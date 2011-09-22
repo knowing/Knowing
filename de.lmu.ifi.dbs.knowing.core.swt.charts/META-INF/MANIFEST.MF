@@ -87,7 +87,6 @@ Import-Package: org.jfree,
  scala.reflect,
  scala.reflect.generic;version="[2.9.0.1,2.9.1.final]",
  scala.runtime;version="[2.9.0.1,2.9.1.final]",
- scala.util;version="[2.9.0.1,2.9.1.final]",
- weka.core
+ scala.util;version="[2.9.0.1,2.9.1.final]"
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: LMU Munich - Database Systems Group

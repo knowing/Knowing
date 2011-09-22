@@ -72,7 +72,6 @@ class OSGIUtil(context: BundleContext) {
 
 }
 
-
 object OSGIUtil {
   val FACTORY_CLASS = classOf[TFactory].getName
   val LOADER_CLASS = classOf[TLoader].getName
@@ -81,6 +80,7 @@ object OSGIUtil {
 
   def registeredDPUs: Array[IDataProcessingUnit] = {
     val services = Activator.tracker.getServices
+
     if(services == null || services.isEmpty)
       return Array()
     val provider = services map (_.asInstanceOf[IDPUProvider])
@@ -150,3 +150,4 @@ object OSGIUtil {
     }
   }
 }
+

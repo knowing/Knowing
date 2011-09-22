@@ -96,7 +96,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
       statusChanged(Running())
       result(r, q)
       statusChanged(Ready())
-    case QueriesResults(r) => r foreach { case (results, query) => result(results, query) }
+    case QueriesResults(r) => r foreach { case (query, results) => result(results, query) }
     case Alive | Alive() => statusChanged(status)
     case msg => messageException(msg)
   }
@@ -130,13 +130,13 @@ trait TProcessor extends Actor with TSender with TConfigurable {
   /**
    *
    */
-  def queries(queries: Instances): List[(Instances, Instance)] = {
+  def queries(queries: Instances): List[(Instance, Instances)] = {
     val enum = queries.enumerateInstances
-    val results = new ListBuffer[(Instances, Instance)]
+    val results = new ListBuffer[(Instance, Instances)]
     var i = 0
     while (enum.hasMoreElements) {
       val instance = enum.nextElement.asInstanceOf[Instance]
-      results += ((query(instance), instance))
+      results += ((instance, query(instance)))
       statusChanged(Progress(queries.relationName, i, queries.numInstances))
       i += 1
     }

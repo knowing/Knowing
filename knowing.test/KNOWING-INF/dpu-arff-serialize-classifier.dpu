@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DataProcessingUnit name="arff-10fold-cross-validation">
+<DataProcessingUnit name="arff-serialize-classifier">
 	<description>Cross Validation with NaiveBayes output to TablePresenter
 	</description>
 	<tags>Cross, Validation, Cross Validation, ARFF, NaiveBayes</tags>
 	<nodes>
 		<node id="ARFF" factoryId="weka.core.converters.ArffLoader" type="loader">
+			<properties>
+				<property key="file" value="iris.arff" />
+			</properties>
+		</node>		
+		<node id="ARFF_TEST" factoryId="weka.core.converters.ArffLoader" type="loader">
 			<properties>
 				<property key="file" value="iris.arff" />
 			</properties>
@@ -18,8 +23,7 @@
 			</properties>
 		</node>
 	
-		<node id="TablePresenter" type="presenter"
-			factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter">
+		<node id="TablePresenter" type="presenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter">
 			<properties>
 				<property key="rows" value="100" />
 			</properties>
@@ -27,8 +31,8 @@
 
 	</nodes>
 	<edges>
-		<edge id="arff_validator" source="ARFF" target="bayes" />
-		<edge id="validator_confusion" source="validator" target="confusionMatrix" />
-		<edge id="confusion_presenter" source="confusionMatrix" target="TablePresenter" />
+		<edge id="arff_bayes_train" source="ARFF" target="bayes" />
+		<edge id="arff_validator_test" source="ARFF_TEST" target="bayes" targetPort="test" />
+		<edge id="bayes_presenter" source="bayes" target="TablePresenter" />
 	</edges>
 </DataProcessingUnit>

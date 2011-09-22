@@ -5,7 +5,7 @@ import scala.collection.JavaConversions._
 import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
-import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
+import de.lmu.ifi.dbs.knowing.core.processing.TClassifier
 import de.lmu.ifi.dbs.knowing.core.processing.TSerializable
 import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties
 import akka.actor.ActorRef
@@ -23,7 +23,7 @@ import weka.core.SerializationHelper
  * @since 21.04.2011
  *
  */
-class WekaClassifier(protected var classifier: Classifier) extends TProcessor with TSerializable {
+class WekaClassifier(protected var classifier: Classifier) extends TClassifier with TSerializable {
 
   private var classLabels: Array[String] = _
   private val name = getClass().getSimpleName;
@@ -33,7 +33,9 @@ class WekaClassifier(protected var classifier: Classifier) extends TProcessor wi
       case None => //no model found
       case Some(in) =>
         debug(this, "Deserialize stored classifier")
-        classifier = SerializationHelper.read(in).asInstanceOf[Classifier]
+        val model = SerializationHelper.readAll(in)
+        classifier = model(0).asInstanceOf[Classifier]
+        classLabels = model(1).asInstanceOf[Array[String]]
         isBuild = true
     }
   }
@@ -43,7 +45,7 @@ class WekaClassifier(protected var classifier: Classifier) extends TProcessor wi
       case None =>
       case Some(out) => 
         debug(this, "Serialize classifier")
-        SerializationHelper.write(out, classifier)
+        SerializationHelper.writeAll(out, Array(classifier, classLabels))
     }
   }
 

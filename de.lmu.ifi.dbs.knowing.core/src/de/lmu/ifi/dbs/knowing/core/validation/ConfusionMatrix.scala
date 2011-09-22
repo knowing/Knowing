@@ -75,21 +75,6 @@ class ConfusionMatrix extends TProcessor {
     confusionMatrix = createMatrix(classLabels.toList)
   }
 
-  private def highestProbability(instances: Instances): Int = {
-    var index = -1
-    var max = -1.0
-    val valAttr = instances.attribute(1)
-    for (i <- 0 until instances.numInstances) {
-      val inst = instances.instance(i)
-      val value = inst.value(valAttr)
-      if (value > max) {
-        max = value
-        index = i
-      }
-    }
-    index
-  }
-
 }
 
 class ConfusionMatrixFactory extends ProcessorFactory(classOf[ConfusionMatrix])
