@@ -39,7 +39,6 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
       case x => classLabels = classLables(instances.attribute(x))
     }
     //Create crossValidator actors for each fold
-
     val crossValidators = initCrossValidators(folds)
     debug(this, "Fold-Actors created!")
     statusChanged(Progress("validation", 0, folds))
@@ -74,7 +73,7 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
       statusChanged(Progress("validation", 1, folds))
       debug(this, "Fold " + currentFold + " results arrived")
     }
-
+	
   }
 
   protected def initCrossValidators(folds: Int) = for (i <- 0 until folds; val actor = factory.getInstance) yield actor

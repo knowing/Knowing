@@ -48,7 +48,7 @@ class Activator extends AbstractUIPlugin {
    */
   override def stop(context: BundleContext) = {
     Activator.directoryTracker.close
-    osgi.unregisterAll
+    osgi.deregisterAll
     saveDPUWizardProperties
     Activator.plugin = null
     osgi = null
@@ -99,7 +99,7 @@ object Activator {
   // The shared instance
   var plugin: Activator = _
 
-  var directoryTracker: ServiceTracker = _
+  var directoryTracker: ServiceTracker[_,_] = _
 
   /**
    * Returns the shared instance

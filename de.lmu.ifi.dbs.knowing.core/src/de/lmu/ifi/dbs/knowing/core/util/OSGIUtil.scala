@@ -20,7 +20,7 @@ import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
  */
 class OSGIUtil(context: BundleContext) {
 
-  private var registrations: List[ServiceRegistration] = Nil
+  private var registrations: List[ServiceRegistration[_]] = Nil
 
   def registerLoader(factory: TFactory) = registrations = context.registerService(FACTORY_CLASS, factory, null) :: registrations
 
@@ -68,9 +68,10 @@ class OSGIUtil(context: BundleContext) {
 
   def registerPresenter(factory: TFactory, clazz: Class[_ <: TPresenter[_]]): Unit = registerPresenter(factory, clazz.getName)
 
-  def unregisterAll = registrations foreach (r => r.unregister)
+  def deregisterAll = registrations foreach (r => r.unregister)
 
 }
+
 
 object OSGIUtil {
   val FACTORY_CLASS = classOf[TFactory].getName
@@ -149,3 +150,4 @@ object OSGIUtil {
     }
   }
 }
+

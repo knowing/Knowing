@@ -37,7 +37,6 @@ abstract class SwtUIFactory(parent: Composite) extends UIFactory {
         rendevouz put (composite)
       }
     })
-
     rendevouz.take
   }
 

@@ -18,7 +18,7 @@ import org.osgi.util.tracker.ServiceTracker
 class Activator extends BundleActivator {
 
   private var util: OSGIUtil = _
-  private var dpuService: ServiceRegistration = _
+  private var dpuService: ServiceRegistration[IDPUProvider] = _
 
   def start(context: BundleContext) = {
     Activator.context = context
@@ -28,14 +28,14 @@ class Activator extends BundleActivator {
     util.registerProcessor(new TestJavaProcessorFactory)
     util.registerProcessor(new SourceSplitFilterFactory)
     util.registerProcessor(new SerializableProcessorFactory)
-    dpuService = context.registerService(classOf[IDPUProvider].getName, BundleDPUProvider.newInstance(context.getBundle), null)
+    dpuService = context.registerService(classOf[IDPUProvider], BundleDPUProvider.newInstance(context.getBundle), null)
     val dpus = OSGIUtil.registeredDPUs
     dpus foreach (dpu => println(dpu.getName.getContent))
   }
 
   def stop(context: BundleContext) = {
     Activator.context = null
-    util.unregisterAll
+    util.deregisterAll
     util = null
     dpuService.unregister
   }

@@ -19,13 +19,13 @@ class Activator extends BundleActivator {
     Activator.context = context
     osgiUtil = new OSGIUtil(context)
     registerServices
-    tracker = new ServiceTracker(context, classOf[IDPUProvider].getName, new DPUProviderServiceTracker(context))
+    tracker = new ServiceTracker[IDPUProvider,IDPUProvider](context, classOf[IDPUProvider], new DPUProviderServiceTracker(context))
     tracker.open
   }
 
   def stop(context: BundleContext) = {
     Activator.context = null;
-    osgiUtil.unregisterAll
+    osgiUtil.deregisterAll
     osgiUtil = null
     tracker.close
   }
@@ -49,23 +49,23 @@ object Activator {
   private var context: BundleContext = null
   private var osgiUtil: OSGIUtil = _
   
-  var tracker: ServiceTracker = _
+  var tracker: ServiceTracker[IDPUProvider,IDPUProvider] = _
 
   def getContext(): BundleContext = context
 }
 
-class DPUProviderServiceTracker(context: BundleContext) extends ServiceTrackerCustomizer {
+class DPUProviderServiceTracker(context: BundleContext) extends ServiceTrackerCustomizer[IDPUProvider,IDPUProvider] {
 
-  def addingService(reference: ServiceReference): Object = {
-    val service = context.getService(reference).asInstanceOf[IDPUProvider]
+  def addingService(reference: ServiceReference[IDPUProvider]): IDPUProvider = {
+    val service = context.getService(reference)
     service
   }
 
-  def modifiedService(reference: ServiceReference, service: Object) {
+  def modifiedService(reference: ServiceReference[IDPUProvider], service: IDPUProvider) {
     service.asInstanceOf[IDPUProvider].getDataProcessingUnits foreach (dpu => println("# " + dpu.getName.getContent))
   }
 
-  def removedService(reference: ServiceReference, service: Object) {
+  def removedService(reference: ServiceReference[IDPUProvider], service: IDPUProvider) {
 
   }
 }
