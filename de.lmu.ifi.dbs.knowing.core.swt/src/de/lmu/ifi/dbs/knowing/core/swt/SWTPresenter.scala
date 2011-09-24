@@ -74,3 +74,7 @@ abstract class SWTPresenter extends TPresenter[Composite] {
   def buildContent(instances: Instances)
 
 }
+
+object SWTPresenter {
+  val TABLE_PRESENTER = classOf[TablePresenter].getName
+}

@@ -69,7 +69,7 @@
          point="org.eclipse.core.contenttype.contentTypes">
       <content-type
             base-type="org.eclipse.core.runtime.xml"
-            file-extensions="dpu, xml"
+            file-extensions="dpu"
             id="de.lmu.ifi.dbs.knowing.ui.dpu"
             name="Data Processing Unit"
             priority="normal">

@@ -137,4 +137,9 @@ class SWTMouseListenerProxy(typ: Int, listener: Listener) extends ChartMouseList
   }
 }
 
+object ChartPresenter {
+  val PIE_PRESENTER = classOf[PiePresenter].getName
+  val TIME_INTERVAL_CLASS_PRESENTER = classOf[TimeIntervalClassPresenter].getName
+  val TIME_SERIES_PRESENTER = classOf[TimeSeriesPresenter].getName
+}
 

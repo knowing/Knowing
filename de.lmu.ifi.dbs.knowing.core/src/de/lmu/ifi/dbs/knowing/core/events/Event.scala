@@ -10,6 +10,7 @@ import weka.core.Instances
 
 trait Event
 trait Status extends Event
+trait UIEvent extends Event
 
 /* ======================== */
 /* == Data Exchange ======= */
@@ -39,7 +40,7 @@ case class Start extends Event
 case class Reset extends Event
 case class Alive extends Event
 case class Configure(properties: Properties) extends Event
-case class UpdateUI extends Status
+case class UpdateUI extends Status with UIEvent
 
 /* ========================= */
 /* == Actor Communication == */

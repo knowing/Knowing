@@ -72,39 +72,28 @@ class OSGIUtil(context: BundleContext) {
 
 }
 
-
 object OSGIUtil {
   val FACTORY_CLASS = classOf[TFactory].getName
   val LOADER_CLASS = classOf[TLoader].getName
   val PROCESSOR_CLASS = classOf[TProcessor].getName
   val PRESENTER_CLASS = classOf[TPresenter[_]].getName
 
-  def registeredDPUs: Array[IDataProcessingUnit] = {
-    val services = Activator.tracker.getServices
-    if(services == null)
-      return Array()
-    val provider = services map (_.asInstanceOf[IDPUProvider])
-    //FoldLeft function
-    val f = (p1: List[IDataProcessingUnit], p2: IDPUProvider) => p1 ::: p2.getDataProcessingUnits.toList
-    //Actual foldLeft
-    val dpus = (List[IDataProcessingUnit]() /: provider)(f)
-    dpus toArray
-  }
+  def registeredDPUs: Array[IDataProcessingUnit] =   Activator.dpuDirectory.getService.getDPUs
 
   def registeredDPU(name: String): IDataProcessingUnit = {
-    val provider = Activator.tracker.getServices map (_.asInstanceOf[IDPUProvider])
-    val dpus = for (p <- provider if (p.getDataProcessingUnit(name) != null)) yield p.getDataProcessingUnit(name)
-    if (dpus.nonEmpty) dpus(0)
-    else null
+    Activator.dpuDirectory.getService.getDPU(name) match {
+      case None => null
+      case Some(dpu) => dpu
+    }
   }
 
   def registeredURLtoDPU(name: String): URL = {
-    val provider = Activator.tracker.getServices map (_.asInstanceOf[IDPUProvider])
-    val urls = for (p <- provider if (p.getURL(name) != null)) yield p.getURL(name)
-    if (urls.nonEmpty) urls(0)
-    else null
+    Activator.dpuDirectory.getService.getDPUPath(name) match {
+      case None => null
+      case Some(url) => url
+    }
   }
-  
+
   /**
    * <p>Obtain factory service by two attempts</p>
    * [1] get serviceReference via 'id + "Factory"'

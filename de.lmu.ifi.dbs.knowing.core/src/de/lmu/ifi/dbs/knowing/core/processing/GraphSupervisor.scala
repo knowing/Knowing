@@ -5,28 +5,31 @@ import akka.event.EventHandler.{ debug, info, warning, error }
 import akka.config.Supervision.AllForOneStrategy
 import com.eaio.uuid.UUID
 import java.net.URI
+import java.util.Properties
+import java.util.concurrent.{ TimeUnit, ScheduledFuture }
+
 import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.util._
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
+import de.lmu.ifi.dbs.knowing.core.model.NodeType
 import de.lmu.ifi.dbs.knowing.core.util.DPUUtil.{ nodeProperties }
-import java.util.Properties
-import java.util.concurrent.{ TimeUnit, ScheduledFuture }
-import scala.collection.mutable.{ Map => MutableMap, LinkedList }
+
+import scala.collection.mutable.{ Map => MutableMap, ListBuffer }
 import scala.collection.JavaConversions._
 import System.{ currentTimeMillis => systemTime }
+
 import org.osgi.framework.FrameworkUtil
-import de.lmu.ifi.dbs.knowing.core.model.NodeType
 
 class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, dpuURI: URI, directory: IFactoryDirectory) extends Actor with TSender {
 
   self.faultHandler = AllForOneStrategy(List(classOf[Throwable]), 5, 5000)
 
-  private val actors: MutableMap[String, ActorRef] = MutableMap()
+  private val actors: MutableMap[String, (ActorRef, NodeType)] = MutableMap()
   //Status map holding: UUID -> Reference, Status, Timestamp
   private val statusMap: MutableMap[UUID, (ActorRef, Status, Long)] = MutableMap()
-  private val events: LinkedList[String] = LinkedList()
+  private val events: ListBuffer[String] = ListBuffer()
   private var schedules: List[ScheduledFuture[AnyRef]] = List()
 
   //Time-to-life in ms
@@ -37,13 +40,14 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, dpuURI: UR
     case Start | Start() => evaluate
     case UpdateUI | UpdateUI() => uifactory update (self.sender.getOrElse(null), UpdateUI())
     case status: Status => handleStatus(status)
+    case uiEvent: UIEvent => handleUIEvent(uiEvent)
     case msg => debug(this, "Unhandled Message: " + msg)
   }
 
   def evaluate {
     initialize
     connectActors
-    actors foreach { case (_, actor) => actor ! Start }
+    actors foreach { case (_, (actor, _)) => actor ! Start }
     //schedule
   }
 
@@ -67,7 +71,7 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, dpuURI: UR
           //Configure with properties
           actor ! Configure(configureProperties(nodeProperties(node)))
           //Add to internal map
-          actors += (node.getId.getContent -> actor)
+          actors += (node.getId.getContent -> (actor, node.getType.getContent))
           statusMap += (actor.getUuid -> (actor, Created(), systemTime))
           uifactory update (actor, Created())
           uifactory update (self, Progress("initialize", 1, dpu.getNodes.size))
@@ -90,9 +94,9 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, dpuURI: UR
    */
   private def connectActors {
     dpu.getEdges foreach (edge => {
-      val source = actors(edge.getSource.getContent)
+      val source = actors(edge.getSource.getContent)._1
       val sourcePort = Some(edge.getSourcePort.getContent)
-      val target = actors(edge.getTarget.getContent)
+      val target = actors(edge.getTarget.getContent)._1
       val targetPort = Some(edge.getTargetPort.getContent)
       source ! Register(target, sourcePort, targetPort)
     })
@@ -103,10 +107,13 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, dpuURI: UR
    */
   private def schedule {
     actors foreach {
-      case (_, actor) => schedules = Scheduler.schedule(actor, Alive, 500, 2500, TimeUnit.MILLISECONDS) :: schedules
+      case (_, (actor, _)) => schedules = Scheduler.schedule(actor, Alive, 500, 2500, TimeUnit.MILLISECONDS) :: schedules
     }
   }
 
+  /**
+   * 
+   */
   private def handleStatus(status: Status) {
     uifactory update (self.sender.getOrElse(null), status)
     self.sender match {
@@ -117,13 +124,26 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, dpuURI: UR
       case Ready() | Finished() => if (finished) {
         info(this, "Evaluation finished. Stopping schedules and supervisor")
         //schedules foreach (future => future.cancel(true))
-        actors foreach { case (_, actor) => actor stop }
+        actors foreach { case (_, (actor, _)) => actor stop }
         uifactory update (self, Shutdown())
         self stop
       }
       case _ => //nothing happens
     }
 
+  }
+
+  /**
+   * Sends the UIEvent to every presenter. 
+   */
+  private def handleUIEvent(event: UIEvent) {
+    //TODO GraphSupervisor -> UIEvent should contain field "id" to specify presenter
+    actors filter {
+      case (_, (_, NodeType.PRESENTER)) => true
+      case _ => false
+    } foreach {
+      case (_, (actor, _)) => actor ! event
+    }
   }
 
   /**

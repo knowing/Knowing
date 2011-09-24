@@ -6,18 +6,20 @@ import javax.xml.bind.annotation.XmlRootElement
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.JAXBException
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
+import de.lmu.ifi.dbs.knowing.core.util.DPUUtil.copy
 import org.eclipse.sapphire.modeling.xml.XmlResourceStore
 import org.eclipse.sapphire.modeling.UrlResourceStore
 import org.eclipse.sapphire.modeling.ResourceStoreException
 import org.eclipse.sapphire.modeling.xml.RootXmlResource
 
+
 trait IDPUProvider {
 
   def getDataProcessingUnits: Array[IDataProcessingUnit]
 
-  def getDataProcessingUnit(name: String): IDataProcessingUnit
+  def getDataProcessingUnit(name: String): Option[IDataProcessingUnit]
 
-  def getURL(name: String): URL
+  def getURL(name: String): Option[URL]
 
 }
 
@@ -34,17 +36,22 @@ class BundleDPUProvider(bundle: Bundle, dir: String = "/KNOWING-INF") extends ID
   /**
    * Doesn't handle non existing DPUs yet!
    */
-  def getDataProcessingUnit(name: String): IDataProcessingUnit = {
+  def getDataProcessingUnit(name: String): Option[IDataProcessingUnit] = {
     dpuMap.get(name) match {
-      case None => null
-      case Some(e) => e._1
+      case None => None
+      case Some(e) => Some(e._1)
     }
   }
 
   /**
    * Doesn't handle non existing DPUs yet!
    */
-  def getURL(name: String): URL = dpuMap(name)._2
+  def getURL(name: String): Option[URL] = {
+    dpuMap.get(name) match {
+      case None => None
+      case Some(entry) => Some(entry._2)
+    }
+  }
 
   private def init {
     val entries = bundle.findEntries(dir, "*.dpu", true)
@@ -60,7 +67,7 @@ class BundleDPUProvider(bundle: Bundle, dir: String = "/KNOWING-INF") extends ID
         val store = new XmlResourceStore(new UrlResourceStore(url));
         val resource = new RootXmlResource(store)
         val dpu: IDataProcessingUnit = IDataProcessingUnit.TYPE.instantiate(resource)
-        (dpu, url)
+        (copy(dpu), url)
       }
       //TODO BundleDPUProvider => handle dpu's with identical name
       dpuMap = dpus map { case (dpu, url) => (dpu.getName.getContent, (dpu, url)) } toMap

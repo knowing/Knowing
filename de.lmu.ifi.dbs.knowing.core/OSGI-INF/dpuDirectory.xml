@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="de.lmu.ifi.dbs.knowing.core.DPUDirectory">
+   <implementation class="de.lmu.ifi.dbs.knowing.core.service.impl.DPUDirectory"/>
+   <service>
+      <provide interface="de.lmu.ifi.dbs.knowing.core.service.IDPUDirectory"/>
+   </service>
+   <reference bind="bindDPUProvider" cardinality="0..n" interface="de.lmu.ifi.dbs.knowing.core.service.IDPUProvider" name="IDPUProvider" policy="dynamic" unbind="unbindDPUProvider"/>
+</scr:component>

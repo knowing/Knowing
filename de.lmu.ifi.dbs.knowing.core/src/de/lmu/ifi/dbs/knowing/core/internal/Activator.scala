@@ -19,15 +19,21 @@ class Activator extends BundleActivator {
     Activator.context = context
     osgiUtil = new OSGIUtil(context)
     registerServices
-    tracker = new ServiceTracker[IDPUProvider,IDPUProvider](context, classOf[IDPUProvider], new DPUProviderServiceTracker(context))
-    tracker.open
+    providerTracker = new ServiceTracker[IDPUProvider,IDPUProvider](context, classOf[IDPUProvider], new DPUProviderServiceTracker(context))
+    providerTracker.open
+    
+    dpuDirectory = new ServiceTracker[IDPUDirectory,IDPUDirectory](context, classOf[IDPUDirectory], null)
+    dpuDirectory.open
   }
 
   def stop(context: BundleContext) = {
     Activator.context = null;
     osgiUtil.deregisterAll
     osgiUtil = null
-    tracker.close
+    providerTracker.close
+    providerTracker = null
+    dpuDirectory.close
+    dpuDirectory = null
   }
 
   private def registerServices {
@@ -49,7 +55,8 @@ object Activator {
   private var context: BundleContext = null
   private var osgiUtil: OSGIUtil = _
   
-  var tracker: ServiceTracker[IDPUProvider,IDPUProvider] = _
+  var providerTracker: ServiceTracker[IDPUProvider,IDPUProvider] = _
+  var dpuDirectory: ServiceTracker[IDPUDirectory, IDPUDirectory] = _
 
   def getContext(): BundleContext = context
 }

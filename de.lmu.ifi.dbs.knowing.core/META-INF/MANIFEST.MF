@@ -78,4 +78,4 @@ Import-Package: org.osgi.framework;version="1.5.0",
  scala.util.parsing.syntax;version="[2.9.0.1,2.9.1.final]",
  scala.util.regexp;version="[2.9.0.1,2.9.1.final]"
 Bundle-Vendor: LMU Munich - Database Systems Group
-Service-Component: OSGI-INF/directory.xml, OSGI-INF/evaluate.xml
+Service-Component: OSGI-INF/directory.xml, OSGI-INF/evaluate.xml, OSGI-INF/dpuDirectory.xml

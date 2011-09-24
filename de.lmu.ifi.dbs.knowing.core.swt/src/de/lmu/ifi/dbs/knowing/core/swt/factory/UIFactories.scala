@@ -5,6 +5,7 @@ import de.lmu.ifi.dbs.knowing.core.model.INode
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.swt.dialog.ProgressDialog
 import akka.actor.ActorRef
+import akka.actor.TypedActor
 import akka.event.EventHandler.{ debug, info, warning, error }
 import org.eclipse.swt.widgets.Composite
 import org.eclipse.swt.custom.CTabFolder
@@ -21,7 +22,7 @@ object UIFactories {
  * Abstract default class to implement own SWT UIFactories.
  * Provides a simple ProgressDialog.
  */
-abstract class SwtUIFactory(parent: Composite) extends UIFactory {
+abstract class SwtUIFactory(parent: Composite) extends TypedActor with UIFactory {
 
   private val rendevouz = new SynchronousQueue[Composite]
   private var started = false
@@ -43,13 +44,18 @@ abstract class SwtUIFactory(parent: Composite) extends UIFactory {
   def update(actor: ActorRef, status: Status) {
     //Create ProgressDialog on first status
     if (!started || dialog == null || dialog.disposed) {
-      dialog = new ProgressDialog(parent.getShell)
-      dialog.supervisor = this.supervisor
+      val dialogRendenzvouz = new SynchronousQueue[ProgressDialog]
       parent.getDisplay.asyncExec(
         new Runnable {
-          def run = dialog.open
+          def run = {
+            val dialog = new ProgressDialog(parent.getShell)
+            dialog.supervisor = supervisor
+            dialog.open
+            dialogRendenzvouz put (dialog)
+          }
         })
       started = true
+      dialog = dialogRendenzvouz.take
     }
     //Update Dialog in UI Thread
     parent.getDisplay.asyncExec(
@@ -59,7 +65,11 @@ abstract class SwtUIFactory(parent: Composite) extends UIFactory {
 
     //Handle special status events
     status match {
-      case UpdateUI() => parent.update
+      case UpdateUI() =>
+        parent.getDisplay.asyncExec(
+          new Runnable {
+            def run = parent.layout()
+          })
       case Shutdown() => started = false
       case _ =>
     }
@@ -81,13 +91,17 @@ abstract class SwtUIFactory(parent: Composite) extends UIFactory {
  */
 class CompositeUIFactory(parent: Composite) extends SwtUIFactory(parent) {
 
-  def createControl(node: INode): Composite = new Composite(parent, SWT.NONE)
+  def createControl(node: INode): Composite = {
+    val composite = new Composite(parent, SWT.NONE)
+    composite.setLayout(new FillLayout)
+    composite
+  }
 }
 
 /**
  * Creates a tab for each node with node.id.
  */
-class TabUIFactory(parent: Composite, style:Int = SWT.BOTTOM) extends SwtUIFactory(parent) {
+class TabUIFactory(parent: Composite, style: Int = SWT.BOTTOM) extends SwtUIFactory(parent) {
 
   private var tabFolder: CTabFolder = new CTabFolder(parent, style)
 
