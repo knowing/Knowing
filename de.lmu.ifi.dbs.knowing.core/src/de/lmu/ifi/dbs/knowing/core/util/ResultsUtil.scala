@@ -466,7 +466,7 @@ object ResultsUtil {
       case a: Attribute => a.name.size > 5 && a.name.startsWith("class")
     }
 
-    classAttr.foldLeft((0.0, "")) {
+    classAttr.foldLeft((-1.0, "")) {
       case ((max, clazz), a: Attribute) =>
         val value = distribution.value(a)
         if (value > max) (value, a.name.substring(5))

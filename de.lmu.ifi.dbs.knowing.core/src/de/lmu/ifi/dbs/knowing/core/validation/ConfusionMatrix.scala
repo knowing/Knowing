@@ -8,10 +8,13 @@ import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
 
 import weka.core.{ Attribute, Instances, Instance }
+import ConfusionMatrix._
 
 class ConfusionMatrix extends TProcessor {
 
   private var confusionMatrix: Instances = _
+  private var unclassified: Instances = _
+  
   private var instancesCount: Array[Int] = Array()
   private var classLabels: Array[String] = Array()
   private var distAttribute: Attribute = _
@@ -28,20 +31,25 @@ class ConfusionMatrix extends TProcessor {
       //distribution == ResultsUtil.classDistribution
       val clazz = ResultsUtil.highestProbability(inst)
       val col = inst.value(classIndex).toInt
-      //This should be solved via a map -> only for non-distributed
-      for (row <- 0 until classLabels.size if classLabels(row).equals(clazz._2)) {
-        val entry = confusionMatrix.instance(row)
-        val old_value = entry.value(col)
-        instancesCount(col) = instancesCount(col) + 1
-        entry.setValue(col, old_value + 1)
+      ResultsUtil.highestProbability(inst) match {
+        case (-1, _) => 
+          unclassified.add(inst)
+        case (prob, clazz) =>
+          //This should be solved via a map -> only for non-distributed
+          for (row <- 0 until classLabels.size if classLabels(row).equals(clazz)) {
+            val entry = confusionMatrix.instance(row)
+            val old_value = entry.value(col)
+            instancesCount(col) = instancesCount(col) + 1
+            entry.setValue(col, old_value + 1)
+          }
       }
     }
-    
+
     //Merge Results
     val rows, cols = classLabels.size
-    for(row <- 0 until rows) {
+    for (row <- 0 until rows) {
       val entry = confusionMatrix.instance(row)
-      for(col <- 0 until cols) {
+      for (col <- 0 until cols) {
         val value = entry.value(col)
         //Avoid division with zero
         val average = instancesCount(col) match {
@@ -52,8 +60,9 @@ class ConfusionMatrix extends TProcessor {
         entry.setValue(col, (value / average) * 100)
       }
     }
-    
+    debug(this, "Unclassified: " + unclassified.size)
     sendResults(confusionMatrix)
+    sendResults(unclassified, Some(UNCLASSIFIED_PORT))
   }
 
   def query(query: Instance): Instances = { null }
@@ -73,23 +82,13 @@ class ConfusionMatrix extends TProcessor {
         instancesCount = new Array(classLabels.size)
     }
     confusionMatrix = createMatrix(classLabels.toList)
-  }
-
-  private def highestProbability(instances: Instances): Int = {
-    var index = -1
-    var max = -1.0
-    val valAttr = instances.attribute(1)
-    for (i <- 0 until instances.numInstances) {
-      val inst = instances.instance(i)
-      val value = inst.value(valAttr)
-      if (value > max) {
-        max = value
-        index = i
-      }
-    }
-    index
+    unclassified = new Instances(instances, instances.size / 100) //1% unclassified
   }
 
 }
 
-class ConfusionMatrixFactory extends ProcessorFactory(classOf[ConfusionMatrix])
+object ConfusionMatrix {
+  val UNCLASSIFIED_PORT = "unclassified"
+}
+
+class ConfusionMatrixFactory extends ProcessorFactory(classOf[ConfusionMatrix]) 
