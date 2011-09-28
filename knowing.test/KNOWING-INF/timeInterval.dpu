@@ -2,16 +2,22 @@
 <DataProcessingUnit name="TimeInterval DPU">
 	<description>Simple Description here</description>
 	<tags>Tag1, Tag2</tags>
+	<configuration>
+		<history>true</history>
+	</configuration>
 	<nodes>
-		<node id="ARFF" factoryId="weka.core.converters.ArffLoader"	type="loader" >
+		<node id="ARFF" factoryId="weka.core.converters.ArffLoader" type="loader">
 			<properties>
 				<property key="file" value="timeInterval.arff" />
 			</properties>
 		</node>
-		<node id="TablePresenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" type="presenter" >
+		<node id="TablePresenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter"
+			type="presenter">
 			<properties />
 		</node>
-		<node id="BarChartPresenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.charts.TimeIntervalClassPresenter" type="presenter" >
+		<node id="BarChartPresenter"
+			factoryId="de.lmu.ifi.dbs.knowing.core.swt.charts.TimeIntervalClassPresenter"
+			type="presenter">
 			<properties />
 		</node>
 	</nodes>

@@ -39,12 +39,10 @@ object EvaluateHandler {
 
   def evaluate(dpu: IDataProcessingUnit, dpuPath: URI): ActorRef = {
     try {
-      val view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(PresenterView.ID)
+      val view = PlatformUI.getWorkbench.getActiveWorkbenchWindow.getActivePage.showView(PresenterView.ID)
       val pView = view.asInstanceOf[PresenterView]
       pView.clearTabs
-      val supervisor = actorOf(new GraphSupervisor(dpu, pView.uifactory, dpuPath, Activator.directoryService)).start
-      supervisor ! Start
-      supervisor
+      Activator.evaluateService.evaluate(dpu, pView.uifactory, dpuPath)
     } catch {
       case pEx: PartInitException =>
         pEx.printStackTrace

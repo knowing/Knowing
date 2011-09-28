@@ -82,12 +82,14 @@ class CrossValidator extends TProcessor {
       case null => filterTrained = true
       case f =>
         filter = Some(filterFactory.getInstance)
+        filter.get.dispatcher = self.dispatcher
         self startLink filter.get
         filter.get ! Configure(classifierProperties)
     }
 
     //Init classifier
     classifier = Some(classifierFactory.getInstance)
+    classifier.get.dispatcher = self.dispatcher
     self startLink classifier.get
     classifier.get ! Configure(classifierProperties)
 
