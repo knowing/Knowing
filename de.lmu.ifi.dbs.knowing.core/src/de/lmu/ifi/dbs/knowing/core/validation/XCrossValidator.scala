@@ -79,6 +79,7 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
 
   protected def startCrossValidation(crossValidators: IndexedSeq[ActorRef], instances: Instances) {
     for (j <- 0 until folds) {
+      crossValidators(j).dispatcher = self.dispatcher
       self startLink crossValidators(j) //Start actors and link yourself as supervisor
       crossValidators(j) ! Register(self, None) //Register so results/status events are send to us
       crossValidators(j) ! Configure(configureProperties(validator_properties, j)) //Configure actor

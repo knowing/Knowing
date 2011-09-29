@@ -87,6 +87,27 @@
 					</case>
 					<property>edges</property>
 				</node-factory>
+                <section>
+                    <label>Configuration</label>
+                    <content>
+                        <with>
+                            <path>Configuration</path>
+                            <label>Configuration</label>
+                            <default-panel>
+                                <content>
+                                    <property-editor>history</property-editor>
+                                    <property-editor>
+                                        <property>output</property>
+                                        <related-content>
+                                            <property-editor>absolute</property-editor>
+                                        </related-content>
+                                    </property-editor>
+                                    <property-editor>constraints</property-editor>
+                                </content>
+                            </default-panel>
+                        </with>
+                    </content>
+                </section>
 				<section>
 					<label>Nodes configuration</label>
 					<collapsible>true</collapsible>
@@ -100,7 +121,7 @@
 						</property-editor>
 					</content>
 				</section>
-				<section>
+                <section>
 					<label>Edges configuration</label>
 					<content>
 						<property-editor>

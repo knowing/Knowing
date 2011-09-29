@@ -1,6 +1,7 @@
 package de.lmu.ifi.dbs.knowing.core.model;
 
 import org.eclipse.sapphire.modeling.IExecutableModelElement;
+import org.eclipse.sapphire.modeling.ImpliedElementProperty;
 import org.eclipse.sapphire.modeling.ListProperty;
 import org.eclipse.sapphire.modeling.ModelElementList;
 import org.eclipse.sapphire.modeling.ModelElementType;
@@ -76,8 +77,16 @@ public interface IDataProcessingUnit extends IExecutableModelElement {
 
 	ModelElementList<IEdge> getEdges();
 
+	/* === Configuration === */
+
+	@XmlBinding(path = "configuration")
+	@Label(standard = "Configuration")
+	@Type(base = IConfiguration.class)
+	ImpliedElementProperty PROP_CONFIGURATION = new ImpliedElementProperty(TYPE, "Configuration");
+
+	IConfiguration getConfiguration();
+
 	/* == == */
 	@DelegateImplementation(IDataProcessingUnitOp.class)
 	Status execute(ProgressMonitor monitor);
-
 }

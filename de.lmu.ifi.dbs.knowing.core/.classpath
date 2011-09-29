@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="lib/akka-actor-1.1.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/akka-actor-1.1.3.jar" sourcepath="/home/muki/Downloads/akka-core-1.1.3/src/akka/akka-actor-1.1.3-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/akka-slf4j-1.1.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/akka-typed-actor-1.1.3.jar"/>
 	<classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_CONTAINER"/>

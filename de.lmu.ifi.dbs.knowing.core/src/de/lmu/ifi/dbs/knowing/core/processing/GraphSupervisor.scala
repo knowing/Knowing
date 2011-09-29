@@ -1,23 +1,23 @@
 package de.lmu.ifi.dbs.knowing.core.processing
 
-import akka.actor.{ Actor, ActorRef, Scheduler }
-import akka.event.EventHandler.{ debug, info, warning, error }
-import akka.config.Supervision.AllForOneStrategy
-import com.eaio.uuid.UUID
 import java.net.URI
-import de.lmu.ifi.dbs.knowing.core.factory._
-import de.lmu.ifi.dbs.knowing.core.util._
-import de.lmu.ifi.dbs.knowing.core.events._
-import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
-import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
-import de.lmu.ifi.dbs.knowing.core.util.DPUUtil.{ nodeProperties }
+import java.lang.System.{ currentTimeMillis => systemTime }
+import java.util.concurrent.{ ConcurrentLinkedQueue, ScheduledFuture, TimeUnit }
 import java.util.Properties
-import java.util.concurrent.{ TimeUnit, ScheduledFuture }
-import scala.collection.mutable.{ Map => MutableMap, LinkedList }
+import java.io.PrintWriter
 import scala.collection.JavaConversions._
-import System.{ currentTimeMillis => systemTime }
-import org.osgi.framework.FrameworkUtil
-import de.lmu.ifi.dbs.knowing.core.model.NodeType
+import scala.collection.mutable.{ Map => MutableMap, SynchronizedQueue, ListBuffer }
+import com.eaio.uuid.UUID
+import akka.actor.{ Actor, ActorRef }
+import akka.config.Supervision.AllForOneStrategy
+import akka.dispatch._
+import akka.event.EventHandler.{ debug, info, warning, error }
+import de.lmu.ifi.dbs.knowing.core.events._
+import de.lmu.ifi.dbs.knowing.core.factory._
+import de.lmu.ifi.dbs.knowing.core.model.{ IDataProcessingUnit, NodeType, EventType, IConfiguration }
+import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
+import de.lmu.ifi.dbs.knowing.core.util.DPUUtil.nodeProperties
+import de.lmu.ifi.dbs.knowing.core.util._
 
 class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, dpuURI: URI, directory: IFactoryDirectory) extends Actor with TSender {
 
@@ -26,8 +26,15 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, dpuURI: UR
   private val actors: MutableMap[String, ActorRef] = MutableMap()
   //Status map holding: UUID -> Reference, Status, Timestamp
   private val statusMap: MutableMap[UUID, (ActorRef, Status, Long)] = MutableMap()
-  private val events: LinkedList[String] = LinkedList()
-  private var schedules: List[ScheduledFuture[AnyRef]] = List()
+  private val events = ListBuffer[String]()
+
+  lazy val processHistory = new SynchronizedQueue[MessageInvocation]
+
+  val configuration = dpu.getConfiguration
+  configuration.getHistory.getContent match {
+    case java.lang.Boolean.TRUE => self.dispatcher = new LoggableDispatcher("LoggableDispatcher", this, configuration)
+    case java.lang.Boolean.FALSE =>
+  }
 
   //Time-to-life in ms
   private val ttl = 2500L
@@ -44,7 +51,6 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, dpuURI: UR
     initialize
     connectActors
     actors foreach { case (_, actor) => actor ! Start }
-    //schedule
   }
 
   private def initialize {
@@ -58,6 +64,7 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, dpuURI: UR
         case Some(f) =>
           //Create actor
           val actor = f.getInstance
+          actor.setDispatcher(self.dispatcher)
           self startLink actor
           //Register and link the supervisor
           actor ! Register(self, None)
@@ -71,7 +78,7 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, dpuURI: UR
           statusMap += (actor.getUuid -> (actor, Created(), systemTime))
           uifactory update (actor, Created())
           uifactory update (self, Progress("initialize", 1, dpu.getNodes.size))
-        case None => warning(this, "No factory found for: " + node.getFactoryId.getText)
+        case None => error(this, "No factory found for: " + node.getFactoryId.getText)
       }
     })
     uifactory update (self, Finished())
@@ -98,15 +105,6 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, dpuURI: UR
     })
   }
 
-  /**
-   * <p>Checks actors if they are alive.</p>
-   */
-  private def schedule {
-    actors foreach {
-      case (_, actor) => schedules = Scheduler.schedule(actor, Alive, 500, 2500, TimeUnit.MILLISECONDS) :: schedules
-    }
-  }
-
   private def handleStatus(status: Status) {
     uifactory update (self.sender.getOrElse(null), status)
     self.sender match {
@@ -119,6 +117,7 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, dpuURI: UR
         //schedules foreach (future => future.cancel(true))
         actors foreach { case (_, actor) => actor stop }
         uifactory update (self, Shutdown())
+        printHistory
         self stop
       }
       case _ => //nothing happens
@@ -131,21 +130,89 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, dpuURI: UR
    * 1) All actors have status Finished | Ready
    * 2) One actor timed out
    */
-  private def finished: Boolean = {
-    //    val timestamp = systemTime
-    //    if (ttl - 500 > Math.abs(timestamp - this.timestamp))
-    //      return false
-    //    this.timestamp = timestamp
+  private def finished: Boolean = !statusMap.exists {
+    case (_, (_, status, lastTimestamp)) =>
+      status match {
+        case Running() | Progress(_, _, _) | Waiting() => true
+        case _ => false
+      }
+  }
 
-    !statusMap.exists {
-      case (_, (_, status, lastTimestamp)) =>
-        status match {
-          case Running() | Progress(_, _, _) | Waiting() => true
-          case _ => false
-        }
-      //TODO GraphSupervisor -> Actor Timeout error handling
-      //        ttl < Math.abs(timestamp - lastTimestamp)
+  private def printHistory = {
+    val writer = configuration.getOutput.getContent match {
+      case null => new PrintWriter(System.out)
+      case path => new PrintWriter(path.toFile)
+    }
+    val actorsByUuid = actors map { case (id, actor) => (actor.getUuid -> id) }
+
+    processHistory.foldLeft(writer) { (writer, m) =>
+      val sender = m.sender match {
+        case None => "None"
+        case Some(s) => actorsByUuid.getOrElse(s.getUuid, "<Internal>") + "[" + s.getActorClass.getSimpleName + "]"
+      }
+      val r = m.receiver
+      writer.print(sender)
+      writer.print(" -> [")
+      writer.print(m.message)
+      writer.print("] -> ")
+      writer.print(actorsByUuid.getOrElse(r.getUuid, "<Internal>"))
+      writer.println("[" + r.getActorClass.getSimpleName + "]")
+      writer
+    }
+  }.flush
+
+}
+
+class LoggableDispatcher(name: String, supervisor: GraphSupervisor, conf: IConfiguration) extends ExecutorBasedEventDrivenDispatcher(name) {
+
+  conf.getconstraints.map { constr =>
+    (constr.getType.getContent, constr.getLog.getContent) match {
+      case (EventType.EVENT,y) =>
     }
   }
 
+  override def createMailbox(actor: ActorRef) =
+    //This code is copied from base class with little modifications
+    mailboxType match {
+      case b: UnboundedMailbox ⇒
+        new ConcurrentLinkedQueue[MessageInvocation] with MessageQueue with ExecutableMailbox {
+          @inline
+          final def dispatcher = LoggableDispatcher.this
+          @inline
+          final def enqueue(m: MessageInvocation) = {
+            val G = classOf[GraphSupervisor]
+            (m.sender, m.receiver) match {
+              case (Some(s), r) => (s.getActorClass, r.getActorClass) match {
+                case (G, _) | (_, G) => //Ignore messages to GraphSupervisor
+                case _ => supervisor.processHistory += m
+              }
+              case (None, r) => r.getActorClass match {
+                case G => //Ignore messages to GraphSupervisor
+                case _ => supervisor.processHistory += m
+              }
+            }
+            this.add(m)
+          }
+          @inline
+          final def dequeue(): MessageInvocation = this.poll()
+        }
+      case b: BoundedMailbox ⇒
+        new DefaultBoundedMessageQueue(b.capacity, b.pushTimeOut) with ExecutableMailbox {
+          @inline
+          final def dispatcher = LoggableDispatcher.this
+        }
+    }
+}
+
+object GraphSupervisor {
+  val clazzes = Map(
+      EventType.EVENT -> List(Results, QueryResults, QueriesResults, Query, Queries,UIFactoryEvent, Created, Waiting,Ready,Running,Progress,Finished, Shutdown ),
+      EventType.STATUS -> List(Created, Waiting,Ready,Running,Progress,Finished, Shutdown ),
+      EventType.UIEVENT -> List(),
+      EventType.RESULTS -> List(Results),
+      EventType.QUERYRESULTS -> List(QueryResults),
+      EventType.QUERIESRESULTS -> List(QueriesResults),
+      EventType.QUERY -> List(Query),
+      EventType.QUERIES -> List(Queries)
+      )
 }

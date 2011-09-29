@@ -17,7 +17,7 @@ import de.lmu.ifi.dbs.knowing.core.util.OSGIUtil
 import de.lmu.ifi.dbs.knowing.core.swt.wizard.SelectDPUPage
 import de.lmu.ifi.dbs.knowing.core.swt._
 import org.osgi.util.tracker.ServiceTracker
-import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
+import de.lmu.ifi.dbs.knowing.core.service._
 
 /**
  * @author Nepomuk Seiler
@@ -35,8 +35,11 @@ class Activator extends AbstractUIPlugin {
   override def start(context: BundleContext) = {
     super.start(context)
     Activator.plugin = this
-    Activator.directoryTracker = new ServiceTracker(context, classOf[IFactoryDirectory].getName, null)
+    Activator.directoryTracker = new ServiceTracker(context, classOf[IFactoryDirectory], null)
     Activator.directoryTracker.open
+    Activator.evaluateTracker = new ServiceTracker(context, classOf[IEvaluateService], null)
+    Activator.evaluateTracker.open
+
     osgi = new OSGIUtil(context)
     osgi.registerPresenter(new TablePresenterFactory)
     osgi.registerPresenter(new MultiTablePresenterFactory)
@@ -48,11 +51,12 @@ class Activator extends AbstractUIPlugin {
    */
   override def stop(context: BundleContext) = {
     Activator.directoryTracker.close
+    Activator.directoryTracker = null
+    Activator.evaluateTracker.close
     osgi.deregisterAll
+    osgi = null
     saveDPUWizardProperties
     Activator.plugin = null
-    osgi = null
-    Activator.directoryTracker = null
     super.stop(context)
   }
 
@@ -99,7 +103,8 @@ object Activator {
   // The shared instance
   var plugin: Activator = _
 
-  var directoryTracker: ServiceTracker[_,_] = _
+  var directoryTracker: ServiceTracker[IFactoryDirectory, IFactoryDirectory] = _
+  var evaluateTracker: ServiceTracker[IEvaluateService, IEvaluateService] = _
 
   /**
    * Returns the shared instance
@@ -108,5 +113,6 @@ object Activator {
    */
   def getDefault: Activator = plugin
 
-  def directoryService: IFactoryDirectory = directoryTracker.getService.asInstanceOf[IFactoryDirectory]
+  def directoryService: IFactoryDirectory = directoryTracker.getService
+  def evaluateService: IEvaluateService = evaluateTracker.getService
 }
