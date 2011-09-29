@@ -67,7 +67,12 @@ object TSerializable {
       case None => None
       case Some(u) =>
         debug(this, "Resolved URI: " + u)
-        Some(u.toURL.openStream)
+        try {
+          Some(u.toURL.openStream)
+        } catch {
+          case e: IOException => warning(this, e.getMessage); None
+        }
+        
     }
   }
 }

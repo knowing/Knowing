@@ -390,7 +390,7 @@ object ResultsUtil {
     while (appendEnum.hasMoreElements) ret.add(appendEnum.nextElement.asInstanceOf[Instance])
     ret
   }
-
+  
   /**
    * This method merges a list of instances into a given header. The header is normally empty.
    */

@@ -31,12 +31,16 @@ object DPUUtil {
     destination.setName(source.getName.getContent)
     destination.setDescription(source.getDescription.getContent)
     destination.setTags(source.getTags.getContent)
-    source.getNodes.foreach {
-      node =>
-        val nodeNew = destination.getNodes.addNewElement
-        nodeNew.setId(node.getId.getContent)
-        nodeNew.setFactoryId(node.getFactoryId.getText)
-        nodeNew.setType(node.getType.getText)
+    source.getNodes.foreach { node =>
+      val nodeNew = destination.getNodes.addNewElement
+      nodeNew.setId(node.getId.getContent)
+      nodeNew.setFactoryId(node.getFactoryId.getText)
+      nodeNew.setType(node.getType.getText)
+      node.getProperties.foreach { p =>
+      	val newProp = nodeNew.getProperties.addNewElement
+      	newProp.setKey(p.getKey.getContent)
+      	newProp.setValue(p.getValue.getContent)
+      }
     }
     source.getEdges.foreach {
       edge =>
@@ -53,12 +57,12 @@ object DPUUtil {
 
   def print(dpu: IDataProcessingUnit, out: OutputStream = System.out) {
     val writer = new PrintWriter(out)
-    if(dpu == null) {
+    if (dpu == null) {
       writer.println("DataProcessingUnit: null")
       writer.flush
       return
     }
-    
+
     writer.println("### [Data Processing Unit] " + dpu.getName.getContent + " ###")
     writer.println("Description: " + dpu.getDescription.getContent)
     writer.println("Tags: " + dpu.getTags.getContent)

@@ -22,7 +22,8 @@ class AttributeCrossValidator extends XCrossValidator {
         warning(this, "No classLabel found in " + instances.relationName)
       case x => classLabels = classLables(instances.attribute(x))
     }
-    val instMaps = ResultsUtil.splitInstanceByAttribute(instances, splitAttr)
+    val instMaps = ResultsUtil.splitInstanceByAttribute(instances, splitAttr,false)    		    
+    
     //Map test-data -> train-data 
     val instMap = for (e <- instMaps) yield instMaps.partition(e2 => e._1.equals(e2._1))
     folds = instMap.size
@@ -44,7 +45,6 @@ class AttributeCrossValidator extends XCrossValidator {
         val trainData = ResultsUtil.appendInstances(new Instances(testData, 0), train map (_._2) toList)
         guessAndSetClassLabel(testData)
         guessAndSetClassLabel(trainData)
-
         //Logic
         self startLink crossValidators(i)
         crossValidators(i) ! Register(self, None)

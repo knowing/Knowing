@@ -5,11 +5,12 @@ import org.osgi.framework.ServiceRegistration
 import org.osgi.framework.InvalidSyntaxException
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import de.lmu.ifi.dbs.knowing.core.processing._
-import OSGIUtil._
 import de.lmu.ifi.dbs.knowing.core.internal.Activator
 import de.lmu.ifi.dbs.knowing.core.service.IDPUProvider
-import java.net.URL
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
+import java.net.URL
+import OSGIUtil._
+
 
 /**
  * <p>Util for (de)register DataMining-Factory-Services</p>
@@ -78,7 +79,12 @@ object OSGIUtil {
   val PROCESSOR_CLASS = classOf[TProcessor].getName
   val PRESENTER_CLASS = classOf[TPresenter[_]].getName
 
-  def registeredDPUs: Array[IDataProcessingUnit] =   Activator.dpuDirectory.getService.getDPUs
+  def registeredDPUs: Array[IDataProcessingUnit] = {
+    Activator.dpuDirectory.getService match {
+      case null => Array()
+      case dir => dir.getDPUs
+    }
+  }
 
   def registeredDPU(name: String): IDataProcessingUnit = {
     Activator.dpuDirectory.getService.getDPU(name) match {

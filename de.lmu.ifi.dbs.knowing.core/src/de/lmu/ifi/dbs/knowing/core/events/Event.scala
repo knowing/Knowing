@@ -17,7 +17,7 @@ trait UIEvent extends Event
 /* ======================== */
 case class Results(instances: Instances, port: Option[String] = None) extends Event
 case class QueryResults(instances: Instances, query: Instance) extends Event
-case class QueriesResults(results: List[(Instances, Instance)])
+case class QueriesResults(results: List[(Instance, Instances)]) //query, results
 case class Query(query: Instance) extends Event
 case class Queries(queries: Instances, id: String = "") extends Event
 case class UIFactoryEvent(factory: UIFactory, node: INode) extends Event

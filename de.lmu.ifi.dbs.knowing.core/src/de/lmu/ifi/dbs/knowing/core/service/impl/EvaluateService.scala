@@ -9,6 +9,7 @@ import de.lmu.ifi.dbs.knowing.core.processing.GraphSupervisor
 import de.lmu.ifi.dbs.knowing.core.service.IEvaluateService
 import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
+import de.lmu.ifi.dbs.knowing.core.util.DPUUtil
 
 
 class EvaluateService extends IEvaluateService {
