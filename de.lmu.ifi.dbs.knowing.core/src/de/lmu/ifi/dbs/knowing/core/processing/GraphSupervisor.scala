@@ -182,11 +182,11 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor, conf: IConfi
           final def enqueue(m: MessageInvocation) = {
             val G = classOf[GraphSupervisor]
             (m.sender, m.receiver) match {
-              case (Some(s), r) => (s.getActorClass, r.getActorClass) match {
-                case (G, _) | (_, G) => //Ignore messages to GraphSupervisor
+              case (Some(s), r) => (s.getActorClass,r.getActorClass) match {
+                case (G,_) | (_,G) => //Ignore messages to GraphSupervisor
                 case _ => supervisor.processHistory += m
               }
-              case (None, r) => r.getActorClass match {
+              case (None, r ) => r.getActorClass match {
                 case G => //Ignore messages to GraphSupervisor
                 case _ => supervisor.processHistory += m
               }

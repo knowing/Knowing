@@ -96,6 +96,7 @@
                             <default-panel>
                                 <content>
                                     <property-editor>history</property-editor>
+<<<<<<< HEAD
                                     <property-editor>
                                         <property>output</property>
                                         <related-content>
@@ -103,6 +104,9 @@
                                         </related-content>
                                     </property-editor>
                                     <property-editor>constraints</property-editor>
+=======
+                                    <property-editor>output</property-editor>
+>>>>>>> c65853fa92a8885dc0de4615d8e9916a7bbf8776
                                 </content>
                             </default-panel>
                         </with>

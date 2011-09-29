@@ -50,7 +50,6 @@ public interface IConfiguration extends IModelElement {
 	Value<Path> getOutput();
 
 	void setOutput(String value);
-
 	void setOutput(Path output);
 
 	/* === Output File === */
