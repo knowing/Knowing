@@ -56,7 +56,6 @@ trait TProcessor extends Actor with TSender with TConfigurable {
       configure(p)
       properties.clear
       properties.putAll(p)
-      if (self.getSender.isDefined) self reply Ready
       statusChanged(Waiting())
     case Start | Start() => start
 

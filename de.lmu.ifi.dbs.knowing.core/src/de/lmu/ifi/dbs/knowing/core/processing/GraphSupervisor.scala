@@ -4,9 +4,9 @@ import java.net.URI
 import java.util.Properties
 import java.util.concurrent.{ TimeUnit, ScheduledFuture, ConcurrentLinkedQueue }
 import java.io.PrintWriter
-import akka.actor.{Actor, ActorRef}
+import akka.actor.{ Actor, ActorRef }
 import akka.config.Supervision.AllForOneStrategy
-import akka.event.EventHandler.{debug, info, warning, error}
+import akka.event.EventHandler.{ debug, info, warning, error }
 import akka.dispatch._
 
 import de.lmu.ifi.dbs.knowing.core.factory._
@@ -16,7 +16,7 @@ import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
 import de.lmu.ifi.dbs.knowing.core.model._
 import de.lmu.ifi.dbs.knowing.core.util.DPUUtil.{ nodeProperties }
 import com.eaio.uuid.UUID
-import scala.collection.mutable.{ Map => MutableMap, ListBuffer,SynchronizedQueue }
+import scala.collection.mutable.{ Map => MutableMap, ListBuffer, SynchronizedQueue }
 import scala.collection.JavaConversions._
 import System.{ currentTimeMillis => systemTime }
 
@@ -46,6 +46,7 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, dpuURI: UR
     case UpdateUI | UpdateUI() => uifactory update (self.sender.getOrElse(null), UpdateUI())
     case status: Status => handleStatus(status)
     case uiEvent: UIEvent => handleUIEvent(uiEvent)
+    case event: Event => debug(this, "Unhandled Event: " + event)
     case msg => debug(this, "Unhandled Message: " + msg)
   }
 
@@ -128,7 +129,7 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, dpuURI: UR
   }
 
   /**
-   * Sends the UIEvent to every presenter. 
+   * Sends the UIEvent to every presenter.
    */
   private def handleUIEvent(event: UIEvent) {
     //TODO GraphSupervisor -> UIEvent should contain field "id" to specify presenter
@@ -153,13 +154,12 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, dpuURI: UR
       }
   }
 
-  private def printHistory = {
+  private def printHistory {
     val writer = configuration.getOutput.getContent match {
       case null => new PrintWriter(System.out)
       case path => new PrintWriter(path.toFile)
     }
-    val actorsByUuid = actors map { case (id, (actor,_)) => (actor.getUuid -> id) }
-
+    val actorsByUuid = actors map { case (id, (actor, _)) => (actor.getUuid -> id) }
     processHistory.foldLeft(writer) { (writer, m) =>
       val sender = m.sender match {
         case None => "None"
@@ -173,8 +173,8 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, dpuURI: UR
       writer.print(actorsByUuid.getOrElse(r.getUuid, "<Internal>"))
       writer.println("[" + r.getActorClass.getSimpleName + "]")
       writer
-    }
-  }.flush
+    }.flush
+  }
 
 }
 
@@ -182,7 +182,7 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor, conf: IConfi
 
   conf.getconstraints.map { constr =>
     (constr.getType.getContent, constr.getLog.getContent) match {
-      case (EventType.EVENT,y) =>
+      case (EventType.EVENT, y) =>
     }
   }
 
@@ -197,11 +197,11 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor, conf: IConfi
           final def enqueue(m: MessageInvocation) = {
             val G = classOf[GraphSupervisor]
             (m.sender, m.receiver) match {
-              case (Some(s), r) => (s.getActorClass,r.getActorClass) match {
-                case (G,_) | (_,G) => //Ignore messages to GraphSupervisor
+              case (Some(s), r) => (s.getActorClass, r.getActorClass) match {
+                case (G, _) | (_, G) => //Ignore messages to GraphSupervisor
                 case _ => supervisor.processHistory += m
               }
-              case (None, r ) => r.getActorClass match {
+              case (None, r) => r.getActorClass match {
                 case G => //Ignore messages to GraphSupervisor
                 case _ => supervisor.processHistory += m
               }
@@ -221,13 +221,12 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor, conf: IConfi
 
 object GraphSupervisor {
   val clazzes = Map(
-      EventType.EVENT -> List(Results, QueryResults, QueriesResults, Query, Queries,UIFactoryEvent, Created, Waiting,Ready,Running,Progress,Finished, Shutdown ),
-      EventType.STATUS -> List(Created, Waiting,Ready,Running,Progress,Finished, Shutdown ),
-      EventType.UIEVENT -> List(),
-      EventType.RESULTS -> List(Results),
-      EventType.QUERYRESULTS -> List(QueryResults),
-      EventType.QUERIESRESULTS -> List(QueriesResults),
-      EventType.QUERY -> List(Query),
-      EventType.QUERIES -> List(Queries)
-      )
+    EventType.EVENT -> List(Results, QueryResults, QueriesResults, Query, Queries, UIFactoryEvent, Created, Waiting, Ready, Running, Progress, Finished, Shutdown),
+    EventType.STATUS -> List(Created, Waiting, Ready, Running, Progress, Finished, Shutdown),
+    EventType.UIEVENT -> List(),
+    EventType.RESULTS -> List(Results),
+    EventType.QUERYRESULTS -> List(QueryResults),
+    EventType.QUERIESRESULTS -> List(QueriesResults),
+    EventType.QUERY -> List(Query),
+    EventType.QUERIES -> List(Queries))
 }

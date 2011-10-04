@@ -31,6 +31,13 @@ object DPUUtil {
     destination.setName(source.getName.getContent)
     destination.setDescription(source.getDescription.getContent)
     destination.setTags(source.getTags.getContent)
+
+    val destConf = destination.getConfiguration
+    val srcConf = source.getConfiguration
+    destConf.setHistory(srcConf.getHistory.getContent)
+    destConf.setAbsolute(srcConf.getAbsolute.getContent)
+    destConf.setOutput(srcConf.getOutput.getContent)
+    
     source.getNodes.foreach { node =>
       val nodeNew = destination.getNodes.addNewElement
       nodeNew.setId(node.getId.getContent)
