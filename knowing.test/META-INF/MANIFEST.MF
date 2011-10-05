@@ -4,7 +4,14 @@ Bundle-Name: Test
 Bundle-SymbolicName: knowing.test;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: knowing.test.Activator
-Import-Package: org.osgi.service.component;version="1.1.0",
+Import-Package: org.eclipse.sapphire.java,
+ org.eclipse.sapphire.modeling,
+ org.eclipse.sapphire.modeling.annotations,
+ org.eclipse.sapphire.modeling.serialization,
+ org.eclipse.sapphire.modeling.xml,
+ org.eclipse.sapphire.modeling.xml.annotations,
+ org.eclipse.sapphire.workspace,
+ org.osgi.service.component;version="1.1.0",
  scala;version="2.9.0.1",
  scala.collection;version="2.9.0.1",
  scala.collection.generic;version="2.9.0.1",

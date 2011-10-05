@@ -135,8 +135,11 @@ trait TSender { this: Actor =>
     if (actor.isRunning)
       actor ! event
   }
+  
 }
 
 object TSender {
   val DEFAULT_PORT = IEdge.DEFAULT_PORT
 }
+
+ 

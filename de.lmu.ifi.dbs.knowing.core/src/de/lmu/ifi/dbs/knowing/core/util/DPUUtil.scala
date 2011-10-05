@@ -37,6 +37,11 @@ object DPUUtil {
     destConf.setHistory(srcConf.getHistory.getContent)
     destConf.setAbsolute(srcConf.getAbsolute.getContent)
     destConf.setOutput(srcConf.getOutput.getContent)
+    srcConf.getconstraints.foreach { c =>
+      val newConstr = destConf.getconstraints.addNewElement
+      newConstr.setType(c.getType.getContent)
+      newConstr.setLog(c.getLog.getContent)
+    }
     
     source.getNodes.foreach { node =>
       val nodeNew = destination.getNodes.addNewElement

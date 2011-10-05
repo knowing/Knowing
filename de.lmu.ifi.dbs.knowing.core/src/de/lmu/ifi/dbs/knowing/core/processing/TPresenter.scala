@@ -27,7 +27,7 @@ trait TPresenter[T] extends TProcessor {
       statusChanged(Running())
       val parent = factory createContainer (node)
       createContainer(parent.asInstanceOf[T])
-      if (self.getSender.isDefined) self reply Ready
+      if (self.getSender.isDefined) self reply Ready()
       statusChanged(Ready())
     case QueryResults(instances, _) => buildPresentation(instances)
   }

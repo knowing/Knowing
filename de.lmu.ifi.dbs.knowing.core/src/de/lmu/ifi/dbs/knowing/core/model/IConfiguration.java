@@ -11,12 +11,12 @@ import org.eclipse.sapphire.modeling.annotations.DefaultValue;
 import org.eclipse.sapphire.modeling.annotations.FileSystemResourceType;
 import org.eclipse.sapphire.modeling.annotations.GenerateImpl;
 import org.eclipse.sapphire.modeling.annotations.Label;
-import org.eclipse.sapphire.modeling.annotations.AbsolutePath;
 import org.eclipse.sapphire.modeling.annotations.Type;
 import org.eclipse.sapphire.modeling.annotations.ValidFileExtensions;
 import org.eclipse.sapphire.modeling.annotations.ValidFileSystemResourceType;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlBinding;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlListBinding;
+import org.eclipse.sapphire.workspace.WorkspaceRelativePath;
 
 @GenerateImpl
 public interface IConfiguration extends IModelElement {
@@ -42,9 +42,9 @@ public interface IConfiguration extends IModelElement {
 	@XmlBinding(path = "output")
 	@Label(standard = "Output")
 	@Type(base = Path.class)
-	@AbsolutePath
+	@WorkspaceRelativePath
 	@ValidFileSystemResourceType(FileSystemResourceType.FILE)
-	@ValidFileExtensions("xml")
+	@ValidFileExtensions("hst")
 	ValueProperty PROP_OUTPUT = new ValueProperty(TYPE, "Output");
 
 	Value<Path> getOutput();
@@ -57,7 +57,7 @@ public interface IConfiguration extends IModelElement {
 	@XmlBinding(path = "output/absolute")
 	@Label(standard = "Absolute")
 	@Type(base = Boolean.class)
-	@DefaultValue(text = "false")
+	@DefaultValue(text = "true")
 	ValueProperty PROP_ABSOLUTE = new ValueProperty(TYPE, "Absolute");
 
 	Value<Boolean> getAbsolute();

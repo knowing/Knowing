@@ -7,9 +7,16 @@
             class="de.lmu.ifi.dbs.knowing.ui.editor.DPUSapphireEditor"
             contributorClass="de.lmu.ifi.dbs.knowing.ui.editor.DPUActionBarContributor"
             default="true"
-            extensions="dpu, xml"
+            extensions="dpu"
             id="de.lmu.ifi.dbs.knowing.ui.editor"
-            name="DPU Sapphire Editor">
+            name="DataProcessingUnit Editor">
+      </editor>
+      <editor
+            class="de.lmu.ifi.dbs.knowing.ui.editor.ProcessHistoryEditor"
+            default="true"
+            extensions="hst"
+            id="de.lmu.ifi.dbs.knowing.ui.editor.history"
+            name="ProcessHistory Editor">
       </editor>
    </extension>
    <extension

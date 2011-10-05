@@ -64,5 +64,7 @@ class ImmutableInstances(instances: Instances) extends Instances(instances, inst
   //  override def setClassIndex(index: Int) = throw new UnsupportedOperationException("Instances is immutable!")
   
   override def toString() = relationName
+  
+  def toStringComplete() = super.toString
 }
     

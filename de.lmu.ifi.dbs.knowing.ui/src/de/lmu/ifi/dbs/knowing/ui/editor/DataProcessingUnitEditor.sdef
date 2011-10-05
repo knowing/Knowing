@@ -24,7 +24,8 @@
 		<id>dpu.editor.overview</id>
 		<root-node>
 			<node>
-				<label>${ Name == null ? &quot;&lt;DataProcessingUnit&gt;&quot; :Name }</label>
+				<label>${ Name == null ? &quot;&lt;DataProcessingUnit&gt;&quot;
+					:Name }</label>
 				<section>
 					<label>General</label>
 					<content>
@@ -51,7 +52,7 @@
 								<property-editor>properties</property-editor>
 							</content>
 						</section>
-                        <image>/icons/node_16.png</image>
+						<image>/icons/node_16.png</image>
 					</case>
 					<property>nodes</property>
 				</node-factory>
@@ -83,35 +84,31 @@
 								<property-editor>weight</property-editor>
 							</content>
 						</section>
-                        <image>/icons/edge_16.png</image>
+						<image>/icons/edge_16.png</image>
 					</case>
 					<property>edges</property>
 				</node-factory>
-                <section>
-                    <label>Configuration</label>
-                    <content>
-                        <with>
-                            <path>Configuration</path>
-                            <label>Configuration</label>
-                            <default-panel>
-                                <content>
-                                    <property-editor>history</property-editor>
-<<<<<<< HEAD
-                                    <property-editor>
-                                        <property>output</property>
-                                        <related-content>
-                                            <property-editor>absolute</property-editor>
-                                        </related-content>
-                                    </property-editor>
-                                    <property-editor>constraints</property-editor>
-=======
-                                    <property-editor>output</property-editor>
->>>>>>> c65853fa92a8885dc0de4615d8e9916a7bbf8776
-                                </content>
-                            </default-panel>
-                        </with>
-                    </content>
-                </section>
+				<section>
+					<label>Configuration</label>
+					<content>
+						<with>
+							<path>Configuration</path>
+							<label>Configuration</label>
+							<default-panel>
+								<content>
+									<property-editor>history</property-editor>
+									<property-editor>
+										<property>output</property>
+										<related-content>
+											<property-editor>absolute</property-editor>
+										</related-content>
+									</property-editor>
+									<property-editor>constraints</property-editor>
+								</content>
+							</default-panel>
+						</with>
+					</content>
+				</section>
 				<section>
 					<label>Nodes configuration</label>
 					<collapsible>true</collapsible>
@@ -125,7 +122,7 @@
 						</property-editor>
 					</content>
 				</section>
-                <section>
+				<section>
 					<label>Edges configuration</label>
 					<content>
 						<property-editor>
@@ -198,4 +195,98 @@
 		</page>
 		<description>This is my Description</description>
 	</wizard>
+	<editor-page>
+		<id>history.editor.overview</id>
+		<page-name>overview</page-name>
+		<page-header-text>overview page</page-header-text>
+		<root-node>
+			<node>
+				<label>${ Name == null ? &quot;&lt;History&gt;&quot; :Name }</label>
+				<node-factory>
+					<property>Messages</property>
+					<case>
+						<label>${ Type == null ? &quot;&lt;Type&gt;&quot; :Type}</label>
+						<section>
+							<label>Message Information</label>
+							<content>
+								<property-editor>
+									<property>Source</property>
+									<hint>
+										<name>read.only</name>
+										<value>true</value>
+									</hint>
+                                    <related-content>
+                                        <property-editor>
+                                            <property>Source-Port</property>
+                                            <hint>
+                                                <name>read.only</name>
+                                                <value>true</value>
+                                            </hint>
+                                        </property-editor>
+                                    </related-content>
+                                    <related-content-width>50</related-content-width>
+								</property-editor>
+								<property-editor>
+                                    <property>Target</property>
+                                    <hint>
+                                        <name>read.only</name>
+                                        <value>true</value>
+                                    </hint>
+                                    <related-content>
+                                        <property-editor>
+                                            <property>Target-Port</property>
+                                            <hint>
+                                                <name>read.only</name>
+                                                <value>true</value>
+                                            </hint>
+                                        </property-editor>
+                                    </related-content>
+                                    <related-content-width>50</related-content-width>
+                                </property-editor>
+                                <property-editor>
+                                    <property>Type</property>
+                                    <hint>
+                                        <name>read.only</name>
+                                        <value>true</value>
+                                    </hint>
+                                </property-editor>
+							</content>
+                            <scroll-vertically>false</scroll-vertically>
+                            <scroll-horizontally>false</scroll-horizontally>
+						</section>
+                        <section>
+                            <label>Content</label>
+                            <collapsible>true</collapsible>
+                            <collapsed-initially>true</collapsed-initially>
+                            <content>
+                                <property-editor>
+                                    <property>Content</property>
+                                    <hint>
+                                        <name>read.only</name>
+                                        <value>false</value>
+                                    </hint>
+                                    <hint>
+                                        <name>expand.vertically</name>
+                                        <value>true</value>
+                                    </hint>
+                                    <hint>
+                                        <name>show.label</name>
+                                        <value>false</value>
+                                    </hint>
+                                </property-editor>
+                            </content>
+                            <scroll-vertically>true</scroll-vertically>
+                            <scroll-horizontally>true</scroll-horizontally>
+                        </section>
+					</case>
+				</node-factory>
+                <section>
+                    <label>General</label>
+                    <content>
+                        <property-editor>Name</property-editor>
+                    </content>
+                </section>
+			</node>
+		</root-node>
+	</editor-page>
 </definition>

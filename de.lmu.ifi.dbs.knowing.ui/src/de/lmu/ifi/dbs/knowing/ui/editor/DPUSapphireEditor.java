@@ -21,6 +21,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.wst.sse.ui.StructuredTextEditor;
 
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit;
+import de.lmu.ifi.dbs.knowing.ui.interal.Activator;
 
 public class DPUSapphireEditor extends SapphireEditor {
 
@@ -31,7 +32,7 @@ public class DPUSapphireEditor extends SapphireEditor {
 	private IModelElement dpuModel;
 
 	public DPUSapphireEditor() {
-		super("de.lmu.ifi.dbs.knowing.ui.editor");
+		super(Activator.PLUGIN_ID);
 	}
 
 	@Override

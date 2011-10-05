@@ -18,7 +18,7 @@ class EvaluateService extends IEvaluateService {
   
   def evaluate(dpu: IDataProcessingUnit, ui: UIFactory, execPath: URI): ActorRef = {
     val supervisor = actorOf(new GraphSupervisor(dpu,ui, execPath, factoryDirectory)).start
-    supervisor ! Start
+    supervisor ! Start()
     supervisor
   }
 
