@@ -149,7 +149,10 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, execPath: 
         //schedules foreach (future => future.cancel(true))
         actors foreach { case (_, (actor, _)) => actor stop }
         uifactory update (self, Shutdown())
-        processHistory.resource.save
+        processHistory match {
+          case null =>
+          case history => history.resource.save
+        }
         self stop
       }
       case _ => //nothing happens
@@ -228,8 +231,8 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends Exec
       case (Some(s), r, e: Event) => (s.getActorClass, r.getActorClass) match {
         case (G, _) | (_, G) => //Ignore messages to GraphSupervisor
         case _ =>
-          val src = supervisor.actorsByUuid.getOrElse(s.getUuid, "[Internal]" + "[" + s.getActorClass.getSimpleName + "]") 
-          val trg = supervisor.actorsByUuid.getOrElse(r.getUuid, "[Internal]" + "[" + r.getActorClass.getSimpleName + "]") 
+          val src = supervisor.actorsByUuid.getOrElse(s.getUuid, "[Internal]" + "[" + s.getActorClass.getSimpleName + "]")
+          val trg = supervisor.actorsByUuid.getOrElse(r.getUuid, "[Internal]" + "[" + r.getActorClass.getSimpleName + "]")
           logEvent(src, trg, e)
       }
       case (None, r, e: Event) => r.getActorClass match {
@@ -268,7 +271,7 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends Exec
         case Nil =>
         case List(src) => msg.setSource(src)
         case List(src, port) => msg.setSource(src); msg.setSourcePort(port)
-        case _ =>  msg.setSource(src)
+        case _ => msg.setSource(src)
       }
       msg.setTarget(trg)
       msg.setContent(content)
