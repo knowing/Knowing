@@ -200,7 +200,7 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends Exec
   override def createMailbox(actor: ActorRef) =
     //This code is copied from base class with little modifications
     mailboxType match {
-      case b: UnboundedMailbox ⇒
+      case b: UnboundedMailbox =>
         new ConcurrentLinkedQueue[MessageInvocation] with MessageQueue with ExecutableMailbox {
           @inline
           final def dispatcher = LoggableDispatcher.this
@@ -215,7 +215,7 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends Exec
         }
       //BoundedMailbox doesn't log.
       //TODO GraphSupervisor.LoggableDispatcher -> BoundedMailbox logging
-      case b: BoundedMailbox ⇒
+      case b: BoundedMailbox =>
         new DefaultBoundedMessageQueue(b.capacity, b.pushTimeOut) with ExecutableMailbox {
           @inline
           final def dispatcher = LoggableDispatcher.this
