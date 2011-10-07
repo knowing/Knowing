@@ -11,6 +11,9 @@ import de.lmu.ifi.dbs.knowing.core.service.IDPUDirectory
 import java.io.OutputStream
 import java.io.PrintWriter
 
+/**
+ * 
+ */
 object DPUUtil {
 
   /**
@@ -59,7 +62,9 @@ object DPUUtil {
         val edgeNew = destination.getEdges.addNewElement
         edgeNew.setId(edge.getId.getContent)
         edgeNew.setSource(edge.getSource.getContent)
+        edgeNew.setSourcePort(edge.getSourcePort.getContent)
         edgeNew.setTarget(edge.getTarget.getContent)
+        edgeNew.setTargetPort(edge.getSourcePort.getContent)
     }
     destination
   }
