@@ -103,7 +103,22 @@
 											<property-editor>absolute</property-editor>
 										</related-content>
 									</property-editor>
-									<property-editor>constraints</property-editor>
+                                    <spacer></spacer>
+                                    <property-editor>
+                                        <property>nodeConstraints</property>
+                                        <hint>
+                                            <name>show.label.above</name>
+                                            <value>true</value>
+                                        </hint>
+                                    </property-editor>
+                                    <spacer></spacer>
+                                    <property-editor>
+                                        <property>eventConstraints</property>
+                                        <hint>
+                                            <name>show.label.above</name>
+                                            <value>true</value>
+                                        </hint>
+                                    </property-editor>
 								</content>
 							</default-panel>
 						</with>
@@ -121,6 +136,7 @@
 							</hint>
 						</property-editor>
 					</content>
+                    <collapsed-initially>true</collapsed-initially>
 				</section>
 				<section>
 					<label>Edges configuration</label>
@@ -134,6 +150,7 @@
 						</property-editor>
 					</content>
 					<collapsible>true</collapsible>
+                    <collapsed-initially>true</collapsed-initially>
 				</section>
 			</node>
 		</root-node>

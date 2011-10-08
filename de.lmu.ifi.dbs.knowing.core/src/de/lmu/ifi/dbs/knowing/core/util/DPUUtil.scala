@@ -12,7 +12,7 @@ import java.io.OutputStream
 import java.io.PrintWriter
 
 /**
- * 
+ *
  */
 object DPUUtil {
 
@@ -40,21 +40,26 @@ object DPUUtil {
     destConf.setHistory(srcConf.getHistory.getContent)
     destConf.setAbsolute(srcConf.getAbsolute.getContent)
     destConf.setOutput(srcConf.getOutput.getContent)
-    srcConf.getconstraints.foreach { c =>
-      val newConstr = destConf.getconstraints.addNewElement
+    srcConf.getEventConstraints.foreach { c =>
+      val newConstr = destConf.getEventConstraints.addNewElement
       newConstr.setType(c.getType.getContent)
       newConstr.setLog(c.getLog.getContent)
     }
-    
+    srcConf.getNodeConstraints.foreach { c =>
+      val newConstr = destConf.getNodeConstraints.addNewElement
+      newConstr.setNode(c.getNode.getContent)
+      newConstr.setLog(c.getLog.getContent)
+    }
+
     source.getNodes.foreach { node =>
       val nodeNew = destination.getNodes.addNewElement
       nodeNew.setId(node.getId.getContent)
       nodeNew.setFactoryId(node.getFactoryId.getText)
       nodeNew.setType(node.getType.getText)
       node.getProperties.foreach { p =>
-      	val newProp = nodeNew.getProperties.addNewElement
-      	newProp.setKey(p.getKey.getContent)
-      	newProp.setValue(p.getValue.getContent)
+        val newProp = nodeNew.getProperties.addNewElement
+        newProp.setKey(p.getKey.getContent)
+        newProp.setValue(p.getValue.getContent)
       }
     }
     source.getEdges.foreach {
@@ -83,6 +88,20 @@ object DPUUtil {
     writer.println("### [Data Processing Unit] " + dpu.getName.getContent + " ###")
     writer.println("Description: " + dpu.getDescription.getContent)
     writer.println("Tags: " + dpu.getTags.getContent)
+    writer.println("== Configuration: ")
+    val conf = dpu.getConfiguration
+    writer.println(" History: " + conf.getHistory.getContent)
+    writer.println(" Path/Absolute: " + conf.getOutput.getText + " / " + conf.getAbsolute.getContent)
+    writer.println(" === Node constraints( " + conf.getNodeConstraints.size + " )")
+    conf.getNodeConstraints.foreach { node =>
+      writer.println("  Node/Log " + node.getNode.getContent + " / " + node.getLog.getContent)
+    }
+
+    writer.println(" === Event constraints( " + conf.getEventConstraints.size + " )")
+    conf.getEventConstraints.foreach { e =>
+      writer.println("  Node/Log " + e.getType.getContent + " / " + e.getLog.getContent)
+    }
+
     writer.println("== Nodes(" + dpu.getNodes.size + ") ==")
     dpu.getNodes.foreach {
       node =>

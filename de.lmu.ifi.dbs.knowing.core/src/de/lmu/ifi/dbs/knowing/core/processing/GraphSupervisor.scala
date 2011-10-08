@@ -192,8 +192,10 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends Exec
 
   private val G = classOf[GraphSupervisor]
 
-  private var logEvents = supervisor.configuration.getconstraints.map(c => (c.getType.getContent -> c.getLog.getContent.booleanValue)).toMap
+  private var logEvents = supervisor.configuration.getEventConstraints.map(c => (c.getType.getContent -> c.getLog.getContent.booleanValue)).toMap
   logEvents = GraphSupervisor.logEvents map { case (e, p) => (e -> logEvents.getOrElse(e, p)) }
+
+  private var logNodes = supervisor.configuration.getNodeConstraints.map(c => (c.getNode.getContent -> c.getLog.getContent.booleanValue)).toMap
 
   private val messages = supervisor.processHistory.getMessages
 
@@ -233,17 +235,34 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends Exec
         case _ =>
           val src = supervisor.actorsByUuid.getOrElse(s.getUuid, "[Internal]" + "[" + s.getActorClass.getSimpleName + "]")
           val trg = supervisor.actorsByUuid.getOrElse(r.getUuid, "[Internal]" + "[" + r.getActorClass.getSimpleName + "]")
-          logEvent(src, trg, e)
+
+          debug(this, "logEvents: " + logEvents + " Empty? " + logEvents.isEmpty)
+          //logNodes empty == log all nodes
+          if (logNodes.isEmpty) logEvent(src, trg, e)
+          //Lookup logNodes => source/target exists == log this msg
+          else (logNodes.get(src), logNodes.get(trg)) match {
+            case (None, None) => //do not log
+            case _ => logEvent(src, trg, e)
+          }
+
       }
+      
       case (None, r, e: Event) => r.getActorClass match {
         case G => //Ignore messages to GraphSupervisor
         case _ =>
           val src = "None"
           val trg = supervisor.actorsByUuid.getOrElse(r.getUuid, "[Internal]") + "[" + r.getActorClass.getSimpleName + "]"
-          logEvent(src, trg, e)
+          
+          debug(this, "logEvents: " + logEvents + " Empty? " + logEvents.isEmpty)
+          //logNodes empty == log all nodes
+          if (logNodes.isEmpty) logEvent(src, trg, e)
+          //Lookup logNodes => source/target exists == log this msg
+          else (logNodes.get(trg)) match {
+            case None => //do not log
+            case _ => logEvent(src, trg, e)
+          }
       }
     }
-
   }
 
   /**
@@ -275,7 +294,7 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends Exec
       }
       msg.setTarget(trg)
       msg.setContent(content)
-    case false => //Do not log
+    case false => debug(this, "Do not log this " + eventType) //Do not log 
   }
 }
 

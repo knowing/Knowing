@@ -2,6 +2,7 @@ package de.lmu.ifi.dbs.knowing.core.service.impl
 
 import de.lmu.ifi.dbs.knowing.core.service._
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
+import de.lmu.ifi.dbs.knowing.core.util.DPUUtil.copy
 import scala.collection.mutable.HashSet
 import java.net.URL
 import org.osgi.service.component.ComponentContext
@@ -29,13 +30,15 @@ class DPUDirectory extends IDPUDirectory {
     val ret = providers map {
       _.getDataProcessingUnit(id) match {
         case None => None
-        case Some(dpu) => Some(dpu)
+        case Some(dpu) => Some(copy(dpu))
       }
     }
     ret.filter(optionFilter).headOption getOrElse (None)
   }
 
   /**
+   * This method returns a copy of the original DPU.
+   * 
    * @param dpu id
    * @return dpu-url first found with id
    */

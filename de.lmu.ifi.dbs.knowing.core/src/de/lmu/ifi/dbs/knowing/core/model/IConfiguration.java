@@ -64,15 +64,24 @@ public interface IConfiguration extends IModelElement {
 
 	void setAbsolute(String value);
 
-	void setAbsolute(Boolean value);
+	void setAbsolute(Boolean value); 
 
-	/* === Constraints === */
+	/* === Event Constraints === */
 
 	@Type(base = IEventConstraint.class)
-	@XmlListBinding(path = "constraints", mappings = { @XmlListBinding.Mapping(element = "constraint", type = IEventConstraint.class) })
-	@Label(standard = "Constraints")
-	ListProperty PROP_CONSTRAINTS = new ListProperty(TYPE, "Constraints");
+	@XmlListBinding(path = "event-constraints", mappings = { @XmlListBinding.Mapping(element = "constraint", type = IEventConstraint.class) })
+	@Label(standard = "Event constraints")
+	ListProperty PROP_EVENT_CONSTRAINTS = new ListProperty(TYPE, "eventConstraints");
 
-	ModelElementList<IEventConstraint> getconstraints();
+	ModelElementList<IEventConstraint> getEventConstraints();
+	
+	/* === Node Constraints === */
+
+	@Type(base = INodeConstraint.class)
+	@XmlListBinding(path = "node-constraints", mappings = { @XmlListBinding.Mapping(element = "constraint", type = INodeConstraint.class) })
+	@Label(standard = "Node constraints")
+	ListProperty PROP_NODE_CONSTRAINTS = new ListProperty(TYPE, "nodeConstraints");
+
+	ModelElementList<INodeConstraint> getNodeConstraints();
 
 }
