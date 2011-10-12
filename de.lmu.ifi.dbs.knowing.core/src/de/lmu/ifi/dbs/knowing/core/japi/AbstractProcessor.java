@@ -13,19 +13,19 @@ import de.lmu.ifi.dbs.knowing.core.events.Status;
  * system.</p>
  * 
  * @author Nepomuk Seiler
- * @version 1.1
+ * @version 1.2
  */
 public abstract class AbstractProcessor implements IProcessor {
 
 	private final JProcessor wrapper;
 
-	public void start() {}
-	
-	public void stop() {}
-
 	public AbstractProcessor(JProcessor wrapper) {
 		this.wrapper = wrapper;
 	}
+	
+	public void start() {}
+	
+	public void stop() {}
 
 	@Override
 	public void sendEvent(Event event, String output) {
@@ -38,7 +38,7 @@ public abstract class AbstractProcessor implements IProcessor {
 
 	@Override
 	public void setStatus(Status status) {
-		wrapper.status_$eq(status);
+		wrapper.statusChanged(status);
 	}
 
 	@Override

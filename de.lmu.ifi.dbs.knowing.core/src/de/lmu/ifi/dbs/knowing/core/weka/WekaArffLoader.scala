@@ -33,7 +33,12 @@ class WekaArffLoader extends TLoader {
 
   def getDataSet(): Instances = {
     val filenames = asList(loaders.par map (_._1) toList)
-    val datasets = loaders.par map { case (file, loader) => (file, loader.getDataSet) } toList;
+    var count = 0
+    val datasets = loaders.par map { case (file, loader) => 
+      statusChanged(new Progress("Loading", count, loaders.size +1))
+      count += 1
+      (file, loader.getDataSet)
+    } toList;
     //Check datasets length to generate output
     datasets.length match {
       case 0 => ResultsUtil.emptyResult // Nothing generated
@@ -49,6 +54,7 @@ class WekaArffLoader extends TLoader {
               inst
             }
             header.insertAttributeAt(new Attribute(TLoader.SOURCE_ATTRIBUTE, filenames), head.numAttributes)
+            statusChanged(new Progress("Merge Instances", loaders.size, loaders.size +1))
             ResultsUtil.appendInstancesTupel(header, datasets, filter)
           case false => ResultsUtil.appendInstances(header, datasets map (_._2))
         }
