@@ -90,8 +90,11 @@ class ProgressDialog(shell: Shell, var disposed:Boolean = false) extends Dialog(
       case Progress(task, worked, work) =>
         val row = rows(actor.getUuid)
         row._2.setMaximum(work)
-        row._2.setSelection(row._2.getSelection + worked)
-        row._1.setText(1, "Progress")
+        row._2.setSelection(worked)
+        task match {
+          case null | "" => row._1.setText(1, "Progress")
+          case task => row._1.setText(1, task)
+        }
       case Running() =>
         val row = rows(actor.getUuid)
         row._2.setSelection(0)

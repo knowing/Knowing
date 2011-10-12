@@ -69,7 +69,7 @@ object DPUUtil {
         edgeNew.setSource(edge.getSource.getContent)
         edgeNew.setSourcePort(edge.getSourcePort.getContent)
         edgeNew.setTarget(edge.getTarget.getContent)
-        edgeNew.setTargetPort(edge.getSourcePort.getContent)
+        edgeNew.setTargetPort(edge.getTargetPort.getContent)
     }
     destination
   }

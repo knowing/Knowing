@@ -14,6 +14,7 @@ import akka.event.EventHandler.{ debug, info, warning, error }
 import weka.classifiers.Classifier
 import weka.core.{ Instance, Instances }
 import weka.core.SerializationHelper
+import de.lmu.ifi.dbs.knowing.core.japi.ILoggableProcessor
 
 
 /**
@@ -23,7 +24,7 @@ import weka.core.SerializationHelper
  * @since 21.04.2011
  *
  */
-class WekaClassifier(protected var classifier: Classifier) extends TClassifier with TSerializable {
+class WekaClassifier(var classifier: Classifier) extends TClassifier with TSerializable {
 
   private var classLabels: Array[String] = _
   private val name = getClass().getSimpleName;
@@ -94,7 +95,17 @@ class WekaClassifierFactory[T <: WekaClassifier, S <: Classifier](wrapper: Class
   val name: String = clazz.getSimpleName
   val id: String = clazz.getName
 
-  def getInstance(): ActorRef = actorOf(wrapper)
+    def getInstance(): ActorRef = {
+    classOf[ILoggableProcessor].isAssignableFrom(clazz) match {
+      case false => actorOf(wrapper)
+      case true =>
+        actorOf {
+          val w = wrapper.newInstance
+          w.classifier.asInstanceOf[ILoggableProcessor].setProcessor(w)
+          w
+        }
+    }
+  }
 
   /* ======================= */
   /* ==== Configuration ==== */

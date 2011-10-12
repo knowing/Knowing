@@ -31,7 +31,7 @@ trait TFilter extends TProcessor {
    */
   def build(instances: Instances)  {
     val filtered = filter(instances)
-    sendEvent(Results(filtered))
+    sendResults(filtered)
   }
   
   protected def mergeResults(results: List[(Instance, Instances)]): Instances = {

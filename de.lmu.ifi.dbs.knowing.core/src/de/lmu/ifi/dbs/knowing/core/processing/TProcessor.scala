@@ -109,9 +109,9 @@ trait TProcessor extends Actor with TSender with TConfigurable {
   }
 
   def start = debug(this, "Running " + self.getActorClassName)
-  
+
   def build: PartialFunction[(Instances, Option[String]), Unit] = { case (instances, _) => build(instances) }
-  
+
   def build(instances: Instances)
 
   /**
@@ -234,7 +234,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
   /**
    * <p>Sends the status change to the actors supervisor</p>
    */
-  protected def statusChanged(status: Status) {
+  def statusChanged(status: Status) {
     if (this.status.equals(status))
       return
     this.status = status

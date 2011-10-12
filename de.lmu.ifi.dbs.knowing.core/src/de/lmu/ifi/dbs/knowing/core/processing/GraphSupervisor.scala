@@ -229,8 +229,8 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends Exec
    * logged to processHistory.
    */
   private def logHistory(m: MessageInvocation) {
-    (m.sender, m.receiver, m.message) match {
-      case (Some(s), r, e: Event) => (s.getActorClass, r.getActorClass) match {
+    (m.channel, m.receiver, m.message) match {
+      case (s: ActorRef, r, e: Event) => (s.getActorClass, r.getActorClass) match {
         case (G, _) | (_, G) => //Ignore messages to GraphSupervisor
         case _ =>
           val src = supervisor.actorsByUuid.getOrElse(s.getUuid, "[Internal]" + "[" + s.getActorClass.getSimpleName + "]")
@@ -246,13 +246,12 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends Exec
           }
 
       }
-      
-      case (None, r, e: Event) => r.getActorClass match {
+      case (_, r, e: Event) => r.getActorClass match {
         case G => //Ignore messages to GraphSupervisor
         case _ =>
           val src = "None"
           val trg = supervisor.actorsByUuid.getOrElse(r.getUuid, "[Internal]") + "[" + r.getActorClass.getSimpleName + "]"
-          
+
           debug(this, "logEvents: " + logEvents + " Empty? " + logEvents.isEmpty)
           //logNodes empty == log all nodes
           if (logNodes.isEmpty) logEvent(src, trg, e)

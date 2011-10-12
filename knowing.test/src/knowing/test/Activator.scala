@@ -28,6 +28,7 @@ class Activator extends BundleActivator {
     util.registerProcessor(new TestJavaProcessorFactory)
     util.registerProcessor(new SourceSplitFilterFactory)
     util.registerProcessor(new SerializableProcessorFactory)
+    util.registerProcessor(new TestWekaFilterFactory)
     dpuService = context.registerService(classOf[IDPUProvider], BundleDPUProvider.newInstance(context.getBundle), null)
     val dpus = OSGIUtil.registeredDPUs
     dpus foreach (dpu => println(dpu.getName.getContent))

@@ -9,6 +9,7 @@ import de.lmu.ifi.dbs.knowing.core.events.Event
 import de.lmu.ifi.dbs.knowing.core.processing.TSerializable
 import java.io.InputStream
 import java.io.OutputStream
+import de.lmu.ifi.dbs.knowing.core.events.Status
 
 /**
  * <p>This wrapper class provides a wrapper for processors developed in Java.
@@ -43,4 +44,19 @@ abstract class JProcessor extends TProcessor with TSerializable {
   def info(msg: String) = EventHandler.info(this, msg)
   def warning(msg: String) = EventHandler.warning(this, msg)
   def error(msg: String) = EventHandler.error(this, msg)
+}
+
+trait ILoggableProcessor {
+  def setProcessor(processor: TProcessor)
+}
+
+object LoggableProcessor {
+  
+  def debug(processor: TProcessor, msg: String) = EventHandler.debug(processor, msg)
+  def info(processor: TProcessor, msg: String) = EventHandler.info(processor, msg)
+  def warning(processor: TProcessor, msg: String) = EventHandler.warning(processor, msg)
+  def error(processor: TProcessor, msg: String) = EventHandler.error(processor, msg)
+  def error(processor: TProcessor, cause: Throwable) = EventHandler.error(processor, cause)
+  
+  def statusChanged(processor: TProcessor, status: Status) = processor.statusChanged(status)
 }
