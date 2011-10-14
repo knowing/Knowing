@@ -27,7 +27,7 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, execPath: 
 
   self.faultHandler = AllForOneStrategy(List(classOf[Throwable]), 5, 5000)
 
-  val actors = MutableMap[String, (ActorRef, NodeType)]()
+  var actors = MutableMap[String, (ActorRef, NodeType)]()
   var actorsByUuid = MutableMap[UUID, String]()
 
   //Status map holding: UUID -> Reference, Status, Timestamp
@@ -147,12 +147,17 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, execPath: 
       case Ready() | Finished() => if (finished) {
         info(this, "Evaluation finished. Stopping schedules and supervisor")
         //schedules foreach (future => future.cancel(true))
-        actors foreach { case (_, (actor, _)) => actor stop }
-        uifactory update (self, Shutdown())
         processHistory match {
           case null =>
           case history => history.resource.save
         }
+        actors foreach { case (_, (actor, _)) => actor stop }
+
+        //Set ActorRefs free
+        actors = MutableMap[String, (ActorRef, NodeType)]()
+        actorsByUuid = MutableMap[UUID, String]()
+        
+        uifactory update (self, Shutdown())
         self stop
       }
       case _ => //nothing happens

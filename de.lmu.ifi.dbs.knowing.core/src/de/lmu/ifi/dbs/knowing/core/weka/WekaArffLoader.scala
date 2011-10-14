@@ -8,6 +8,7 @@ import de.lmu.ifi.dbs.knowing.core.processing.TLoader._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
+import akka.event.EventHandler.{ debug, info, warning, error }
 import java.io.{ FileInputStream, File }
 import java.util.Properties
 import java.net.{ URI, URL }
@@ -34,10 +35,11 @@ class WekaArffLoader extends TLoader {
   def getDataSet(): Instances = {
     val filenames = asList(loaders.par map (_._1) toList)
     var count = 0
-    val datasets = loaders.par map { case (file, loader) => 
-      statusChanged(new Progress("Loading", count, loaders.size +1))
-      count += 1
-      (file, loader.getDataSet)
+    val datasets = loaders.par map {
+      case (file, loader) =>
+        statusChanged(new Progress("Loading", count, loaders.size + 1))
+        count += 1
+        (file, loader.getDataSet)
     } toList;
     //Check datasets length to generate output
     datasets.length match {
@@ -54,15 +56,19 @@ class WekaArffLoader extends TLoader {
               inst
             }
             header.insertAttributeAt(new Attribute(TLoader.SOURCE_ATTRIBUTE, filenames), head.numAttributes)
-            statusChanged(new Progress("Merge Instances", loaders.size, loaders.size +1))
+            statusChanged(new Progress("Merge Instances", loaders.size, loaders.size + 1))
+            self ! Reset()
             ResultsUtil.appendInstancesTupel(header, datasets, filter)
-          case false => ResultsUtil.appendInstances(header, datasets map (_._2))
+          case false =>
+            self ! Reset()
+            ResultsUtil.appendInstances(header, datasets map (_._2))
         }
 
     }
   }
 
   def configure(properties: Properties) = {
+    loaders = Nil
     source = properties.getProperty(SOURCE_ATTRIBUTE, "false") toBoolean
     val uris = TLoader.getInputURIs(properties)
     uris map {
@@ -73,7 +79,9 @@ class WekaArffLoader extends TLoader {
     }
   }
 
-  def reset = loaders foreach (_._2.reset)
+  //Doesn't reset ArffReader -> cannot be gc
+  //loaders foreach (_._2.reset) 
+  def reset = configure(properties)
 
   /**
    * Forward if there were multiple loaders

@@ -18,7 +18,7 @@ trait TLoader extends TProcessor {
    * <p>Override for special behaviour</p>
    */
   override protected def customReceive = {
-    case Reset => reset
+    case Reset() => reset
   }
 
   override def start {

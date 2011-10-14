@@ -116,7 +116,10 @@ class PresenterUIFactory(view: PresenterView) extends TypedActor with UIFactory 
     //Handle special status events
     status match {
       case UpdateUI() => view update
-      case Shutdown() => started = false
+      case Shutdown() => 
+        started = false
+        supervisor = null
+        debug(this, "Shutdown UI Factory")
       case _ =>
     }
 
