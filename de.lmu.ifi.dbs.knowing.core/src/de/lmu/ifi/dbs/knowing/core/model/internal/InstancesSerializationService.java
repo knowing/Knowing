@@ -26,15 +26,19 @@ public class InstancesSerializationService extends ValueSerializationService {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public String encode(Object value) {
-		//Handle ImmutableInstances format
-		if(value instanceof ImmutableInstances) {
-			ImmutableInstances inst = (ImmutableInstances) value;
-			return inst.toStringComplete();
+		// Handle ImmutableInstances format
+		try {
+			if (value instanceof ImmutableInstances) {
+				ImmutableInstances inst = (ImmutableInstances) value;
+				return inst.toStringComplete();
+			}
+			return super.encode(value);
+		} catch (Exception e) {
+			return e.getMessage();
 		}
-		return super.encode(value);
 	}
 
 }

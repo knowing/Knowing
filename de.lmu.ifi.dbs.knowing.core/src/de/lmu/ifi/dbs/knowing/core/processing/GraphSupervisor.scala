@@ -241,7 +241,6 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends Exec
           val src = supervisor.actorsByUuid.getOrElse(s.getUuid, "[Internal]" + "[" + s.getActorClass.getSimpleName + "]")
           val trg = supervisor.actorsByUuid.getOrElse(r.getUuid, "[Internal]" + "[" + r.getActorClass.getSimpleName + "]")
 
-          debug(this, "logEvents: " + logEvents + " Empty? " + logEvents.isEmpty)
           //logNodes empty == log all nodes
           if (logNodes.isEmpty) logEvent(src, trg, e)
           //Lookup logNodes => source/target exists == log this msg
@@ -257,7 +256,6 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends Exec
           val src = "None"
           val trg = supervisor.actorsByUuid.getOrElse(r.getUuid, "[Internal]") + "[" + r.getActorClass.getSimpleName + "]"
 
-          debug(this, "logEvents: " + logEvents + " Empty? " + logEvents.isEmpty)
           //logNodes empty == log all nodes
           if (logNodes.isEmpty) logEvent(src, trg, e)
           //Lookup logNodes => source/target exists == log this msg
@@ -266,6 +264,7 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends Exec
             case _ => logEvent(src, trg, e)
           }
       }
+      case (_,r, m) =>
     }
   }
 
@@ -298,7 +297,7 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends Exec
       }
       msg.setTarget(trg)
       msg.setContent(content)
-    case false => debug(this, "Do not log this " + eventType) //Do not log 
+    case false =>  //Do not log 
   }
 }
 
