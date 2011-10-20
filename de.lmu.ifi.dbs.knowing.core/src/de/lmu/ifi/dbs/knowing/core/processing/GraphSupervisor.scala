@@ -71,6 +71,11 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, execPath: 
     case msg => debug(this, "Unhandled Message: " + msg)
   }
 
+  override def postStop = {
+    debug(this, "Shutdown supervisor")
+    shutdownSupervisor()
+  }
+
   /**
    * Run the process!
    */
@@ -147,22 +152,25 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, execPath: 
       case Ready() | Finished() => if (finished) {
         info(this, "Evaluation finished. Stopping schedules and supervisor")
         //schedules foreach (future => future.cancel(true))
-        processHistory match {
-          case null =>
-          case history => history.resource.save
-        }
-        actors foreach { case (_, (actor, _)) => actor stop }
-
-        //Set ActorRefs free
-        actors = MutableMap[String, (ActorRef, NodeType)]()
-        actorsByUuid = MutableMap[UUID, String]()
-        
+        shutdownSupervisor
         uifactory update (self, Shutdown())
         self stop
       }
       case _ => //nothing happens
     }
 
+  }
+
+  private def shutdownSupervisor() {
+    processHistory match {
+      case null =>
+      case history => history.resource.save
+    }
+    actors foreach { case (_, (actor, _)) => actor stop }
+
+    //Set ActorRefs free
+    actors = MutableMap[String, (ActorRef, NodeType)]()
+    actorsByUuid = MutableMap[UUID, String]()
   }
 
   /**
