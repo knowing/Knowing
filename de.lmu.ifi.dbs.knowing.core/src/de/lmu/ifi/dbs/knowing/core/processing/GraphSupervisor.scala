@@ -49,7 +49,7 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, execPath: 
         //Creating FileResourceStore
         val file = path.toFile
         val store = new RootXmlResource(new XmlResourceStore(new FileResourceStore(file)))
-        processHistory = IProcessHistory.TYPE.instantiate(store).asInstanceOf[IProcessHistory]
+        processHistory = IProcessHistory.TYPE.instantiate(store)
         processHistory.setName(dpu.getName.getContent)
         self.dispatcher = new LoggableDispatcher("LoggableDispatcher", this)
       } catch {
@@ -206,7 +206,10 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends Exec
   private val G = classOf[GraphSupervisor]
 
   private var logEvents = supervisor.configuration.getEventConstraints.map(c => (c.getType.getContent -> c.getLog.getContent.booleanValue)).toMap
-  logEvents = GraphSupervisor.logEvents map { case (e, p) => (e -> logEvents.getOrElse(e, p)) }
+  logEvents = logEvents.isEmpty match {
+    case true => GraphSupervisor.logEvents map { case (e, p) => (e -> !p) }
+    case false => GraphSupervisor.logEvents map { case (e, p) => (e -> logEvents.getOrElse(e, p)) }
+  }
 
   private var logNodes = supervisor.configuration.getNodeConstraints.map(c => (c.getNode.getContent -> c.getLog.getContent.booleanValue)).toMap
 
@@ -272,7 +275,7 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends Exec
             case _ => logEvent(src, trg, e)
           }
       }
-      case (_,r, m) =>
+      case (_, r, m) =>
     }
   }
 
@@ -305,7 +308,7 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends Exec
       }
       msg.setTarget(trg)
       msg.setContent(content)
-    case false =>  //Do not log 
+    case false => //Do not log 
   }
 }
 

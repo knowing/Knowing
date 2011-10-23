@@ -62,8 +62,8 @@ trait TProcessor extends Actor with TSender with TConfigurable {
     //Process results
     case Results(inst, port) =>
       statusChanged(Running())
-      isBuild = true
       build(inst, port)
+      isBuild = true
       processStoredQueries
       self.sender match {
         case Some(s) => s ! Finished()
