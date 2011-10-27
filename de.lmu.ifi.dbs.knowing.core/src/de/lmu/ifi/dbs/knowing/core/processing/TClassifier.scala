@@ -6,13 +6,15 @@ import weka.core.{ Instance, Instances }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.processing.IProcessorPorts.{ TRAIN, TEST }
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
+import java.io.OutputStream
+import java.io.InputStream
 
 /**
  *  @author Nepomuk Seiler
  *  @version 0.1
  *  @since 16.06.2011
  */
-trait TClassifier extends TProcessor {
+trait TClassifier extends TProcessor with TSerializable {
 
   override def build = {
     case (instances, Some(TEST)) =>
@@ -35,6 +37,38 @@ trait TClassifier extends TProcessor {
     case (instances, None) => build(instances)
     case (instances, Some(port)) => error(this, "Incompatible target port: " + port)
   }
+
+  /**
+   * Default implementation tries to open an input stream
+   * and deserialize an existing classifier. If no inpustream
+   * is found, just a fresh classifier will be started.
+   */
+  override def start = inputStream match {
+    case None => debug(this, "Nothing to deserialize in " + getClass.getSimpleName)
+    case Some(in) =>
+      deserialize(in)
+      isBuild = true
+  }
+
+  /**
+   * Default implementation tries to open an output stream
+   * to store the internal state of the classifier. If no
+   * output is given, nothing will be stored.
+   */
+  override def postStop = outputStream match {
+    case None => debug(this, "Nothing to serialize in " + getClass.getSimpleName)
+    case Some(out) => serialize(out)
+  }
+
+  /**
+   * @param out -> never null nor invalid
+   */
+  def serialize(out: OutputStream) = {}
+  
+  /**
+   * @param in -> never null nor invalid
+   */
+  def deserialize(in: InputStream) = {}
 
   /**
    * <p>This method build the internal model which is used<br>
