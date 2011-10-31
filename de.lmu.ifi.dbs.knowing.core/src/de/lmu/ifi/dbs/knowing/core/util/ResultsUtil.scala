@@ -381,8 +381,6 @@ object ResultsUtil {
    */
   @throws(classOf[WekaException])
   def appendInstances(first: Instances, append: Instances): Instances = {
-    //    println("First: " + first)
-    //    println("Append: " + append)
     if (!first.equalHeaders(append))
       throw new WekaException("Instances headers are not equal")
     val ret = new Instances(first, first.numInstances + append.numInstances)
@@ -426,14 +424,12 @@ object ResultsUtil {
     val splitAttr = instances.attribute(attribute)
     if (splitAttr == null)
       return Map(ORIGINAL_INSTANCES -> instances)
-    val instList = instances toList
-    val classMap = instList.groupBy(inst => splitAttr.value(inst.value(splitAttr) toInt))
+    val classMap = instances.groupBy(inst => splitAttr.value(inst.value(splitAttr) toInt))
     classMap map {
       case (clazz, list) =>
         val ret = new Instances(instances, list.length)
         list foreach (ret.add(_))
         if (removeAttr) ret.deleteAttributeAt(splitAttr.index)
-        //println("splitted: " + ret)
         (clazz, ret)
     }
   }

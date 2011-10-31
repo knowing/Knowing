@@ -46,28 +46,3 @@ abstract class JProcessor extends TProcessor with TSerializable {
   def error(msg: String) = EventHandler.error(this, msg)
 }
 
-trait ILoggableProcessor {
-  def setProcessor(processor: TProcessor)
-}
-
-class LoggableProcessor(processor: TProcessor) {
-    
-  def debug(msg: String) = EventHandler.debug(processor, msg)
-  def info(msg: String) = EventHandler.info(processor, msg)
-  def warning(msg: String) = EventHandler.warning(processor, msg)
-  def error(msg: String) = EventHandler.error(processor, msg)
-  def error(cause: Throwable) = EventHandler.error(processor, cause)
-  
-  def statusChanged(status: Status) = processor.statusChanged(status)
-}
-
-object LoggableProcessor {
-  
-  def debug(processor: TProcessor, msg: String) = EventHandler.debug(processor, msg)
-  def info(processor: TProcessor, msg: String) = EventHandler.info(processor, msg)
-  def warning(processor: TProcessor, msg: String) = EventHandler.warning(processor, msg)
-  def error(processor: TProcessor, msg: String) = EventHandler.error(processor, msg)
-  def error(processor: TProcessor, cause: Throwable) = EventHandler.error(processor, cause)
-  
-  def statusChanged(processor: TProcessor, status: Status) = processor.statusChanged(status)
-}
