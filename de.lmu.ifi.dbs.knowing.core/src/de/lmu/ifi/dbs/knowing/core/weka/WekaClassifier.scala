@@ -1,7 +1,7 @@
 package de.lmu.ifi.dbs.knowing.core.weka
 
 import java.util.Properties
-import java.io.{InputStream, OutputStream}
+import java.io.{ InputStream, OutputStream }
 import scala.collection.JavaConversions._
 import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.events._
@@ -25,28 +25,26 @@ import de.lmu.ifi.dbs.knowing.core.japi.ILoggableProcessor
  */
 class WekaClassifier(var classifier: Classifier) extends TClassifier {
 
-  private var classLabels: Array[String] = _
+  private var classLabels = Array[String]()
   private val name = getClass.getSimpleName
 
   def build(instances: Instances) {
     debug(this, "Build internal model for " + name + " ...")
-    val index = guessAndSetClassLabel(instances)
-    index match {
-      case -1 =>
-        classLabels = Array()
-        warning(this, "No classLabel found in " + name)
-      case x => classLabels = classLables(instances.attribute(x))
-    }
+    guessAndCreateClassLabels(instances)
     classifier.buildClassifier(instances)
     debug(this, "... build successfull for " + name)
     processStoredQueries
   }
 
+  def guessAndCreateClassLabels(instances: Instances) = guessAndSetClassLabel(instances) match {
+    case -1 =>
+      classLabels = Array()
+      warning(this, "No classLabel found in " + name)
+    case x => classLabels = classLables(instances.attribute(x))
+  }
+
   def query(query: Instance): Instances = {
     val distribution = classifier.distributionForInstance(query)
-
-    val distString = for (i <- 0 until distribution.length) yield distribution(i).toString
-    //    debug(this, "Classified with: " + distString + " # ClassValue: " + query.classValue)
     ResultsUtil.classAndProbabilityResult(getClassLabels.toList, distribution)
   }
 
