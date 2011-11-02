@@ -39,7 +39,7 @@ class Activator extends BundleActivator {
     osgiUtil.registerLoader(new ExtendedWekaArffLoaderFactory, ExtendedWekaArffLoaderFactory.id)
     osgiUtil.registerLoader(new WekaArffLoaderFactory, WekaArffLoaderFactory.id)
     osgiUtil.registerSaver(new WekaArffSaverFactory, WekaArffSaverFactory.id)
-    osgiUtil.registerSaver(new WekaRelationalArffSaverFactory)
+//    osgiUtil.registerSaver(new WekaRelationalArffSaverFactory)
     osgiUtil.registerProcessor(new NaiveBayesFactory, classOf[weka.classifiers.bayes.NaiveBayes].getName)
     osgiUtil.registerProcessor(new OneRFactory, classOf[weka.classifiers.rules.OneR].getName)
     osgiUtil.registerProcessor(new CrossValidatorFactory, CrossValidatorFactory.id)

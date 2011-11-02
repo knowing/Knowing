@@ -25,13 +25,6 @@
          unpack="false"/>
 
    <plugin
-         id="de.lmu.ifi.dbs.knowing.scala_library"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="nz.ac.waikato.cs.weka"
          download-size="0"
          install-size="0"
@@ -90,6 +83,13 @@
 
    <plugin
          id="org.eclipse.wst.common.uriresolver"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.scala-ide.scala.library"
          download-size="0"
          install-size="0"
          version="0.0.0"
