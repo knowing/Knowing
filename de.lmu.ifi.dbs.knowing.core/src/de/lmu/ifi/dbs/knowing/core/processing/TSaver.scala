@@ -35,8 +35,7 @@ trait TSaver extends TProcessor {
     _file = properties.getProperty(FILE, "<no file>")
     _url = properties.getProperty(URL, "<no url>")
     configure(properties)
-    if (self.getSender.isDefined)
-      self reply Ready
+    statusChanged(Waiting())
   }
 
   /**
