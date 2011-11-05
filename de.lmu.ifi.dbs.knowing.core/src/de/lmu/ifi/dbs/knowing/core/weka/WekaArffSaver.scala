@@ -14,11 +14,15 @@ import java.util.Properties
 import scala.collection.JavaConversions._
 
 /**
- * <p>Wraps the weka.core.converters.ArffSaver to save ARFF files</p>
- *
- * @author Nepomuk Seiler
+ * 
+ *  <p>Currently the WekaArffSaver implementation
+ * doesn't use the ArffSaver from Weka internaly as
+ * it doesn't scale well. Instead a custom, always
+ * incremental, write-implementation is used.<p>
+ * 
  * @version 0.3
  * @since 04.07.2011
+ * @author Nepomuk Seiler
  */
 class WekaArffSaver extends TSaver {
 
@@ -27,26 +31,35 @@ class WekaArffSaver extends TSaver {
   def write(instances: Instances) {
     debug(this, "Write Instances")
     //write header
-    statusChanged(Progress("Write header",0, instances.size))
+    statusChanged(Progress("Write header", 0, instances.size))
     val header = new Instances(instances, 0)
     val writer = new PrintWriter(out)
-    writer.println(header.toString)
+    writer.print(header.toString)
 
     //Write instances incremental
     val attributes = header.enumerateAttributes.toList.asInstanceOf[List[Attribute]]
     val enumInst = instances.enumerateInstances
     var instNum = 1
+    var worked = 0
     while (enumInst.hasMoreElements) {
-      statusChanged(Progress("Write..",instNum, instances.size))
+      //Normalize to 0-100 and send only on change.
+      worked = (instNum * 100) / instances.size match {
+        case w if w == worked => w
+        case w if w > worked =>
+          statusChanged(Progress("Write..", w, 100))
+          w
+      }
+
       val inst = enumInst.nextElement.asInstanceOf[Instance]
-      val sb = attributes.foldLeft(new StringBuffer)((sb, attr) => sb.append(inst.value(attr)+","))
-      sb.deleteCharAt(sb.length-1)
+      val sb = attributes.foldLeft(new StringBuffer)((sb, attr) => sb.append(inst.value(attr) + ","))
+      sb.deleteCharAt(sb.length - 1) //remove last ','
       writer.println(sb.toString)
       instNum += 1
     }
     writer.flush
     writer.close
 
+    debug(this, "Write Instances finished")
     reset
     //TODO WekaArffSaver -> must be configured again, after write
   }
@@ -58,7 +71,7 @@ class WekaArffSaver extends TSaver {
     //TODO WekaArffSaver -> RetrievalMode
     if (!file.equals("<no file>")) {
       val outputFile = new File(getFilePath(properties))
-      if(!outputFile.exists) outputFile.createNewFile
+      if (!outputFile.exists) outputFile.createNewFile
       out = new FileOutputStream(outputFile)
     } else if (!url.equals("<no url>")) {
       //TODO WekaArffSaver -> URL output
