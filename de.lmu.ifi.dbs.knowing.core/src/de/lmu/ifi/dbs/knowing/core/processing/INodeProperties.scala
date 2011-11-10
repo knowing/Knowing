@@ -28,6 +28,7 @@ object INodeProperties {
   val FILE_EXTENSIONS = "extensions"
 
   val SOURCE_ATTRIBUTE = ResultsUtil.ATTRIBUTE_SOURCE
+  val CLASS_ATTRIBUTE = ResultsUtil.ATTRIBUTE_CLASS
 
   val OUTPUT = "output"
   val OUTPUT_SINGLE = "single"
