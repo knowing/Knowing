@@ -16,6 +16,8 @@
 
 #Scala
 *.scala_dependencies 
+*.cache
+.cache
 
 #except this file
 !.gitignore
