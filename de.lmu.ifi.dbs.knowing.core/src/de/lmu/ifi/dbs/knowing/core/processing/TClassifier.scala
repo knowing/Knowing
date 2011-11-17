@@ -5,6 +5,7 @@ import java.util.Properties
 import weka.core.{ Instance, Instances }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.processing.IProcessorPorts.{ TRAIN, TEST }
+import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties.{ SET_CLASS }
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import java.io.OutputStream
 import java.io.InputStream
@@ -16,6 +17,8 @@ import java.io.InputStream
  */
 trait TClassifier extends TProcessor with TSerializable {
 
+  protected var setClass = false
+  
   override def build = {
     case (instances, Some(TEST)) =>
       guessAndSetClassLabel(instances)
@@ -58,6 +61,10 @@ trait TClassifier extends TProcessor with TSerializable {
   override def postStop = outputStream match {
     case None => debug(this, "Nothing to serialize in " + getClass.getSimpleName)
     case Some(out) => serialize(out)
+  }
+  
+  override def configure(properties: Properties) {
+    setClass = properties.getProperty(SET_CLASS, "false").toBoolean
   }
 
   /**

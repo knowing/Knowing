@@ -50,8 +50,6 @@ class WekaClassifier(var classifier: Classifier) extends TClassifier {
 
   def getClassLabels(): Array[String] = classLabels
 
-  def configure(properties: Properties) {} //Override for special behaviour
-
   def result(result: Instances, query: Instance) {} //Override for special behaviour
 
 }

@@ -297,7 +297,7 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends Exec
    * Logs only the messages which should be logged, based on the eventType
    */
   private def log(src: String, trg: String, content: Instances, eventType: EventType) = logEvents(eventType) match {
-    case true =>
+    case true => try {
       val msg = messages.addNewElement
       msg.setType(eventType)
       src.split(":").toList match {
@@ -308,6 +308,9 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends Exec
       }
       msg.setTarget(trg)
       msg.setContent(content)
+    } catch {
+      case e: Exception => warning(this, "Logging failed: " + e.getMessage)
+    }
     case false => //Do not log 
   }
 }
