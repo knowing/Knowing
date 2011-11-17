@@ -6,6 +6,7 @@ import java.io.StringReader;
 import org.eclipse.sapphire.modeling.serialization.ValueSerializationService;
 
 import weka.core.Instances;
+import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil;
 import de.lmu.ifi.dbs.knowing.core.processing.ImmutableInstances;
 
 /**
@@ -31,11 +32,14 @@ public class InstancesSerializationService extends ValueSerializationService {
 	public String encode(Object value) {
 		// Handle ImmutableInstances format
 		try {
-			if (value instanceof ImmutableInstances) {
+/*			if (value instanceof ImmutableInstances) {
 				ImmutableInstances inst = (ImmutableInstances) value;
 				return inst.toStringComplete();
 			}
-			return super.encode(value);
+			return super.encode(value);*/
+			//TODO Fixed amount of printed data should be set elsewhere
+			Instances instances = (Instances) value;
+			return ResultsUtil.appendInstancesPartial(instances, instances, 50).toString();
 		} catch (Exception e) {
 			return e.getMessage();
 		}

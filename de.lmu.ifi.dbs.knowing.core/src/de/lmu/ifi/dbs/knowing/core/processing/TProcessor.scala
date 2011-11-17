@@ -169,35 +169,17 @@ trait TProcessor extends Actor with TSender with TConfigurable {
    * @param dataset
    * @return class attribute index or -1
    */
-  def guessAndSetClassLabel(dataset: Instances, default: Int = -1): Int = {
-    val index = dataset.classIndex
-    index match {
-      case -1 =>
-        val cIndex = guessClassLabel(dataset)
-        (cIndex, default) match {
-          case (-1, -1) => -1
-          case (-1, d) => dataset.setClassIndex(d); d
-          case (guess, -1) => dataset.setClassIndex(guess); guess
-        }
-      case x => x
-    }
-  }
+  def guessAndSetClassLabel(dataset: Instances, default: Int = -1): Int = TProcessor.guessAndSetClassLabel(dataset, default)
 
-  def guessClassLabel(dataset: Instances): Int = {
-    //TODO TProcessor.guesClassLabel -> guess class labels in relational datasets
-    val classAttribute = dataset.attribute("class")
-    if (classAttribute != null)
-      return classAttribute.index
+  /**
+   * <p>Guesses the classLabel index, but does not change the dataset</p>
+   * <p>Checks for Attribute("class") and then nominal attribute</p>
+   */
+  def guessClassLabel(dataset: Instances): Int = TProcessor.guessClassLabel(dataset)
 
-    //Maybe this is not the feastes way to do
-    val attributes = dataset.enumerateAttributes().toList
-    val nominal = attributes filter (a => a.asInstanceOf[Attribute].isNominal)
-    nominal.headOption match {
-      case Some(x) => x.asInstanceOf[Attribute].index
-      case None => -1
-    }
-  }
-
+  /**
+   * <p>Convertes the nominal attributes to a String[]</p>
+   */
   def classLables(attribute: Attribute): Array[String] = {
     val enum = attribute.enumerateValues()
     var labels: List[String] = Nil
@@ -207,6 +189,11 @@ trait TProcessor extends Actor with TSender with TConfigurable {
     }
     labels.reverse.toArray
   }
+
+  /**
+   * @return index of the highest value orElse -1
+   */
+  def highestProbabilityIndex(distribution: Array[Double]): Int = TProcessor.highestProbabilityIndex(distribution)
 
   protected def cacheQuery(q: Instance) = queryQueue += ((self.sender, Query(q)))
 
@@ -248,4 +235,57 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 object TProcessor {
 
   val ABSOLUTE_PATH = INodeProperties.ABSOLUTE_PATH
+  
+    /**
+   * @return index of the highest value orElse -1
+   */
+  def highestProbabilityIndex(distribution: Array[Double]): Int = distribution.length match {
+    case 0 => -1
+    case 1 => 0
+    case x => distribution.zipWithIndex.max._2
+  }
+  
+    /**
+   *  <p>Checks the dataset for class attribute in this order
+   *  <li> {@link Instances#classIndex()} -> if >= 0 returns index</li>
+   *  <li> returns index of attribute named "class" if exists</li>
+   *  <li> returns index of first nominal attribute</li>
+   *  <li> returns index of last attribute </li>
+   *  </p>
+   *
+   * @param dataset
+   * @return class attribute index or -1
+   */
+  def guessAndSetClassLabel(dataset: Instances, default: Int = -1): Int = {
+    val index = dataset.classIndex
+    index match {
+      case -1 =>
+        val cIndex = guessClassLabel(dataset)
+        (cIndex, default) match {
+          case (-1, -1) => -1
+          case (-1, d) => dataset.setClassIndex(d); d
+          case (guess, -1) => dataset.setClassIndex(guess); guess
+        }
+      case x => x
+    }
+  }
+
+  /**
+   * <p>Guesses the classLabel index, but does not change the dataset</p>
+   * <p>Checks for Attribute("class") and then nominal attribute</p>
+   */
+  def guessClassLabel(dataset: Instances): Int = {
+    //TODO TProcessor.guesClassLabel -> guess class labels in relational datasets
+    val classAttribute = dataset.attribute("class")
+    if (classAttribute != null)
+      return classAttribute.index
+
+    //Maybe this is not the fastest way to do this
+    val attributes = dataset.enumerateAttributes.toList
+    val nominal = attributes filter (a => a.asInstanceOf[Attribute].isNominal)
+    nominal.headOption match {
+      case Some(x) => x.asInstanceOf[Attribute].index
+      case None => -1
+    }
+  }
 }

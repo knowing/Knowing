@@ -40,6 +40,12 @@ object INodeProperties {
   val WRITE_MODE_INCREMENTAL = "incremental"
 
   /* ========================= */
+  /* ====== Classifier ======= */
+  /* ========================= */
+
+  val SET_CLASS = "setClass"
+
+  /* ========================= */
   /* == By GraphSupervisor === */
   /* ========================= */
   val EXE_PATH = "execution"
