@@ -21,6 +21,17 @@ import org.eclipse.sapphire.modeling.xml.annotations.XmlRootBinding;
 
 import de.lmu.ifi.dbs.knowing.core.model.internal.IDataProcessingUnitOp;
 
+/**
+ * <p> A DataProcessingUnit (DPU) encapsulates a data mining process.<br>
+ * It's a simple graph where each node represents a step in the process.<br>
+ * The edges symbolize the data flow inside the data mining process.
+ * </p>
+ * 
+ * @author Nepomuk Seiler
+ * @version 1.0
+ * @see<a href="https://github.com/knowing/Knowing/wiki/DataProcessingUnit">GitHub Wiki - DataProcessingUnit</a>
+ * @see<a href="https://github.com/knowing/Knowing/wiki/Knowing-Framework">GitHub Wiki - Knowing Framework </a>
+ */
 @GenerateImpl
 @XmlRootBinding(elementName = "DataProcessingUnit")
 public interface IDataProcessingUnit extends IExecutableModelElement {

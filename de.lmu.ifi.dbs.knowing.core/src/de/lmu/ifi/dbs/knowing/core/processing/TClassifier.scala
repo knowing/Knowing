@@ -12,13 +12,20 @@ import java.io.InputStream
 
 /**
  *  @author Nepomuk Seiler
- *  @version 0.1
+ *  @version 0.2
  *  @since 16.06.2011
  */
 trait TClassifier extends TProcessor with TSerializable {
 
   protected var setClass = false
   
+  /**
+   * Distinguish if input should be used to train the classifier
+   * or should be classified and send as results to all connected
+   * nodes.
+   * 
+   * @param PartialFunction[Instances, Option[String]] - match on (message, port)
+   */
   override def build = {
     case (instances, Some(TEST)) =>
       guessAndSetClassLabel(instances)

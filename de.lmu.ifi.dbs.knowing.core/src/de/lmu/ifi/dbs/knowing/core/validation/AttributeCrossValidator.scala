@@ -8,6 +8,13 @@ import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.core.events._
 import weka.core.Instances
 
+/**
+ * Splits up the dataset based on a given Attribute
+ * and performs a crossvalidation.
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.3
+ */
 class AttributeCrossValidator extends XCrossValidator {
 
   import AttributeCrossValidator._
@@ -65,6 +72,7 @@ class AttributeCrossValidator extends XCrossValidator {
 }
 
 object AttributeCrossValidator {
+  /** Split attribute */
   val ATTRIBUTE = "attribute"
 }
 

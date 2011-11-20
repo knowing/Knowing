@@ -34,6 +34,9 @@ trait TFilter extends TProcessor {
     sendResults(filtered)
   }
   
+  /**
+   * @return merged instances or emptyResult
+   */
   protected def mergeResults(results: List[(Instance, Instances)]): Instances = {
     val instances = results map(_._2)
     instances.headOption match {

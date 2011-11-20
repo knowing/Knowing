@@ -1,6 +1,10 @@
 package de.lmu.ifi.dbs.knowing.core.processing
 
 import java.util.Properties
+
+/**
+ * Make a class configurable
+ */
 trait TConfigurable {
 
   /**

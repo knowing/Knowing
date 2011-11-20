@@ -12,6 +12,9 @@ import de.lmu.ifi.dbs.knowing.core.model.IEdge
 
 /**
  * <p>This actor is able to send Events to registered actors</p>
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.1
  */
 trait TSender { this: Actor =>
 

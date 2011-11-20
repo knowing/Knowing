@@ -14,6 +14,8 @@ import scala.collection.mutable.{ Map => MutableMap }
 import java.util.ArrayList
 
 /**
+ * Single CrossValidation step
+ * 
  * @author Nepomuk Seiler
  * @version 0.2
  * @since 13.05.2011

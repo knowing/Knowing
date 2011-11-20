@@ -3,9 +3,20 @@ package de.lmu.ifi.dbs.knowing.core.service.impl
 import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import scala.collection.mutable.HashMap
+import org.slf4j.LoggerFactory
+import de.lmu.ifi.dbs.knowing.core.internal.Activator
 
+/**
+ * Default implemenation for IFactoryDirectory
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.1
+ */
 class FactoryDirectory extends IFactoryDirectory {
 
+  private val log = LoggerFactory.getLogger(classOf[FactoryDirectory])
+  
+  /** 0..n relation */
   private val factories = new HashMap[String, TFactory]
 
   def getFactory(id: String): Option[TFactory] = factories.get(id)
@@ -14,7 +25,7 @@ class FactoryDirectory extends IFactoryDirectory {
 
   def bindFactoryService(service: TFactory) {
     factories.contains(service.id) match {
-      case true => println("Factory already exists: " + service.id)
+      case true => log.warn("Factory already exists: " + service.id)
       case false => factories += (service.id -> service)
     }
   }

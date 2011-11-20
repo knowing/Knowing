@@ -97,7 +97,7 @@ class WekaArffSaverFactory extends TFactory {
   def createPropertyValues: Map[String, Array[_ <: Any]] = {
     Map(FILE -> Array(new File(System.getProperty("user.home"))),
       URL -> Array(new java.net.URL("file", "", System.getProperty("user.home"))),
-      ABSOLUTE_PATH -> boolean_property)
+      ABSOLUTE_PATH -> BOOLEAN_PROPERTY)
   }
 
   def createPropertyDescription: Map[String, String] = {

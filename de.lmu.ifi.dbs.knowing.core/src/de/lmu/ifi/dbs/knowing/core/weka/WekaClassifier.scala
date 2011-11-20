@@ -18,6 +18,8 @@ import de.lmu.ifi.dbs.knowing.core.japi.ILoggableProcessor
 
 /**
  *
+ * Wraps the WEKA classifier interface.
+ *
  * @author Nepomuk Seiler
  * @version 0.2
  * @since 21.04.2011

@@ -7,12 +7,13 @@ import org.eclipse.sapphire.modeling.serialization.ValueSerializationService;
 
 import weka.core.Instances;
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil;
-import de.lmu.ifi.dbs.knowing.core.processing.ImmutableInstances;
 
 /**
+ * <p>(De)serialize {@link Instances} objects. Used by
+ * the IProcessHistory model.</p>
  * 
  * @author Nepomuk Seiler
- * @version 1.0
+ * @version 0.2
  * @since 2011-10-05
  */
 public class InstancesSerializationService extends ValueSerializationService {

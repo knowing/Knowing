@@ -12,6 +12,12 @@ import java.io.FileOutputStream
 import TSerializable._
 import TLoader._
 
+/**
+ * <p>Makes a TProcessor serialiazable</p>
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.1
+ */
 trait TSerializable { this: TProcessor =>
 
   @throws(classOf[IOException])
@@ -21,11 +27,20 @@ trait TSerializable { this: TProcessor =>
   def outputStream(): Option[OutputStream] = TSerializable.outputStream(properties)
 }
 
+/**
+ * Contains util methods for TSerializable
+ */
 object TSerializable {
 
   val SERIALIZE = INodeProperties.SERIALIZE
   val DESERIALIZE = INodeProperties.DESERIALIZE
 
+  /**
+   * Generates the output stream based on the following properties:
+   * <li>SERIALIZE</li>
+   * <li>EXE_PATH</li>
+   * <li>ABSOLUTE_PATH</li>
+   */
   @throws(classOf[IOException])
   def outputStream(properties: Properties): Option[OutputStream] = {
     val file = properties.getProperty(SERIALIZE, "<empty>")
@@ -43,7 +58,11 @@ object TSerializable {
         val url = u.toURL
         debug(this, "URL: " + url)
         url.getProtocol match {
+          
+          //Handle file explicit 
           case "file" => Some(new FileOutputStream(url.getFile))
+          
+          // This must be tested - Doesn't work for TCP connections (no write access)
           case _ =>
             val con = url.openConnection
             debug(this, "Opend connection: " + con)
@@ -53,6 +72,12 @@ object TSerializable {
     }
   }
 
+    /**
+   * Generates the input stream based on the following properties:
+   * <li>SERIALIZE</li>
+   * <li>EXE_PATH</li>
+   * <li>ABSOLUTE_PATH</li>
+   */
   @throws(classOf[IOException])
   def inputStream(properties: Properties): Option[InputStream] = {
     val file = properties.getProperty(DESERIALIZE, "<empty>")

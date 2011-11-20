@@ -9,7 +9,7 @@ import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 
 /**
  * @author Nepomuk Seiler
- * @version 0.1
+ * @version 0.3
  * @since 24.04.2011
  *
  */

@@ -10,6 +10,13 @@ import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
 import weka.core.{ Attribute, Instances, Instance }
 import ConfusionMatrix._
 
+/**
+ * Creates a ConfusionMatrix Instances object.
+ * Input Instances must have been created with ResultsUtil.appendClassDistribution(..)
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.1
+ */
 class ConfusionMatrix extends TProcessor {
 
   private var confusionMatrix: Instances = _

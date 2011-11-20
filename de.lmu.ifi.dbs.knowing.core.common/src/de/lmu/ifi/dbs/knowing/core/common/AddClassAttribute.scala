@@ -10,9 +10,7 @@ import scala.collection.JavaConversions._
 import AddClassAttribute._
 
 /**
- * <p>
- * Adds a class-attribute to the instances
- * </p>
+ * <p> Adds a class-attribute to the instances </p>
  * 
  * @author Nepomuk Seiler
  * @version 1.0
