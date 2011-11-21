@@ -13,6 +13,8 @@ import akka.event.EventHandler.{ debug, info, warning, error }
 import akka.actor.UntypedActorFactory
 
 /**
+ * Wraps the WEKA Filter class.
+ * 
  * @author Nepomuk Seiler
  * @version 0.1
  * @since 18.06.2011

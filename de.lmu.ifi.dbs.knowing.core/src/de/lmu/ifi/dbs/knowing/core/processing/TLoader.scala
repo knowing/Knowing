@@ -12,6 +12,14 @@ import java.net.URI
 import java.io.File
 import java.io.FilenameFilter
 
+/**
+ * <p>Loader retrieve data from a source and send it into
+ * the DPU graph. After a Loader receives the Start messages
+ * it begins to load the data.</p>
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.1
+ */
 trait TLoader extends TProcessor {
 
   /**
@@ -80,6 +88,9 @@ object TLoader {
   /** Points to the dpu directory. Ends with a file.seperator */
   val EXE_PATH = INodeProperties.EXE_PATH // this properties is created by the GraphSupervisor-Caller
 
+  /**
+   * @return absolute path to inputFile
+   */
   def getFilePath(properties: Properties): String = {
     val absolute = properties.getProperty(ABSOLUTE_PATH, "false").toBoolean
     absolute match {
@@ -88,6 +99,12 @@ object TLoader {
     }
   }
 
+  /**
+   * Tries to resolve URI based on the execution path if
+   * not given as an absolute value.
+   * 
+   * @return URI to inputSource
+   */
   def getInputURI(properties: Properties): URI = {
     val absolute = properties.getProperty(ABSOLUTE_PATH, "false").toBoolean
     val exePath = properties.getProperty(EXE_PATH)
@@ -102,6 +119,13 @@ object TLoader {
     }
   }
 
+  /**
+   * Tries to resolve URI based on the execution path if
+   * not given as absolute value. Does this for every file
+   * matching the given file extensions inside the given directory .
+   * 
+   * @return URIs to inputSources
+   */
   def getInputURIs(properties: Properties): Array[URI] = {
     val dirPath = properties.getProperty(DIR)
     if (dirPath == null || dirPath.isEmpty)
@@ -133,6 +157,10 @@ object TLoader {
     }
   }
 
+  /**
+   * 
+   * @return Some(resolvedURI) or None
+   */
   def resolveFile(exePath: String, filename: String): Option[URI] = {
     exePath match {
       case null | "" => None

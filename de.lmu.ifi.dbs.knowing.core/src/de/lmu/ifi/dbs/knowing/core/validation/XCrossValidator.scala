@@ -12,6 +12,14 @@ import weka.core.{ Instance, Instances }
 import com.eaio.uuid.UUID
 import weka.core.Attribute
 
+/**
+ * Performs a crossvalidation on the given input.
+ * Splits the dataset with Instances.train/test.
+ * Uses CrossValidator.class for each crossvaldation step.
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.1
+ */
 class XCrossValidator(var factory: TFactory, var folds: Int, var validator_properties: Properties) extends TProcessor {
 
   protected var resultHeader: Instances = _

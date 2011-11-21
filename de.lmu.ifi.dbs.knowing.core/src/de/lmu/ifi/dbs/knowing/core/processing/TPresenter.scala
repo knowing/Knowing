@@ -16,12 +16,16 @@ import weka.core.{ Instances, Instance, Attribute }
  */
 trait TPresenter[T] extends TProcessor {
 
+  /** Name of this component */
   val name: String
 
   override final protected def customReceive: Receive = presenterReceive orElse defaultReceive
   
   protected def presenterReceive: Receive = defaultReceive
 
+  /**
+   * Handles UI specific events
+   */
   private def defaultReceive: Receive = {
     case UIFactoryEvent(factory, node) =>
       statusChanged(Running())
@@ -32,6 +36,9 @@ trait TPresenter[T] extends TProcessor {
     case QueryResults(instances, _) => buildPresentation(instances)
   }
 
+  /**
+   * 
+   */
   def build(instances: Instances) {
     statusChanged(Running())
     buildPresentation(instances)

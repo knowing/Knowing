@@ -8,16 +8,24 @@ import org.eclipse.sapphire.modeling.Path;
 import org.eclipse.sapphire.modeling.Value;
 import org.eclipse.sapphire.modeling.ValueProperty;
 import org.eclipse.sapphire.modeling.annotations.DefaultValue;
+import org.eclipse.sapphire.modeling.annotations.FileExtensions;
 import org.eclipse.sapphire.modeling.annotations.FileSystemResourceType;
 import org.eclipse.sapphire.modeling.annotations.GenerateImpl;
 import org.eclipse.sapphire.modeling.annotations.Label;
 import org.eclipse.sapphire.modeling.annotations.Type;
-import org.eclipse.sapphire.modeling.annotations.ValidFileExtensions;
 import org.eclipse.sapphire.modeling.annotations.ValidFileSystemResourceType;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlBinding;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlListBinding;
 import org.eclipse.sapphire.workspace.WorkspaceRelativePath;
 
+/**
+ * <p>Configure logging for process history. This is done
+ * via the Knowing IDE and is saved inside a DPU.</p>
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.1
+ * @since 2011-10
+ */
 @GenerateImpl
 public interface IConfiguration extends IModelElement {
 
@@ -44,7 +52,7 @@ public interface IConfiguration extends IModelElement {
 	@Type(base = Path.class)
 	@WorkspaceRelativePath
 	@ValidFileSystemResourceType(FileSystemResourceType.FILE)
-	@ValidFileExtensions("hst")
+	@FileExtensions(expr = "hst")
 	ValueProperty PROP_OUTPUT = new ValueProperty(TYPE, "Output");
 
 	Value<Path> getOutput();

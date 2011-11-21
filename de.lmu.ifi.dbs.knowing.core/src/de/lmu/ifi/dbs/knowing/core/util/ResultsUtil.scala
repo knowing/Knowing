@@ -4,14 +4,18 @@ import java.util.{ ArrayList, Arrays, Collections, List => JList, Properties, Ma
 import scala.collection.JavaConversions._
 import weka.core.{ Attribute, DenseInstance, Instances, Instance, ProtectedProperties, WekaException }
 import weka.core.SparseInstance
+import de.lmu.ifi.dbs.knowing.core.processing.ImmutableInstances
+import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 
 /**
  * @author Nepomuk Seiler
- * @version 0.1
+ * @version 0.3
  * @since 24.04.2011
  *
  */
 object ResultsUtil {
+
+  val ATTRIBUTE_DUMMY = "dummy"
   val ATTRIBUTE_CLASS = "class"
   val ATTRIBUTE_CLASS_DISTRIBUTION = "class_distribution"
   val ATTRIBUTE_PROBABILITY = "probability"
@@ -30,7 +34,7 @@ object ResultsUtil {
   val NAME_TIME_SERIES = "time_series"
 
   val NOT_CLASSIFIED = "not_classified";
-    
+
   val META_ATTRIBUTE_NAME = "name"
 
   val DATETIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss:SSS"
@@ -42,9 +46,17 @@ object ResultsUtil {
   /* ========================= */
 
   /**
-   * Empty Instances
+   * <p>Empty Instances. This Instances object has
+   * one Attribute (ATTRIBUTE_DUMMY) as you can't load
+   * an Instances object without any attributes</p>
+   *
+   * @return Instances with Attribute "dummy"
    */
-  def emptyResult: Instances = new Instances(NAME_EMPTY, new ArrayList[Attribute], 0)
+  def emptyResult: Instances = {
+    val attributes = new ArrayList[Attribute]
+    attributes.add(new Attribute(ATTRIBUTE_DUMMY))
+    new Instances(NAME_EMPTY, attributes, 0)
+  }
 
   /**
    * <p>
@@ -123,15 +135,16 @@ object ResultsUtil {
     val probaAttribute = returns.attribute(ATTRIBUTE_PROBABILITY)
     for (i <- 0 until distribution.length) {
       val instance = new DenseInstance(2)
-      instance.setValue(classAttribute, classAttribute.value(i))
+      //      instance.setValue(classAttribute, classAttribute.value(i))
       instance.setValue(probaAttribute, distribution(i))
       returns.add(i, instance)
+      returns.lastInstance.setClassValue(classAttribute.value(i))
     }
-    //Just in case
+    //Add 0.0 probability to non existing classLabels in distribution
     for (i <- distribution.length until (labels.size - distribution.length)) {
       val instance = new DenseInstance(2)
       instance.setValue(classAttribute, classAttribute.value(i))
-      instance.setValue(probaAttribute, 0)
+      instance.setValue(probaAttribute, 0.0)
       returns.add(i, instance)
     }
     returns
@@ -253,7 +266,7 @@ object ResultsUtil {
   /* ========================= */
 
   def isEmptyResult(dataset: Instances): Boolean = {
-    dataset.relationName.equals(NAME_EMPTY) || (dataset.numAttributes == 0 && dataset.numInstances == 0)
+    dataset.relationName.equals(NAME_EMPTY) || (dataset.numAttributes == 1 && dataset.numInstances == 0)
   }
 
   /**
@@ -374,23 +387,43 @@ object ResultsUtil {
   }
 
   /**
+   * <p>Converts a ImmutableInstances object into an mutable Instances object</p>
+   *
+   * @param ImmutableInstances
+   * @return Instances object
+   */
+  def convertToMutable(instances: ImmutableInstances): Instances = appendInstances(new Instances(instances, 0), instances)
+
+  @throws(classOf[WekaException])
+  def appendInstancesPartial(header: Instances, append: Instances, numInstances: Int): Instances = {
+    if (!header.equalHeaders(append))
+      throw new WekaException("Instances headers are not equal")
+    val ret = new Instances(header, numInstances)
+
+    for (i <- 0 until header.numInstances if (i < numInstances)) ret.add(header(i))
+    for (i <- 0 until append.numInstances if (i + header.numInstances < numInstances)) ret.add(append(i))
+
+    ret
+  }
+
+  /**
    * Just appends one 'append' to 'first' without changing attributes.
    *
    * @throws WekaException - if headers are not equal
    * @returns Instances - new instances object with first -> append added
    */
   @throws(classOf[WekaException])
-  def appendInstances(first: Instances, append: Instances): Instances = {
-    if (!first.equalHeaders(append))
+  def appendInstances(header: Instances, append: Instances): Instances = {
+    if (!header.equalHeaders(append))
       throw new WekaException("Instances headers are not equal")
-    val ret = new Instances(first, first.numInstances + append.numInstances)
-    val firstEnum = first.enumerateInstances
+    val ret = new Instances(header, header.numInstances + append.numInstances)
+    val firstEnum = header.enumerateInstances
     while (firstEnum.hasMoreElements) ret.add(firstEnum.nextElement.asInstanceOf[Instance])
     val appendEnum = append.enumerateInstances
     while (appendEnum.hasMoreElements) ret.add(appendEnum.nextElement.asInstanceOf[Instance])
     ret
   }
-  
+
   /**
    * This method merges a list of instances into a given header. The header is normally empty.
    */
@@ -415,23 +448,30 @@ object ResultsUtil {
    * <p>Splits a instances object with the given attribute into a map of source -> Instances
    * If 'attribute' is not defined, the method returns ORIGINAL_INSTANCES -> instances</p>
    *
+   * <p>Note: If instances is of type ImmutableInstances it will be converted
+   * into a Instances object so it can be edited</p>
+   *
+   *
    * @param instances - Instances to split
    * @param attribute - name of the attribute, the split should be performed on
    * @returns source -> Instances
    *
    */
   def splitInstanceByAttribute(instances: Instances, attribute: String, removeAttr: Boolean = true): Map[String, Instances] = {
-    val splitAttr = instances.attribute(attribute)
-    if (splitAttr == null)
-      return Map(ORIGINAL_INSTANCES -> instances)
-    val classMap = instances.groupBy(inst => splitAttr.value(inst.value(splitAttr) toInt))
-    classMap map {
-      case (clazz, list) =>
-        val ret = new Instances(instances, list.length)
-        list foreach (ret.add(_))
-        if (removeAttr) ret.deleteAttributeAt(splitAttr.index)
-        (clazz, ret)
+    (instances.attribute(attribute), instances) match {
+      case (null, inst: ImmutableInstances) => Map(ORIGINAL_INSTANCES -> convertToMutable(inst))
+      case (null, inst) => Map(ORIGINAL_INSTANCES -> inst)
+      case (splitAttr, inst) =>
+        val classMap = instances.groupBy(inst => splitAttr.value(inst.value(splitAttr) toInt))
+        classMap map {
+          case (clazz, list) =>
+            val ret = new Instances(instances, list.length)
+            list foreach (ret.add(_))
+            if (removeAttr) ret.deleteAttributeAt(splitAttr.index)
+            (clazz, ret)
+        }
     }
+
   }
 
   /**
@@ -455,7 +495,10 @@ object ResultsUtil {
   def splitInstanceBySourceJava(instances: Instances, removeAttr: Boolean = true): JMap[String, Instances] = splitInstanceByAttributeJava(instances, ATTRIBUTE_SOURCE, removeAttr)
 
   /**
+   * <p>returns the highest probability and the class name</p>
    *
+   * @param distribution - must have been created with @link{appendClassDistribution(header, inst, setClass)}
+   * @return (probability, class) or (0, NOT_CLASSIFIED)
    */
   def highestProbability(distribution: Instance): (Double, String) = {
     val classAttr = distribution.enumerateAttributes.toList filter {
@@ -471,6 +514,29 @@ object ResultsUtil {
   }
 
   /**
+   * @param distribution - must have been created with @link{classAndProbabilityResult(classes, distribution)}
+   * @return (probability, class) or (0, NOT_CLASSIFIED)
+   * @throws Exception - if distribution wasn't created via @link{classAndProbabilityResult(classes, distribution)}
+   */
+  def highestProbability(distribution: Instances): (Double, String) = {
+    if (!distribution.relationName.equals(NAME_CLASS_AND_PROBABILITY))
+      throw new Exception("Wrong instances name -> maybe wrong format")
+    val classAttr = distribution.attribute(ATTRIBUTE_CLASS)
+    val probAttr = distribution.attribute(ATTRIBUTE_PROBABILITY)
+    var ret = (0.0, NOT_CLASSIFIED)
+    for (i <- 0 until distribution.length) {
+      val inst = distribution(i)
+      inst.value(probAttr) match {
+        case probability if probability > ret._1 =>
+          val clazz = classAttr.value(inst.value(classAttr).toInt)
+          ret = (probability, clazz)
+        case x => //do nothing
+      }
+    }
+    ret
+  }
+
+  /**
    * class_and_probability must contain ALL class labels.
    *
    * Appends classDistribution as follows: Instances-Attributes + class + classA + classB + classC..
@@ -480,8 +546,9 @@ object ResultsUtil {
    * @param inst - contains query -> class_and_probability
    * @return new Instances object with appended classDistribution
    */
-  def appendClassDistribution(header: Instances, inst: Map[Instance, Instances]): Instances = {
+  def appendClassDistribution(header: Instances, inst: Map[Instance, Instances], setClass: Boolean = true): Instances = {
     val head = new Instances(header, inst.size)
+    val classIndex = TProcessor.guessAndSetClassLabel(head)
     val labels = header.classAttribute.enumerateValues.toList
     labels foreach (l => head.insertAttributeAt(new Attribute("class" + l), head.numAttributes))
     inst.foldLeft(head) {
@@ -493,6 +560,10 @@ object ResultsUtil {
         //Fill in distribution
         for (i <- numAttr until (numAttr + labels.size)) inst.setValue(i, dist.get(i - numAttr).value(1))
         head.add(inst)
+        if (setClass) {
+          val clazz = highestProbability(dist)._2
+          head.lastInstance.setClassValue(clazz)
+        }
         head
     }
   }

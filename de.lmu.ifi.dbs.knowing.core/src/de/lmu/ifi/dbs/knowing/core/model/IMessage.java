@@ -14,6 +14,12 @@ import org.eclipse.sapphire.modeling.xml.annotations.XmlBinding;
 import weka.core.Instances;
 import de.lmu.ifi.dbs.knowing.core.model.internal.InstancesSerializationService;
 
+/**
+ * <p>String representation of a message send between two {@link INode}
+ * connected by an {@link IEdge}. </p>
+ * @author Nepomuk Seiler
+ * @version 0.1
+ */
 @GenerateImpl
 public interface IMessage extends IModelElement {
 

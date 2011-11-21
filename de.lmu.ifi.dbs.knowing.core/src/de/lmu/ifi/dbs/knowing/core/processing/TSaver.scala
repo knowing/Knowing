@@ -31,7 +31,7 @@ trait TSaver extends TProcessor {
   def reset
 
   private def saverConfiguration(properties: Properties) {
-    _mode = properties.getProperty(WRITE_MODE, WRITE_MODE_BATCH)
+    _mode = properties.getProperty(WRITE_MODE, WRITE_MODE_INCREMENTAL)
     _file = properties.getProperty(FILE, "<no file>")
     _url = properties.getProperty(URL, "<no url>")
     configure(properties)

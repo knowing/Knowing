@@ -18,6 +18,8 @@ import de.lmu.ifi.dbs.knowing.core.japi.ILoggableProcessor
 
 /**
  *
+ * Wraps the WEKA classifier interface.
+ *
  * @author Nepomuk Seiler
  * @version 0.2
  * @since 21.04.2011
@@ -49,8 +51,6 @@ class WekaClassifier(var classifier: Classifier) extends TClassifier {
   }
 
   def getClassLabels(): Array[String] = classLabels
-
-  def configure(properties: Properties) {} //Override for special behaviour
 
   def result(result: Instances, query: Instance) {} //Override for special behaviour
 

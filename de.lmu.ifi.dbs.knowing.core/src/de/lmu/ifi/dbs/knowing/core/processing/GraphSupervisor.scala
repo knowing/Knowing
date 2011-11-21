@@ -23,17 +23,29 @@ import org.eclipse.sapphire.modeling.xml.{ RootXmlResource, XmlResourceStore }
 import org.eclipse.sapphire.modeling.{ ResourceStore, FileResourceStore, Path }
 import weka.core.Instances
 
+/**
+ * <p> SupervisorActor for a data mining process.</p>
+ * <p> This class is used to execute a DPU inside a 
+ * specific WidgetSystem and on a specified executionPath.</p>
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.3
+ */
 class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, execPath: URI, directory: IFactoryDirectory) extends Actor with TSender {
 
   self.faultHandler = AllForOneStrategy(List(classOf[Throwable]), 5, 5000)
 
+  /** NodeID -> (actor, type) */
   var actors = MutableMap[String, (ActorRef, NodeType)]()
+  
+  /** UUID -> NodeID */
   var actorsByUuid = MutableMap[UUID, String]()
 
-  //Status map holding: UUID -> Reference, Status, Timestamp
+  /** Status map holding: UUID -> Reference, Status, Timestamp */
   private val statusMap: MutableMap[UUID, (ActorRef, Status, Long)] = MutableMap()
   private val events = ListBuffer[String]()
 
+  /** data mining process log */
   var processHistory: IProcessHistory = _
 
   //Initialize processHistory
@@ -67,8 +79,8 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, execPath: 
     case UpdateUI | UpdateUI() => uifactory update (self.sender.getOrElse(null), UpdateUI())
     case status: Status => handleStatus(status)
     case uiEvent: UIEvent => handleUIEvent(uiEvent)
-    case event: Event => debug(this, "Unhandled Event: " + event)
-    case msg => debug(this, "Unhandled Message: " + msg)
+    case event: Event => //Do nothing
+    case msg => warning(this, "Unkown Message: " + msg)
   }
 
   override def postStop = {
@@ -142,6 +154,10 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, execPath: 
     })
   }
 
+  /**
+   * On each status update the supervisor checks if the
+   * process has finished. 
+   */
   private def handleStatus(status: Status) {
     uifactory update (self.sender.getOrElse(null), status)
     self.sender match {
@@ -149,6 +165,8 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, execPath: 
       case None => warning(this, "Unkown status message: " + status)
     }
     status match {
+      
+      //Only check if finished if a "finishing" event arrives
       case Ready() | Finished() => if (finished) {
         info(this, "Evaluation finished. Stopping schedules and supervisor")
         //schedules foreach (future => future.cancel(true))
@@ -156,6 +174,8 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, execPath: 
         uifactory update (self, Shutdown())
         self stop
       }
+      
+      //Process seems to be going on
       case _ => //nothing happens
     }
 
@@ -201,8 +221,17 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, execPath: 
 
 }
 
+/**
+ * <p> Dispatcher which uses the mailboxes of each actor to log
+ * messages send between actors. This Dispatcher is only used if
+ * the "history" property is enabled in the DataProcessingUnit (DPU).</p>
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.1
+ */
 class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends ExecutorBasedEventDrivenDispatcher(name) {
 
+  /** Do not log messages send to GraphSupervisor */
   private val G = classOf[GraphSupervisor]
 
   private var logEvents = supervisor.configuration.getEventConstraints.map(c => (c.getType.getContent -> c.getLog.getContent.booleanValue)).toMap
@@ -297,7 +326,7 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends Exec
    * Logs only the messages which should be logged, based on the eventType
    */
   private def log(src: String, trg: String, content: Instances, eventType: EventType) = logEvents(eventType) match {
-    case true =>
+    case true => try {
       val msg = messages.addNewElement
       msg.setType(eventType)
       src.split(":").toList match {
@@ -308,6 +337,9 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends Exec
       }
       msg.setTarget(trg)
       msg.setContent(content)
+    } catch {
+      case e: Exception => warning(this, "Logging failed: " + e.getMessage)
+    }
     case false => //Do not log 
   }
 }

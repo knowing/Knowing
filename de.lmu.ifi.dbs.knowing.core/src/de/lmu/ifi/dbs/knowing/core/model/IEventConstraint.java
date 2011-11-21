@@ -11,6 +11,12 @@ import org.eclipse.sapphire.modeling.annotations.Required;
 import org.eclipse.sapphire.modeling.annotations.Type;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlBinding;
 
+/**
+ * <p>Process History constraint. Which event types should be logged.</p>
+ * @author Nepomuk Seiler
+ * @version 0.1
+ *
+ */
 @GenerateImpl
 public interface IEventConstraint extends IModelElement{
 

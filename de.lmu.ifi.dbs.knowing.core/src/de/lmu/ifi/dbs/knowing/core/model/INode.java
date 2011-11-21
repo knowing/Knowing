@@ -19,6 +19,14 @@ import org.eclipse.sapphire.modeling.annotations.Type;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlBinding;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlListBinding;
 
+/**
+ * <p>Represents a data mining step. Holds factory-id for the
+ * factory-osgi-service and its configuration.</p>
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.1
+ *
+ */
 @GenerateImpl
 public interface INode extends IModelElement {
 

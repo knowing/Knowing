@@ -17,6 +17,13 @@ import org.eclipse.sapphire.modeling.xml.annotations.XmlBinding;
 
 import de.lmu.ifi.dbs.knowing.core.model.internal.NodeReferenceService;
 
+/**
+ * <p>Dataflow between two {@link INode}s</p>
+ * 
+ * @author Nepomuk Seiler
+ * @version 1.0
+ *
+ */
 @GenerateImpl
 public interface IEdge extends IModelElement {
 	

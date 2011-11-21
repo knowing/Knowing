@@ -64,9 +64,9 @@ class NaiveBayesFactory extends WekaClassifierFactory[NaiveBayes, weka.classifie
   }
 
   override def createPropertyValues: Map[String, Array[_<:Any]] = {
-    Map(KERNEL_ESTIMATOR -> boolean_property,
-        SUPERVISED_DISCRETIZATION -> boolean_property,
-        DEBUG -> boolean_property)
+    Map(KERNEL_ESTIMATOR -> BOOLEAN_PROPERTY,
+        SUPERVISED_DISCRETIZATION -> BOOLEAN_PROPERTY,
+        DEBUG -> BOOLEAN_PROPERTY)
   }
 
   override def createPropertyDescription: Map[String, String] = {

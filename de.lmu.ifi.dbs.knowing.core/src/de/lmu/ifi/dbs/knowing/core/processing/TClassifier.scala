@@ -5,17 +5,27 @@ import java.util.Properties
 import weka.core.{ Instance, Instances }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.processing.IProcessorPorts.{ TRAIN, TEST }
+import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties.{ SET_CLASS }
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import java.io.OutputStream
 import java.io.InputStream
 
 /**
  *  @author Nepomuk Seiler
- *  @version 0.1
+ *  @version 0.2
  *  @since 16.06.2011
  */
 trait TClassifier extends TProcessor with TSerializable {
 
+  protected var setClass = false
+  
+  /**
+   * Distinguish if input should be used to train the classifier
+   * or should be classified and send as results to all connected
+   * nodes.
+   * 
+   * @param PartialFunction[Instances, Option[String]] - match on (message, port)
+   */
   override def build = {
     case (instances, Some(TEST)) =>
       guessAndSetClassLabel(instances)
@@ -58,6 +68,10 @@ trait TClassifier extends TProcessor with TSerializable {
   override def postStop = outputStream match {
     case None => debug(this, "Nothing to serialize in " + getClass.getSimpleName)
     case Some(out) => serialize(out)
+  }
+  
+  override def configure(properties: Properties) {
+    setClass = properties.getProperty(SET_CLASS, "false").toBoolean
   }
 
   /**

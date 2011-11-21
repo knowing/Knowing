@@ -3,6 +3,13 @@ package de.lmu.ifi.dbs.knowing.core.model;
 import org.eclipse.sapphire.modeling.annotations.EnumSerialization;
 import org.eclipse.sapphire.modeling.annotations.Label;
 
+/**
+ * <p>Possible events to log on in the processing history.</p>
+ * 
+ * @author Nepomuk Seiler
+ * @version 1.0
+ * @since 2011-10
+ */
 @Label(standard = "type", full = "event type")
 public enum EventType {
 	

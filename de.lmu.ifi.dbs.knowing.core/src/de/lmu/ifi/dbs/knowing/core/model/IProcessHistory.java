@@ -14,6 +14,18 @@ import org.eclipse.sapphire.modeling.xml.annotations.XmlBinding;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlListBinding;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlRootBinding;
 
+/**
+ * <p>Process history is a log file which contains all the<br>
+ * data send between all nodes inside a dpu during the<br>
+ * data mining process. The process history can be configured<br>
+ * via constraints:
+ * <li> {@link INodeConstraint}</li>
+ * <li> {@link IEventConstraint}</li>
+ * </p>
+ * @author Nepomuk Seiler
+ * @version 0.1
+ *
+ */
 @GenerateImpl
 @XmlRootBinding(elementName = "ProcessHistory")
 public interface IProcessHistory extends IModelElement {

@@ -120,7 +120,7 @@ class WekaArffLoaderFactory extends ProcessorFactory(classOf[WekaArffLoader]) {
   override def createPropertyValues: Map[String, Array[_ <: Any]] = {
     Map(PROP_FILE -> Array(new File(System.getProperty("user.home"))),
       PROP_URL -> Array(new URL("file", "", System.getProperty("user.home"))),
-      PROP_ABSOLUTE_PATH -> boolean_property)
+      PROP_ABSOLUTE_PATH -> BOOLEAN_PROPERTY)
   }
 
   override def createPropertyDescription: Map[String, String] = {

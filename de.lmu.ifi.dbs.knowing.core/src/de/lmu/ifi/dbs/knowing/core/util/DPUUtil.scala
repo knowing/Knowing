@@ -12,12 +12,13 @@ import java.io.OutputStream
 import java.io.PrintWriter
 
 /**
- *
+ * @author Nepomuk Seiler
+ * @version 0.1
  */
 object DPUUtil {
 
   /**
-   * Creates a new IDataProcessingUnit instance. Isn't hook to any ressource.
+   * Creates a new IDataProcessingUnit instance. Isn't hooked to any ressource.
    */
   def copy(dpu: IDataProcessingUnit): IDataProcessingUnit = {
     val destination = IDataProcessingUnit.TYPE.instantiate.asInstanceOf[IDataProcessingUnit]
@@ -25,11 +26,13 @@ object DPUUtil {
   }
 
   /**
-   *
+   * Eclipse Sapphire now offers clone support all models. 
+   * 
    * @param source -> copy values from here
    * @param destination -> paste values in here
    * @return destination
    */
+  @deprecated
   def copy(source: IDataProcessingUnit, destination: IDataProcessingUnit): IDataProcessingUnit = {
     destination.setName(source.getName.getContent)
     destination.setDescription(source.getDescription.getContent)
@@ -77,6 +80,9 @@ object DPUUtil {
   def getDPU(directory: IDPUDirectory, id: String): IDataProcessingUnit = directory.getDPU(id).getOrElse(null)
   def getDPUPath(directory: IDPUDirectory, id: String): URL = directory.getDPUPath(id).getOrElse(null)
 
+  /**
+   * Simple debugging method. Prints DPU to given outputStream
+   */
   def print(dpu: IDataProcessingUnit, out: OutputStream = System.out) {
     val writer = new PrintWriter(out)
     if (dpu == null) {

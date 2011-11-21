@@ -18,8 +18,6 @@ class Activator extends BundleActivator {
     Activator.context = context
     osgiUtil = new OSGIUtil(context)
     registerServices
-    providerTracker = new ServiceTracker[IDPUProvider, IDPUProvider](context, classOf[IDPUProvider], new DPUProviderServiceTracker(context))
-    providerTracker.open
 
     dpuDirectory = new ServiceTracker[IDPUDirectory, IDPUDirectory](context, classOf[IDPUDirectory], null)
     dpuDirectory.open
@@ -29,8 +27,6 @@ class Activator extends BundleActivator {
     Activator.context = null;
     osgiUtil.deregisterAll
     osgiUtil = null
-    providerTracker.close
-    providerTracker = null
     dpuDirectory.close
     dpuDirectory = null
   }
@@ -39,7 +35,6 @@ class Activator extends BundleActivator {
     osgiUtil.registerLoader(new ExtendedWekaArffLoaderFactory, ExtendedWekaArffLoaderFactory.id)
     osgiUtil.registerLoader(new WekaArffLoaderFactory, WekaArffLoaderFactory.id)
     osgiUtil.registerSaver(new WekaArffSaverFactory, WekaArffSaverFactory.id)
-//    osgiUtil.registerSaver(new WekaRelationalArffSaverFactory)
     osgiUtil.registerProcessor(new NaiveBayesFactory, classOf[weka.classifiers.bayes.NaiveBayes].getName)
     osgiUtil.registerProcessor(new OneRFactory, classOf[weka.classifiers.rules.OneR].getName)
     osgiUtil.registerProcessor(new CrossValidatorFactory, CrossValidatorFactory.id)
@@ -52,6 +47,8 @@ class Activator extends BundleActivator {
 
 object Activator {
 
+  val PLUGIN_ID = "de.lmu.ifi.dbs.knowing.core"
+  
   private var context: BundleContext = null
   private var osgiUtil: OSGIUtil = _
 
@@ -61,18 +58,3 @@ object Activator {
   def getContext(): BundleContext = context
 }
 
-class DPUProviderServiceTracker(context: BundleContext) extends ServiceTrackerCustomizer[IDPUProvider, IDPUProvider] {
-
-  def addingService(reference: ServiceReference[IDPUProvider]): IDPUProvider = {
-    val service = context.getService(reference)
-    service
-  }
-
-  def modifiedService(reference: ServiceReference[IDPUProvider], service: IDPUProvider) {
-    service.asInstanceOf[IDPUProvider].getDataProcessingUnits foreach (dpu => println("# " + dpu.getName.getContent))
-  }
-
-  def removedService(reference: ServiceReference[IDPUProvider], service: IDPUProvider) {
-
-  }
-}

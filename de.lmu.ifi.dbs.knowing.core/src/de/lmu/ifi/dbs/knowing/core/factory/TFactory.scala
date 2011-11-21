@@ -8,8 +8,10 @@ import akka.actor.Actor.actorOf
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 
 /**
- * <p>This factory creates actors and configurators to create<br>
- * a configuration for your created actor.</p>
+ * <p>This factory should be registered as an OSGi service
+ * and will be used to create an instance of the specified
+ * actor.
+ * </p>
  *
  * @author Nepomuk Seiler
  * @version 0.3
@@ -17,20 +19,22 @@ import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
  */
 trait TFactory {
 
+  /** human readable name */
   val name: String
+  
+  /** unique identifier to retrieve this factory */
   val id: String
 
   protected val properties = createDefaultProperties
   protected val values = createPropertyValues
   protected val description = createPropertyDescription
 
+  /** factory method - creates actor instance */
   def getInstance(): ActorRef
 
   /* ===================== */
   /* === Configuration === */
   /* ===================== */
-
-  def configurator: Configurator = new Configurator(properties, values, description)
 
   def createDefaultProperties: Properties
 
@@ -40,9 +44,21 @@ trait TFactory {
 }
 
 object TFactory {
-  val boolean_property = Array("true", "false")
+  val BOOLEAN_PROPERTY = Array("true", "false")
 }
 
+/**
+ * <p>Standard factory with default values for each method:
+ * 
+ * <li>name: processor.getSimpleName</li>
+ * <li>id: processor.getName</li>
+ * <li>getInstance: actorOf(processor.newInstance)</li>
+ * <li>Properties: empty maps / Properties</li>
+ * </p>
+ *  
+ * @author Nepomuk Seiler
+ * @version 1.0
+ */
 class ProcessorFactory(processor: Class[_ <: TProcessor]) extends TFactory {
   val name = processor.getSimpleName
   val id = processor.getName

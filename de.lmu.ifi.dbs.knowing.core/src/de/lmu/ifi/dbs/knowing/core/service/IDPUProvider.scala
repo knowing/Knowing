@@ -12,17 +12,39 @@ import org.eclipse.sapphire.modeling.UrlResourceStore
 import org.eclipse.sapphire.modeling.ResourceStoreException
 import org.eclipse.sapphire.modeling.xml.RootXmlResource
 
-
+/**
+ * OSGi service interface to provide DPUs stored somewhere
+ * to the knowing framework.
+ * 
+ * @Nepomuk Seiler
+ * @version 1.0
+ */
 trait IDPUProvider {
 
+  /**
+   * @return all provided DPUs
+   */
   def getDataProcessingUnits: Array[IDataProcessingUnit]
 
+  /**
+   * @return specified DPU
+   */
   def getDataProcessingUnit(name: String): Option[IDataProcessingUnit]
 
+  /**
+   * @return url to specified DPU
+   */
   def getURL(name: String): Option[URL]
 
 }
 
+/**
+ * Provides DPUs stored internally in a bundle. Default path is
+ * \/KNOWING-INF . Searches automatically for all DPUs residing there.
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.1
+ */
 class BundleDPUProvider(bundle: Bundle, dir: String = "/KNOWING-INF") extends IDPUProvider {
 
   private var dpuMap: Map[String, (IDataProcessingUnit, URL)] = Map()
@@ -53,6 +75,9 @@ class BundleDPUProvider(bundle: Bundle, dir: String = "/KNOWING-INF") extends ID
     }
   }
 
+  /**
+   * reads all .dpu files in the given dir property
+   */
   private def init {
     val entries = bundle.findEntries(dir, "*.dpu", true)
     if (entries == null)
@@ -78,6 +103,9 @@ class BundleDPUProvider(bundle: Bundle, dir: String = "/KNOWING-INF") extends ID
   }
 }
 
+/**
+ * Factory methods for Java which doesn't support default values of Scala
+ */
 object BundleDPUProvider {
 
   def newInstance(bundle: Bundle): BundleDPUProvider = new BundleDPUProvider(bundle)

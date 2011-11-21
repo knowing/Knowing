@@ -13,6 +13,12 @@ import org.eclipse.sapphire.modeling.annotations.Required;
 import org.eclipse.sapphire.modeling.annotations.Type;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlBinding;
 
+/**
+ * <p>Constraint on a specific node type for process history.</p>
+ * @author Nepomuk Seiler
+ * @version 0.1
+ *
+ */
 @GenerateImpl
 public interface INodeConstraint extends IModelElement {
 

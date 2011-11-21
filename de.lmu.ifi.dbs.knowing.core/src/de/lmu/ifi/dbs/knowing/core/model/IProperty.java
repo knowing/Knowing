@@ -1,5 +1,7 @@
 package de.lmu.ifi.dbs.knowing.core.model;
 
+import java.util.Properties;
+
 import org.eclipse.sapphire.modeling.IModelElement;
 import org.eclipse.sapphire.modeling.ModelElementType;
 import org.eclipse.sapphire.modeling.Value;
@@ -9,6 +11,12 @@ import org.eclipse.sapphire.modeling.annotations.Label;
 import org.eclipse.sapphire.modeling.annotations.Required;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlBinding;
 
+/**
+ * <p>Key-Value pair in a {@link Properties} object</p>
+ * @author Nepomuk Seiler
+ * @version 0.1
+ *
+ */
 @GenerateImpl
 public interface IProperty extends IModelElement {
 
