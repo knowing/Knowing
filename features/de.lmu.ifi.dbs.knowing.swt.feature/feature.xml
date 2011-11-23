@@ -2,7 +2,7 @@
 <feature
       id="de.lmu.ifi.dbs.knowing.swt.feature"
       label="Knowing SWT Feature"
-      version="1.0.0.qualifier"
+      version="0.1.0.qualifier"
       provider-name="LMU Munich - Database Systems Group">
 
    <description url="http://www.example.com/description">

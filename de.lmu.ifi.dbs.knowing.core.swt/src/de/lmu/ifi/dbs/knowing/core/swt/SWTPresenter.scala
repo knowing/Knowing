@@ -9,8 +9,11 @@ import de.lmu.ifi.dbs.knowing.core.processing.TPresenter
 import de.lmu.ifi.dbs.knowing.core.swt.handler.SWTListener
 
 /**
+ * Base class for writing TPresenters for the 
+ * Standard Widget Toolkit (SWT).
+ * 
  * @author Nepomuk Seiler
- * @version 0.1
+ * @version 0.2
  * @since 22.04.2011
  *
  */
@@ -53,10 +56,7 @@ abstract class SWTPresenter extends TPresenter[Composite] {
   def buildPresentation(instances: Instances) {
     if (composite != null) {
       composite.getDisplay().syncExec(new Runnable {
-        def run {
-          //debug(this, "SWTPresenter.buildPresentation with  " + instances.relationName)
-          buildContent(instances);
-        }
+        def run = buildContent(instances)
       })
     }
   }
@@ -64,12 +64,12 @@ abstract class SWTPresenter extends TPresenter[Composite] {
   def getContainerClass(): String = classOf[Composite].getName
 
   /**
-   *
+   * Create component presenting the data
    */
   def createControl(parent: Composite)
 
   /**
-   *
+   * Fill the component with content
    */
   def buildContent(instances: Instances)
 

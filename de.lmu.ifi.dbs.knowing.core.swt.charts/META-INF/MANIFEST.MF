@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Knowing SWT JFreeChart
 Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.core.swt.charts
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: de.lmu.ifi.dbs.knowing.core.swt.charts.internal.Activator
 Export-Package: de.lmu.ifi.dbs.knowing.core.swt.charts,
  de.lmu.ifi.dbs.knowing.core.swt.charts.events
-Require-Bundle: de.lmu.ifi.dbs.knowing.core;bundle-version="1.0.0",
- de.lmu.ifi.dbs.knowing.core.swt;bundle-version="1.0.0",
+Require-Bundle: de.lmu.ifi.dbs.knowing.core,
+ de.lmu.ifi.dbs.knowing.core.swt,
  org.eclipse.ui;bundle-version="3.6.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.jfree,

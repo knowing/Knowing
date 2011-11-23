@@ -29,6 +29,10 @@ abstract class SwtUIFactory(parent: Composite) extends TypedActor with UIFactory
   private var dialog: ProgressDialog = _
   var supervisor: ActorRef = _
 
+  /**
+   * creates a {@link Composite} container and takes
+   * care of sync with the UI thread.
+   */
   def createContainer(node: INode): Composite = {
     debug(this, "CreateContainer with " + node + " ... waiting for finish...")
     parent.getDisplay.asyncExec(new Runnable {
