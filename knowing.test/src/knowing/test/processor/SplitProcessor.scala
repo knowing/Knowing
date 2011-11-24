@@ -13,11 +13,16 @@ import weka.core.Instances
 class SplitProcessor extends TProcessor {
 
   def build(inst: Instances) {
+    //Split up input into two instances
     val toCopy = inst.numInstances / 2
     val one = new Instances(inst, 0, toCopy)
     val two = new Instances(inst, inst.numInstances / 2, toCopy - 1)
-    sendEvent(Results(one), Some(OUTPUT1))
-    sendEvent(Results(two), Some(OUTPUT2))
+    
+    //Sends to OUTPUT1, which is a port
+    sendResults(one, Some(OUTPUT1))
+    
+    //Sends to OUTPUT2, which is a port too
+    sendResults(two, Some(OUTPUT2))
   }
 
   def query(query: Instance): Instances = { null }

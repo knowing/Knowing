@@ -13,12 +13,8 @@
 		<node id="TablePresenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" type="presenter"	>
 			<properties />
 		</node>
-		<node id="SourceSplitFilter" factoryId="knowing.test.filter.SourceSplitFilter" type="processor" >
-			<properties />
-		</node>
 	</nodes>
 	<edges>
 		<edge id="arff_TablePresenter" target="TablePresenter" source="ARFF"  />
-		<edge id="arff_SourceSplitFilter" target="SourceSplitFilter" source="ARFF" />
 	</edges>
 </DataProcessingUnit>
