@@ -27,22 +27,26 @@ import scala.collection.JavaConversions.asList
  */
 class WekaArffLoader extends TLoader {
 
-  var loaders: List[(String, ArffLoader)] = Nil
   var source: Boolean = false
 
   private var single = true
 
   def getDataSet(): Instances = {
-    val filenames = asList(loaders.par map (_._1) toList)
+    val filenames = asList(inputs map (_._1) toList)
+    debug(this, inputs)
     var count = 0
-    val datasets = loaders.par map {
-      case (file, loader) =>
-        statusChanged(new Progress("Loading", count, loaders.size + 1))
+    val datasets = inputs.par map {
+      case (src, in) =>
+        val loader = new ArffLoader
+        loader.setSource(in)
+        (src -> loader)
+    } map {
+      case (src, loader) =>
+        statusChanged(new Progress("Loading", count, inputs.size + 1))
         count += 1
-        (file, loader.getDataSet)
+        (src, loader.getDataSet)
     } toList;
-    //Check datasets length to generate output
-    datasets.length match {
+    datasets.size match {
       case 0 => ResultsUtil.emptyResult // Nothing generated
       case 1 => datasets.head._2 // Just one input
       case _ => // hell yeah, more than one input
@@ -56,7 +60,7 @@ class WekaArffLoader extends TLoader {
               inst
             }
             header.insertAttributeAt(new Attribute(TLoader.SOURCE_ATTRIBUTE, filenames), head.numAttributes)
-            statusChanged(new Progress("Merge Instances", loaders.size, loaders.size + 1))
+            statusChanged(new Progress("Merge Instances", inputs.size, inputs.size + 1))
             self ! Reset()
             ResultsUtil.appendInstancesTupel(header, datasets, filter)
           case false =>
@@ -65,17 +69,14 @@ class WekaArffLoader extends TLoader {
         }
 
     }
+
   }
 
-  def configure(properties: Properties) = {
-    loaders = Nil
-    source = properties.getProperty(SOURCE_ATTRIBUTE, "false") toBoolean
-    val uris = TLoader.getInputURIs(properties)
-    uris map {
-      case uri =>
-        val loader = new ArffLoader
-        loader.setSource(uri.toURL)
-        loaders = (extractFilename(uri), loader) :: loaders
+  override def configure(properties: Properties) = {
+    source = properties.getProperty(SOURCE_ATTRIBUTE, "false") toBoolean;
+    if(!resolved) {
+      inputs = resolveInputs(properties)
+      resolved = true
     }
   }
 

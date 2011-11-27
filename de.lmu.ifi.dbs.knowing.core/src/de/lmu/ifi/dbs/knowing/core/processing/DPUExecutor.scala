@@ -3,8 +3,7 @@ package de.lmu.ifi.dbs.knowing.core.processing
 import java.net.URI
 import java.util.Properties
 import java.util.concurrent.{ TimeUnit, ScheduledFuture, ConcurrentLinkedQueue }
-import java.io.PrintWriter
-import java.io.IOException
+import java.io.{InputStream,OutputStream, IOException, PrintWriter}
 import akka.actor.{ Actor, ActorRef }
 import akka.config.Supervision.AllForOneStrategy
 import akka.event.EventHandler.{ debug, info, warning, error }
@@ -31,7 +30,12 @@ import weka.core.Instances
  * @author Nepomuk Seiler
  * @version 0.3
  */
-class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, execPath: URI, directory: IFactoryDirectory) extends Actor with TSender {
+class DPUExecutor(dpu: IDataProcessingUnit,
+    uifactory: UIFactory,
+    execPath: URI,
+    directory: IFactoryDirectory,
+    loaderInput: Map[String, InputStream] = Map(),
+    saverOutput: Map[String, OutputStream] = Map()) extends Actor with TSender {
 
   self.faultHandler = AllForOneStrategy(List(classOf[Throwable]), 5, 5000)
 
@@ -83,10 +87,7 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, execPath: 
     case msg => warning(this, "Unkown Message: " + msg)
   }
 
-  override def postStop = {
-    debug(this, "Shutdown supervisor")
-    shutdownSupervisor()
-  }
+  override def postStop = shutdownSupervisor
 
   /**
    * Run the process!
@@ -221,6 +222,10 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, execPath: 
 
 }
 
+object DPUExecutor {
+  val logEvents = EventType.values map (e => (e, false)) toMap
+}
+
 /**
  * <p> Dispatcher which uses the mailboxes of each actor to log
  * messages send between actors. This Dispatcher is only used if
@@ -229,15 +234,15 @@ class GraphSupervisor(dpu: IDataProcessingUnit, uifactory: UIFactory, execPath: 
  * @author Nepomuk Seiler
  * @version 0.1
  */
-class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends ExecutorBasedEventDrivenDispatcher(name) {
+class LoggableDispatcher(name: String, supervisor: DPUExecutor) extends ExecutorBasedEventDrivenDispatcher(name) {
 
   /** Do not log messages send to GraphSupervisor */
-  private val G = classOf[GraphSupervisor]
+  private val G = classOf[DPUExecutor]
 
   private var logEvents = supervisor.configuration.getEventConstraints.map(c => (c.getType.getContent -> c.getLog.getContent.booleanValue)).toMap
   logEvents = logEvents.isEmpty match {
-    case true => GraphSupervisor.logEvents map { case (e, p) => (e -> !p) }
-    case false => GraphSupervisor.logEvents map { case (e, p) => (e -> logEvents.getOrElse(e, p)) }
+    case true => DPUExecutor.logEvents map { case (e, p) => (e -> !p) }
+    case false => DPUExecutor.logEvents map { case (e, p) => (e -> logEvents.getOrElse(e, p)) }
   }
 
   private var logNodes = supervisor.configuration.getNodeConstraints.map(c => (c.getNode.getContent -> c.getLog.getContent.booleanValue)).toMap
@@ -344,6 +349,3 @@ class LoggableDispatcher(name: String, supervisor: GraphSupervisor) extends Exec
   }
 }
 
-object GraphSupervisor {
-  val logEvents = EventType.values map (e => (e, false)) toMap
-}

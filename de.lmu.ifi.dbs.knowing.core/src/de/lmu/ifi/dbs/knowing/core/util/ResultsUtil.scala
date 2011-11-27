@@ -41,6 +41,8 @@ object ResultsUtil {
 
   val ORIGINAL_INSTANCES = "original"
 
+  val UNKOWN_SOURCE = "unkown"
+
   /* ========================= */
   /* ==== Result Creation ==== */
   /* ========================= */

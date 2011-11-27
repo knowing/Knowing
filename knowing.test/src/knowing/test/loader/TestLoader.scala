@@ -17,7 +17,7 @@ class TestLoader extends TLoader {
     null
   }
 
-  def configure(properties: Properties) = {}
+  override def configure(properties: Properties) = {}
 
   def reset() = {}
 

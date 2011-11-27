@@ -11,7 +11,7 @@ import org.eclipse.ui.PlatformUI
 import akka.actor.Actor.actorOf
 import akka.actor.ActorRef
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
-import de.lmu.ifi.dbs.knowing.core.processing.GraphSupervisor
+import de.lmu.ifi.dbs.knowing.core.processing.DPUExecutor
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.swt.internal.Activator
 import de.lmu.ifi.dbs.knowing.core.swt.view.PresenterView

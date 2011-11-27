@@ -20,14 +20,12 @@ import java.io.FilenameFilter
  * @author Nepomuk Seiler
  * @version 0.1
  */
-trait TLoader extends TProcessor {
+trait TLoader extends TProcessor with TStreamResolver {
 
   /**
    * <p>Override for special behaviour</p>
    */
-  override protected def customReceive = {
-    case Reset() => reset
-  }
+  override protected def customReceive = ioReceive
 
   override def start {
     val dataset = getDataSet
@@ -44,11 +42,6 @@ trait TLoader extends TProcessor {
    */
   @throws(classOf[IOException])
   def getDataSet(): Instances
-
-  /**
-   * Reset dataset, properties and possible connections, inputstreams, etc.
-   */
-  def reset
 
   /* == Doesn't needed by TLoader == */
   def build(instances: Instances) = {}

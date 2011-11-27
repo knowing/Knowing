@@ -19,8 +19,10 @@ trait TSaver extends TProcessor {
    * <p>Override for special behaviour</p>
    */
   override protected def customReceive = {
+    
     case Configure(p) => saverConfiguration(p)
-    case Reset => reset
+    
+    case Reset() => reset
   }
 
   def write(instances: Instances)

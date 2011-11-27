@@ -1,6 +1,6 @@
 package de.lmu.ifi.dbs.knowing.core.weka
 
-import de.lmu.ifi.dbs.knowing.core.processing.TSaver
+import de.lmu.ifi.dbs.knowing.core.processing.{TSaver, TStreamResolver}
 import de.lmu.ifi.dbs.knowing.core.processing.TSaver._
 import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory._
@@ -24,16 +24,16 @@ import scala.collection.JavaConversions._
  * @since 04.07.2011
  * @author Nepomuk Seiler
  */
-class WekaArffSaver extends TSaver {
+class WekaArffSaver extends TSaver with TStreamResolver {
 
-  private var out: OutputStream = _
+  protected override def customReceive = ioReceive
 
   def write(instances: Instances) {
     debug(this, "Write Instances")
     //write header
     statusChanged(Progress("Write header", 0, instances.size))
     val header = new Instances(instances, 0)
-    val writer = new PrintWriter(out)
+    val writer = new PrintWriter(outputs.values.head)
     writer.print(header.toString)
 
     //Write instances incremental
@@ -59,6 +59,7 @@ class WekaArffSaver extends TSaver {
     writer.flush
     writer.close
 
+    //TODO WekaArffSaver -> Write doesn't really work
     debug(this, "Write Instances finished")
     reset
     //TODO WekaArffSaver -> must be configured again, after write
@@ -68,14 +69,8 @@ class WekaArffSaver extends TSaver {
   }
 
   def configure(properties: Properties) {
+    outputs = resolveOutputs(properties)
     //TODO WekaArffSaver -> RetrievalMode
-    if (!file.equals("<no file>")) {
-      val outputFile = new File(getFilePath(properties))
-      if (!outputFile.exists) outputFile.createNewFile
-      out = new FileOutputStream(outputFile)
-    } else if (!url.equals("<no url>")) {
-      //TODO WekaArffSaver -> URL output
-    }
   }
 }
 

@@ -50,5 +50,5 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.0",
  de.lmu.ifi.dbs.knowing.core.swt,
  nz.ac.waikato.cs.weka;bundle-version="3.7.3"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Service-Component: OSGI-INF/dsProcessor.xml, OSGI-INF/bypassProcessor.xml, OSGI-INF/multiInputProcessor.xml
