@@ -102,10 +102,15 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 
   override def preRestart(reason: Throwable) {
     // clean up before restart
+    isBuild = false
+    status = Created()
+    queryQueue.clear
+    queriesQueue.clear
   }
 
   override def postRestart(reason: Throwable) {
     // reinit stable state after restart
+    configure(properties)
   }
 
   def start = debug(this, "Running " + self.getActorClassName)

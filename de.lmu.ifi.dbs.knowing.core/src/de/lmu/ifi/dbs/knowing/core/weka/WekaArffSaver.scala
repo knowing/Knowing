@@ -29,14 +29,14 @@ class WekaArffSaver extends TSaver with TStreamResolver {
   protected override def customReceive = ioReceive
 
   def write(instances: Instances) {
-    debug(this, "Write Instances")
     //write header
-    statusChanged(Progress("Write header", 0, instances.size))
+    statusChanged(Progress("Write header for " + instances.relationName, 0, instances.size))
     val header = new Instances(instances, 0)
     val writer = new PrintWriter(outputs.values.head)
     writer.print(header.toString)
 
     //Write instances incremental
+    debug(this, "Write Instances[" + instances.numInstances + "]")
     val attributes = header.enumerateAttributes.toList.asInstanceOf[List[Attribute]]
     val enumInst = instances.enumerateInstances
     var instNum = 1
@@ -59,14 +59,12 @@ class WekaArffSaver extends TSaver with TStreamResolver {
     writer.flush
     writer.close
 
-    //TODO WekaArffSaver -> Write doesn't really work
     debug(this, "Write Instances finished")
     reset
     //TODO WekaArffSaver -> must be configured again, after write
   }
 
-  def reset {
-  }
+  def reset = configure(properties)
 
   def configure(properties: Properties) {
     outputs = resolveOutputs(properties)

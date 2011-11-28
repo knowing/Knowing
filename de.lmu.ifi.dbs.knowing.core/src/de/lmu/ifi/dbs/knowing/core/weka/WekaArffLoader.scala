@@ -33,7 +33,6 @@ class WekaArffLoader extends TLoader {
 
   def getDataSet(): Instances = {
     val filenames = asList(inputs map (_._1) toList)
-    debug(this, inputs)
     var count = 0
     val datasets = inputs.par map {
       case (src, in) =>

@@ -69,14 +69,14 @@ trait TStreamResolver { this: TProcessor =>
    */
   @throws(classOf[IOException])
   def resolveInputs(properties: Properties): Map[String, InputStream] = {
-    //Try 
     resolveFilePath(properties) match {
       case None =>
 
       //Input successfully created
-      case Some(p) => return Map(p.getFileName.toString -> newInputStream(p))
+      case Some(p) =>
+        debug(this, "Resolved resource: " + p.getFileName())
+        return Map(p.getFileName.toString -> newInputStream(p))
     }
-
     resolveDirPath(properties) match {
       case None =>
       case Some(p) =>
@@ -86,7 +86,8 @@ trait TStreamResolver { this: TProcessor =>
         try {
           val fileExt = properties.getProperty(FILE_EXTENSIONS)
           stream = newDirectoryStream(p)
-          for (f <- stream if f.getFileName.endsWith(fileExt)) {
+          for (f <- stream if f.getFileName.toString.endsWith(fileExt)) {
+            debug(this, "Resolved resource: " + f.getFileName())
             inputMap += (f.getFileName.toString -> newInputStream(f))
           }
         } catch {
@@ -99,6 +100,7 @@ trait TStreamResolver { this: TProcessor =>
 
     }
 
+    debug(this, "Trying resolve url...")
     resolveInputFromURL(properties) match {
       case None => Map()
 
@@ -172,6 +174,7 @@ trait TStreamResolver { this: TProcessor =>
     if (!properties.containsKey(key))
       return None
 
+    debug(this, "Trying resolve [" + key + "]...")
     val path = Paths.get(properties.getProperty(key))
     val absolute = properties.getProperty(ABSOLUTE_PATH, "false").toBoolean
 
@@ -212,13 +215,15 @@ trait TStreamResolver { this: TProcessor =>
 
       //Resolve URL from FILE property
       case (false, true) =>
-        val execURI = new URI(properties.getProperty(EXE_PATH, ""))
+        debug(this, "Trying resolve input via executionPath[" + properties.getProperty(EXE_PATH) + "] and FILE[" + properties.getProperty(FILE) + "]...")
+        val execURI = new URI(properties.getProperty(EXE_PATH))
         val fileName = properties.getProperty(FILE)
         val file = execURI.resolve(fileName)
         Some(file.toURL.openStream)
 
       //Resolve URL from URL property
       case (true, _) =>
+        debug(this, "Trying resolve input from URL[" + properties.getProperty(URL_PROP) + "]...")
         val url = new URL(properties.getProperty(URL_PROP))
         url.getProtocol match {
           case "file" =>
