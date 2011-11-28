@@ -118,9 +118,14 @@ class DPUExecutor(dpu: IDataProcessingUnit,
           self startLink actor
           //Register and link the supervisor
           actor ! Register(self, None)
-          //Check for presenter and init
-          if (node.getType.getContent.equals(NodeType.PRESENTER))
-            actor ! UIFactoryEvent(uifactory, node)
+          //Check for special nodes(presenter,loader,saver) and init
+          (node.getId.getContent, node.getType.getContent) match {
+            case (_,NodeType.PRESENTER) => actor ! UIFactoryEvent(uifactory, node)
+            case (id,NodeType.LOADER) if loaderInput.containsKey(id) => actor ! ConfigureInput(ResultsUtil.UNKOWN_SOURCE, loaderInput(id))
+            case (id,NodeType.SAVER)  if saverOutput.containsKey(id) => actor ! ConfigureOutput(ResultsUtil.UNKOWN_SOURCE, saverOutput(id))
+            case _ => //no special treatment
+          }
+            
           //Configure with properties
           actor ! Configure(configureProperties(nodeProperties(node)))
           //Add to internal map

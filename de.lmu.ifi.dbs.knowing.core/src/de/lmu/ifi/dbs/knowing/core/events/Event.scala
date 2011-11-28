@@ -2,10 +2,10 @@ package de.lmu.ifi.dbs.knowing.core.events
 
 import java.util.Properties
 import java.io.{InputStream,OutputStream}
-
 import akka.actor.ActorRef
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
 import de.lmu.ifi.dbs.knowing.core.model.INode
+import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import weka.core.{Instance,Instances}
 
 trait Event
@@ -40,8 +40,8 @@ case class Start extends Event
 case class Reset extends Event
 case class Alive extends Event
 case class Configure(properties: Properties) extends Event
-case class ConfigureInput(source:String = "", input: InputStream) extends Event
-case class ConfigureOutput(target:String = "", output: OutputStream) extends Event
+case class ConfigureInput(source:String = ResultsUtil.UNKOWN_SOURCE, input: InputStream) extends Event
+case class ConfigureOutput(target:String = ResultsUtil.UNKOWN_SOURCE, output: OutputStream) extends Event
 case class UpdateUI extends Status with UIEvent
 
 /* ========================= */
