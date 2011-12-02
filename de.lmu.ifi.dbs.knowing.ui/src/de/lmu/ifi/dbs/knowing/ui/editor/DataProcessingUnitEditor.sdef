@@ -31,7 +31,7 @@
 					<content>
 						<property-editor>name</property-editor>
 						<property-editor>
-							<property>Description</property>
+							<property>description</property>
 							<hint>
 								<name>expand.vertically</name>
 								<value>true</value>
@@ -168,6 +168,25 @@
 			<tool-palette-desc>node to connect to</tool-palette-desc>
 			<property>Nodes</property>
 			<label>${id == null ? &quot;&lt;node&gt;&quot; : id}</label>
+            <properties-view>
+                <page>
+                    <label>General</label>
+                    <content>
+                        <property-editor>id</property-editor>
+                        <property-editor>factoryId</property-editor>
+                        <property-editor>type</property-editor>
+                    </content>
+                </page>
+                <page>
+                    <label>Properties</label>
+                    <content>
+                        <property-editor>
+                            <property>properties</property>
+                            <show-label>false</show-label>
+                        </property-editor>
+                    </content>
+                </page>
+            </properties-view>
 		</node>
 		<connection>
 			<id>node_node_connection</id>
@@ -189,10 +208,32 @@
 				<property>target</property>
 				<value>${id}</value>
 			</endpoint2>
+            <properties-view>
+                <page>
+                    <label>General</label>
+                    <content>
+                        <property-editor>id</property-editor>
+                        <property-editor>source</property-editor>
+                        <property-editor>sourcePort</property-editor>
+                        <property-editor>target</property-editor>
+                        <property-editor>targetPort</property-editor>
+                    </content>
+                </page>
+            </properties-view>
 		</connection-binding>
 		<grid>
 			<visible>true</visible>
 		</grid>
+        <properties-view>
+            <page>
+                <label>General</label>
+                <content>
+                    <property-editor>name</property-editor>
+                    <property-editor>description</property-editor>
+                    <property-editor>tags</property-editor>
+                </content>
+            </page>
+        </properties-view>
 	</diagram-page>
 	<wizard>
 		<id>dpu.wizard</id>

@@ -68,7 +68,7 @@ public interface IEdge extends IModelElement {
 	/* === Source Port === */
 
 	@XmlBinding(path = "@sourcePort")
-	@Label(standard = "Port")
+	@Label(standard = "SourcePort")
 	@DefaultValue(text = DEFAULT_PORT)
 	ValueProperty PROP_SOURCE_PORT = new ValueProperty(TYPE, "sourcePort");
 
@@ -91,7 +91,7 @@ public interface IEdge extends IModelElement {
 	/* === Target Port === */
 
 	@XmlBinding(path = "@targetPort")
-	@Label(standard = "Port")
+	@Label(standard = "TargetPort")
 	@DefaultValue(text = DEFAULT_PORT)
 	ValueProperty PROP_TARGET_PORT = new ValueProperty(TYPE, "targetPort");
 
