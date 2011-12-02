@@ -12,7 +12,6 @@ import org.eclipse.sapphire.modeling.annotations.Required;
 import org.eclipse.sapphire.modeling.annotations.Type;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlBinding;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlListBinding;
-import org.eclipse.sapphire.modeling.xml.annotations.XmlRootBinding;
 
 /**
  * <p>Process history is a log file which contains all the<br>
@@ -23,11 +22,11 @@ import org.eclipse.sapphire.modeling.xml.annotations.XmlRootBinding;
  * <li> {@link IEventConstraint}</li>
  * </p>
  * @author Nepomuk Seiler
- * @version 0.1
+ * @version 0.2
  *
  */
 @GenerateImpl
-@XmlRootBinding(elementName = "ProcessHistory")
+@XmlBinding(path = "ProcessHistory")
 public interface IProcessHistory extends IModelElement {
 
 	ModelElementType TYPE = new ModelElementType(IProcessHistory.class);

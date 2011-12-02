@@ -13,10 +13,10 @@ import org.eclipse.sapphire.modeling.ModelProperty;
 import org.eclipse.sapphire.modeling.ReferenceValue;
 import org.eclipse.sapphire.modeling.Resource;
 import org.eclipse.sapphire.modeling.Value;
-import org.eclipse.sapphire.modeling.ValueNormalizationService;
 import org.eclipse.sapphire.modeling.ValueProperty;
-import org.eclipse.sapphire.modeling.serialization.ValueSerializationService;
 import org.eclipse.sapphire.modeling.util.MiscUtil;
+import org.eclipse.sapphire.services.ValueNormalizationService;
+import org.eclipse.sapphire.services.ValueSerializationMasterService;
 
 @SuppressWarnings( "all" )
 
@@ -78,7 +78,7 @@ public final class Node
     
     public void setFactoryId( final JavaTypeName value )
     {
-        setFactoryId( value != null ? service( PROP_FACTORY_ID, ValueSerializationService.class ).encode( value ) : null );
+        setFactoryId( value != null ? service( PROP_FACTORY_ID, ValueSerializationMasterService.class ).encode( value ) : null );
     }
     
     public Value<String> getId()
@@ -166,7 +166,7 @@ public final class Node
     
     public void setType( final NodeType value )
     {
-        setType( value != null ? service( PROP_TYPE, ValueSerializationService.class ).encode( value ) : null );
+        setType( value != null ? service( PROP_TYPE, ValueSerializationMasterService.class ).encode( value ) : null );
     }
     
     protected void refreshProperty( ModelProperty property, final boolean force )

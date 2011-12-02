@@ -7,10 +7,10 @@ import org.eclipse.sapphire.modeling.ModelElement;
 import org.eclipse.sapphire.modeling.ModelProperty;
 import org.eclipse.sapphire.modeling.Resource;
 import org.eclipse.sapphire.modeling.Value;
-import org.eclipse.sapphire.modeling.ValueNormalizationService;
 import org.eclipse.sapphire.modeling.ValueProperty;
-import org.eclipse.sapphire.modeling.serialization.ValueSerializationService;
 import org.eclipse.sapphire.modeling.util.MiscUtil;
+import org.eclipse.sapphire.services.ValueNormalizationService;
+import org.eclipse.sapphire.services.ValueSerializationMasterService;
 import weka.core.Instances;
 
 @SuppressWarnings( "all" )
@@ -75,7 +75,7 @@ public final class Message
     
     public void setContent( final Instances value )
     {
-        setContent( value != null ? service( PROP_CONTENT, ValueSerializationService.class ).encode( value ) : null );
+        setContent( value != null ? service( PROP_CONTENT, ValueSerializationMasterService.class ).encode( value ) : null );
     }
     
     public Value<String> getSource()
@@ -255,7 +255,7 @@ public final class Message
     
     public void setType( final EventType value )
     {
-        setType( value != null ? service( PROP_TYPE, ValueSerializationService.class ).encode( value ) : null );
+        setType( value != null ? service( PROP_TYPE, ValueSerializationMasterService.class ).encode( value ) : null );
     }
     
     protected void refreshProperty( ModelProperty property, final boolean force )

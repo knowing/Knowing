@@ -6,8 +6,7 @@ Bundle-Version: 0.1.1.qualifier
 Bundle-Activator: de.lmu.ifi.dbs.knowing.core.internal.Activator
 Require-Bundle: nz.ac.waikato.cs.weka;bundle-version="3.7.3";visibility:=reexport,
  org.codehaus.aspectwerkz;bundle-version="2.2.3";visibility:=reexport,
- slf4j.api;bundle-version="1.6.1";resolution:=optional,
- org.scala-ide.scala.library
+ slf4j.api;bundle-version="1.6.1";resolution:=optional
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: akka,
@@ -44,10 +43,10 @@ Bundle-ClassPath: .,
 Import-Package: org.eclipse.sapphire.java,
  org.eclipse.sapphire.modeling,
  org.eclipse.sapphire.modeling.annotations,
- org.eclipse.sapphire.modeling.serialization,
  org.eclipse.sapphire.modeling.util,
  org.eclipse.sapphire.modeling.xml,
  org.eclipse.sapphire.modeling.xml.annotations,
+ org.eclipse.sapphire.services,
  org.eclipse.sapphire.workspace,
  org.osgi.framework;version="1.5.0",
  org.osgi.service.component;version="1.1.0",

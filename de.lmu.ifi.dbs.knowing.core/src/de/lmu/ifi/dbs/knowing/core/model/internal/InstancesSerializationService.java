@@ -3,7 +3,7 @@ package de.lmu.ifi.dbs.knowing.core.model.internal;
 import java.io.IOException;
 import java.io.StringReader;
 
-import org.eclipse.sapphire.modeling.serialization.ValueSerializationService;
+import org.eclipse.sapphire.services.ValueSerializationService;
 
 import weka.core.Instances;
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil;

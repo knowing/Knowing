@@ -6,10 +6,10 @@ import org.eclipse.sapphire.modeling.ModelElement;
 import org.eclipse.sapphire.modeling.ModelProperty;
 import org.eclipse.sapphire.modeling.Resource;
 import org.eclipse.sapphire.modeling.Value;
-import org.eclipse.sapphire.modeling.ValueNormalizationService;
 import org.eclipse.sapphire.modeling.ValueProperty;
-import org.eclipse.sapphire.modeling.serialization.ValueSerializationService;
 import org.eclipse.sapphire.modeling.util.MiscUtil;
+import org.eclipse.sapphire.services.ValueNormalizationService;
+import org.eclipse.sapphire.services.ValueSerializationMasterService;
 
 @SuppressWarnings( "all" )
 
@@ -69,7 +69,7 @@ public final class NodeConstraint
     
     public void setLog( final Boolean value )
     {
-        setLog( value != null ? service( PROP_LOG, ValueSerializationService.class ).encode( value ) : null );
+        setLog( value != null ? service( PROP_LOG, ValueSerializationMasterService.class ).encode( value ) : null );
     }
     
     public Value<String> getNode()

@@ -1,6 +1,6 @@
 package de.lmu.ifi.dbs.knowing.core.model.internal;
 
-import org.eclipse.sapphire.modeling.ReferenceService;
+import org.eclipse.sapphire.services.ReferenceService;
 
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit;
 import de.lmu.ifi.dbs.knowing.core.model.IEdge;
@@ -9,7 +9,7 @@ import de.lmu.ifi.dbs.knowing.core.model.INode;
 /**
  * <p>Used by {@link IEdge} to provide options for the source/target port property</p>
  * @author Nepomuk Seiler
- * @version 0.1
+ * @version 0.2
  *
  */
 public class NodeReferenceService extends ReferenceService {
@@ -19,7 +19,8 @@ public class NodeReferenceService extends ReferenceService {
 		if (reference == null)
 			return null;
 
-		final IDataProcessingUnit dpu = element().nearest(IDataProcessingUnit.class);
+//		context().find(IDataProcessingUnit.class).nearest(IDataProcessingUnit.class);
+		final IDataProcessingUnit dpu = context(IDataProcessingUnit.class);
 		for (INode node : dpu.getNodes()) {
 			if (reference.equals(node.getId().getText()))
 				return node;

@@ -11,10 +11,10 @@ import org.eclipse.sapphire.modeling.ModelProperty;
 import org.eclipse.sapphire.modeling.Path;
 import org.eclipse.sapphire.modeling.Resource;
 import org.eclipse.sapphire.modeling.Value;
-import org.eclipse.sapphire.modeling.ValueNormalizationService;
 import org.eclipse.sapphire.modeling.ValueProperty;
-import org.eclipse.sapphire.modeling.serialization.ValueSerializationService;
 import org.eclipse.sapphire.modeling.util.MiscUtil;
+import org.eclipse.sapphire.services.ValueNormalizationService;
+import org.eclipse.sapphire.services.ValueSerializationMasterService;
 
 @SuppressWarnings( "all" )
 
@@ -77,7 +77,7 @@ public final class Configuration
     
     public void setAbsolute( final Boolean value )
     {
-        setAbsolute( value != null ? service( PROP_ABSOLUTE, ValueSerializationService.class ).encode( value ) : null );
+        setAbsolute( value != null ? service( PROP_ABSOLUTE, ValueSerializationMasterService.class ).encode( value ) : null );
     }
     
     public ModelElementList<IEventConstraint> getEventConstraints()
@@ -130,7 +130,7 @@ public final class Configuration
     
     public void setHistory( final Boolean value )
     {
-        setHistory( value != null ? service( PROP_HISTORY, ValueSerializationService.class ).encode( value ) : null );
+        setHistory( value != null ? service( PROP_HISTORY, ValueSerializationMasterService.class ).encode( value ) : null );
     }
     
     public ModelElementList<INodeConstraint> getNodeConstraints()
@@ -183,7 +183,7 @@ public final class Configuration
     
     public void setOutput( final Path value )
     {
-        setOutput( value != null ? service( PROP_OUTPUT, ValueSerializationService.class ).encode( value ) : null );
+        setOutput( value != null ? service( PROP_OUTPUT, ValueSerializationMasterService.class ).encode( value ) : null );
     }
     
     protected void refreshProperty( ModelProperty property, final boolean force )

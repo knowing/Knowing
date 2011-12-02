@@ -61,8 +61,8 @@ public interface INode extends IModelElement {
 
 	@Type(base = JavaTypeName.class)
 	@Reference(target = JavaType.class)
-	@JavaTypeConstraint(kind = { JavaTypeKind.CLASS, JavaTypeKind.ABSTRACT_CLASS, JavaTypeKind.INTERFACE }, 
-			type = {"de.lmu.ifi.dbs.knowing.core.processing.TProcessor", "de.lmu.ifi.dbs.knowing.core.japi.IProcessor"})
+	@JavaTypeConstraint(kind = { JavaTypeKind.CLASS, JavaTypeKind.ABSTRACT_CLASS, JavaTypeKind.INTERFACE })
+//			type = {"de.lmu.ifi.dbs.knowing.core.processing.TProcessor", "de.lmu.ifi.dbs.knowing.core.japi.IProcessor"})
 	@XmlBinding(path = "@factoryId")
 	@Label(standard = "factoryId")
 	@Required

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.6"?>
 
-<target name="Running Platform" sequenceNumber="6">
+<target name="Knowing Target Platform" sequenceNumber="9">
 <locations>
 <location path="${eclipse_home}" type="Profile"/>
-<location path="${project_loc:/de.lmu.ifi.dbs.knowing.target/plugins}" type="Directory"/>
+<location path="${project_loc:/de.lmu.ifi.dbs.knowing.core.target/plugins}" type="Directory"/>
 </locations>
 <environment>
 <os>linux</os>

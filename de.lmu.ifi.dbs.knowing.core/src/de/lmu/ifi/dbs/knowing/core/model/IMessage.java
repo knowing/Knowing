@@ -7,8 +7,9 @@ import org.eclipse.sapphire.modeling.ValueProperty;
 import org.eclipse.sapphire.modeling.annotations.GenerateImpl;
 import org.eclipse.sapphire.modeling.annotations.Label;
 import org.eclipse.sapphire.modeling.annotations.LongString;
+import org.eclipse.sapphire.modeling.annotations.Service;
 import org.eclipse.sapphire.modeling.annotations.Type;
-import org.eclipse.sapphire.modeling.serialization.ValueSerialization;
+import org.eclipse.sapphire.services.*;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlBinding;
 
 import weka.core.Instances;
@@ -82,7 +83,7 @@ public interface IMessage extends IModelElement {
 
 	@XmlBinding(path = "content")
 	@Label(standard = "Content")
-	@ValueSerialization(service = InstancesSerializationService.class)
+	@Service(impl = InstancesSerializationService.class)
 	@Type(base = Instances.class)
 	@LongString
 	ValueProperty PROP_CONTENT = new ValueProperty(TYPE, "Content");

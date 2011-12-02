@@ -17,7 +17,6 @@ import org.eclipse.sapphire.modeling.annotations.Required;
 import org.eclipse.sapphire.modeling.annotations.Type;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlBinding;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlListBinding;
-import org.eclipse.sapphire.modeling.xml.annotations.XmlRootBinding;
 
 import de.lmu.ifi.dbs.knowing.core.model.internal.IDataProcessingUnitOp;
 
@@ -33,7 +32,7 @@ import de.lmu.ifi.dbs.knowing.core.model.internal.IDataProcessingUnitOp;
  * @see<a href="https://github.com/knowing/Knowing/wiki/Knowing-Framework">GitHub Wiki - Knowing Framework </a>
  */
 @GenerateImpl
-@XmlRootBinding(elementName = "DataProcessingUnit")
+@XmlBinding(path = "DataProcessingUnit")
 public interface IDataProcessingUnit extends IExecutableModelElement {
 
 	ModelElementType TYPE = new ModelElementType(IDataProcessingUnit.class);
