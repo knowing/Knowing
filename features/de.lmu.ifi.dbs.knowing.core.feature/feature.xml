@@ -2,7 +2,7 @@
 <feature
       id="de.lmu.ifi.dbs.knowing.core.feature"
       label="Knowing Core Feature"
-      version="0.1.0.qualifier"
+      version="0.1.1.qualifier"
       provider-name="LMU Munich - Database Systems Group">
 
    <description url="http://www.example.com/description">
@@ -97,6 +97,13 @@
 
    <plugin
          id="de.lmu.ifi.dbs.knowing.core.common"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.sapphire.platform"
          download-size="0"
          install-size="0"
          version="0.0.0"
