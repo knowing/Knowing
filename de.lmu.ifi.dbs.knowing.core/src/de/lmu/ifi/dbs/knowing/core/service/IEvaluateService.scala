@@ -5,6 +5,7 @@ import akka.actor.ActorRef
 import java.io.{InputStream,OutputStream}
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
+import scala.collection.mutable.{Map => MutableMap}
 
 /**
  * OSGi service responsible for starting a data mining process.
@@ -23,5 +24,5 @@ trait IEvaluateService {
    */
   def evaluate(dpu: IDataProcessingUnit, ui: UIFactory, execPath: URI): ActorRef
   
-  def evaluate(dpu: IDataProcessingUnit, ui: UIFactory, execPath: URI, input: Map[String, InputStream], output: Map[String, OutputStream]): ActorRef
+  def evaluate(dpu: IDataProcessingUnit, ui: UIFactory, execPath: URI, input: MutableMap[String, InputStream], output: MutableMap[String, OutputStream]): ActorRef
 }

@@ -10,6 +10,7 @@ import de.lmu.ifi.dbs.knowing.core.processing.DPUExecutor
 import de.lmu.ifi.dbs.knowing.core.service.{IEvaluateService, IFactoryDirectory}
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
 import de.lmu.ifi.dbs.knowing.core.util.DPUUtil
+import scala.collection.mutable.{Map => MutableMap, HashMap}
 
 /**
  * Default implementation for the EvaluationService
@@ -26,9 +27,9 @@ class EvaluateService extends IEvaluateService {
    * Instantiates GraphSupervisor and runs the DPU
    * @see IEvaluationService
    */
-  def evaluate(dpu: IDataProcessingUnit, ui: UIFactory, execPath: URI): ActorRef = evaluate(dpu, ui, execPath, Map(), Map())
+  def evaluate(dpu: IDataProcessingUnit, ui: UIFactory, execPath: URI): ActorRef = evaluate(dpu, ui, execPath, HashMap(), HashMap())
   
-  def evaluate(dpu: IDataProcessingUnit, ui: UIFactory, execPath: URI, input: Map[String, InputStream], output: Map[String, OutputStream]): ActorRef = {
+  def evaluate(dpu: IDataProcessingUnit, ui: UIFactory, execPath: URI, input: MutableMap[String, InputStream], output: MutableMap[String, OutputStream]): ActorRef = {
     val executor = actorOf(new DPUExecutor(dpu,ui, execPath, factoryDirectory)).start
     executor ! Start()
     executor
