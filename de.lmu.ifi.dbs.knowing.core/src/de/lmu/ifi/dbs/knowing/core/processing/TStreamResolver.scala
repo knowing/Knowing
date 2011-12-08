@@ -6,7 +6,7 @@ import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import java.util.Properties
 import java.io.{ OutputStream, InputStream, IOException }
 import java.nio.file.{ Files, Path, Paths, DirectoryStream }
-import java.nio.file.Files.{ newInputStream, newOutputStream, newDirectoryStream, deleteIfExists, createDirectories, createFile }
+import java.nio.file.Files.{ newInputStream, newOutputStream, newDirectoryStream, deleteIfExists,exists, createDirectories, createFile }
 import java.net.{ URI, URL }
 import scala.collection.JavaConversions._
 import INodeProperties.{ ABSOLUTE_PATH, FILE, FILE_EXTENSIONS, DIR, URL => URL_PROP, EXE_PATH }
@@ -87,7 +87,7 @@ trait TStreamResolver { this: TProcessor =>
           val fileExt = properties.getProperty(FILE_EXTENSIONS)
           stream = newDirectoryStream(p)
           for (f <- stream if f.getFileName.toString.endsWith(fileExt)) {
-            debug(this, "Resolved resource: " + f.getFileName())
+            debug(this, "Resolved input resource: " + f.getFileName())
             inputMap += (f.getFileName.toString -> newInputStream(f))
           }
         } catch {
@@ -123,11 +123,18 @@ trait TStreamResolver { this: TProcessor =>
   def resolveOutputs(properties: Properties): Map[String, OutputStream] = {
     resolveFilePath(properties) match {
       case None => Map()
-      case Some(p) =>
-        createDirectories(p.getParent)
-        deleteIfExists(p)
-        createFile(p)
-        Map(p.getFileName.toString -> newOutputStream(p))
+      case Some(f) =>
+        debug(this, "Resolved output resource: " + f.getFileName)
+        createDirectories(f.getParent)
+        
+        //TODO INodeProperties.WRITE_OVERRIDE_EXISTING code here
+        Files.exists(f) match {
+          case true =>
+          case false =>
+        }
+        deleteIfExists(f)
+        createFile(f)
+        Map(f.getFileName.toString -> newOutputStream(f))
     }
   }
 

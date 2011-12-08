@@ -127,7 +127,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
           }
             
           //Configure with properties
-          actor ! Configure(configureProperties(nodeProperties(node)))
+          actor ! Configure(configureProperties(nodeProperties(node), f))
           //Add to internal map
           actors += (node.getId.getContent -> (actor, node.getType.getContent))
           statusMap += (actor.getUuid -> (actor, Created(), systemTime))
@@ -142,9 +142,14 @@ class DPUExecutor(dpu: IDataProcessingUnit,
   /**
    * Adds the DPU_PATH property to the property configuration
    */
-  private def configureProperties(properties: Properties): Properties = {
+  private def configureProperties(properties: Properties, f: TFactory): Properties = {
     properties setProperty (TLoader.EXE_PATH, execPath.toString)
-    new ImmutableProperties(properties)
+    
+    val defProperties = new Properties(f.createDefaultProperties)
+    defProperties.put(INodeProperties.DEBUG, "false")
+    
+    properties foreach {case (v,k) => defProperties setProperty(v,k)}
+    new ImmutableProperties(defProperties)
   }
 
   /**

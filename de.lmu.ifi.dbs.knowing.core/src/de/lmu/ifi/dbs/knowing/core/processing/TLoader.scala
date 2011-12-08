@@ -16,7 +16,7 @@ import java.io.FilenameFilter
  * <p>Loader retrieve data from a source and send it into
  * the DPU graph. After a Loader receives the Start messages
  * it begins to load the data.</p>
- * 
+ *
  * @author Nepomuk Seiler
  * @version 0.1
  */
@@ -25,8 +25,14 @@ trait TLoader extends TProcessor with TStreamResolver {
   /**
    * <p>Override for special behaviour</p>
    */
-  override protected def customReceive = ioReceive
+  override protected def customReceive = ioReceive orElse loaderReceive
 
+  private def loaderReceive: Receive = {
+    
+    case Configure(properties) => loaderConfiguration(properties)
+    
+  }
+  
   override def start {
     val dataset = getDataSet
     sendEvent(Results(dataset))
@@ -42,6 +48,16 @@ trait TLoader extends TProcessor with TStreamResolver {
    */
   @throws(classOf[IOException])
   def getDataSet(): Instances
+
+  private def loaderConfiguration(properties: Properties) {
+    configure(properties)
+    if (!resolved) {
+      inputs = resolveInputs(properties)
+      resolved = true
+    }
+    configure(properties)
+    statusChanged(Waiting())
+  }
 
   /* == Doesn't needed by TLoader == */
   def build(instances: Instances) = {}
@@ -95,7 +111,7 @@ object TLoader {
   /**
    * Tries to resolve URI based on the execution path if
    * not given as an absolute value.
-   * 
+   *
    * @return URI to inputSource
    */
   def getInputURI(properties: Properties): URI = {
@@ -116,7 +132,7 @@ object TLoader {
    * Tries to resolve URI based on the execution path if
    * not given as absolute value. Does this for every file
    * matching the given file extensions inside the given directory .
-   * 
+   *
    * @return URIs to inputSources
    */
   def getInputURIs(properties: Properties): Array[URI] = {
@@ -151,7 +167,7 @@ object TLoader {
   }
 
   /**
-   * 
+   *
    * @return Some(resolvedURI) or None
    */
   def resolveFile(exePath: String, filename: String): Option[URI] = {

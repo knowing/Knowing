@@ -38,6 +38,7 @@ object INodeProperties {
   val WRITE_MODE_NONE = "none"
   val WRITE_MODE_BATCH = "batch"
   val WRITE_MODE_INCREMENTAL = "incremental"
+  val WRITE_OVERRIDE_EXISTING = "override"
 
   /* ========================= */
   /* ====== Classifier ======= */

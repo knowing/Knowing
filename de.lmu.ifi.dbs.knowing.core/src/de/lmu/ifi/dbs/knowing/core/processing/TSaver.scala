@@ -1,7 +1,5 @@
 package de.lmu.ifi.dbs.knowing.core.processing
 
-
-import akka.actor.Actor
 import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.processing.TSaver._
@@ -9,7 +7,7 @@ import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import java.util.Properties
 import weka.core.{Instances, Instance}
 
-trait TSaver extends TProcessor {
+trait TSaver extends TProcessor with TStreamResolver {
 
   protected var _mode = WRITE_MODE_NONE
   protected var _file = "<no file>"
@@ -18,7 +16,9 @@ trait TSaver extends TProcessor {
   /**
    * <p>Override for special behaviour</p>
    */
-  override protected def customReceive = {
+  override protected def customReceive = ioReceive orElse saverReceive
+  
+  private def saverReceive: Receive = {
     
     case Configure(p) => saverConfiguration(p)
     
@@ -37,6 +37,10 @@ trait TSaver extends TProcessor {
     _file = properties.getProperty(FILE, "<no file>")
     _url = properties.getProperty(URL, "<no url>")
     configure(properties)
+    if(!resolved) {
+      outputs = resolveOutputs(properties)
+      resolved = true
+    }
     statusChanged(Waiting())
   }
 

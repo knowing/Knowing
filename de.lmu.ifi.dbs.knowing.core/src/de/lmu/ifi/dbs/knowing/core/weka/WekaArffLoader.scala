@@ -73,10 +73,6 @@ class WekaArffLoader extends TLoader {
 
   override def configure(properties: Properties) = {
     source = properties.getProperty(SOURCE_ATTRIBUTE, "false") toBoolean;
-    if(!resolved) {
-      inputs = resolveInputs(properties)
-      resolved = true
-    }
   }
 
   //Doesn't reset ArffReader -> cannot be gc
