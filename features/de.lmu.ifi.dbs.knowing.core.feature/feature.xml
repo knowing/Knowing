@@ -17,6 +17,19 @@
       [Enter License Description here.]
    </license>
 
+   <requires>
+      <import plugin="org.scala-ide.scala.library" version="2.9.1"/>
+      <import plugin="org.eclipse.sapphire.java" version="0.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.sapphire.modeling" version="0.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.sapphire.modeling.xml" version="0.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.sapphire.osgi" version="0.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.sapphire.platform" version="0.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.sapphire.workspace" version="0.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.wst.common.uriresolver"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="org.eclipse.osgi.services"/>
+   </requires>
+
    <plugin
          id="de.lmu.ifi.dbs.knowing.core"
          download-size="0"
@@ -39,71 +52,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.sapphire.java"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.sapphire.modeling"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.sapphire.modeling.xml"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.sapphire.osgi"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.sapphire.osgi.fragment"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.sapphire.workspace"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.wst.common.uriresolver"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.scala-ide.scala.library"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.lmu.ifi.dbs.knowing.core.common"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.sapphire.platform"
          download-size="0"
          install-size="0"
          version="0.0.0"
