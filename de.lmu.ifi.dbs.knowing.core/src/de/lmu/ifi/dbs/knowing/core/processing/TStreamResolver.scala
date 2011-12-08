@@ -144,7 +144,7 @@ trait TStreamResolver { this: TProcessor =>
   /**
    * @return None - if no absolute Path to the ressource could be created, Some(Path) else
    */
-  private def resolveFilePath(properties: Properties): Option[Path] = {
+  protected def resolveFilePath(properties: Properties): Option[Path] = {
     val accept = (isAbs: Boolean, isDir: Boolean) => (isAbs, isDir) match {
       //Resolved successfully
       case (true, false) => true
@@ -159,7 +159,7 @@ trait TStreamResolver { this: TProcessor =>
   /**
    *
    */
-  private def resolveDirPath(properties: Properties): Option[Path] = {
+  protected def resolveDirPath(properties: Properties): Option[Path] = {
     val accept = (isAbs: Boolean, isDir: Boolean) => (isAbs, isDir) match {
       //Resolved successfully
       case (true, true) => true
@@ -177,7 +177,7 @@ trait TStreamResolver { this: TProcessor =>
    * @param accept - Accept if path is directory or file
    * @return None on errors resolving Path, Some(Path) else
    */
-  private def resolveFromFileSystem(properties: Properties, key: String, accept: (Boolean, Boolean) => Boolean): Option[Path] = {
+  protected def resolveFromFileSystem(properties: Properties, key: String, accept: (Boolean, Boolean) => Boolean): Option[Path] = {
     if (!properties.containsKey(key))
       return None
 
@@ -216,7 +216,7 @@ trait TStreamResolver { this: TProcessor =>
    * @throws IOException - malformed URL,..
    */
   @throws(classOf[IOException])
-  private def resolveInputFromURL(properties: Properties): Option[InputStream] = {
+  protected def resolveInputFromURL(properties: Properties): Option[InputStream] = {
     (properties.containsKey(URL_PROP), properties.containsKey(FILE)) match {
       case (false, false) => None
 
