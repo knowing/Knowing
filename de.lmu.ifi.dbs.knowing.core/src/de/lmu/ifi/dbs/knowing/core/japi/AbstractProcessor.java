@@ -57,6 +57,11 @@ public abstract class AbstractProcessor implements IProcessor {
 	public OutputStream getOutputStream() {
 		return wrapper.getOutputStream();
 	}
+	
+	@Override
+	public void throwException(Throwable t, String details) {
+		wrapper.throwException(t, details);
+	}
 
 	protected int guessAndSetClassLabel(Instances dataset) {
 		return wrapper.guessAndSetClassLabel(dataset, -1);

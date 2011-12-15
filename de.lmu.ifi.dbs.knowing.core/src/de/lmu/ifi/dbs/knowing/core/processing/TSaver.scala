@@ -6,6 +6,7 @@ import de.lmu.ifi.dbs.knowing.core.processing.TSaver._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import java.util.Properties
 import weka.core.{Instances, Instance}
+import java.io.IOException
 
 trait TSaver extends TProcessor with TStreamResolver {
 
@@ -25,6 +26,7 @@ trait TSaver extends TProcessor with TStreamResolver {
     case Reset() => reset
   }
 
+  @throws(classOf[IOException])
   def write(instances: Instances)
 
   /**

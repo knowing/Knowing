@@ -4,13 +4,11 @@ import akka.actor.Actor
 import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
-import java.io.IOException
-import java.util.Properties
 import weka.core.{ Instances, Instance }
-import java.net.URL
-import java.net.URI
-import java.io.File
-import java.io.FilenameFilter
+import java.util.Properties
+import java.net.{URL,URI}
+import java.io.{FilenameFilter,File, IOException}
+import java.nio.file.NoSuchFileException
 
 /**
  * <p>Loader retrieve data from a source and send it into
@@ -28,15 +26,19 @@ trait TLoader extends TProcessor with TStreamResolver {
   override protected def customReceive = ioReceive orElse loaderReceive
 
   private def loaderReceive: Receive = {
-    
+
     case Configure(properties) => loaderConfiguration(properties)
-    
+
   }
-  
+
   override def start {
-    val dataset = getDataSet
-    sendEvent(Results(dataset))
-    statusChanged(Finished())
+    try {
+      val dataset = getDataSet
+      sendEvent(Results(dataset))
+      statusChanged(Finished())
+    } catch {
+      case e: Exception => throwException(e, "Loading dataset failed")
+    }
   }
 
   /**
@@ -51,11 +53,16 @@ trait TLoader extends TProcessor with TStreamResolver {
 
   private def loaderConfiguration(properties: Properties) {
     configure(properties)
-    if (!resolved) {
-      inputs = resolveInputs(properties)
-      resolved = true
+    try {
+      if (!resolved) {
+        inputs = resolveInputs(properties)
+        resolved = true
+      }
+    } catch {
+      case e: NoSuchFileException => throwException(e, "File not available")
+      case e: Exception => throwException(e, "Error resolving input")
     }
-    configure(properties)
+
     statusChanged(Waiting())
   }
 
