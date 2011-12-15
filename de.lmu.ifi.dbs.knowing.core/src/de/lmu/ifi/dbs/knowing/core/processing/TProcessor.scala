@@ -6,7 +6,7 @@ import scala.collection.mutable.Queue
 import scala.collection.mutable.ListBuffer
 import akka.actor.Actor
 import akka.event.EventHandler.{ debug, info, warning, error }
-import akka.config.Supervision.Permanent
+import akka.config.Supervision.Temporary
 import akka.actor.ActorRef
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
@@ -38,7 +38,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
   protected val queriesQueue = Queue[(Option[ActorRef], Queries)]()
 
   //Default lifeCylce 
-  self.lifeCycle = Permanent
+  self.lifeCycle = Temporary
 
   def receive: Receive = customReceive orElse defaultReceive
 
@@ -53,26 +53,35 @@ trait TProcessor extends Actor with TSender with TConfigurable {
   private def defaultReceive: Receive = {
     case Register(actor, in, out) => register(actor, in, out)
     case Configure(p) =>
-      configure(p)
-      properties.clear
-      properties.putAll(p)
-      statusChanged(Waiting())
+      try {
+        configure(p)
+        properties.clear
+        properties.putAll(p)
+        statusChanged(Waiting())
+      } catch {
+        case e: Exception => throwException(e, "Error while configuring")
+      }
+
     case Start | Start() => start
 
     //Process results
     case Results(inst, port) =>
       statusChanged(Running())
-      build(inst, port)
-      isBuild = true
-      processStoredQueries
-      self.sender match {
-        case Some(s) => s ! Finished()
-        case None => //Nothing
+      try {
+        build(inst, port)
+        isBuild = true
+        processStoredQueries
+        self.sender match {
+          case Some(s) => s ! Finished()
+          case None => //Nothing
+        }
+        statusChanged(Ready())
+      } catch {
+        case e: Exception => throwException(e, "Error while processing Results event")
       }
-      statusChanged(Ready())
 
     //Process single query
-    case Query(q) => isBuild match {
+    case Query(q) => try isBuild match {
       case true =>
         statusChanged(Running())
         processStoredQueries
@@ -93,8 +102,13 @@ trait TProcessor extends Actor with TSender with TConfigurable {
     //Process query result
     case QueryResults(r, q) =>
       statusChanged(Running())
-      result(r, q)
-      statusChanged(Ready())
+      try {
+        result(r, q)
+        statusChanged(Ready())
+      } catch {
+        case e: Exception => throwException(e, "Error while processing QueryResults")
+      }
+
     case QueriesResults(r) => r foreach { case (query, results) => result(results, query) }
     case Alive | Alive() => statusChanged(status)
     case msg => messageException(msg)
@@ -115,8 +129,10 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 
   def start = debug(this, "Running " + self.getActorClassName)
 
+  @throws(classOf[KnowingException])
   def build: PartialFunction[(Instances, Option[String]), Unit] = { case (instances, _) => build(instances) }
 
+  @throws(classOf[KnowingException])
   def build(instances: Instances)
 
   /**
@@ -129,6 +145,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
    * @param query - Instance with query
    * @return Instances - Query result
    */
+  @throws(classOf[KnowingException])
   def query(query: Instance): Instances
 
   /**
@@ -155,6 +172,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
    * @param result - the results
    * @param query - the query
    */
+  @throws(classOf[KnowingException])
   def result(result: Instances, query: Instance)
 
   /**
@@ -206,20 +224,23 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 
   protected def processStoredQueries {
     //Does not respect arrival time
+    try {}
+    catch {
+      case e: Exception => throwException(e, "Error while processing stored Query element")
+    }
     while (queryQueue.nonEmpty) {
       val elem = queryQueue.dequeue
-      elem._1 match {
-        case None => //nothing
-        case Some(s) => s ! QueryResults(query(elem._2.query), elem._2.query)
-      }
+      elem._1.foreach(_ ! QueryResults(query(elem._2.query), elem._2.query))
     }
-    while (queriesQueue.nonEmpty) {
-      val elem = queriesQueue.dequeue
-      elem._1 match {
-        case None => //nothing
+
+    try {
+      while (queriesQueue.nonEmpty) {
+        val elem = queriesQueue.dequeue
         //TODO Id must be send 
-        case Some(s) => s ! QueriesResults(queries(elem._2.queries))
+        elem._1.foreach(_ ! QueriesResults(queries(elem._2.queries)))
       }
+    } catch {
+      case e: Exception => throwException(e, "Error while processing stored Queries element")
     }
   }
 
@@ -235,13 +256,18 @@ trait TProcessor extends Actor with TSender with TConfigurable {
       case None => warning(this, "No supervisor defined!")
     }
   }
+
+  def throwException(err: Throwable, details: String = "") = self.supervisor match {
+    case Some(s) => s ! ExceptionEvent(err, details)
+    case None => warning(this, "No supervisor defined!")
+  }
 }
 
 object TProcessor {
 
   val ABSOLUTE_PATH = INodeProperties.ABSOLUTE_PATH
-  
-    /**
+
+  /**
    * @return index of the highest value orElse -1
    */
   def highestProbabilityIndex(distribution: Array[Double]): Int = distribution.length match {
@@ -249,8 +275,8 @@ object TProcessor {
     case 1 => 0
     case x => distribution.zipWithIndex.max._2
   }
-  
-    /**
+
+  /**
    *  <p>Checks the dataset for class attribute in this order
    *  <li> {@link Instances#classIndex()} -> if >= 0 returns index</li>
    *  <li> returns index of attribute named "class" if exists</li>

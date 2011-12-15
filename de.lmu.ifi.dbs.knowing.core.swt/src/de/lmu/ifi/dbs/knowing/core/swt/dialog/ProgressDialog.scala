@@ -1,12 +1,9 @@
 package de.lmu.ifi.dbs.knowing.core.swt.dialog
 
-import org.eclipse.jface.dialogs.Dialog
+import org.eclipse.jface.dialogs.{ MessageDialog, Dialog }
 import org.eclipse.swt.graphics.Point
 import org.eclipse.swt.layout.FillLayout
-import org.eclipse.swt.widgets.Composite
-import org.eclipse.swt.widgets.Control
-import org.eclipse.swt.widgets.Shell
-import org.eclipse.swt.widgets.Table
+import org.eclipse.swt.widgets.{ Table, Shell, Control, Composite }
 import org.eclipse.swt.SWT
 import org.eclipse.swt.widgets.TableColumn
 import org.eclipse.swt.widgets.ProgressBar
@@ -17,15 +14,15 @@ import org.eclipse.swt.widgets.TableItem
 import org.eclipse.swt.custom.TableEditor
 import com.eaio.uuid.UUID
 
-class ProgressDialog(shell: Shell, var disposed:Boolean = false) extends Dialog(shell) {
+class ProgressDialog(shell: Shell, var disposed: Boolean = false) extends Dialog(shell) {
 
   import ProgressDialog._
 
   var supervisor: ActorRef = _
-  
+
   private var table: Table = _
   private val rows: Map[UUID, (TableItem, ProgressBar)] = Map()
-  
+
   setBlockOnOpen(false)
 
   /**
@@ -46,7 +43,7 @@ class ProgressDialog(shell: Shell, var disposed:Boolean = false) extends Dialog(
         col.setText(name)
         col.setWidth(width)
     }
-    
+
     return container;
   }
 
@@ -58,10 +55,10 @@ class ProgressDialog(shell: Shell, var disposed:Boolean = false) extends Dialog(
     //		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
     //		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
   }
-  
-  override protected def close:Boolean = {
-    if(supervisor != null) {
-      if(supervisor.isRunning) {
+
+  override protected def close: Boolean = {
+    if (supervisor != null) {
+      if (supervisor.isRunning) {
         supervisor.stop
       }
     }
@@ -74,37 +71,60 @@ class ProgressDialog(shell: Shell, var disposed:Boolean = false) extends Dialog(
    */
   override protected def getInitialSize: Point = new Point(450, 300)
 
+  /**
+   * Handles different status updates. Stops process on finish or exception.
+   *
+   * @param actor - the actor sending the message, non null
+   * @param status - the status being send, non null
+   */
   def update(actor: ActorRef, status: Status) = {
     status match {
+
+      //Actor created -> create ProgressBar
       case Created() =>
         val item = new TableItem(table, SWT.NONE)
         val name = actor.getActorClassName.split('.').last
         item.setText(name)
-        item.setText(1, "Created")
         val bar = new ProgressBar(table, SWT.NONE)
         val editor = new TableEditor(table)
         editor.grabHorizontal = true
         editor.grabVertical = true
         editor.setEditor(bar, item, 2)
         rows += (actor.getUuid -> (item, bar))
+        changed(actor, 0, "Created")
+
+      //Actor makes progress -> update ProgressBar linked with this actor
       case Progress(task, worked, work) =>
         val row = rows(actor.getUuid)
         row._2.setMaximum(work)
-        row._2.setSelection(worked)
-        task match {
-          case null | "" => row._1.setText(1, "Progress")
-          case task => row._1.setText(1, task)
+        val msg = task match {
+          case null | "" => "Progress"
+          case task => task
         }
-      case Running() =>
-        val row = rows(actor.getUuid)
-        row._2.setSelection(0)
-        row._1.setText(1, "Running")
+        changed(actor, worked, msg)
+
+      //Should set ProgressBar to intermediate
+      case Running() => changed(actor, 0, "Running")
+
+      //Shutdown the ProgressDialog and process
       case Shutdown() => close
-      case status =>
-        val row = rows(actor.getUuid)
-        row._2.setSelection(0)
-        row._1.setText(1, status.toString)
+
+      //Handles exception thrown by actor
+      case ExceptionEvent(e, details) =>
+        MessageDialog.openError(new Shell, "Error in " + actor.getActorClassName, details + " \n \n" + e.getMessage)
+        close
+
+      case status => changed(actor, 0, status.toString)
     }
+  }
+
+  /**
+   * Status for actor changed
+   */
+  private def changed(actor: ActorRef, selection: Int, msg: String) {
+    val row = rows(actor.getUuid)
+    row._2.setSelection(selection)
+    row._1.setText(1, msg)
   }
 
 }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataProcessingUnit name="dpu-exception-test.dpu">
+    <configuration>
+        <history>false</history>
+        <output>
+            <absolute>true</absolute>
+        </output>
+    </configuration>
+    <nodes>
+        <node id="ExceptionProcessor" factoryId="knowing.test.processor.ExceptionProcessor" type="processor"></node>
+        <node id="EmptyLoader" factoryId="knowing.test.loader.EmptyLoader" type="loader"></node>
+        <node id="EmptyQuery" factoryId="knowing.test.processor.EmptyQueryProcessor" type="processor"></node>
+    </nodes>
+    <edges>
+        <edge source="EmptyLoader" target="EmptyQuery" id="loader2query"></edge>
+        <edge source="EmptyLoader" target="ExceptionProcessor" id="loader2exception"></edge>
+        <edge source="EmptyQuery" target="ExceptionProcessor" id="query2exception"></edge>
+    </edges>
+</DataProcessingUnit>

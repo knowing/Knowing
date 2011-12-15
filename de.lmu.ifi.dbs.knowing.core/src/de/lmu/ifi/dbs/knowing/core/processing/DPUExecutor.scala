@@ -3,9 +3,9 @@ package de.lmu.ifi.dbs.knowing.core.processing
 import java.net.URI
 import java.util.Properties
 import java.util.concurrent.{ TimeUnit, ScheduledFuture, ConcurrentLinkedQueue }
-import java.io.{InputStream,OutputStream, IOException, PrintWriter}
+import java.io.{ InputStream, OutputStream, IOException, PrintWriter }
 import akka.actor.{ Actor, ActorRef }
-import akka.config.Supervision.AllForOneStrategy
+import akka.config.Supervision.OneForOneStrategy
 import akka.event.EventHandler.{ debug, info, warning, error }
 import akka.dispatch._
 import de.lmu.ifi.dbs.knowing.core.factory._
@@ -24,24 +24,24 @@ import weka.core.Instances
 
 /**
  * <p> SupervisorActor for a data mining process.</p>
- * <p> This class is used to execute a DPU inside a 
+ * <p> This class is used to execute a DPU inside a
  * specific WidgetSystem and on a specified executionPath.</p>
- * 
+ *
  * @author Nepomuk Seiler
  * @version 0.3
  */
 class DPUExecutor(dpu: IDataProcessingUnit,
-    uifactory: UIFactory,
-    execPath: URI,
-    directory: IFactoryDirectory,
-    loaderInput: Map[String, InputStream] = Map(),
-    saverOutput: Map[String, OutputStream] = Map()) extends Actor with TSender {
+  uifactory: UIFactory,
+  execPath: URI,
+  directory: IFactoryDirectory,
+  loaderInput: Map[String, InputStream] = Map(),
+  saverOutput: Map[String, OutputStream] = Map()) extends Actor with TSender {
 
-  self.faultHandler = AllForOneStrategy(List(classOf[Throwable]), 5, 5000)
+  self.faultHandler = OneForOneStrategy(List(classOf[Throwable]), 5, 5000)
 
   /** NodeID -> (actor, type) */
   var actors = MutableMap[String, (ActorRef, NodeType)]()
-  
+
   /** UUID -> NodeID */
   var actorsByUuid = MutableMap[UUID, String]()
 
@@ -79,11 +79,21 @@ class DPUExecutor(dpu: IDataProcessingUnit,
 
   def receive = {
     case Register(actor, in, out) => register(actor, in, out)
+    
     case Start | Start() => evaluate
+    
     case UpdateUI | UpdateUI() => uifactory update (self.sender.getOrElse(null), UpdateUI())
+    
+    case e:ExceptionEvent => 
+      warning(self.sender.getOrElse(self), e.details + "\n" + e.throwable + "\n" + e.throwable.getStackTraceString)
+      handleStatus(e)
+      
     case status: Status => handleStatus(status)
+    
     case uiEvent: UIEvent => handleUIEvent(uiEvent)
+    
     case event: Event => //Do nothing
+      
     case msg => warning(this, "Unkown Message: " + msg)
   }
 
@@ -117,15 +127,15 @@ class DPUExecutor(dpu: IDataProcessingUnit,
           actor.setDispatcher(self.dispatcher)
           self startLink actor
           //Register and link the supervisor
-          actor ! Register(self, None)
+//          actor ! Register(self, None)
           //Check for special nodes(presenter,loader,saver) and init
           (node.getId.getContent, node.getType.getContent) match {
-            case (_,NodeType.PRESENTER) => actor ! UIFactoryEvent(uifactory, node)
-            case (id,NodeType.LOADER) if loaderInput.containsKey(id) => actor ! ConfigureInput(ResultsUtil.UNKOWN_SOURCE, loaderInput(id))
-            case (id,NodeType.SAVER)  if saverOutput.containsKey(id) => actor ! ConfigureOutput(ResultsUtil.UNKOWN_SOURCE, saverOutput(id))
+            case (_, NodeType.PRESENTER) => actor ! UIFactoryEvent(uifactory, node)
+            case (id, NodeType.LOADER) if loaderInput.containsKey(id) => actor ! ConfigureInput(ResultsUtil.UNKOWN_SOURCE, loaderInput(id))
+            case (id, NodeType.SAVER) if saverOutput.containsKey(id) => actor ! ConfigureOutput(ResultsUtil.UNKOWN_SOURCE, saverOutput(id))
             case _ => //no special treatment
           }
-            
+
           //Configure with properties
           actor ! Configure(configureProperties(nodeProperties(node), f))
           //Add to internal map
@@ -133,7 +143,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
           statusMap += (actor.getUuid -> (actor, Created(), systemTime))
           uifactory update (actor, Created())
           uifactory update (self, Progress("initialize", 1, dpu.getNodes.size))
-        case None => error(this, "No factory found for: " + node.getFactoryId.getText)
+        case None => self ! ExceptionEvent(new Exception, "No factory found for: " + node.getFactoryId.getText)
       }
     })
     uifactory update (self, Finished())
@@ -144,11 +154,11 @@ class DPUExecutor(dpu: IDataProcessingUnit,
    */
   private def configureProperties(properties: Properties, f: TFactory): Properties = {
     properties setProperty (TLoader.EXE_PATH, execPath.toString)
-    
+
     val defProperties = new Properties(f.createDefaultProperties)
     defProperties.put(INodeProperties.DEBUG, "false")
-    
-    properties foreach {case (v,k) => defProperties setProperty(v,k)}
+
+    properties foreach { case (v, k) => defProperties setProperty (v, k) }
     new ImmutableProperties(defProperties)
   }
 
@@ -167,7 +177,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
 
   /**
    * On each status update the supervisor checks if the
-   * process has finished. 
+   * process has finished.
    */
   private def handleStatus(status: Status) {
     uifactory update (self.sender.getOrElse(null), status)
@@ -176,7 +186,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
       case None => warning(this, "Unkown status message: " + status)
     }
     status match {
-      
+
       //Only check if finished if a "finishing" event arrives
       case Ready() | Finished() => if (finished) {
         info(this, "Evaluation finished. Stopping schedules and supervisor")
@@ -185,7 +195,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
         uifactory update (self, Shutdown())
         self stop
       }
-      
+
       //Process seems to be going on
       case _ => //nothing happens
     }
@@ -240,7 +250,7 @@ object DPUExecutor {
  * <p> Dispatcher which uses the mailboxes of each actor to log
  * messages send between actors. This Dispatcher is only used if
  * the "history" property is enabled in the DataProcessingUnit (DPU).</p>
- * 
+ *
  * @author Nepomuk Seiler
  * @version 0.1
  */
