@@ -21,7 +21,7 @@ class ProgressDialog(shell: Shell, var disposed: Boolean = false) extends Dialog
   var supervisor: ActorRef = _
 
   private var table: Table = _
-  private val rows: Map[UUID, (TableItem, ProgressBar)] = Map()
+  private var rows: Map[UUID, (TableItem, ProgressBar)] = Map()
 
   setBlockOnOpen(false)
 
@@ -62,6 +62,10 @@ class ProgressDialog(shell: Shell, var disposed: Boolean = false) extends Dialog
         supervisor.stop
       }
     }
+    table.dispose()
+    table = null
+    rows = Map()
+    supervisor = null
     disposed = true
     super.close
   }
@@ -105,8 +109,8 @@ class ProgressDialog(shell: Shell, var disposed: Boolean = false) extends Dialog
 
       //Should set ProgressBar to intermediate
       case Running() => changed(actor, 0, "Running")
-
-      //Shutdown the ProgressDialog and process
+      
+      //Close ProgressDialog
       case Shutdown() => close
 
       //Handles exception thrown by actor

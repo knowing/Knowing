@@ -29,7 +29,12 @@ class WekaFilter(val filter: Filter) extends TFilter {
     val header = new Instances(instances, 0)
     guessAndSetClassLabel(header)
     filter.setInputFormat(header)
-    Filter.useFilter(instances, filter)
+    val results = Filter.useFilter(instances, filter)
+    
+    //this resets the RelationLocator
+    filter.setInputFormat(header)
+    
+    results
   }
 
   def query(query: Instance): Instances = {

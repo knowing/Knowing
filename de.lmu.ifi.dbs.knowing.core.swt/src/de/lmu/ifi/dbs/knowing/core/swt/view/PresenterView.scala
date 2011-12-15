@@ -85,7 +85,7 @@ object PresenterView { val ID = "de.lmu.ifi.dbs.knowing.core.swt.presenterView" 
  * This class was the first UIFactory implementation. Will be
  * improved by extending TabUIFactory. Almost all the code got
  * used in UIFactories.scala
- * 
+ *
  * @author Nepomuk Seiler
  * @version 0.1
  */
@@ -124,7 +124,7 @@ class PresenterUIFactory(view: PresenterView) extends TypedActor with UIFactory 
     //Handle special status events
     status match {
       case UpdateUI() => view update
-      case Shutdown() => 
+      case Shutdown() =>
         started = false
         supervisor = null
         debug(this, "Shutdown UI Factory")
@@ -132,6 +132,6 @@ class PresenterUIFactory(view: PresenterView) extends TypedActor with UIFactory 
     }
 
   }
-  
+
   def setSupervisor(supervisor: ActorRef) = this.supervisor = supervisor
 }
