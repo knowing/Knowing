@@ -107,4 +107,11 @@ public interface IProcessor {
 	 * this methods creates an @OutputStream </p>
 	 */
 	OutputStream getOutputStream() throws IOException;
+	
+	/**
+	 * 
+	 * @param t
+	 * @param details
+	 */
+	void throwException(Throwable t, String details);
 }

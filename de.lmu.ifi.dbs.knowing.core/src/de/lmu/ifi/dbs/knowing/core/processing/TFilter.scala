@@ -21,6 +21,7 @@ trait TFilter extends TProcessor {
    * Default implementation uses the query method. Override
    * this method for performance issues or if the input is need as a whole.
    */
+  @throws(classOf[KnowingException])
   def filter(instances: Instances): Instances = {
     val results = queries(instances)
     mergeResults(results)
