@@ -55,7 +55,10 @@ class WekaArffSaver extends TSaver {
           }
 
           val inst = enumInst.nextElement.asInstanceOf[Instance]
-          val sb = attributes.foldLeft(new StringBuffer)((sb, attr) => sb.append(inst.value(attr) + ","))
+          val sb = attributes.foldLeft(new StringBuffer) {
+            case (sb, attr) if attr.`type` == Attribute.DATE => sb.append(attr.formatDate(inst.value(attr)) + ",")
+            case (sb, attr) => sb.append(inst.value(attr) + ",")
+          }
 
           sb.deleteCharAt(sb.length - 1) //remove last ','
           writer.println(sb.toString)
@@ -68,7 +71,7 @@ class WekaArffSaver extends TSaver {
         count += 1
     }
 
-    reset 
+    reset
   }
 
   def reset = configure(properties)

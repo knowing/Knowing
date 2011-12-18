@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataProcessingUnit name="ArffLoader to ArffSaver">
+    <configuration>
+        <history>false</history>
+        <output>
+            <absolute>true</absolute>
+        </output>
+    </configuration>
+    <nodes>
+        <node id="ArffLoader" factoryId="weka.core.converters.ArffLoader" type="loader">
+            <properties>
+                <property key="file" value="timeSeries.arff"></property>
+            </properties>
+        </node>
+        <node id="ArffSaver" factoryId="weka.core.converters.ArffSaver" type="saver">
+            <properties>
+                <property key="file" value="saveTimeSeries.arff"></property>
+            </properties>
+        </node>
+    </nodes>
+    <edges>
+        <edge source="ArffLoader" target="ArffSaver" id="loader2saver"></edge>
+    </edges>
+</DataProcessingUnit>
