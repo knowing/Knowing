@@ -57,6 +57,7 @@ class WekaArffSaver extends TSaver {
           val inst = enumInst.nextElement.asInstanceOf[Instance]
           val sb = attributes.foldLeft(new StringBuffer) {
             case (sb, attr) if attr.`type` == Attribute.DATE => sb.append(attr.formatDate(inst.value(attr)) + ",")
+            case (sb, attr) if attr.`type` == Attribute.NOMINAL => sb.append(attr.value(inst.value(attr).toInt) + ",")
             case (sb, attr) => sb.append(inst.value(attr) + ",")
           }
 
