@@ -34,7 +34,7 @@ trait TLoader extends TProcessor with TStreamResolver {
   override def start {
     try {
       val dataset = getDataSet
-      sendEvent(Results(dataset))
+      sendResults(dataset)
       statusChanged(Finished())
     } catch {
       case e: Exception => throwException(e, "Loading dataset failed")

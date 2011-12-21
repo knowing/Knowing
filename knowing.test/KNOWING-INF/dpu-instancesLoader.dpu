@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataProcessingUnit name="InstancesLoader">
+    <configuration>
+        <history>false</history>
+        <output>
+            <absolute>true</absolute>
+        </output>
+    </configuration>
+    <nodes>
+        <node id="InstancesLoader" factoryId="de.lmu.ifi.dbs.knowing.core.common.io.InstancesLoader" type="loader">
+            <properties>
+                <property key="file" value="output.inst"></property>
+            </properties>
+        </node>
+        <node id="ArffSaver" factoryId="weka.core.converters.ArffSaver" type="saver">
+            <properties>
+                <property key="file" value="iris.new.arff"></property>
+            </properties>
+        </node>
+    </nodes>
+    <edges>
+        <edge source="InstancesLoader" target="ArffSaver" id="loader2saver"></edge>
+    </edges>
+</DataProcessingUnit>
