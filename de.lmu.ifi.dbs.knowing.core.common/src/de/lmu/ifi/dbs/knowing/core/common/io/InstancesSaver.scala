@@ -15,8 +15,10 @@ class InstancesSaver extends TSaver {
     case (file, out) =>
       val saver = new SerializedInstancesSaver
       saver.setDestination(out)
-      //Should be configured, default: incremental
-      saver.setInstances(instances)
+      
+      //Use own implementation for performance?
+      //Must be converted as WEKA doesn't know ImmutableInstances
+      saver.setInstances(new Instances(instances))
       saver.writeBatch
       saver.resetWriter
   }

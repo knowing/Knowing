@@ -14,12 +14,16 @@ import java.util.Random
  */
 class ImmutableInstances(instances: Instances) extends Instances(instances, instances.numInstances) {
 
+  initialize()
+
   //Add instances to this instance without creating a copy
-  val enum = instances.enumerateInstances
-  while (enum hasMoreElements) {
-    val inst = enum.nextElement.asInstanceOf[Instance]
-    super.add(inst)
-    inst.setDataset(instances)
+  private def initialize() {
+    val enum = instances.enumerateInstances
+    while (enum hasMoreElements) {
+      val inst = enum.nextElement.asInstanceOf[Instance]
+      super.add(inst)
+      inst.setDataset(instances) //
+    }
   }
 
   override def add(inst: Instance) = throw new UnsupportedOperationException("Instances is immutable!")
@@ -62,9 +66,9 @@ class ImmutableInstances(instances: Instances) extends Instances(instances, inst
   //ClassIndex should be mutable
   //  override def setClass(attribute: Attribute) = throw new UnsupportedOperationException("Instances is immutable!")
   //  override def setClassIndex(index: Int) = throw new UnsupportedOperationException("Instances is immutable!")
-  
+
   override def toString() = relationName
-  
+
   def toStringComplete() = super.toString
 }
     

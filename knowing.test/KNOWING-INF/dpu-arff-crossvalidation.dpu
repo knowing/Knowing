@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DataProcessingUnit name="arff-cross-validation">
+<DataProcessingUnit name="Arff-1Fold-validation">
     <description>Cross Validation with NaiveBayes output to TablePresenter</description>
     <tags>Cross, Validation, Cross Validation, ARFF, NaiveBayes</tags>
     <nodes>
@@ -16,7 +16,7 @@
         </node>
         <node  id="ARFF" factoryId="weka.core.converters.ArffLoader" type="loader" >
             <properties>
-                <property value="iris.arff" key="url"/>
+                <property value="iris.arff" key="file"/>
             </properties>
         </node>
         <node id="TablePresenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" type="presenter" >
