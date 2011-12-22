@@ -31,7 +31,7 @@ import de.lmu.ifi.dbs.knowing.core.model._
  */
 class PresenterView extends ViewPart {
 
-  val uifactory = TypedActor.newInstance(classOf[UIFactory], new PresenterUIFactory(this))
+  val uifactory = TypedActor.newInstance(classOf[UIFactory[Composite]], new PresenterUIFactory(this))
   val rendevouz = new SynchronousQueue[Composite]
 
   private var tabFolder: CTabFolder = _
@@ -89,7 +89,7 @@ object PresenterView { val ID = "de.lmu.ifi.dbs.knowing.core.swt.presenterView" 
  * @author Nepomuk Seiler
  * @version 0.1
  */
-class PresenterUIFactory(view: PresenterView) extends TypedActor with UIFactory {
+class PresenterUIFactory(view: PresenterView) extends TypedActor with UIFactory[Composite] {
 
   private var started = false
   private var dialog: ProgressDialog = _

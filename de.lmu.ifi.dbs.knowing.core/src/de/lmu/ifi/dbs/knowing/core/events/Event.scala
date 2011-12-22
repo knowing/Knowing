@@ -20,7 +20,7 @@ case class QueryResults(instances: Instances, query: Instance) extends Event
 case class QueriesResults(results: List[(Instance, Instances)]) extends Event //query, results
 case class Query(query: Instance) extends Event
 case class Queries(queries: Instances, id: String = "") extends Event
-case class UIFactoryEvent(factory: UIFactory, node: INode) extends Event
+case class UIFactoryEvent(factory: UIFactory[_], node: INode) extends Event
 
 /* ======================== */
 /* == Status Commands ===== */

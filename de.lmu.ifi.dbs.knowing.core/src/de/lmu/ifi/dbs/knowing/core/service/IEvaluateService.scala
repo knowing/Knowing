@@ -22,7 +22,7 @@ trait IEvaluateService {
    * @param uiFactory - choose uiSystem and where to present
    * @param execPath - executionPath to resolve relative properties
    */
-  def evaluate(dpu: IDataProcessingUnit, ui: UIFactory, execPath: URI): ActorRef
+  def evaluate(dpu: IDataProcessingUnit, ui: UIFactory[_], execPath: URI): ActorRef
   
-  def evaluate(dpu: IDataProcessingUnit, ui: UIFactory, execPath: URI, input: MutableMap[String, InputStream], output: MutableMap[String, OutputStream]): ActorRef
+  def evaluate(dpu: IDataProcessingUnit, ui: UIFactory[_], execPath: URI, input: MutableMap[String, InputStream], output: MutableMap[String, OutputStream]): ActorRef
 }

@@ -11,9 +11,9 @@ import de.lmu.ifi.dbs.knowing.core.model.INode
  * @since 22.04.2011
  *
  */
-trait UIFactory { 
+trait UIFactory[T] { 
   
-  def createContainer(node: INode):AnyRef
+  def createContainer(node: INode):T
   
   def update(actor: ActorRef, status: Status)
   

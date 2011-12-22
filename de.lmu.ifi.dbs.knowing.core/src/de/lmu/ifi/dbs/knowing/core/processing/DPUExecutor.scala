@@ -31,7 +31,7 @@ import weka.core.Instances
  * @version 0.3
  */
 class DPUExecutor(dpu: IDataProcessingUnit,
-  uifactory: UIFactory,
+  uifactory: UIFactory[_],
   execPath: URI,
   directory: IFactoryDirectory,
   loaderInput: Map[String, InputStream] = Map(),

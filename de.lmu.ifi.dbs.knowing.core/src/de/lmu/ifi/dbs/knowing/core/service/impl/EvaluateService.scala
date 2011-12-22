@@ -27,9 +27,9 @@ class EvaluateService extends IEvaluateService {
    * Instantiates GraphSupervisor and runs the DPU
    * @see IEvaluationService
    */
-  def evaluate(dpu: IDataProcessingUnit, ui: UIFactory, execPath: URI): ActorRef = evaluate(dpu, ui, execPath, HashMap(), HashMap())
+  def evaluate(dpu: IDataProcessingUnit, ui: UIFactory[_], execPath: URI): ActorRef = evaluate(dpu, ui, execPath, HashMap(), HashMap())
   
-  def evaluate(dpu: IDataProcessingUnit, ui: UIFactory, execPath: URI, input: MutableMap[String, InputStream], output: MutableMap[String, OutputStream]): ActorRef = {
+  def evaluate(dpu: IDataProcessingUnit, ui: UIFactory[_], execPath: URI, input: MutableMap[String, InputStream], output: MutableMap[String, OutputStream]): ActorRef = {
     val executor = actorOf(new DPUExecutor(dpu,ui, execPath, factoryDirectory)).start
     executor ! Start()
     executor

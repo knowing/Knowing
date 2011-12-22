@@ -22,7 +22,7 @@ object UIFactories {
  * Abstract default class to implement own SWT UIFactories.
  * Provides a simple ProgressDialog.
  */
-abstract class SwtUIFactory(parent: Composite) extends TypedActor with UIFactory {
+abstract class SwtUIFactory(parent: Composite) extends TypedActor with UIFactory[Composite] {
 
   private val rendevouz = new SynchronousQueue[Composite]
   private var started = false
