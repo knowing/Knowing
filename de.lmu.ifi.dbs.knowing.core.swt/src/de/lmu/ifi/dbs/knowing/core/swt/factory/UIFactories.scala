@@ -3,6 +3,7 @@ package de.lmu.ifi.dbs.knowing.core.swt.factory
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
 import de.lmu.ifi.dbs.knowing.core.model.INode
 import de.lmu.ifi.dbs.knowing.core.events._
+import de.lmu.ifi.dbs.knowing.core.util.DPUUtil
 import de.lmu.ifi.dbs.knowing.core.swt.dialog.ProgressDialog
 import akka.actor.ActorRef
 import akka.actor.TypedActor
@@ -13,6 +14,9 @@ import org.eclipse.swt.SWT
 import org.eclipse.swt.custom.CTabItem
 import org.eclipse.swt.layout.FillLayout
 import java.util.concurrent.SynchronousQueue
+import java.util.Properties
+import scala.collection.JavaConversions._
+
 
 object UIFactories {
 
@@ -25,6 +29,7 @@ object UIFactories {
 abstract class SwtUIFactory(parent: Composite) extends TypedActor with UIFactory[Composite] {
 
   private val rendevouz = new SynchronousQueue[Composite]
+
   private var started = false
   private var dialog: ProgressDialog = _
   var supervisor: ActorRef = _
@@ -34,10 +39,10 @@ abstract class SwtUIFactory(parent: Composite) extends TypedActor with UIFactory
    * care of sync with the UI thread.
    */
   def createContainer(node: INode): Composite = {
-    debug(this, "CreateContainer with " + node + " ... waiting for finish...")
+    debug(this, "CreateContainer with [" + node + "]  Waiting for finish.")
     parent.getDisplay.asyncExec(new Runnable {
       def run {
-        debug(this, "Trying to create tab... ")
+        debug(this, "Trying to create UI container on UI thread.")
         val composite = createControl(node)
         rendevouz put (composite)
       }
@@ -70,22 +75,41 @@ abstract class SwtUIFactory(parent: Composite) extends TypedActor with UIFactory
     //Handle special status events
     status match {
       case UpdateUI() =>
-        parent.getDisplay.asyncExec(
+        parent.getDisplay.syncExec(
           new Runnable {
-            def run = parent.layout()
+            def run = updateUI()
           })
       case Shutdown() => started = false
       case _ =>
     }
   }
 
-  def setSupervisor(supervisor: ActorRef) = this.supervisor = supervisor
+  def setSupervisor(supervisor: ActorRef) = {
+    this.supervisor = supervisor
+    parent.getDisplay.syncExec(
+      new Runnable {
+        def run = disposeControls()
+      })
+
+  }
+
+  /**
+   * Forces the UI to repaint
+   */
+  def updateUI() = parent.layout()
 
   /**
    * Extending classes must implement this method.
    * It's synchronized with the UI thread.
    */
   def createControl(node: INode): Composite
+
+  /**
+   * A new datamining process is started. Dispose
+   * old UI containers.
+   * It's synchronized with the UI thread.
+   */
+  def disposeControls()
 
 }
 
@@ -95,10 +119,20 @@ abstract class SwtUIFactory(parent: Composite) extends TypedActor with UIFactory
  */
 class CompositeUIFactory(parent: Composite) extends SwtUIFactory(parent) {
 
+  private var composite: Composite = _
+
   def createControl(node: INode): Composite = {
-    val composite = new Composite(parent, SWT.NONE)
+    composite = new Composite(parent, SWT.NONE)
     composite.setLayout(new FillLayout)
+    
+    //TODO: Configure LayoutManager with properties
+    //DPUUtil.nodeProperties(node)
     composite
+  }
+
+  def disposeControls() = {
+    composite.dispose()
+    composite = null
   }
 }
 
@@ -122,11 +156,22 @@ class TabUIFactory(parent: Composite, style: Int = SWT.BOTTOM) extends SwtUIFact
     val composite = new Composite(tabFolder, SWT.NONE)
     composite.setLayout(new FillLayout)
     tabItem.setControl(composite)
+
     composite
   }
 
-  def clearTabs {
-    val items = tabFolder.getItems();
-    items foreach (item => item.dispose)
+  /**
+   * Disposes all items inside the CTabFolder.
+   * Does not dispose the CTabFolder.
+   */
+  def disposeControls() = tabFolder.getItems foreach (item => item.dispose)
+
+  /**
+   * Sets selection to the first tab if exists.
+   */
+  override def updateUI() = tabFolder.getItemCount match {
+    case 0 =>
+    case _ => tabFolder.setSelection(0)
   }
+
 }

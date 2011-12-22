@@ -26,8 +26,8 @@ object DPUUtil {
   }
 
   /**
-   * Eclipse Sapphire now offers clone support all models. 
-   * 
+   * Eclipse Sapphire now offers clone support all models.
+   *
    * @param source -> copy values from here
    * @param destination -> paste values in here
    * @return destination
@@ -170,12 +170,10 @@ object DPUUtil {
     dpu.getNodes.toList filter (node => node.getType.equals(typ) && node.getFactoryId.equals(factory)) toArray
   }
 
-  def nodeProperties(node: INode): Properties = {
-    val props = new Properties
-    node.getProperties.foldLeft(props) { (properties, p) =>
+  def nodeProperties(node: INode): Properties = node.getProperties.foldLeft(new Properties) {
+    (properties, p) =>
       properties.setProperty(p.getKey.getContent, p.getValue.getContent)
       properties
-    }
   }
 
   def setNodeProperties(node: INode, properties: Properties) = {
