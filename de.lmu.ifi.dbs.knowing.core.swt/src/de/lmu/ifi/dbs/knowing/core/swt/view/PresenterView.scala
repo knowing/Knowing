@@ -133,5 +133,12 @@ class PresenterUIFactory(view: PresenterView) extends TypedActor with UIFactory[
 
   }
 
-  def setSupervisor(supervisor: ActorRef) = this.supervisor = supervisor
+  def setSupervisor(supervisor: ActorRef) = {
+    this.supervisor = supervisor
+    view.getSite.getShell.getDisplay.asyncExec(
+      new Runnable {
+        def run = view.clearTabs
+      })
+  }
+  
 }

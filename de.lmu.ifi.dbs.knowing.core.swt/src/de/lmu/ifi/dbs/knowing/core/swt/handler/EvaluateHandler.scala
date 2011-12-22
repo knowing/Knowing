@@ -34,23 +34,3 @@ class EvaluateHandler extends AbstractHandler {
   }
 
 }
-
-object EvaluateHandler {
-
-  def evaluate(dpu: IDataProcessingUnit, dpuPath: URI): ActorRef = {
-    try {
-      val view = PlatformUI.getWorkbench.getActiveWorkbenchWindow.getActivePage.showView(PresenterView.ID)
-      val pView = view.asInstanceOf[PresenterView]
-      pView.clearTabs
-      Activator.evaluateService.evaluate(dpu, pView.uifactory, dpuPath)
-    } catch {
-      case pEx: PartInitException =>
-        pEx.printStackTrace
-        null
-      case e: Exception =>
-        e.printStackTrace
-        null
-    }
-  }
-
-}

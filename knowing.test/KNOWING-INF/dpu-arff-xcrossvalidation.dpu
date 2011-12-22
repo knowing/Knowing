@@ -36,11 +36,13 @@
 		<!-- <node id="ArffOutput" type="saver" factoryId="weka.core.converters.ArffSaver"> 
 			<properties> <property key="file" value="output.saver.arff" /> </properties> 
 			</node> -->
+        <node id="RawMatrixPresenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" type="presenter"></node>
 	</nodes>
 	<edges>
 		<edge id="arff_validator" source="ARFF" target="validator" />
 		<edge id="validator_confusion" source="validator" target="confusionMatrix" />
 		<edge id="confusion_presenter" source="confusionMatrix" target="TablePresenter" />
 		<!-- <edge id="validator_arffSaver" source="validator" target="ArffOutput" /> -->
+        <edge source="validator" target="RawMatrixPresenter" id="rawMatrix2presenter"></edge>
 	</edges>
 </DataProcessingUnit>

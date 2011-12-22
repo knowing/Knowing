@@ -28,10 +28,12 @@
 				<property key="rows" value="100" />
 			</properties>
 		</node>
+        <node id="RawTablePresenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" type="presenter"></node>
 	</nodes>
 	<edges>
 		<edge id="arff_validator" source="ARFF" target="validator" />
 		<edge id="validator_confusion" source="validator" target="confusionMatrix" />
-		<edge id="confusion_presenter" source="confusionMatrix" target="TablePresenter" />
+		<edge id="confusion2presenter" source="confusionMatrix" target="TablePresenter" />
+        <edge source="validator" target="RawTablePresenter" id="rawMatrix2Presenter"></edge>
 	</edges>
 </DataProcessingUnit>
