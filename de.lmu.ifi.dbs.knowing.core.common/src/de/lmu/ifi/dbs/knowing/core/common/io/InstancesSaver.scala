@@ -29,4 +29,6 @@ class InstancesSaver extends TSaver {
 
 }
 
-class InstancesSaverFactory extends ProcessorFactory(classOf[InstancesSaver])
+class InstancesSaverFactory extends ProcessorFactory(classOf[InstancesSaver]) {
+  override val id = classOf[weka.core.converters.SerializedInstancesSaver].getName
+}

@@ -7,7 +7,7 @@
         </output>
     </configuration>
     <nodes>
-        <node id="InstancesLoader" factoryId="de.lmu.ifi.dbs.knowing.core.common.io.InstancesLoader" type="loader">
+        <node id="InstancesLoader" factoryId="weka.core.converters.SerializedInstancesLoader" type="loader">
             <properties>
                 <property key="file" value="output.inst"></property>
             </properties>

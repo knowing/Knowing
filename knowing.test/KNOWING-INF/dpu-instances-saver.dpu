@@ -12,7 +12,7 @@
                 <property key="file" value="iris.arff"></property>
             </properties>
         </node>
-        <node id="InstancesSaver" factoryId="de.lmu.ifi.dbs.knowing.core.common.io.InstancesSaver" type="saver">
+        <node id="InstancesSaver" factoryId="weka.core.converters.SerializedInstancesSaver" type="saver">
             <properties>
                 <property key="file" value="output.inst"></property>
             </properties>

@@ -30,4 +30,6 @@ class InstancesLoader extends TLoader {
 
 }
 
-class InstancesLoaderFactory extends ProcessorFactory(classOf[InstancesLoader])
+class InstancesLoaderFactory extends ProcessorFactory(classOf[InstancesLoader]) {
+  override val id = classOf[weka.core.converters.SerializedInstancesLoader].getName
+}
