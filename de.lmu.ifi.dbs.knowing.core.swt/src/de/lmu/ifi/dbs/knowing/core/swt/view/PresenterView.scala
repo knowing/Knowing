@@ -3,40 +3,48 @@ package de.lmu.ifi.dbs.knowing.core.swt.view
 import akka.actor.{ ActorRef, Actor, TypedActor }
 import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
-import java.util.concurrent.{ ArrayBlockingQueue, SynchronousQueue }
-import org.eclipse.swt.layout.FillLayout
 import org.eclipse.swt.SWT
 import org.eclipse.swt.widgets.Composite
 import org.eclipse.swt.graphics.Image
 import org.eclipse.swt.custom.{ CTabFolder, CTabItem }
 import org.eclipse.ui.part.ViewPart
-import org.eclipse.ui.IPropertyListener
-import org.eclipse.core.runtime.{ Status => JobStatus, IStatus, IProgressMonitor }
 import de.lmu.ifi.dbs.knowing.core.swt.dialog.ProgressDialog
-import de.lmu.ifi.dbs.knowing.core.swt.factory.TabUIFactory
+import de.lmu.ifi.dbs.knowing.core.swt.factory.UIFactories.{newTabUIFactoryInstance, newServiceProperties}
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.model._
+import de.lmu.ifi.dbs.knowing.core.swt.internal.Activator
+import org.osgi.framework.ServiceRegistration
 
 /**
  * @author Nepomuk Seiler
- * @version 0.2
+ * @version 0.3
  * @since 22.04.2011
  *
  */
 class PresenterView extends ViewPart {
 
   var uifactory: UIFactory[Composite] = _
-  val rendevouz = new SynchronousQueue[Composite]
+  
+  private var uiFactoryReg: ServiceRegistration[UIFactory[Composite]] = _
 
   /**
-   * Creates UIFactory.
+   * Creates UIFactory and register it as a service
    */
   def createPartControl(parent: Composite) = {
-    uifactory = TypedActor.newInstance(classOf[UIFactory[Composite]], new TabUIFactory(parent))
+    uifactory = newTabUIFactoryInstance(parent, PresenterView.ID)
+    
+    //Register UIFactory as a service
+    val ctx = Activator.getDefault.getBundle.getBundleContext
+    uiFactoryReg = ctx.registerService(classOf[UIFactory[Composite]], uifactory, newServiceProperties)
   }
 
   def setFocus() = {}
+  
+  override def dispose() {
+    uiFactoryReg.unregister
+    super.dispose()
+  }
 
 }
 
