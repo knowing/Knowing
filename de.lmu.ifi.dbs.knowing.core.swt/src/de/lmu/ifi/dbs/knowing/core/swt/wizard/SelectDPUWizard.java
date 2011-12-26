@@ -5,7 +5,6 @@ import java.net.URISyntaxException;
 
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.sapphire.modeling.ResourceStoreException;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
@@ -43,8 +42,11 @@ public class SelectDPUWizard extends Wizard {
 	}
 
 	private void evaluate(IDataProcessingUnit dpu, URI execPath) throws PartInitException {
-		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(PresenterView.ID());
-		PresenterView pView = (PresenterView) view;
-		Activator.evaluateService().evaluate(dpu, pView.uifactory(), execPath);
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(PresenterView.ID());
+		try {
+			Activator.evaluateService().evaluate(dpu, execPath);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

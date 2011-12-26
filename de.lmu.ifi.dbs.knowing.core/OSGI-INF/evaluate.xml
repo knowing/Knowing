@@ -5,4 +5,5 @@
       <provide interface="de.lmu.ifi.dbs.knowing.core.service.IEvaluateService"/>
    </service>
    <reference bind="bindDirectoryService" cardinality="1..1" interface="de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory" name="IFactoryDirectory" policy="static" unbind="unbindDirectoryService"/>
+   <reference bind="bindUIFactory" cardinality="0..n" interface="de.lmu.ifi.dbs.knowing.core.factory.UIFactory" name="UIFactory" policy="dynamic" unbind="unbindUIFactory"/>
 </scr:component>
