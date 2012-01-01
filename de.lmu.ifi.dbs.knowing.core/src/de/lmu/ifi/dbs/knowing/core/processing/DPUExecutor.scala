@@ -4,7 +4,7 @@ import java.net.URI
 import java.util.Properties
 import java.util.concurrent.{ TimeUnit, ScheduledFuture, ConcurrentLinkedQueue }
 import java.io.{ InputStream, OutputStream, IOException, PrintWriter }
-import akka.actor.{ Actor, ActorRef }
+import akka.actor.{ Actor, ActorRef, PoisonPill }
 import akka.config.Supervision.OneForOneStrategy
 import akka.event.EventHandler.{ debug, info, warning, error }
 import akka.dispatch._
@@ -34,8 +34,8 @@ class DPUExecutor(dpu: IDataProcessingUnit,
   uifactory: UIFactory[_],
   execPath: URI,
   directory: IFactoryDirectory,
-  loaderInput: Map[String, InputStream] = Map(),
-  saverOutput: Map[String, OutputStream] = Map()) extends Actor with TSender {
+  loaderInput: MutableMap[String, InputStream] = MutableMap(),
+  saverOutput: MutableMap[String, OutputStream] = MutableMap()) extends Actor with TSender {
 
   self.faultHandler = OneForOneStrategy(List(classOf[Throwable]), 5, 5000)
 
@@ -79,21 +79,21 @@ class DPUExecutor(dpu: IDataProcessingUnit,
 
   def receive = {
     case Register(actor, in, out) => register(actor, in, out)
-    
+
     case Start | Start() => evaluate
-    
+
     case UpdateUI | UpdateUI() => uifactory update (self.sender.getOrElse(null), UpdateUI())
-    
-    case e:ExceptionEvent => 
+
+    case e: ExceptionEvent =>
       warning(self.sender.getOrElse(self), e.details + "\n" + e.throwable + "\n" + e.throwable.getStackTraceString)
       handleStatus(e)
-      
+
     case status: Status => handleStatus(status)
-    
+
     case uiEvent: UIEvent => handleUIEvent(uiEvent)
-    
+
     case event: Event => //Do nothing
-      
+
     case msg => warning(this, "Unkown Message: " + msg)
   }
 
@@ -127,12 +127,17 @@ class DPUExecutor(dpu: IDataProcessingUnit,
           actor.setDispatcher(self.dispatcher)
           self startLink actor
           //Register and link the supervisor
-//          actor ! Register(self, None)
+          //          actor ! Register(self, None)
           //Check for special nodes(presenter,loader,saver) and init
           (node.getId.getContent, node.getType.getContent) match {
             case (_, NodeType.PRESENTER) => actor ! UIFactoryEvent(uifactory, node)
-            case (id, NodeType.LOADER) if loaderInput.containsKey(id) => actor ! ConfigureInput(ResultsUtil.UNKOWN_SOURCE, loaderInput(id))
-            case (id, NodeType.SAVER) if saverOutput.containsKey(id) => actor ! ConfigureOutput(ResultsUtil.UNKOWN_SOURCE, saverOutput(id))
+
+            case (id, NodeType.LOADER) if loaderInput.containsKey(id) =>
+              actor ! ConfigureInput(ResultsUtil.UNKOWN_SOURCE, loaderInput(id))
+              loaderInput.remove(id)
+            case (id, NodeType.SAVER) if saverOutput.containsKey(id) =>
+              actor ! ConfigureOutput(ResultsUtil.UNKOWN_SOURCE, saverOutput(id))
+              saverOutput.remove(id)
             case _ => //no special treatment
           }
 
@@ -143,9 +148,29 @@ class DPUExecutor(dpu: IDataProcessingUnit,
           statusMap += (actor.getUuid -> (actor, Created(), systemTime))
           uifactory update (actor, Created())
           uifactory update (self, Progress("initialize", 1, dpu.getNodes.size))
-        case None => self ! ExceptionEvent(new Exception, "No factory found for: " + node.getFactoryId.getText)
+        case None =>
+          self ! ExceptionEvent(new Exception, "No factory found for: " + node.getFactoryId.getText)
+          self ! PoisonPill
       }
     })
+
+    //Check if all input/output maps have been processed
+    (loaderInput.nonEmpty, saverOutput.nonEmpty) match {
+      case (true, true) =>
+        self ! ExceptionEvent(new Exception,
+          "Input and OuputMap refer to nonexisting nodes. \n loaderInput: " + loaderInput.keySet + " \n saverOutput: " + saverOutput.keySet)
+        self ! PoisonPill
+      case (true, false) =>
+        self ! ExceptionEvent(new Exception, "InputMap refer to nonexisting nodes. \n loaderInput: " + loaderInput.keySet
+            + "\n Loader nodes " + DPUUtil.loaderNodes(dpu).foreach(n => print(n + ", ")))
+        self ! PoisonPill
+      case (false, true) =>
+        self ! ExceptionEvent(new Exception, "OutputMap refer to nonexisting nodes. \n saverOutput: " + saverOutput.keySet
+            + "\n Saver nodes " + DPUUtil.saverNodes(dpu).foreach(n => print(n + ", ")))
+        self ! PoisonPill
+      case (false, false) => debug(this, "All input/output maps have been processed successfully")
+    }
+
     uifactory update (self, Finished())
   }
 

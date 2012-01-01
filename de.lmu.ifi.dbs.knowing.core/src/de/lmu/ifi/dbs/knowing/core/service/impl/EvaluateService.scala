@@ -87,7 +87,7 @@ class EvaluateService extends IEvaluateService {
     input: MutableMap[String, InputStream],
     output: MutableMap[String, OutputStream]): ActorRef = {
 
-    val executor = actorOf(new DPUExecutor(dpu, ui, execPath, factoryDirectory, input.toMap, output.toMap)).start
+    val executor = actorOf(new DPUExecutor(dpu, ui, execPath, factoryDirectory, input, output)).start
     executor ! Start()
     executor
   }

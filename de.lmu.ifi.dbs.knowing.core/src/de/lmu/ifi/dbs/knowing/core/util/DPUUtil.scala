@@ -137,21 +137,19 @@ object DPUUtil {
 
   /**
    *
-   */
-  def nodesOfType(typ: String, dpu: IDataProcessingUnit): Array[INode] = {
-    dpu.getNodes.toList filter (node => node.getType.equals(typ)) toArray
-  }
-
-  /**
-   *
    * @param typ - @see NodeType
    */
-  def nodesOfType(typ: NodeType, dpu: IDataProcessingUnit): Array[INode] = nodesOfType(typ.name.toLowerCase, dpu)
+  def nodesOfType(typ: NodeType, dpu: IDataProcessingUnit): Array[INode] = dpu.getNodes.toList filter (node => node.getType.equals(typ)) toArray
 
   /**
    *
    */
   def loaderNodes(dpu: IDataProcessingUnit): Array[INode] = nodesOfType(NodeType.LOADER, dpu)
+
+  /**
+   *
+   */
+  def saverNodes(dpu: IDataProcessingUnit): Array[INode] = nodesOfType(NodeType.SAVER, dpu)
 
   /**
    *
