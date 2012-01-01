@@ -1,16 +1,11 @@
 package de.lmu.ifi.dbs.knowing.core.service
+
 import java.net.URL
 import org.osgi.framework.Bundle
-import javax.xml.bind.annotation.XmlAccessorType
-import javax.xml.bind.annotation.XmlRootElement
-import javax.xml.bind.JAXBContext
-import javax.xml.bind.JAXBException
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
 import de.lmu.ifi.dbs.knowing.core.util.DPUUtil.copy
-import org.eclipse.sapphire.modeling.xml.XmlResourceStore
-import org.eclipse.sapphire.modeling.UrlResourceStore
-import org.eclipse.sapphire.modeling.ResourceStoreException
-import org.eclipse.sapphire.modeling.xml.RootXmlResource
+import org.eclipse.sapphire.modeling.xml.{RootXmlResource,XmlResourceStore}
+import org.eclipse.sapphire.modeling.{ResourceStoreException,UrlResourceStore}
 
 /**
  * OSGi service interface to provide DPUs stored somewhere
@@ -89,7 +84,7 @@ class BundleDPUProvider(bundle: Bundle, dir: String = "/KNOWING-INF") extends ID
 
     try {
       val dpus = urls map { url =>
-        val store = new XmlResourceStore(new UrlResourceStore(url));
+        val store = new XmlResourceStore(new UrlResourceStore(url))
         val resource = new RootXmlResource(store)
         val dpu: IDataProcessingUnit = IDataProcessingUnit.TYPE.instantiate(resource)
         (copy(dpu), url)
