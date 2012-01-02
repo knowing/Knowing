@@ -4,7 +4,7 @@ import java.util.{LinkedList,Properties}
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
-import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
+import de.lmu.ifi.dbs.knowing.core.factory.PresenterFactory
 import de.lmu.ifi.dbs.knowing.core.swt.provider.{ InstanceContentProvider, InstanceLabelProvider }
 import de.lmu.ifi.dbs.knowing.presenter.ITablePresenter
 import org.eclipse.jface.viewers.{ TableViewerColumn, TableViewer, LabelProvider, ColumnWeightData }
@@ -142,7 +142,7 @@ class TablePresenter extends SWTPresenter with ITablePresenter[Composite] {
 
 }
 
-class TablePresenterFactory extends ProcessorFactory(classOf[TablePresenter]) {
+class TablePresenterFactory extends PresenterFactory(classOf[TablePresenter],classOf[ITablePresenter[Composite]]) {
 
   override def createDefaultProperties: Properties = {
     val properties = new Properties

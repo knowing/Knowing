@@ -13,12 +13,12 @@
                 <property key="file" value="iris.arff" />
             </properties>
         </node>
-        <node id="TablePresenter1" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" type="presenter" >
+        <node id="TablePresenter1" factoryId="de.lmu.ifi.dbs.knowing.presenter.ITablePresenter" type="presenter" >
             <properties>
                 <property value="100" key="rows"/>
             </properties>
         </node>
-        <node id="TablePresenter2" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" type="presenter" >
+        <node id="TablePresenter2" factoryId="de.lmu.ifi.dbs.knowing.presenter.ITablePresenter" type="presenter" >
             <properties>
                 <property value="100" key="rows"/>
             </properties>

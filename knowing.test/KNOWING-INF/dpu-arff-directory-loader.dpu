@@ -10,7 +10,7 @@
 				<property value="true" key="source" />
 			</properties>
 		</node>
-		<node id="TablePresenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" type="presenter"	>
+		<node id="TablePresenter" factoryId="de.lmu.ifi.dbs.knowing.presenter.ITablePresenter" type="presenter"	>
 			<properties />
 		</node>
 	</nodes>

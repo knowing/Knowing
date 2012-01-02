@@ -19,7 +19,7 @@
                 <property value="iris.arff" key="file"/>
             </properties>
         </node>
-        <node id="TablePresenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" type="presenter" >
+        <node id="TablePresenter" factoryId="de.lmu.ifi.dbs.knowing.presenter.ITablePresenter" type="presenter" >
             <properties>
                 <property value="100" key="rows"/>
             </properties>

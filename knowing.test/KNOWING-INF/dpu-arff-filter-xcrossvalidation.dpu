@@ -23,12 +23,12 @@
 			<properties>
 			</properties>
 		</node>
-		<node id="TablePresenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" type="presenter" >
+		<node id="TablePresenter" factoryId="de.lmu.ifi.dbs.knowing.presenter.ITablePresenter" type="presenter" >
 			<properties>
 				<property key="rows" value="100" />
 			</properties>
 		</node>
-        <node id="RawTablePresenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" type="presenter"></node>
+        <node id="RawTablePresenter" factoryId="de.lmu.ifi.dbs.knowing.presenter.ITablePresenterr" type="presenter"></node>
 	</nodes>
 	<edges>
 		<edge id="arff_validator" source="ARFF" target="validator" />

@@ -17,12 +17,12 @@
             <properties />
                
         </node>
-        <node id="TablePresenter1" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" type="presenter" >
+        <node id="TablePresenter1" factoryId="de.lmu.ifi.dbs.knowing.presenter.ITablePresenter" type="presenter" >
             <properties>
                 <property key="rows" value="100" />
             </properties>
         </node>
-        <node id="TablePresenter2" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" type="presenter" >
+        <node id="TablePresenter2" factoryId="de.lmu.ifi.dbs.knowing.presenter.ITablePresenter" type="presenter" >
             <properties>
                 <property key="rows" value="100" />
             </properties>

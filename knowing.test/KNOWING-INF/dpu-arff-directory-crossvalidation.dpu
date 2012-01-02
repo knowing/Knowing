@@ -22,10 +22,10 @@
 			<properties>
 			</properties>
 		</node>
-		<node id="TablePresenterInput" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" type="presenter" >
+		<node id="TablePresenterInput" factoryId="de.lmu.ifi.dbs.knowing.presenter.ITablePresenter" type="presenter" >
 			<properties />
 		</node>
-		<node id="TablePresenterValidation" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" type="presenter" >
+		<node id="TablePresenterValidation" factoryId="de.lmu.ifi.dbs.knowing.presenter.ITablePresenter" type="presenter" >
 			<properties />
 		</node>
 	</nodes>

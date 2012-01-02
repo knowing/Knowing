@@ -23,7 +23,7 @@
 			</properties>
 		</node>
 	
-		<node id="TablePresenter" type="presenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter">
+		<node id="TablePresenter" type="presenter" factoryId="de.lmu.ifi.dbs.knowing.presenter.ITablePresenter">
 			<properties>
 				<property key="rows" value="100" />
 			</properties>

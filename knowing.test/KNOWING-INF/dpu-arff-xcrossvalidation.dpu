@@ -36,7 +36,7 @@
 		<!-- <node id="ArffOutput" type="saver" factoryId="weka.core.converters.ArffSaver"> 
 			<properties> <property key="file" value="output.saver.arff" /> </properties> 
 			</node> -->
-        <node id="RawMatrixPresenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter" type="presenter"></node>
+        <node id="RawMatrixPresenter" factoryId="de.lmu.ifi.dbs.knowing.presenter.ITablePresenter" type="presenter"></node>
 	</nodes>
 	<edges>
 		<edge id="arff_validator" source="ARFF" target="validator" />
