@@ -10,7 +10,7 @@ import org.junit.runner.RunWith
 import de.lmu.ifi.dbs.knowing.core.processing.DPUExecutor
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
 import de.lmu.ifi.dbs.knowing.core.events._
-import de.lmu.ifi.dbs.knowing.core.test._
+import de.lmu.ifi.dbs.knowing.test._
 import de.lmu.ifi.dbs.knowing.core.weka._
 import java.nio.file.Paths
 import org.eclipse.sapphire.modeling.xml.{ RootXmlResource, XmlResourceStore }

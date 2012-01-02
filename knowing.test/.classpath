@@ -8,6 +8,5 @@
 	<classpathentry kind="src" path="src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="SCALATEST_HOME/scalatest-1.6.1.jar"/>
 	<classpathentry kind="output" path="target"/>
 </classpath>

@@ -1,27 +1,24 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Test
-Bundle-SymbolicName: knowing.test;singleton:=true
+Bundle-Name: Knowing Presenter API
+Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.presenter
 Bundle-Version: 0.1.1.qualifier
-Bundle-Activator: knowing.test.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Vendor: LMU Munich - Database Systems Group
+Require-Bundle: de.lmu.ifi.dbs.knowing.core;bundle-version="0.1.1",
+ org.scala-ide.scala.library
 Import-Package: org.eclipse.sapphire.java,
  org.eclipse.sapphire.modeling,
  org.eclipse.sapphire.modeling.annotations,
+ org.eclipse.sapphire.modeling.util,
  org.eclipse.sapphire.modeling.xml,
  org.eclipse.sapphire.modeling.xml.annotations,
+ org.eclipse.sapphire.services,
  org.eclipse.sapphire.workspace,
+ org.osgi.framework;version="1.5.0",
  org.osgi.service.component;version="1.1.0",
- org.scalatest,
- org.scalatest.concurrent,
- org.scalatest.events,
- org.scalatest.fixture,
- org.scalatest.junit,
- org.scalatest.matchers,
- org.scalatest.mock,
- org.scalatest.prop,
- org.scalatest.testng,
- org.scalatest.tools,
- org.scalatest.verb,
+ org.osgi.util.tracker;version="1.4.0",
+ org.slf4j;version="1.6.1",
  scala;version="[2.9.0.1,2.9.3.0]",
  scala.collection;version="[2.9.0.1,2.9.3.0]",
  scala.collection.generic;version="[2.9.0.1,2.9.3.0]",
@@ -54,13 +51,3 @@ Import-Package: org.eclipse.sapphire.java,
  scala.util.parsing.json;version="[2.9.0.1,2.9.3.0]",
  scala.util.parsing.syntax;version="[2.9.0.1,2.9.3.0]",
  scala.util.regexp;version="[2.9.0.1,2.9.3.0]"
-Require-Bundle: org.eclipse.ui;bundle-version="3.6.0",
- org.eclipse.core.runtime,
- de.lmu.ifi.dbs.knowing.core,
- de.lmu.ifi.dbs.knowing.core.swt,
- de.lmu.ifi.dbs.knowing.test;bundle-version="0.1.1",
- nz.ac.waikato.cs.weka;bundle-version="3.7.3",
- org.junit;bundle-version="4.8.2";resolution:=optional
-Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Service-Component: OSGI-INF/dsProcessor.xml, OSGI-INF/bypassProcessor.xml, OSGI-INF/multiInputProcessor.xml

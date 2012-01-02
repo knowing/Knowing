@@ -4,17 +4,17 @@ import java.util.Properties
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
-import de.lmu.ifi.dbs.knowing.core.factory.TFactory
+import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
 import de.lmu.ifi.dbs.knowing.core.swt.provider.{ InstanceContentProvider, InstanceLabelProvider }
+import de.lmu.ifi.dbs.knowing.presenter.ITablePresenter
 import org.eclipse.jface.viewers.{ TableViewerColumn, TableViewer }
 import org.eclipse.swt.SWT
-import org.eclipse.swt.widgets.{ Composite, Button, Label, Spinner }
+import org.eclipse.swt.widgets.{ Composite, Button, Label, Spinner,Listener }
 import org.eclipse.swt.layout.{ GridData, GridLayout }
 import org.eclipse.jface.layout.TableColumnLayout
 import org.eclipse.jface.viewers.ColumnWeightData
 import weka.core.{ Instances, Attribute }
-import org.eclipse.swt.widgets.Listener
-import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
+
 
 /**
  * @author Nepomuk Seiler
