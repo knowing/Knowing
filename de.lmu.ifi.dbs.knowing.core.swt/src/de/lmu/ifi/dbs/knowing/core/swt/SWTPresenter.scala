@@ -2,16 +2,17 @@ package de.lmu.ifi.dbs.knowing.core.swt
 
 import org.eclipse.swt.layout.FillLayout
 import org.eclipse.swt.SWT
-import org.eclipse.swt.widgets.{ Composite, Label, Listener }
+import org.eclipse.swt.widgets.{ Control, Composite, Label, Listener }
 import weka.core.Instances
 import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.processing.TPresenter
 import de.lmu.ifi.dbs.knowing.core.swt.handler.SWTListener
+import scala.collection.mutable.ArrayBuffer
 
 /**
- * Base class for writing TPresenters for the 
+ * Base class for writing TPresenters for the
  * Standard Widget Toolkit (SWT).
- * 
+ *
  * @author Nepomuk Seiler
  * @version 0.2
  * @since 22.04.2011
@@ -19,59 +20,66 @@ import de.lmu.ifi.dbs.knowing.core.swt.handler.SWTListener
  */
 abstract class SWTPresenter extends TPresenter[Composite] {
 
-  private var composite: Composite = _
+  protected var parent: Composite = _
+  protected val containers = ArrayBuffer[Composite]()
 
   override def presenterReceive = {
     case SWTListener(typ, listener) =>
       debug(this, "Received SWTListener: " + listener)
-      composite.getDisplay.asyncExec(new Runnable() {
-        def run = addListener(typ, listener)
-      })
+      sync(parent) { addListener(typ, listener) }
   }
 
-  def createContainer(parent: Composite) {
-    if (composite != null && !composite.isDisposed())
-      dispose
-
-    parent.getDisplay().syncExec(new Runnable {
-      def run {
-        composite = new Composite(parent, SWT.NONE)
-        composite.setLayout(new FillLayout)
-        createControl(composite)
-      }
-    })
-  }
-
-  def dispose = composite dispose
-
-  def redraw = composite redraw
-
+  /**
+   * Clients must implement this method in order
+   * to register listener on their components.
+   */
   def addListener(typ: Int, listener: Listener)
 
   /**
-   * <p>Delegates the call to buildContent() and runs it sync <br>
-   * in the UI thread to avoid invalid thread access.</p>
-   * @param instances
+   * Executes the given function on the UI Thread synchronous.
+   *
+   * @param parent - used to access display
+   * @param syncFun - function which will be executed on the UI thread
    */
-  def buildPresentation(instances: Instances) {
-    if (composite != null) {
-      composite.getDisplay().syncExec(new Runnable {
-        def run = buildContent(instances)
-      })
-    }
+  def sync(c: Composite)(syncFun: => Unit) {
+    c.getDisplay.syncExec(new Runnable {
+      def run = syncFun
+    })
   }
 
+  /**
+   * Executes the given runnable on the UI Thread synchronous.
+   *
+   * @param parent - used to access display
+   * @param runnable - runnable which will be executed on the UI thread
+   */
+  def sync(parent: Composite, runnable: Runnable) = parent.getDisplay.syncExec(runnable)
+
+  /**
+   *
+   */
+  def dispose = sync(parent) { containers foreach (_.dispose) }
+
+  /**
+   *
+   */
+  def redraw = sync(parent) { containers foreach (_.redraw) }
+
+  /**
+   *
+   */
   def getContainerClass(): String = classOf[Composite].getName
 
   /**
-   * Create component presenting the data
+   *
    */
-  def createControl(parent: Composite)
+  def getParent(): Composite = parent
 
   /**
-   * Fill the component with content
+   * Clients must set the parent class variable
+   * in order to get properly sync with the UI Thread.
    */
-  def buildContent(instances: Instances)
+  def setParent(parent: Composite) = this.parent = parent
 
 }
 

@@ -5,8 +5,7 @@ Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.presenter
 Bundle-Version: 0.1.1.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: LMU Munich - Database Systems Group
-Require-Bundle: de.lmu.ifi.dbs.knowing.core;bundle-version="0.1.1",
- org.scala-ide.scala.library
+Require-Bundle: de.lmu.ifi.dbs.knowing.core;bundle-version="0.1.1"
 Import-Package: org.eclipse.sapphire.java,
  org.eclipse.sapphire.modeling,
  org.eclipse.sapphire.modeling.annotations,
@@ -51,3 +50,4 @@ Import-Package: org.eclipse.sapphire.java,
  scala.util.parsing.json;version="[2.9.0.1,2.9.3.0]",
  scala.util.parsing.syntax;version="[2.9.0.1,2.9.3.0]",
  scala.util.regexp;version="[2.9.0.1,2.9.3.0]"
+Export-Package: de.lmu.ifi.dbs.knowing.presenter

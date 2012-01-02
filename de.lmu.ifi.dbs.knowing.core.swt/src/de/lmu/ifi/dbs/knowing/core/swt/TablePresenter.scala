@@ -1,37 +1,72 @@
 package de.lmu.ifi.dbs.knowing.core.swt
 
-import java.util.Properties
+import java.util.{LinkedList,Properties}
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
 import de.lmu.ifi.dbs.knowing.core.swt.provider.{ InstanceContentProvider, InstanceLabelProvider }
 import de.lmu.ifi.dbs.knowing.presenter.ITablePresenter
-import org.eclipse.jface.viewers.{ TableViewerColumn, TableViewer }
+import org.eclipse.jface.viewers.{ TableViewerColumn, TableViewer, LabelProvider, ColumnWeightData }
 import org.eclipse.swt.SWT
-import org.eclipse.swt.widgets.{ Composite, Button, Label, Spinner,Listener }
+import org.eclipse.swt.graphics.Image
+import org.eclipse.swt.widgets.{ Composite, Button, Label, Spinner, Listener }
 import org.eclipse.swt.layout.{ GridData, GridLayout }
 import org.eclipse.jface.layout.TableColumnLayout
-import org.eclipse.jface.viewers.ColumnWeightData
+import org.eclipse.jface.viewers.{ArrayContentProvider,ITableLabelProvider}
 import weka.core.{ Instances, Attribute }
-
 
 /**
  * @author Nepomuk Seiler
- * @version 0.1
+ * @version 0.2
  * @since 22.04.2011
  *
  */
-class TablePresenter extends SWTPresenter {
+class TablePresenter extends SWTPresenter with ITablePresenter[Composite] {
 
-  val name = TablePresenter.name
+  val name = "Table Presenter"
 
   private var viewer: TableViewer = _
   private var layout: TableColumnLayout = _
   private var columnsInit = false
-  private var rows = 100
+  
+  private var model = new LinkedList[Array[String]]
 
-  def createControl(parent: Composite) {
+  /**
+   * @param attributes - contain header information
+   */
+  def buildTableHeader(attributes: Array[Attribute]) {
+    val weight = attributes.length match {
+      case 0 => 100
+      case x => 100 / x
+    }
+    viewer.getTable.setHeaderVisible(true)
+    viewer.getTable.setLinesVisible(true)
+    for (a <- attributes) {
+      val viewerColumn = new TableViewerColumn(viewer, SWT.LEAD)
+      layout.setColumnData(viewerColumn.getColumn, new ColumnWeightData(weight, 70, true))
+      viewerColumn.getColumn.setText(a.name)
+      viewerColumn.getColumn.setWidth(70)
+      viewerColumn.getColumn.setResizable(true)
+      viewerColumn.getColumn.setMoveable(true)
+    }
+
+    //    viewer.setLabelProvider(new InstanceLabelProvider)
+    viewer.setLabelProvider(new TablePresenterLabelProvider)
+    viewer.setContentProvider(new ArrayContentProvider)
+    viewer.setInput(model)
+    debug(this, "... columns created")
+  }
+
+  /**
+   * @param content - string values containing column content
+   */
+  def addRow(content: Array[String]) {
+    model.add(content)
+    viewer.refresh()
+  }
+
+  def createContainer(parent: Composite) {
     val composite = new Composite(parent, SWT.NONE)
     composite.setLayout(new GridLayout(4, false))
 
@@ -63,19 +98,15 @@ class TablePresenter extends SWTPresenter {
     val gd_spinner = new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1)
     gd_spinner.widthHint = 50
     sRows.setLayoutData(gd_spinner)
-    sRows.setSelection(rows)
+    sRows.setSelection(rowsPerPage)
 
     val tableComposite = new Composite(composite, SWT.NONE)
     layout = new TableColumnLayout
     tableComposite.setLayout(layout)
     tableComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1))
     viewer = new TableViewer(tableComposite, SWT.BORDER | SWT.FULL_SELECTION)
-  }
 
-  def buildContent(instances: Instances) {
-    createColumns(instances)
-    viewer.setInput(createInput(instances))
-    viewer.refresh()
+    setParent(composite)
   }
 
   def createColumns(instances: Instances) {
@@ -83,13 +114,14 @@ class TablePresenter extends SWTPresenter {
       return
 
     debug(this, "createColumns...")
+    //TODO necessary
     instances.setClassIndex(-1); //WekaEnumeration skips the class attribute, so the class index has to be unset...
     val weight = instances.numInstances match {
       case 0 => 100
       case x => 100 / x
     }
-    viewer.getTable().setHeaderVisible(true);
-    viewer.getTable().setLinesVisible(true);
+    viewer.getTable().setHeaderVisible(true)
+    viewer.getTable().setLinesVisible(true)
     for (i <- 0 until instances.numAttributes) {
       val a = instances.attribute(i)
       val viewerColumn = new TableViewerColumn(viewer, SWT.LEAD)
@@ -100,46 +132,33 @@ class TablePresenter extends SWTPresenter {
       viewerColumn.getColumn.setMoveable(true)
     }
 
-    viewer.setLabelProvider(new InstanceLabelProvider);
-    viewer.setContentProvider(new InstanceContentProvider);
-    columnsInit = true;
+    viewer.setLabelProvider(new InstanceLabelProvider)
+    viewer.setContentProvider(new InstanceContentProvider)
+    columnsInit = true
     debug(this, "... columns created")
-  }
-
-  def configure(properties: Properties) = {
-    debug(this, "Configure TablePresenter with " + properties)
-    val row_string = properties.getProperty(TablePresenter.ROWS_PER_PAGE, "100")
-    rows = row_string.toInt
   }
 
   def addListener(typ: Int, listener: Listener) = viewer.getTable.addListener(typ, listener)
 
-  private def createInput(instances: Instances): Instances = {
-    if (instances.numInstances > rows)
-      new Instances(instances, 0, rows)
-    else
-      instances
-  }
-
-}
-
-object TablePresenter {
-
-  val name = "Table Presenter"
-  val ROWS_PER_PAGE = "rows"
 }
 
 class TablePresenterFactory extends ProcessorFactory(classOf[TablePresenter]) {
 
-  override val name: String = TablePresenter.name
-
   override def createDefaultProperties: Properties = {
     val properties = new Properties
-    properties.setProperty(TablePresenter.ROWS_PER_PAGE, "100");
+    properties.setProperty(ITablePresenter.ROWS_PER_PAGE, "100");
     properties
   }
 
-  override def createPropertyValues: Map[String, Array[Any]] = Map(TablePresenter.ROWS_PER_PAGE -> Array(0, 1000))
+  override def createPropertyValues: Map[String, Array[Any]] = Map(ITablePresenter.ROWS_PER_PAGE -> Array(0, 1000))
 
-  override def createPropertyDescription: Map[String, String] = Map(TablePresenter.ROWS_PER_PAGE -> "How much rows to show")
+  override def createPropertyDescription: Map[String, String] = Map(ITablePresenter.ROWS_PER_PAGE -> "How much rows to show")
+}
+
+class TablePresenterLabelProvider extends LabelProvider with ITableLabelProvider {
+
+  def getColumnImage(element: Object, columnIndex: Int): Image = null
+
+  def getColumnText(element: Object, columnIndex: Int): String = element.asInstanceOf[Array[String]](columnIndex)
+
 }

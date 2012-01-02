@@ -43,7 +43,7 @@ abstract class AbstractChartPresenter(val name: String) extends SWTPresenter {
   /**
    *
    */
-  def createControl(parent: Composite) = {
+  def createContainer(parent: Composite) = {
     chart = createChart(dataset)
     configurePlot(chart.getPlot)
     chartComposite = new ChartComposite(parent, SWT.NONE, chart, true)

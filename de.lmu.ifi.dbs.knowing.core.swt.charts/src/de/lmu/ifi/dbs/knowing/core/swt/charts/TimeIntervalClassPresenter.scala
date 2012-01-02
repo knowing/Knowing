@@ -58,7 +58,7 @@ class TimeIntervalClassPresenter extends AbstractChartPresenter("Time Interval C
     xyplot.setRangeGridlinePaint(Color.white)
   }
 
-  def buildContent(instances: Instances) = {
+  def buildPresentation(instances: Instances) = {
     //TODO TimeIntervalClassPresenter -> Check for right Instances format
     guessAndSetClassLabel(instances)
     //First buildContent call

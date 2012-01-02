@@ -35,7 +35,7 @@ class TimeSeriesPresenter extends AbstractChartPresenter("Time Series Presenter"
 
   protected def createDataset(): Dataset = new TimeSeriesCollection
 
-  def buildContent(instances: Instances) = {
+  def buildPresentation(instances: Instances) = {
     debug(this, "Create content in TimeSeries: " + instances.relationName)
     //TODO TimeSeriesPresenter -> Check for right Instances format
     guessAndSetClassLabel(instances)

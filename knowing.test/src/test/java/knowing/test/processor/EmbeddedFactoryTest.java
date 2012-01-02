@@ -6,7 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.lmu.ifi.dbs.knowing.core.test.EmbeddedFactoryDirectory;
+import de.lmu.ifi.dbs.knowing.test.EmbeddedFactoryDirectory;
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory;
 
 public class EmbeddedFactoryTest {

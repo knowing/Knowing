@@ -29,9 +29,9 @@ class MultiTablePresenter extends SWTPresenter {
   private var tables: Map[String, ActorRef] = Map()
   private var tabFolder: TabFolder = _
 
-  def createControl(parent: Composite) = tabFolder = new TabFolder(parent, SWT.TOP);
+  def createContainer(parent: Composite) = tabFolder = new TabFolder(parent, SWT.TOP);
 
-  def buildContent(instances: Instances) = {
+  def buildPresentation(instances: Instances) = {
     val relation = instances.relationName
     val presenter = tables.get(relation)
     presenter match {

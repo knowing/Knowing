@@ -151,7 +151,7 @@ class PiePresenter extends AbstractChartPresenter("Pie Presenter") {
     return classIndex
   }
 
-  def buildContent(instances: Instances) = {
+  def buildPresentation(instances: Instances) = {
     var classIndex = -1
     if (internal_model.isEmpty)
       classIndex = initModel(instances)

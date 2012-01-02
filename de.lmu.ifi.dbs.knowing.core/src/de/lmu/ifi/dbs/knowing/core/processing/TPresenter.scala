@@ -20,7 +20,7 @@ trait TPresenter[T] extends TProcessor {
   val name: String
 
   override final protected def customReceive: Receive = presenterReceive orElse defaultReceive
-  
+
   protected def presenterReceive: Receive = defaultReceive
 
   /**
@@ -29,19 +29,40 @@ trait TPresenter[T] extends TProcessor {
   private def defaultReceive: Receive = {
     case UIFactoryEvent(factory, node) =>
       statusChanged(Running())
-      val parent = factory createContainer (node)
-      createContainer(parent.asInstanceOf[T])
+      val parent = factory.createContainer(node).asInstanceOf[T]
+      sync(parent) {
+        createContainer(parent)
+      }
+
       if (self.getSender.isDefined) self reply Ready()
       statusChanged(Ready())
     case QueryResults(instances, _) => buildPresentation(instances)
   }
 
   /**
-   * 
+   * Executes the given function on the UI Thread synchronous.
+   *
+   * @param parent - used to access display
+   * @param syncFun - function which will be executed on the UI thread
+   */
+  def sync(parent: T)(syncFun: => Unit)
+
+  /**
+   * Executes the given runnable on the UI Thread synchronous.
+   *
+   * @param parent - used to access display
+   * @param runnable - runnable which will be executed on the UI thread
+   */
+  def sync(parent: T, runnable: Runnable)
+
+  /**
+   *
    */
   def build(instances: Instances) {
     statusChanged(Running())
-    buildPresentation(instances)
+    sync(getParent) {
+      buildPresentation(instances)
+    }
     statusChanged(UpdateUI())
     statusChanged(Ready())
   }
@@ -66,6 +87,11 @@ trait TPresenter[T] extends TProcessor {
    * @return the UI-Container class
    */
   def getContainerClass(): String
+
+  /**
+   * Returns the parent of this presenter
+   */
+  def getParent(): T
 
   /* == Doesn't needed by TPresenter == */
   def query(instance: Instance): Instances = ResultsUtil.emptyResult

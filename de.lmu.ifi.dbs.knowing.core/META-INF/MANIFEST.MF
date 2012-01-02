@@ -32,7 +32,6 @@ Export-Package: akka,
  de.lmu.ifi.dbs.knowing.core.model.internal,
  de.lmu.ifi.dbs.knowing.core.processing,
  de.lmu.ifi.dbs.knowing.core.service,
- de.lmu.ifi.dbs.knowing.core.test,
  de.lmu.ifi.dbs.knowing.core.util,
  de.lmu.ifi.dbs.knowing.core.validation,
  de.lmu.ifi.dbs.knowing.core.weka

@@ -6,7 +6,7 @@ import de.lmu.ifi.dbs.knowing.core.model.INode
 import de.lmu.ifi.dbs.knowing.core.factory.{ ProcessorFactory, UIFactory }
 import de.lmu.ifi.dbs.knowing.core.processing.TPresenter
 import weka.core.Instances
-import scala.collection.mutable.{HashMap,ArrayBuffer}
+import scala.collection.mutable.{ HashMap, ArrayBuffer }
 import java.util.Properties
 import java.util.concurrent.SynchronousQueue
 
@@ -18,15 +18,14 @@ class EmbeddedUIFactory extends UIFactory[IEmbeddedUIComponent] {
 
   val containers = HashMap[String, IEmbeddedUIComponent]()
   val rendevouz = new SynchronousQueue[HashMap[String, IEmbeddedUIComponent]]
-  
+
   private var supervisor: ActorRef = _
-  
+
   /**
    * Waits until the process finishes and return the
    * Map with all presenters wrapped inside a IEmbeddedUIComponent
    */
   def await(): HashMap[String, IEmbeddedUIComponent] = rendevouz.take
-    
 
   def createContainer(node: INode): IEmbeddedUIComponent = {
     val container = new EmbeddedUIComponent
@@ -85,7 +84,11 @@ class EmbeddedUIComponentPresenter extends TPresenter[IEmbeddedUIComponent] {
 
   val name = "Embedded UI Component Presenter"
 
-  private var parent: IEmbeddedUIComponent = _
+  protected var parent: IEmbeddedUIComponent = _
+
+  def sync(parent: IEmbeddedUIComponent)(syncFun: => Unit) = syncFun
+  
+  def sync(parent: IEmbeddedUIComponent, runnable: Runnable) = runnable.run()
 
   /**
    * Creates the initial UI-Container presenting the data
@@ -107,6 +110,8 @@ class EmbeddedUIComponentPresenter extends TPresenter[IEmbeddedUIComponent] {
    * @return the UI-Container class
    */
   def getContainerClass(): String = classOf[IEmbeddedUIComponent].getName
+  
+  def getParent(): IEmbeddedUIComponent = parent
 
   def configure(properties: Properties) = {}
 }

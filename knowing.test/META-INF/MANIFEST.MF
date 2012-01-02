@@ -59,6 +59,7 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.0",
  de.lmu.ifi.dbs.knowing.core,
  de.lmu.ifi.dbs.knowing.core.swt,
  de.lmu.ifi.dbs.knowing.test;bundle-version="0.1.1",
+ de.lmu.ifi.dbs.knowing.presenter;bundle-version="0.1.1",
  nz.ac.waikato.cs.weka;bundle-version="3.7.3",
  org.junit;bundle-version="4.8.2";resolution:=optional
 Bundle-ActivationPolicy: lazy
