@@ -2,8 +2,7 @@ package de.lmu.ifi.dbs.knowing.core.util
 
 import java.net.URL
 import java.util.Properties
-import scala.collection.JavaConversions.asScalaBuffer
-import scala.collection.JavaConversions.propertiesAsScalaMap
+import scala.collection.JavaConversions._
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
 import de.lmu.ifi.dbs.knowing.core.model.INode
 import de.lmu.ifi.dbs.knowing.core.model.NodeType
@@ -34,46 +33,7 @@ object DPUUtil {
    */
   @deprecated
   def copy(source: IDataProcessingUnit, destination: IDataProcessingUnit): IDataProcessingUnit = {
-    destination.setName(source.getName.getContent)
-    destination.setDescription(source.getDescription.getContent)
-    destination.setTags(source.getTags.getContent)
-
-    val destConf = destination.getConfiguration
-    val srcConf = source.getConfiguration
-    destConf.setHistory(srcConf.getHistory.getContent)
-    destConf.setAbsolute(srcConf.getAbsolute.getContent)
-    destConf.setOutput(srcConf.getOutput.getContent)
-    srcConf.getEventConstraints.foreach { c =>
-      val newConstr = destConf.getEventConstraints.addNewElement
-      newConstr.setType(c.getType.getContent)
-      newConstr.setLog(c.getLog.getContent)
-    }
-    srcConf.getNodeConstraints.foreach { c =>
-      val newConstr = destConf.getNodeConstraints.addNewElement
-      newConstr.setNode(c.getNode.getContent)
-      newConstr.setLog(c.getLog.getContent)
-    }
-
-    source.getNodes.foreach { node =>
-      val nodeNew = destination.getNodes.addNewElement
-      nodeNew.setId(node.getId.getContent)
-      nodeNew.setFactoryId(node.getFactoryId.getText)
-      nodeNew.setType(node.getType.getText)
-      node.getProperties.foreach { p =>
-        val newProp = nodeNew.getProperties.addNewElement
-        newProp.setKey(p.getKey.getContent)
-        newProp.setValue(p.getValue.getContent)
-      }
-    }
-    source.getEdges.foreach {
-      edge =>
-        val edgeNew = destination.getEdges.addNewElement
-        edgeNew.setId(edge.getId.getContent)
-        edgeNew.setSource(edge.getSource.getContent)
-        edgeNew.setSourcePort(edge.getSourcePort.getContent)
-        edgeNew.setTarget(edge.getTarget.getContent)
-        edgeNew.setTargetPort(edge.getTargetPort.getContent)
-    }
+    destination.copy(source)
     destination
   }
 
@@ -139,7 +99,9 @@ object DPUUtil {
    *
    * @param typ - @see NodeType
    */
-  def nodesOfType(typ: NodeType, dpu: IDataProcessingUnit): Array[INode] = dpu.getNodes.toList filter (node => node.getType.equals(typ)) toArray
+  def nodesOfType(typ: NodeType, dpu: IDataProcessingUnit): Array[INode] = {
+    dpu.getNodes filter (node => node.getType.getContent.equals(typ)) toArray
+  }
 
   /**
    *
@@ -165,7 +127,24 @@ object DPUUtil {
    *
    */
   def node(typ: String, factory: String, dpu: IDataProcessingUnit): Array[INode] = {
-    dpu.getNodes.toList filter (node => node.getType.equals(typ) && node.getFactoryId.equals(factory)) toArray
+    dpu.getNodes filter (node => node.getType.equals(typ) && node.getFactoryId.equals(factory)) toArray
+  }
+
+  /**
+   * @param id - node ID
+   * @return node or null
+   */
+  def nodeById(id: String, dpu: IDataProcessingUnit): INode = nodeByIdOption(id, dpu) match {
+    case Some(node) => node
+    case None => null
+  }
+
+  /**
+   * @param id - node ID
+   * @return Some(node) or None
+   */
+  def nodeByIdOption(id: String, dpu: IDataProcessingUnit): Option[INode] = {
+    dpu.getNodes find (node => node.getId.getContent.equals(id))
   }
 
   def nodeProperties(node: INode): Properties = node.getProperties.foldLeft(new Properties) {
