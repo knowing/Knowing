@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Test
+Bundle-Name: Knowing RCP Test Application
 Bundle-SymbolicName: knowing.test;singleton:=true
-Bundle-Version: 0.1.1.qualifier
+Bundle-Version: 0.1.2.qualifier
 Bundle-Activator: knowing.test.Activator
 Import-Package: org.eclipse.sapphire.java,
  org.eclipse.sapphire.modeling,
@@ -65,3 +65,4 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.0",
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Service-Component: OSGI-INF/dsProcessor.xml, OSGI-INF/bypassProcessor.xml, OSGI-INF/multiInputProcessor.xml
+Bundle-Vendor: LMU Munich - Database Systems Group

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Knowing Presenter API
 Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.presenter
-Bundle-Version: 0.1.1.qualifier
+Bundle-Version: 0.1.2.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: LMU Munich - Database Systems Group
 Require-Bundle: de.lmu.ifi.dbs.knowing.core;bundle-version="0.1.1"

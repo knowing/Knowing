@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Knowing Core
 Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.core;singleton:=true
-Bundle-Version: 0.1.1.qualifier
+Bundle-Version: 0.1.2.qualifier
 Bundle-Activator: de.lmu.ifi.dbs.knowing.core.internal.Activator
 Require-Bundle: nz.ac.waikato.cs.weka;bundle-version="3.7.3";visibility:=reexport,
  org.codehaus.aspectwerkz;bundle-version="2.2.3";visibility:=reexport
