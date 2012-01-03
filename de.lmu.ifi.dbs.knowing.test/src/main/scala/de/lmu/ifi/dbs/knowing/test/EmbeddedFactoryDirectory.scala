@@ -14,6 +14,8 @@ import scala.collection.mutable.HashMap
  */
 class EmbeddedFactoryDirectory extends IFactoryDirectory {
 
+  /** Logger */
+  
   /** factories stored */
   private val factories = HashMap[String, TFactory]()
 
@@ -34,6 +36,9 @@ class EmbeddedFactoryDirectory extends IFactoryDirectory {
 
     if (factories.contains(factory.id))
       throw new IllegalArgumentException("Factory with id [" + factory.id + "] + cannot be added twice")
+    
+    //TODO use real logger
+    println("Register factory [" + factory.id + "]")
     
     factories += (factory.id -> factory)
     this

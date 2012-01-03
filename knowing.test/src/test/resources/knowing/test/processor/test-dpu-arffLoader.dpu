@@ -12,7 +12,7 @@
                 <property key="file" value="iris.arff"></property>
             </properties>
         </node>
-        <node id="EmbeddedPresenter" factoryId="de.lmu.ifi.dbs.knowing.core.test.EmbeddedUIComponentPresenter" type="presenter"></node>
+        <node id="EmbeddedPresenter" factoryId="de.lmu.ifi.dbs.knowing.test.EmbeddedUIComponentPresenter" type="presenter"></node>
     </nodes>
     <edges>
         <edge source="ArffLoader" target="EmbeddedPresenter" id="loader2Presenter"></edge>

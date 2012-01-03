@@ -18,7 +18,7 @@ import org.eclipse.sapphire.modeling.{ ResourceStoreException, UrlResourceStore 
 import weka.core.Attribute
 
 @RunWith(classOf[JUnitRunner])
-class ArffLoaderTest extends FunSuite with ShouldMatchers with BeforeAndAfter {
+class ArffLoaderTest extends FunSuite with ShouldMatchers with BeforeAndAfter with KnowingTest {
 
   var dpuExecutor: ActorRef = _
   var uiFactory: EmbeddedUIFactory = _
@@ -36,13 +36,10 @@ class ArffLoaderTest extends FunSuite with ShouldMatchers with BeforeAndAfter {
     val exePath = Paths.get("src", "test", "resources").toUri
     
     //Load the DPU
-    val dpuURL = getClass().getResource("test-dpu-arffLoader.dpu")
-    val store = new XmlResourceStore(new UrlResourceStore(dpuURL))
-    val resource = new RootXmlResource(store)
-    val dpu: IDataProcessingUnit = IDataProcessingUnit.TYPE.instantiate(resource)
+    val dpu = loadDPU("test-dpu-arffLoader.dpu")
 
     //Create the dpuExectuor running the test
-    dpuExecutor = actorOf(new DPUExecutor(dpu, uiFactory, exePath, factoryDirectory)).start
+    dpuExecutor = createDPUExecutor(dpu, uiFactory, exePath, factoryDirectory).start
   }
 
   test("Run ARFFLoader") {
