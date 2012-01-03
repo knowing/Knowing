@@ -16,7 +16,7 @@ import org.eclipse.sapphire.modeling.annotations.Type;
 import org.eclipse.sapphire.modeling.annotations.ValidFileSystemResourceType;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlBinding;
 import org.eclipse.sapphire.modeling.xml.annotations.XmlListBinding;
-import org.eclipse.sapphire.workspace.WorkspaceRelativePath;
+//import org.eclipse.sapphire.workspace.WorkspaceRelativePath;
 
 /**
  * <p>Configure logging for process history. This is done
@@ -50,7 +50,7 @@ public interface IConfiguration extends IModelElement {
 	@XmlBinding(path = "output")
 	@Label(standard = "Output")
 	@Type(base = Path.class)
-	@WorkspaceRelativePath
+//	@WorkspaceRelativePath
 	@ValidFileSystemResourceType(FileSystemResourceType.FILE)
 	@FileExtensions(expr = "hst")
 	ValueProperty PROP_OUTPUT = new ValueProperty(TYPE, "Output");
