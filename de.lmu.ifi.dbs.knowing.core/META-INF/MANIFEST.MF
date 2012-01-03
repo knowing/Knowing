@@ -36,9 +36,9 @@ Export-Package: akka,
  de.lmu.ifi.dbs.knowing.core.validation,
  de.lmu.ifi.dbs.knowing.core.weka
 Bundle-ClassPath: .,
- lib/akka-actor-1.2.jar,
- lib/akka-slf4j-1.2.jar,
- lib/akka-typed-actor-1.2.jar
+ src/main/resources/akka-actor-1.2.jar,
+ src/main/resources/akka-slf4j-1.2.jar,
+ src/main/resources/akka-typed-actor-1.2.jar
 Import-Package: org.eclipse.sapphire.java,
  org.eclipse.sapphire.modeling,
  org.eclipse.sapphire.modeling.annotations,
