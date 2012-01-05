@@ -5,10 +5,10 @@ import java.net.URL
 /**
  * Access all registerd DataProcessingUnits in the current
  * platform.
- * 
+ *
  * Note: All methods should return either an ImmutableInstance
  * of the requested DPU or a copy.
- * 
+ *
  * @author Nepomuk Seiler
  * @version 0.1
  */
@@ -19,7 +19,7 @@ trait IDPUDirectory {
    * @return Some(dpu) else None
    */
   def getDPU(id: String): Option[IDataProcessingUnit]
-  
+
   /**
    * normally inside a bundle
    * @return URL to dpu
@@ -30,4 +30,13 @@ trait IDPUDirectory {
    * @return all registered dpus
    */
   def getDPUs(): Array[IDataProcessingUnit]
+}
+
+object IDPUDirectory {
+  val KNOWING_DPU_MANIFEST_HEADER = "Knowing-DPU"
+  val KNOWING_FOLDER = "KNOWING-INF"
+  val DPU_SEPARATOR = ","
+  val DPU_WILDCARD = "*"
+
+  val LOAD_ALL = "knowing.dpudirectory.loadAll"
 }

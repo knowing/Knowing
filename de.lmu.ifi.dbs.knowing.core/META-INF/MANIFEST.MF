@@ -85,4 +85,4 @@ Import-Package: org.eclipse.sapphire.java,
  scala.util.parsing.syntax;version="[2.9.0.1,2.9.3.0]",
  scala.util.regexp;version="[2.9.0.1,2.9.3.0]"
 Bundle-Vendor: LMU Munich - Database Systems Group
-Service-Component: OSGI-INF/directory.xml, OSGI-INF/evaluate.xml, OSGI-INF/dpuDirectory.xml
+Service-Component: OSGI-INF/factoryDirectory.xml, OSGI-INF/evaluate.xml, OSGI-INF/dpuDirectory.xml, OSGI-INF/modelStore.xml

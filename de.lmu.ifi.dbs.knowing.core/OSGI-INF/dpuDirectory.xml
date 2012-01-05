@@ -5,4 +5,5 @@
       <provide interface="de.lmu.ifi.dbs.knowing.core.service.IDPUDirectory"/>
    </service>
    <reference bind="bindDPUProvider" cardinality="0..n" interface="de.lmu.ifi.dbs.knowing.core.service.IDPUProvider" name="IDPUProvider" policy="dynamic" unbind="unbindDPUProvider"/>
+   <property name="knowing.dpudirectory.loadAll" type="Boolean" value="true"/>
 </scr:component>

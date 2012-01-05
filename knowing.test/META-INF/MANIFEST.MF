@@ -65,4 +65,5 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.0",
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Service-Component: OSGI-INF/dsProcessor.xml, OSGI-INF/bypassProcessor.xml, OSGI-INF/multiInputProcessor.xml
-Bundle-Vendor: LMU Munich - Database Systems Group
+Knowing-DPU: *
+Bundle-Vendor: LMU Munich - Database Systems Groups

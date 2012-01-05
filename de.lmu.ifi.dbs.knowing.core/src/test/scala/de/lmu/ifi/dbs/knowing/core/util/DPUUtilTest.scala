@@ -21,11 +21,7 @@ class DPUUtilTest extends FunSuite with ShouldMatchers with BeforeAndAfter {
 
   before {
     val url = Paths.get("src", "test", "resources", "dpu-arff-xcrossvalidation.dpu").toUri.toURL
-    val store = new XmlResourceStore(new UrlResourceStore(url))
-    val resource = new RootXmlResource(store)
-    val orgDPU: IDataProcessingUnit = IDataProcessingUnit.TYPE.instantiate(resource)
-    dpu = IDataProcessingUnit.TYPE.instantiate()
-    dpu.copy(orgDPU)
+    dpu = deserialize(url)
   }
 
   test("DPU loaded correctly") {
@@ -33,7 +29,7 @@ class DPUUtilTest extends FunSuite with ShouldMatchers with BeforeAndAfter {
     dpu.getNodes.size should equal(5)
     dpu.getEdges.size should equal(4)
   }
-
+  
   test("Nodes of type Loader") {
     val loader = loaderNodes(dpu)
     loader should have length 1

@@ -4,6 +4,7 @@ import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
 import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
 import de.lmu.ifi.dbs.knowing.core.processing.DPUExecutor
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
+import de.lmu.ifi.dbs.knowing.core.util.DPUUtil.deserialize
 import org.eclipse.sapphire.modeling.xml.{ RootXmlResource, XmlResourceStore }
 import org.eclipse.sapphire.modeling.UrlResourceStore
 import akka.actor.ActorRef
@@ -26,14 +27,7 @@ trait KnowingTest {
    * @param url - URL to DPU
    * @return dpu - copy of the original dpu
    */
-  def loadDPU(url: URL): IDataProcessingUnit = {
-    val store = new XmlResourceStore(new UrlResourceStore(url))
-    val resource = new RootXmlResource(store)
-    val orgDPU: IDataProcessingUnit = IDataProcessingUnit.TYPE.instantiate(resource)
-    val dpu: IDataProcessingUnit = IDataProcessingUnit.TYPE.instantiate()
-    dpu.copy(orgDPU)
-    dpu
-  }
+  def loadDPU(url: URL): IDataProcessingUnit = deserialize(url)
 
   /**
    * DPU is resolved relative to the test class location

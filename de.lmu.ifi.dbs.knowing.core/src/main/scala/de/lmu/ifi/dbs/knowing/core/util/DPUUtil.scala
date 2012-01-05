@@ -2,13 +2,14 @@ package de.lmu.ifi.dbs.knowing.core.util
 
 import java.net.URL
 import java.util.Properties
+import java.io.{PrintWriter,OutputStream}
 import scala.collection.JavaConversions._
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
 import de.lmu.ifi.dbs.knowing.core.model.INode
 import de.lmu.ifi.dbs.knowing.core.model.NodeType
 import de.lmu.ifi.dbs.knowing.core.service.IDPUDirectory
-import java.io.OutputStream
-import java.io.PrintWriter
+import org.eclipse.sapphire.modeling.xml.{ RootXmlResource, XmlResourceStore }
+import org.eclipse.sapphire.modeling.UrlResourceStore
 
 /**
  * @author Nepomuk Seiler
@@ -17,25 +18,30 @@ import java.io.PrintWriter
 object DPUUtil {
 
   /**
-   * Creates a new IDataProcessingUnit instance. Isn't hooked to any ressource.
+   * @param url - URL to dpu
+   * @return a deep copy of the url stored. Not linked to any resource
+   */
+  def deserialize(url: URL): IDataProcessingUnit = {
+    val store = new XmlResourceStore(new UrlResourceStore(url))
+    val resource = new RootXmlResource(store)
+    val orgDPU: IDataProcessingUnit = IDataProcessingUnit.TYPE.instantiate(resource)
+    val dpu: IDataProcessingUnit = IDataProcessingUnit.TYPE.instantiate()
+    dpu.copy(orgDPU)
+    dpu
+  }
+  
+
+  /**
+   * Creates a new IDataProcessingUnit instance. Isn't hooked to any resource.
+   * @param dpu - original dpu
+   * @return 
    */
   def copy(dpu: IDataProcessingUnit): IDataProcessingUnit = {
     val destination = IDataProcessingUnit.TYPE.instantiate.asInstanceOf[IDataProcessingUnit]
-    copy(dpu, destination)
-  }
-
-  /**
-   * Eclipse Sapphire now offers clone support all models.
-   *
-   * @param source -> copy values from here
-   * @param destination -> paste values in here
-   * @return destination
-   */
-  @deprecated
-  def copy(source: IDataProcessingUnit, destination: IDataProcessingUnit): IDataProcessingUnit = {
-    destination.copy(source)
+    destination.copy(dpu)
     destination
   }
+
 
   def getDPU(directory: IDPUDirectory, id: String): IDataProcessingUnit = directory.getDPU(id).getOrElse(null)
   def getDPUPath(directory: IDPUDirectory, id: String): URL = directory.getDPUPath(id).getOrElse(null)
