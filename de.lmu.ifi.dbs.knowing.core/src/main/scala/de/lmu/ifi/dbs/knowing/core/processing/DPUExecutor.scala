@@ -4,6 +4,7 @@ import java.net.URI
 import java.util.Properties
 import java.util.concurrent.{ TimeUnit, ScheduledFuture, ConcurrentLinkedQueue }
 import java.io.{ InputStream, OutputStream, IOException, PrintWriter }
+import java.nio.file.{Paths, Files }
 import akka.actor.{ Actor, ActorRef, PoisonPill }
 import akka.config.Supervision.OneForOneStrategy
 import akka.event.EventHandler.{ debug, info, warning, error }
@@ -46,8 +47,8 @@ class DPUExecutor(dpu: IDataProcessingUnit,
   var actorsByUuid = MutableMap[UUID, String]()
 
   /** Status map holding: UUID -> Reference, Status, Timestamp */
-  private val statusMap: MutableMap[UUID, (ActorRef, Status, Long)] = MutableMap()
-  private val events = ListBuffer[String]()
+  val statusMap: MutableMap[UUID, (ActorRef, Status, Long)] = MutableMap()
+  val events = ListBuffer[String]()
 
   /** data mining process log */
   var processHistory: IProcessHistory = _
@@ -103,8 +104,8 @@ class DPUExecutor(dpu: IDataProcessingUnit,
    * Run the process!
    */
   def evaluate {
-    initialize
-    connectActors
+    initialize()
+    connectActors()
     actorsByUuid = actors map { case (id, (actor, _)) => (actor.getUuid -> id) }
     actors foreach { case (_, (actor, _)) => actor ! Start() }
   }
@@ -113,7 +114,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
    * Configure UIFactory
    * Create and configure actors for each node
    */
-  private def initialize {
+  def initialize() {
     uifactory setSupervisor (self)
     uifactory update (self, Created())
     uifactory update (self, Progress("initialize", 0, dpu.getNodes.size))
@@ -162,11 +163,11 @@ class DPUExecutor(dpu: IDataProcessingUnit,
         self ! PoisonPill
       case (true, false) =>
         self ! ExceptionEvent(new Exception, "InputMap refer to nonexisting nodes. \n loaderInput: " + loaderInput.keySet
-            + "\n Loader nodes " + DPUUtil.loaderNodes(dpu).foreach(n => print(n + ", ")))
+          + "\n Loader nodes " + DPUUtil.loaderNodes(dpu).foreach(n => print(n + ", ")))
         self ! PoisonPill
       case (false, true) =>
         self ! ExceptionEvent(new Exception, "OutputMap refer to nonexisting nodes. \n saverOutput: " + saverOutput.keySet
-            + "\n Saver nodes " + DPUUtil.saverNodes(dpu).foreach(n => print(n + ", ")))
+          + "\n Saver nodes " + DPUUtil.saverNodes(dpu).foreach(n => print(n + ", ")))
         self ! PoisonPill
       case (false, false) => debug(this, "All input/output maps have been processed successfully")
     }
@@ -177,11 +178,29 @@ class DPUExecutor(dpu: IDataProcessingUnit,
   /**
    * Adds the DPU_PATH property to the property configuration
    */
-  private def configureProperties(properties: Properties, f: TFactory): Properties = {
+  def configureProperties(properties: Properties, f: TFactory): Properties = {
     properties setProperty (TLoader.EXE_PATH, execPath.toString)
 
     val defProperties = new Properties(f.createDefaultProperties)
     defProperties.put(INodeProperties.DEBUG, "false")
+
+    val urlKey = properties.containsKey(INodeProperties.URL)
+    val dirKey = properties.containsKey(INodeProperties.DIR)
+    val fileKey = properties.containsKey(INodeProperties.FILE)
+    (urlKey, fileKey, dirKey) match {
+      case (true, _, _) =>
+      case (_, true, _) => TStreamResolver.resolveFromFileSystem(properties, INodeProperties.FILE, TStreamResolver.acceptAbsoluteFile) match {
+        case Some(p) if Files.exists(p)  => //perfect!
+        case Some(p) if !Files.exists(p) => 
+          warning(this, "File input for Node " + f.name + "doesn't exists " + p)
+          
+        case None =>
+          warning(this, "File input for Node " + f.name + " could not be resolved ")
+      }
+
+      case (_, false, dir) =>
+      case (_, _, _) =>
+    }
 
     properties foreach { case (v, k) => defProperties setProperty (v, k) }
     new ImmutableProperties(defProperties)
@@ -190,7 +209,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
   /**
    *
    */
-  private def connectActors {
+  def connectActors() {
     dpu.getEdges foreach (edge => {
       val source = actors(edge.getSource.getContent)._1
       val sourcePort = Some(edge.getSourcePort.getContent)
@@ -204,7 +223,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
    * On each status update the supervisor checks if the
    * process has finished.
    */
-  private def handleStatus(status: Status) {
+  def handleStatus(status: Status) {
     uifactory update (self.sender.getOrElse(null), status)
     self.sender match {
       case Some(a) => statusMap update (a.getUuid, (a, status, systemTime))
@@ -227,7 +246,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
 
   }
 
-  private def shutdownSupervisor() {
+  def shutdownSupervisor() {
     processHistory match {
       case null =>
       case history => history.resource.save
@@ -242,7 +261,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
   /**
    * Sends the UIEvent to every presenter.
    */
-  private def handleUIEvent(event: UIEvent) {
+  def handleUIEvent(event: UIEvent) {
     //TODO GraphSupervisor -> UIEvent should contain field "id" to specify presenter
     actors filter {
       case (_, (_, NodeType.PRESENTER)) => true
@@ -257,7 +276,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
    * 1) All actors have status Finished | Ready
    * 2) One actor timed out
    */
-  private def finished: Boolean = !statusMap.exists {
+  def finished: Boolean = !statusMap.exists {
     case (_, (_, status, lastTimestamp)) =>
       status match {
         case Running() | Progress(_, _, _) | Waiting() => true

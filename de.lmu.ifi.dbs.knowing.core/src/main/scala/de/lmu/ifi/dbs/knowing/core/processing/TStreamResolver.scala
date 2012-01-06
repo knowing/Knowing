@@ -6,7 +6,7 @@ import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import java.util.Properties
 import java.io.{ OutputStream, InputStream, IOException }
 import java.nio.file.{ Files, Path, Paths, DirectoryStream }
-import java.nio.file.Files.{ newInputStream, newOutputStream, newDirectoryStream, deleteIfExists,exists, createDirectories, createFile }
+import java.nio.file.Files.{ newInputStream, newOutputStream, newDirectoryStream, deleteIfExists, exists, createDirectories, createFile }
 import java.net.{ URI, URL }
 import scala.collection.JavaConversions._
 import INodeProperties.{ ABSOLUTE_PATH, FILE, FILE_EXTENSIONS, DIR, URL => URL_PROP, EXE_PATH }
@@ -126,7 +126,7 @@ trait TStreamResolver { this: TProcessor =>
       case Some(f) =>
         debug(this, "Resolved output resource: " + f.getFileName)
         createDirectories(f.getParent)
-        
+
         //TODO INodeProperties.WRITE_OVERRIDE_EXISTING code here
         Files.exists(f) match {
           case true =>
@@ -145,30 +145,14 @@ trait TStreamResolver { this: TProcessor =>
    * @return None - if no absolute Path to the ressource could be created, Some(Path) else
    */
   protected def resolveFilePath(properties: Properties): Option[Path] = {
-    val accept = (isAbs: Boolean, isDir: Boolean) => (isAbs, isDir) match {
-      //Resolved successfully
-      case (true, false) => true
-      //Path is a directory!
-      case (true, true) => false
-      //Really wrong
-      case (_, _) => false
-    }
-    resolveFromFileSystem(properties, FILE, accept)
+    resolveFromFileSystem(properties, FILE, TStreamResolver.acceptAbsoluteFile)
   }
 
   /**
    *
    */
   protected def resolveDirPath(properties: Properties): Option[Path] = {
-    val accept = (isAbs: Boolean, isDir: Boolean) => (isAbs, isDir) match {
-      //Resolved successfully
-      case (true, true) => true
-      //Path is a directory!
-      case (true, false) => false
-      //Really wrong
-      case (_, _) => false
-    }
-    resolveFromFileSystem(properties, DIR, accept)
+    resolveFromFileSystem(properties, DIR, TStreamResolver.acceptAbsoluteDir)
   }
 
   /**
@@ -178,37 +162,7 @@ trait TStreamResolver { this: TProcessor =>
    * @return None on errors resolving Path, Some(Path) else
    */
   protected def resolveFromFileSystem(properties: Properties, key: String, accept: (Boolean, Boolean) => Boolean): Option[Path] = {
-    if (!properties.containsKey(key))
-      return None
-
-    debug(this, "Trying resolve [" + key + "]...")
-    val path = Paths.get(properties.getProperty(key))
-    val absolute = properties.getProperty(ABSOLUTE_PATH, "false").toBoolean
-
-    (path.isAbsolute, absolute) match {
-
-      //Path is absolute and property absolute is selected
-      case (true, true) => Some(path)
-
-      //Path isn't absolute, but property assumes it is
-      case (false, true) => None
-
-      //Path is relative
-      case _ =>
-        val execURI = new URI(properties.getProperty(EXE_PATH, ""))
-        execURI.getScheme match {
-          //Can only handle file schemes
-          case "file" =>
-            val exePath = Paths.get(execURI)
-            val relPath = exePath.resolve(path)
-            accept(relPath.isAbsolute, Files.isDirectory(relPath)) match {
-              case true => Some(relPath)
-              case false => None
-            }
-          //ResolveInputFromURL will try to resolve this
-          case _ => None
-        }
-    }
+    TStreamResolver.resolveFromFileSystem(properties, key, accept)
   }
 
   /**
@@ -242,6 +196,67 @@ trait TStreamResolver { this: TProcessor =>
               case Some(p) => Some(Files.newInputStream(p))
             }
           case _ => Some(url.openStream)
+        }
+    }
+  }
+}
+
+object TStreamResolver {
+
+  val acceptAbsoluteFile = (isAbs: Boolean, isDir: Boolean) => (isAbs, isDir) match {
+    //Resolved successfully
+    case (true, false) => true
+    //Path is a directory!
+    case (true, true) => false
+    //Really wrong
+    case (_, _) => false
+  }
+
+  val acceptAbsoluteDir = (isAbs: Boolean, isDir: Boolean) => (isAbs, isDir) match {
+    //Resolved successfully
+    case (true, true) => true
+    //Path is a directory!
+    case (true, false) => false
+    //Really wrong
+    case (_, _) => false
+  }
+
+  /**
+   * @param properties - INode properties from DPU
+   * @param key - FILE | DIR
+   * @param accept - Accept if path is directory or file
+   * @return None on errors resolving Path, Some(Path) else
+   */
+  def resolveFromFileSystem(properties: Properties, key: String, accept: (Boolean, Boolean) => Boolean): Option[Path] = {
+    if (!properties.containsKey(key))
+      return None
+
+    debug(this, "Trying resolve [" + key + "]...")
+    val path = Paths.get(properties.getProperty(key))
+    val absolute = properties.getProperty(ABSOLUTE_PATH, "false").toBoolean
+
+    (path.isAbsolute, absolute) match {
+
+      //Path is absolute and property absolute is selected
+      case (true, true) => Some(path)
+
+      //Path isn't absolute, but property assumes it is
+      case (false, true) => None
+
+      //Path is relative
+      case _ =>
+        val execURI = new URI(properties.getProperty(EXE_PATH, ""))
+        execURI.getScheme match {
+          //Can only handle file schemes
+          case "file" =>
+            val exePath = Paths.get(execURI)
+            val relPath = exePath.resolve(path)
+            accept(relPath.isAbsolute, Files.isDirectory(relPath)) match {
+              case true => Some(relPath)
+              case false => None
+            }
+          //ResolveInputFromURL will try to resolve this
+          case _ => None
         }
     }
   }

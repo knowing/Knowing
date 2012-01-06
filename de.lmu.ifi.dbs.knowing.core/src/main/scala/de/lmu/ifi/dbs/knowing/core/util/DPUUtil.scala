@@ -2,7 +2,7 @@ package de.lmu.ifi.dbs.knowing.core.util
 
 import java.net.URL
 import java.util.Properties
-import java.io.{PrintWriter,OutputStream}
+import java.io.{ PrintWriter, OutputStream }
 import scala.collection.JavaConversions._
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
 import de.lmu.ifi.dbs.knowing.core.model.INode
@@ -27,21 +27,20 @@ object DPUUtil {
     val orgDPU: IDataProcessingUnit = IDataProcessingUnit.TYPE.instantiate(resource)
     val dpu: IDataProcessingUnit = IDataProcessingUnit.TYPE.instantiate()
     dpu.copy(orgDPU)
+    store.dispose
     dpu
   }
-  
 
   /**
    * Creates a new IDataProcessingUnit instance. Isn't hooked to any resource.
    * @param dpu - original dpu
-   * @return 
+   * @return
    */
   def copy(dpu: IDataProcessingUnit): IDataProcessingUnit = {
     val destination = IDataProcessingUnit.TYPE.instantiate.asInstanceOf[IDataProcessingUnit]
     destination.copy(dpu)
     destination
   }
-
 
   def getDPU(directory: IDPUDirectory, id: String): IDataProcessingUnit = directory.getDPU(id).getOrElse(null)
   def getDPUPath(directory: IDPUDirectory, id: String): URL = directory.getDPUPath(id).getOrElse(null)

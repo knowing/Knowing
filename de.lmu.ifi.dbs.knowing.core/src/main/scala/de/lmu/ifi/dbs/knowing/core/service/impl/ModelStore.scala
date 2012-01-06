@@ -36,7 +36,7 @@ class ModelStore extends IModelStore with KnowingBundleExtender {
    */
   def getModel(node: INode): Option[URL] = {
     node.getProperties
-      .find(p => p.getKey.getContent.equals(INodeProperties.DESERIALIZE))
+      .find(_.getKey.getContent.equals(INodeProperties.DESERIALIZE))
       .flatMap(p => bundleProviders.get(p.getValue.getContent))
   }
 

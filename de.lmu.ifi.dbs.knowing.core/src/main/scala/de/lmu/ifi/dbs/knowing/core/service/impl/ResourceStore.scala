@@ -3,7 +3,7 @@ package de.lmu.ifi.dbs.knowing.core.service.impl
 import de.lmu.ifi.dbs.knowing.core.service.{ KnowingBundleExtender, IResourceStore, IResourceProvider }
 import de.lmu.ifi.dbs.knowing.core.model.INode
 import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties
-import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties.{ URL => URL_PROP, FILE }
+import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties.FILE
 
 import org.osgi.framework.{ Bundle, BundleContext }
 import java.net.URL
@@ -40,19 +40,22 @@ class ResourceStore extends IResourceStore with KnowingBundleExtender {
    * @return Some(url) or None
    */
   def getResource(node: INode): Option[URL] = {
-    val resources = node.getProperties
-      .filter {
-        _.getKey.getContent match {
-          case URL_PROP | FILE => false
-          case _ => true
-        }
-      }
-
-    resources.size match {
-      case 0 => None
-      case 1 => bundleProviders.get(resources(0).getValue.getContent)
-      case _ => bundleProviders.get(resources(0).getValue.getContent)
-    }
+    //    val resources = node.getProperties
+    //      .filter {
+    //        _.getKey.getContent match {
+    //          case INodeProperties.URL | FILE => false
+    //          case _ => true
+    //        }
+    //      }
+    //
+    //    resources.size match {
+    //      case 0 => None
+    //      case 1 => bundleProviders.get(resources(0).getValue.getContent)
+    //      case _ => bundleProviders.get(resources(0).getValue.getContent)
+    //    }
+    node.getProperties
+      .find(_.getKey.getContent.equals(FILE))
+      .flatMap(p => bundleProviders.get(p.getValue.getContent))
   }
 
   /**

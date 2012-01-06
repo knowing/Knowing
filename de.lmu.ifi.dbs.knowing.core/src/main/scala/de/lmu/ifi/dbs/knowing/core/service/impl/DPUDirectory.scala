@@ -38,6 +38,8 @@ class DPUDirectory extends IDPUDirectory with KnowingBundleExtender {
    * @return dpu first found with id
    */
   def getDPU(id: String): Option[IDataProcessingUnit] = {
+    println("Get DPU with id " + id)
+    println("Stored DPUs " + bundleProviders.keySet)
     bundleProviders.get(id) match {
       case Some(e) => return Some(deserialize(e))
       case None =>
@@ -60,6 +62,9 @@ class DPUDirectory extends IDPUDirectory with KnowingBundleExtender {
    * @return dpu-url first found with id
    */
   def getDPUPath(id: String): Option[URL] = {
+    if (bundleProviders.containsKey(id))
+      return bundleProviders.get(id)
+
     val results = new ListBuffer[URL]
     for (provider <- serviceProviders) {
       provider.getURL(id) match {
@@ -75,7 +80,9 @@ class DPUDirectory extends IDPUDirectory with KnowingBundleExtender {
    */
   def getDPUs(): Array[IDataProcessingUnit] = {
     val dpuArrays = serviceProviders map (_.getDataProcessingUnits.toList)
-    dpuArrays.reduceLeft((head, next) => head ::: next).toArray
+    val providerDPUs = dpuArrays.reduceLeft((head, next) => head ::: next)
+    val bundleDPUs = bundleProviders.map { case (_, url) => deserialize(url) }.toList
+    (bundleDPUs ::: providerDPUs).toArray
   }
 
   /*======================================*/
@@ -99,14 +106,16 @@ class DPUDirectory extends IDPUDirectory with KnowingBundleExtender {
    */
   def addDataProcessingUnits(b: Bundle) = getResourceDescription(b, loadAll)
     .filter(_.endsWith(".dpu"))
-    .foreach { dpu =>
-      val entry = b.getEntry(dpu)
-      bundleProviders.contains(dpu) match {
+    .foreach { dpuEntry =>
+      val entry = b.getEntry(dpuEntry)
+      bundleProviders.contains(dpuEntry) match {
         case false if entry != null =>
-          bundleProviders += (dpu -> entry)
-          log.debug("Added DPU " + dpu)
+          val dpu =  deserialize(entry)
+          
+          bundleProviders += (dpu.getName.getContent -> entry)
+          log.debug("Added DPU " + dpuEntry)
         case false if entry == null =>
-          log.warn("DPU does not exists " + dpu)
+          log.warn("DPU does not exists " + dpuEntry)
         case true =>
       }
     }
