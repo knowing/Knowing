@@ -1,7 +1,7 @@
 package de.lmu.ifi.dbs.knowing.test
 
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
-import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
+import de.lmu.ifi.dbs.knowing.core.service._
 import de.lmu.ifi.dbs.knowing.core.processing.DPUExecutor
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
 import de.lmu.ifi.dbs.knowing.core.util.DPUUtil.deserialize
@@ -44,8 +44,13 @@ trait KnowingTest {
   /* ============ DPUExecutor  =========== */
   /* ===================================== */
 
-  def createDPUExecutor(dpu: IDataProcessingUnit, uiFactory: UIFactory[_], exePath: URI, factoryDirectory: IFactoryDirectory): ActorRef = {
-    actorOf(new DPUExecutor(dpu, uiFactory, exePath, factoryDirectory))
+  def createDPUExecutor(dpu: IDataProcessingUnit,
+    uiFactory: UIFactory[_],
+    exePath: URI,
+    factoryDirectory: IFactoryDirectory,
+    modelStore: IModelStore,
+    resourceStore: IResourceStore): ActorRef = {
+    actorOf(new DPUExecutor(dpu, uiFactory, exePath, factoryDirectory, modelStore, resourceStore))
   }
 
 }

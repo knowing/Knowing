@@ -84,7 +84,8 @@ class ResourceStore extends IResourceStore with KnowingBundleExtender {
       val entry = b.getEntry(res)
       bundleProviders.contains(res) match {
         case false if entry != null =>
-          bundleProviders += (res -> entry)
+          val id = res.substring(RESOURCE_FOLDER.length + 1)
+          bundleProviders += (id -> entry)
           log.debug("Added Resource " + res)
         case false if entry == null =>
           log.warn("Resource does not exists " + res)

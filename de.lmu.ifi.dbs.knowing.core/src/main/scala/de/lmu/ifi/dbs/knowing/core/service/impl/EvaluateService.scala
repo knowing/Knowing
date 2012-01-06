@@ -7,11 +7,12 @@ import akka.actor.ActorRef
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
 import de.lmu.ifi.dbs.knowing.core.processing.DPUExecutor
-import de.lmu.ifi.dbs.knowing.core.service.{ IEvaluateService, IFactoryDirectory }
+import de.lmu.ifi.dbs.knowing.core.service._
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
 import de.lmu.ifi.dbs.knowing.core.util.DPUUtil
 import scala.collection.mutable.{ Map => MutableMap, HashMap }
 import scala.collection.mutable.ArrayBuffer
+import org.slf4j.LoggerFactory
 
 /**
  * Default implementation for the EvaluationService
@@ -21,8 +22,16 @@ import scala.collection.mutable.ArrayBuffer
  */
 class EvaluateService extends IEvaluateService {
 
+  private lazy val log = LoggerFactory.getLogger(classOf[IEvaluateService])
+
   /** 1..1 relation */
   private var factoryDirectory: IFactoryDirectory = _
+
+  /** 1..1 relation */
+  private var modelStore: IModelStore = _
+
+  /** 1..1 relation */
+  private var resourceStore: IResourceStore = _
 
   /** 0..n relation */
   private var uiFactories = new ArrayBuffer[UIFactory[_]]()
@@ -87,9 +96,13 @@ class EvaluateService extends IEvaluateService {
     input: MutableMap[String, InputStream],
     output: MutableMap[String, OutputStream]): ActorRef = {
 
-    val executor = actorOf(new DPUExecutor(dpu, ui, execPath, factoryDirectory, input, output)).start
+    val executor = actorOf(new DPUExecutor(dpu, ui, execPath, factoryDirectory, modelStore, resourceStore, input, output)).start
     executor ! Start()
     executor
+  }
+
+  def activate() {
+    log.debug("EvaluateSerive activated")
   }
 
   /** bind factory service */
@@ -98,9 +111,22 @@ class EvaluateService extends IEvaluateService {
   /** unbind factory service */
   def unbindDirectoryService(service: IFactoryDirectory) = factoryDirectory = null
 
+  /** bind factory service */
+  def bindModelStoreService(service: IModelStore) = modelStore = service
+
+  /** unbind factory service */
+  def unbindModelStoreService(service: IModelStore) = modelStore = null
+
+  /** bind factory service */
+  def bindResourceStoreService(service: IResourceStore) = resourceStore = service
+
+  /** unbind factory service */
+  def unbindResourceStoreService(service: IResourceStore) = resourceStore = null
+
   /** bind UIFactory service */
   def bindUIFactory(service: UIFactory[_]) = uiFactories += service
 
   /** unbind UIFactory service */
   def unbindUIFactory(service: UIFactory[_]) = uiFactories -= service
+
 }

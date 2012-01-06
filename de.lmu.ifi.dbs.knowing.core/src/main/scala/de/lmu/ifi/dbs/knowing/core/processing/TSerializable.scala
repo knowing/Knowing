@@ -22,15 +22,14 @@ trait TSerializable extends TStreamResolver { this: TProcessor =>
 
   @throws(classOf[IOException])
   def inputStream(): Option[InputStream] = resolveSerializeProperty(properties, DESERIALIZE) match {
-    case None => None
-
     //Input successfully created
-    case Some(p) => exists(p) match {
-      case false => None
-
-      case true => Some(newInputStream(p))
+    case Some(p) if exists(p) => Some(newInputStream(p))
+    case _ => properties.getProperty(DESERIALIZE) match {
+      case null => None
+      case url => 
+        val model = new URL(url)
+        Some(model.openStream)
     }
-
   }
 
   @throws(classOf[IOException])

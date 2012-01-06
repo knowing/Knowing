@@ -4,7 +4,7 @@ import java.net.URI
 import java.util.Properties
 import java.util.concurrent.{ TimeUnit, ScheduledFuture, ConcurrentLinkedQueue }
 import java.io.{ InputStream, OutputStream, IOException, PrintWriter }
-import java.nio.file.{Paths, Files }
+import java.nio.file.{ Paths, Files }
 import akka.actor.{ Actor, ActorRef, PoisonPill }
 import akka.config.Supervision.OneForOneStrategy
 import akka.event.EventHandler.{ debug, info, warning, error }
@@ -12,9 +12,10 @@ import akka.dispatch._
 import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.util._
 import de.lmu.ifi.dbs.knowing.core.events._
-import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
+import de.lmu.ifi.dbs.knowing.core.service._
 import de.lmu.ifi.dbs.knowing.core.model._
 import de.lmu.ifi.dbs.knowing.core.util.DPUUtil.{ nodeProperties }
+import INodeProperties._
 import com.eaio.uuid.UUID
 import scala.collection.mutable.{ Map => MutableMap, ListBuffer, SynchronizedQueue }
 import scala.collection.JavaConversions._
@@ -35,6 +36,8 @@ class DPUExecutor(dpu: IDataProcessingUnit,
   uifactory: UIFactory[_],
   execPath: URI,
   directory: IFactoryDirectory,
+  modelStore: IModelStore,
+  resourceStore: IResourceStore,
   loaderInput: MutableMap[String, InputStream] = MutableMap(),
   saverOutput: MutableMap[String, OutputStream] = MutableMap()) extends Actor with TSender {
 
@@ -110,6 +113,10 @@ class DPUExecutor(dpu: IDataProcessingUnit,
     actors foreach { case (_, (actor, _)) => actor ! Start() }
   }
 
+  /*=======================================================*/
+  /*============= CREATE AND INITIALIZE NODES =============*/
+  /*=======================================================*/
+
   /**
    * Configure UIFactory
    * Create and configure actors for each node
@@ -143,7 +150,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
           }
 
           //Configure with properties
-          actor ! Configure(configureProperties(nodeProperties(node), f))
+          actor ! Configure(configureProperties(node, f))
           //Add to internal map
           actors += (node.getId.getContent -> (actor, node.getType.getContent))
           statusMap += (actor.getUuid -> (actor, Created(), systemTime))
@@ -175,36 +182,87 @@ class DPUExecutor(dpu: IDataProcessingUnit,
     uifactory update (self, Finished())
   }
 
+  /*=======================================================*/
+  /*================== CONFIGURE NODES ====================*/
+  /*=======================================================*/
+
   /**
    * Adds the DPU_PATH property to the property configuration
    */
-  def configureProperties(properties: Properties, f: TFactory): Properties = {
+  def configureProperties(node: INode, f: TFactory): Properties = {
+    val properties = nodeProperties(node)
     properties setProperty (TLoader.EXE_PATH, execPath.toString)
 
     val defProperties = new Properties(f.createDefaultProperties)
     defProperties.put(INodeProperties.DEBUG, "false")
 
+    //Check FILE | URL | DIR properties
     val urlKey = properties.containsKey(INodeProperties.URL)
-    val dirKey = properties.containsKey(INodeProperties.DIR)
-    val fileKey = properties.containsKey(INodeProperties.FILE)
+    val dirKey = properties.containsKey(DIR)
+    val fileKey = properties.containsKey(FILE)
     (urlKey, fileKey, dirKey) match {
       case (true, _, _) =>
-      case (_, true, _) => TStreamResolver.resolveFromFileSystem(properties, INodeProperties.FILE, TStreamResolver.acceptAbsoluteFile) match {
-        case Some(p) if Files.exists(p)  => //perfect!
-        case Some(p) if !Files.exists(p) => 
-          warning(this, "File input for Node " + f.name + "doesn't exists " + p)
-          
+      case (_, true, _) => TStreamResolver.resolveFromFileSystem(properties, FILE, TStreamResolver.acceptAbsoluteFile) match {
+        case Some(p) if Files.exists(p) => debug(this, "File found " + p) //perfect!
+        case Some(p) if !Files.exists(p) =>
+          warning(this, "File input for Node " + node.getId.getContent + "could be resolved, but doesn't exists " + p)
+          resourceStore.getResource(node) match {
+            case None => warning(this, "Default resource [" + properties.getProperty(FILE) + "] for Node " + node.getId.getContent + " couldn't be found")
+            case Some(url) =>
+              debug(this, "Set input URL to " + url.toString)
+              properties.removeKey(FILE)
+              properties.setProperty(INodeProperties.URL, url.toString)
+          }
         case None =>
-          warning(this, "File input for Node " + f.name + " could not be resolved ")
+          warning(this, "File input for Node " + node.getId.getContent + " could not be resolved. Wrong filename or path.")
+          val file = properties.getProperty(FILE)
+          resourceStore.getResource(file) match {
+            case None => warning(this, "Default resource [" + file + "] for Node [" + node.getId.getContent + "] couldn't be found")
+            case Some(url) =>
+              debug(this, "Set input URL to " + url.toString)
+              properties.removeKey(FILE)
+              properties.setProperty(INodeProperties.URL, url.toString)
+          }
+
       }
 
       case (_, false, dir) =>
       case (_, _, _) =>
     }
 
+    //Check DESERIALIZE property
+    properties.containsKey(DESERIALIZE) match {
+      case true => TStreamResolver.resolveFromFileSystem(properties, DESERIALIZE, TStreamResolver.acceptAbsoluteFile) match {
+        case Some(p) if Files.exists(p) => //perfect!
+        case Some(p) if !Files.exists(p) =>
+          warning(this, "Deserialize input for Node " + node.getId.getContent + " could be resolved, but doesn't exists " + p)
+          modelStore.getModel(node) match {
+            case None => warning(this, "Default model [" + properties.getProperty(DESERIALIZE) + "] for Node [" + node.getId.getContent + "] couldn't be found")
+            case Some(url) =>
+              debug(this, "Set input DESERIALIZE to " + url.toString)
+              properties.setProperty(DESERIALIZE, url.toString)
+          }
+          
+        case None =>
+          warning(this, "Deserialize input for Node " + node.getId.getContent + " could not be resolved. Wrong filename or path.")
+          val file = properties.getProperty(DESERIALIZE)
+          modelStore.getModel(file) match {
+            case None => warning(this, "Default model [" + file + "] for Node [" + node.getId.getContent + "] couldn't be found")
+            case Some(url) =>
+              debug(this, "Set input DESERIALIZE to " + url.toString)
+              properties.setProperty(DESERIALIZE, url.toString)
+          }
+      }
+      case false =>
+    }
+
     properties foreach { case (v, k) => defProperties setProperty (v, k) }
     new ImmutableProperties(defProperties)
   }
+
+  /*=======================================================*/
+  /*=================== CONNECT NODES =====================*/
+  /*=======================================================*/
 
   /**
    *
@@ -218,6 +276,10 @@ class DPUExecutor(dpu: IDataProcessingUnit,
       source ! Register(target, sourcePort, targetPort)
     })
   }
+
+  /*=======================================================*/
+  /*=============== LIFECYCLE MANAGEMENT ==================*/
+  /*=======================================================*/
 
   /**
    * On each status update the supervisor checks if the

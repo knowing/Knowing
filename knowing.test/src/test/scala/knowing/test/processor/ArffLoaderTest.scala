@@ -28,6 +28,9 @@ class ArffLoaderTest extends FunSuite with ShouldMatchers with BeforeAndAfter wi
     val factoryDirectory = new EmbeddedFactoryDirectory()
       .add(new WekaArffLoaderFactory)
       .add(new EmbeddedUIComponentPresenterFactory)
+      
+    val modelStore = new EmbeddedModelStore
+    val resourceStore = new EmbeddedResourceStore
 
     //Create UIFactory to access results
     uiFactory = new EmbeddedUIFactory
@@ -39,7 +42,7 @@ class ArffLoaderTest extends FunSuite with ShouldMatchers with BeforeAndAfter wi
     val dpu = loadDPU("test-dpu-arffLoader.dpu")
 
     //Create the dpuExectuor running the test
-    dpuExecutor = createDPUExecutor(dpu, uiFactory, exePath, factoryDirectory).start
+    dpuExecutor = createDPUExecutor(dpu, uiFactory, exePath, factoryDirectory,modelStore,resourceStore).start
   }
 
   test("Run ARFFLoader") {

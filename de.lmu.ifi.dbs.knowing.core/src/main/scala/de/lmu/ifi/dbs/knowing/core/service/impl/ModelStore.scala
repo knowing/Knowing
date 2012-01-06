@@ -69,7 +69,8 @@ class ModelStore extends IModelStore with KnowingBundleExtender {
       val entry = b.getEntry(model)
       bundleProviders.contains(model) match {
         case false if entry != null =>
-          bundleProviders += (model -> entry)
+          val id = model.substring(RESOURCE_FOLDER.length + 1)
+          bundleProviders += (id -> entry)
           log.debug("Added Model " + model)
         case false if entry == null =>
           log.warn("Model does not exists " + model)
