@@ -1,0 +1,54 @@
+15;0;false
+8.631748403156521E27;260.24277472835854;71.56556605599286;12.729771377953206;0.4475370826107716;0.4475370826107716;0.05867347771329186;0.034798499528019694;-1.5356914898608998E-4;-0.032485637341744186;-0.032485637341744186;-568.4493616727727;-1894.006468004522;-1.3776239699762169E10;-1.099511627776E12
+eigenvector_matrix
+
+ 0.841820945 -0.4356155072 0.2605688006 0.5940194702 0.3899292648 -0.2887486475 0.0558105355 -0.0500334129 -0.1364861982 -0.2319459956 0.4630753603 -0.2821119582 0.2353097254 -0.0829677046 -1
+ 1 0.4356155044 -0.2605687989 -0.5940194663 -0.3899292622 0.2887486455 -0.0558105351 0.0500334126 0.1364861973 0.231945994 -0.4630753572 0.2821119563 -0.2353097237 0.0829677041 0.9999999933
+ 0.5114540359 0.2025109927 -0.133711376 -0.2930785944 -0.1974738009 0.1477942598 -0.0285472351 0.025541725 0.0697203281 0.1188490066 -0.2364958341 0.1531036183 -0.258773644 0.0142327671 0.5114540325
+ -0.0788622941 0.5073978782 -0.5046068745 1 0.6847356438 -0.4383334172 -0.1965002136 0.2406565229 0.1896381613 0.7056999374 -0.6220646872 0.4394391586 -0.472790892 0.4988292022 -0.0788622935
+ -0.0921847846 0.0917952008 -0.0673904593 -0.573851547 -0.7516800187 -0.2033751541 0.0029801625 -0.0041247072 -0.0025271651 -0.0636051083 0.0075308354 -0.0296989575 0.0299843522 -0.0025653221 -0.092184784
+ 0.0735796386 -0.5696059174 1 0.4851934804 1 -1 -0.1033797738 0.0758729254 0.0153046386 0.2912108952 -0.0199590339 -1 1 -1 0.0735796381
+ -0.0496758286 -0.0033432381 -0.0709023765 0.7265089623 -0.3666325523 -0.5522649223 -0.4637950596 0.3526987688 0.2402684361 -1 0.9166967188 -0.0482645754 0.0342668043 -0.0013823836 -0.0496758283
+ -0.1549204597 0.0668512928 -0.0554346534 -0.2086416994 -0.1239050364 -0.6420382268 -1 1 1 0.6309720742 -1 -0.0374752448 0.0739452503 -0.0043111327 -0.1549204587
+ -0.270172753 0.0971997327 -0.3729177994 0.32246532 0.9583782462 0.3154565997 0.5376096099 -0.4736654667 -0.5066012212 -0.4024451729 0.9086477482 -0.0826587984 0.0268738731 -0.0075183782 -0.2701727512
+ -0.0259250333 1 0.0244427025 0.3858240454 0.0552292272 -0.4575051511 -0.1926928598 0.1351390959 0.0305255042 0.151759822 -0.1064910827 0.0656144258 -0.1031826947 0.1245345018 -0.0259250331
+ 0.0274342651 -0.4566690784 -0.183372757 0.2338353367 0.010405774 -0.1759764676 -0.0765937647 0.0726884204 0.0884603513 0.0942340804 0.558739976 -0.0679066005 0.0962878218 -0.1244925014 0.0274342649
+ 0.0176217069 0.0296592879 -0.0051347229 0.1738879092 -0.0812540547 0.041876836 0.0242058458 -0.0213099161 -0.0226084773 -0.0097044392 0.0258693036 0.0095050457 -0.009497333 0.0004903781 0.0176217068
+ -0.0077843771 0.1797552977 -0.0089400174 -0.2390081378 0.0203890656 0.1836893608 0.0784149469 -0.0519952188 -0.0341276374 -0.0342162411 0.1072094431 0.0815281342 -0.0903757787 0.0937253356 -0.0077843771
+ -0.0127569261 0.1002153842 -0.0945700688 -0.0542659316 0.0764924721 0.1268674921 0.0102630355 0.0224156841 0.183245938 -0.0340295449 -0.1005331807 0.1200017067 -0.1228844537 0.1249009466 -0.012756926
+ -0.313697792 -0.8723053789 0.9087017972 0.1817965473 -0.1580823341 -0.1189822513 0.1759066516 -0.2240411401 -0.237433899 -0.0619488708 0.1014116316 -0.4401278442 0.2424744341 -0.0087296264 -0.3136977899
+
+output_format
+@relation 2011.08.20-Joggen-28min-Christian-de.sendsor.accelerationSensor.algorithm.moennig.fv.AugmentedFV
+
+@attribute start date 'yyyy-MM-dd\" \"HH:mm:ss.SS'
+@attribute end date 'yyyy-MM-dd\" \"HH:mm:ss.SS'
+@attribute segment relational
+@attribute timestamp date 'yyyy-MM-dd\' \'HH:mm:ss.SS'
+@attribute x numeric
+@attribute y numeric
+@attribute z numeric
+@attribute source {/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.08.20-Joggen-28min-Christian.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.08.15-Skaten-min14-52-Christian.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.05.29-spazieren-min3-26-patricia.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.05.25-Joggen-min15-40-Julie.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.05.24-spazieren-min35-50.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.05.24-spazieren-min2-15.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.05.23-Joggen-min30-60-Thomas.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.05.11-Skaten-min10-44-Christian.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.05.06-Skaten-min10-45-Christian.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.05.02-Joggen-min5-30-Christian.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.04.28-Joggen-min8-28-Christian.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.04.18-spazieren-min10-45-Christian.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.04.16-spazieren-min5-40-Christian.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.04.03-biken-min10-56-Christian.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2010.08.21-biken-min5-85.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2010.08.10-spazieren-min5-30.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2010.07.18-biken-min91-110.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2010.07.18-biken-min6-15.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2010.07.17-crosstrainer-min4-17.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2010.07.15-crosstrainer-min1-30-Franz.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2010.07.14-crosstrainer-min6-16-Franz.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2010.07.12-Joggen-min15-45-Thomas.arff}
+@attribute class {Joggen,Skaten,spazieren,biken,crosstrainer}
+@end segment
+@attribute SSR numeric
+@attribute source {/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.08.20-Joggen-28min-Christian.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.08.15-Skaten-min14-52-Christian.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.05.29-spazieren-min3-26-patricia.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.05.25-Joggen-min15-40-Julie.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.05.24-spazieren-min35-50.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.05.24-spazieren-min2-15.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.05.23-Joggen-min30-60-Thomas.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.05.11-Skaten-min10-44-Christian.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.05.06-Skaten-min10-45-Christian.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.05.02-Joggen-min5-30-Christian.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.04.28-Joggen-min8-28-Christian.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.04.18-spazieren-min10-45-Christian.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.04.16-spazieren-min5-40-Christian.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2011.04.03-biken-min10-56-Christian.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2010.08.21-biken-min5-85.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2010.08.10-spazieren-min5-30.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2010.07.18-biken-min91-110.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2010.07.18-biken-min6-15.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2010.07.17-crosstrainer-min4-17.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2010.07.15-crosstrainer-min1-30-Franz.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2010.07.14-crosstrainer-min6-16-Franz.arff,/C:/Users/muki/wekafiles/medmon/big/inputdata/2010.07.12-Joggen-min15-45-Thomas.arff}
+@attribute class {Joggen,Skaten,spazieren,biken,crosstrainer}
+@attribute FV_1 numeric
+@attribute FV_2 numeric
+@attribute FV_3 numeric
+@attribute FV_4 numeric
+@attribute FV_5 numeric
+@attribute FV_6 numeric
+@attribute FV_7 numeric
+@attribute FV_8 numeric
+@attribute FV_9 numeric
+@attribute FV_10 numeric
+@attribute FV_11 numeric
+@attribute FV_12 numeric
+@attribute FV_13 numeric
+@attribute FV_14 numeric
+@attribute FV_15 numeric
+
+@data
+

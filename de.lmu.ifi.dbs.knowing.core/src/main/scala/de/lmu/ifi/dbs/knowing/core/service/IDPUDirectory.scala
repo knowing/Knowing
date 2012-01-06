@@ -33,10 +33,5 @@ trait IDPUDirectory {
 }
 
 object IDPUDirectory {
-  val KNOWING_DPU_MANIFEST_HEADER = "Knowing-DPU"
-  val KNOWING_FOLDER = "KNOWING-INF"
-  val DPU_SEPARATOR = ","
-  val DPU_WILDCARD = "*"
-
   val LOAD_ALL = "knowing.dpudirectory.loadAll"
 }

@@ -31,11 +31,6 @@ trait IModelStore {
  */
 object IModelStore {
 
-  val KNOWING_MODEL_MANIFEST_HEADER = "Knowing-DPU-Model"
-  val KNOWING_FOLDER = IDPUDirectory.KNOWING_FOLDER
-  val MODEL_SEPARATOR = ","
-  val MODEL_WILDCARD = "*"
-
   //Service properties
   val LOAD_ALL = "knowing.modelstore.loadAll"
 }

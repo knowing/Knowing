@@ -12,14 +12,18 @@ import org.osgi.service.component.ComponentContext
 import org.slf4j.LoggerFactory
 import scala.collection.mutable.{ HashMap, HashSet }
 import scala.collection.JavaConversions._
+import de.lmu.ifi.dbs.knowing.core.service.KnowingBundleExtender
 
 /**
  * @author Nepomuk Seiler
  * @version 0.1
  */
-class ModelStore extends IModelStore with BundleListener {
+class ModelStore extends IModelStore with KnowingBundleExtender {
 
-  private lazy val log = LoggerFactory.getLogger(classOf[IModelStore])
+  val log = LoggerFactory.getLogger(classOf[IModelStore])
+  
+  val MANIFEST_HEADER = "Knowing-DPU-Model"
+  val RESOURCE_FOLDER = "KNOWING-INF/model"
 
   /** IDPUProvider services */
   private lazy val serviceProviders = new HashSet[IModelProvider]
@@ -47,21 +51,14 @@ class ModelStore extends IModelStore with BundleListener {
   /*===== Bundle Handling - Manifest =====*/
   /*======================================*/
 
-  /**
-   * @see https://github.com/gkvas/gemini.jpa/blob/master/org.eclipse.gemini.jpa/src/org/eclipse/gemini/jpa/PersistenceBundleExtender.java
-   */
-  def bundleChanged(event: BundleEvent) = event.getType match {
-    case STARTING | STARTED | RESOLVED | INSTALLED | LAZY_ACTIVATION =>
-      addModel(event.getBundle)
-    case STOPPING | STOPPED | UNRESOLVED | UNINSTALLED =>
-      removeModel(event.getBundle)
-    case _ =>
-  }
+  def onBundleInstallation(b: Bundle) = addModel(b)
+
+  def onBundleDeinstallation(b: Bundle) = removeModel(b)
 
   /**
    * Checks all bundles and adds DPUs to internal store if necessary
    */
-  def checkAllBundles(context: BundleContext) {
+  def checkBundlesOnActivation(context: BundleContext) {
     for (b <- context.getBundles)
       addModel(b)
   }
@@ -69,14 +66,14 @@ class ModelStore extends IModelStore with BundleListener {
   /**
    * Add DPU to internal store
    */
-  def addModel(b: Bundle) = getModelDesc(b)
+  def addModel(b: Bundle) = getResourceDescription(b)
     .filter(!_.endsWith(".dpu"))
     .foreach { model =>
-      val entry = b.getEntry(KNOWING_FOLDER + "/" + model)
+      val entry = b.getEntry(model)
       bundleProviders.contains(model) match {
         case false if entry != null =>
           bundleProviders += (model -> entry)
-          log.debug("Added Model " + model + " with url " + entry)
+          log.debug("Added Model " + model)
         case false if entry == null =>
           log.warn("Model does not exists " + model)
         case true =>
@@ -86,66 +83,20 @@ class ModelStore extends IModelStore with BundleListener {
   /**
    * Remove DPU from internal store
    */
-  def removeModel(b: Bundle) = getModelDesc(b)
+  def removeModel(b: Bundle) = getResourceDescription(b)
     .filter(!_.endsWith(".dpu"))
+    .filter(bundleProviders.contains(_))
     .foreach { model =>
-      bundleProviders.contains(model) match {
-        case true =>
-          bundleProviders -= model
-          log.debug("Removed Model " + model)
-        case false =>
-      }
+      bundleProviders -= model
+      log.debug("Removed Model " + model)
     }
-
-  /**
-   * Resolve Models from KNOWING-INF.
-   */
-  def getModelDesc(b: Bundle): List[String] = {
-    val entries = b.getEntryPaths(KNOWING_FOLDER)
-    val convert = (entries: java.util.Enumeration[String]) => {
-      //Remove KNOWING-INF/ from string
-      entries.map(e => e.substring(KNOWING_FOLDER.length + 1)).toList
-    }
-
-    b.getHeaders.get(KNOWING_MODEL_MANIFEST_HEADER) match {
-      case null =>
-        (b.getEntryPaths(KNOWING_FOLDER), loadAll) match {
-          case (null, _) =>
-            List()
-          case (entries, false) =>
-            log.warn("Bundle " + b.getSymbolicName + " has Models, but doesnt export them. Add '" + KNOWING_MODEL_MANIFEST_HEADER + "': *' to MANIFEST.MF or set service to loadAll=true")
-            List()
-          case (entries, true) =>
-            convert(entries)
-        }
-
-      case MODEL_WILDCARD => convert(entries)
-      case header => header.split(MODEL_SEPARATOR).toList
-    }
-  }
 
   /*======================================*/
   /*====== Activation / Deactivation =====*/
   /*======================================*/
 
-  def activate(context: ComponentContext, properties: java.util.Map[String, Object]) {
+  def configure(properties: java.util.Map[String, Object]) {
     loadAll = properties.get(LOAD_ALL).asInstanceOf[Boolean]
-    context.getBundleContext.addBundleListener(this)
-    checkAllBundles(context.getBundleContext)
-    log.debug("ModelStore service activated. LoadAll = " + loadAll)
-  }
-
-  def deactivate(context: ComponentContext) {
-    context.getBundleContext.removeBundleListener(this)
-    log.debug("ModelStore service deactivated")
-  }
-
-  //TODO check if this implementation works properly
-  def modified(context: ComponentContext, properties: java.util.Map[String, Object]) {
-    bundleProviders.clear
-    loadAll = properties.get(LOAD_ALL).asInstanceOf[Boolean]
-    checkAllBundles(context.getBundleContext)
-    log.debug("ModelStore service modified. LoadAll = " + loadAll)
   }
 
   /* ======================= */

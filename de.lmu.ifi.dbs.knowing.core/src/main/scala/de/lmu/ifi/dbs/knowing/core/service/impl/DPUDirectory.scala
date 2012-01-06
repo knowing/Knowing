@@ -19,9 +19,12 @@ import IDPUDirectory._
  * @version 1.0
  * @since 2011-09-22
  */
-class DPUDirectory extends IDPUDirectory with SynchronousBundleListener {
+class DPUDirectory extends IDPUDirectory with KnowingBundleExtender {
 
-  private lazy val log = LoggerFactory.getLogger(classOf[IDPUDirectory])
+  val log = LoggerFactory.getLogger(classOf[IDPUDirectory])
+
+  val MANIFEST_HEADER = "Knowing-DPU"
+  val RESOURCE_FOLDER = "KNOWING-INF/dpu"
 
   /** IDPUProvider services */
   private lazy val serviceProviders = new HashSet[IDPUProvider]
@@ -80,22 +83,14 @@ class DPUDirectory extends IDPUDirectory with SynchronousBundleListener {
   /*===== Bundle Handling - Manifest =====*/
   /*======================================*/
 
-  /**
-   * @see https://github.com/gkvas/gemini.jpa/blob/master/org.eclipse.gemini.jpa/src/org/eclipse/gemini/jpa/PersistenceBundleExtender.java
-   */
-  def bundleChanged(event: BundleEvent) = event.getType match {
-    case STARTING | STARTED | RESOLVED | INSTALLED | LAZY_ACTIVATION =>
-      addDataProcessingUnits(event.getBundle)
+  def onBundleInstallation(b: Bundle) = addDataProcessingUnits(b)
 
-    case STOPPING | STOPPED | UNRESOLVED | UNINSTALLED =>
-      removeDataProcessingUnits(event.getBundle)
-    case _ =>
-  }
+  def onBundleDeinstallation(b: Bundle) = removeDataProcessingUnits(b)
 
   /**
    * Checks all bundles and adds DPUs to internal store if necessary
    */
-  def checkAllBundles(context: BundleContext) {
+  def checkBundlesOnActivation(context: BundleContext) {
     for (b <- context.getBundles)
       addDataProcessingUnits(b)
   }
@@ -103,14 +98,14 @@ class DPUDirectory extends IDPUDirectory with SynchronousBundleListener {
   /**
    * Add DPU to internal store
    */
-  def addDataProcessingUnits(b: Bundle) = getDataProcessingUnitDesc(b)
+  def addDataProcessingUnits(b: Bundle) = getResourceDescription(b, loadAll)
     .filter(_.endsWith(".dpu"))
     .foreach { dpu =>
-      val entry = b.getEntry(KNOWING_FOLDER + "/" + dpu)
+      val entry = b.getEntry(dpu)
       bundleProviders.contains(dpu) match {
         case false if entry != null =>
           bundleProviders += (dpu -> entry)
-          log.debug("Added DPU " + dpu + " with url " + entry)
+          log.debug("Added DPU " + dpu)
         case false if entry == null =>
           log.warn("DPU does not exists " + dpu)
         case true =>
@@ -120,66 +115,20 @@ class DPUDirectory extends IDPUDirectory with SynchronousBundleListener {
   /**
    * Remove DPU from internal store
    */
-  def removeDataProcessingUnits(b: Bundle) = getDataProcessingUnitDesc(b)
+  def removeDataProcessingUnits(b: Bundle) = getResourceDescription(b, loadAll)
     .filter(_.endsWith(".dpu"))
+    .filter(bundleProviders.contains(_))
     .foreach { dpu =>
-      bundleProviders.contains(dpu) match {
-        case true =>
-          bundleProviders -= dpu
-          log.debug("Removed DPU " + dpu)
-        case false =>
-      }
+      bundleProviders -= dpu
+      log.debug("Removed DPU " + dpu)
     }
-
-  /**
-   * Resolve DPUs from KNOWING-INF.
-   */
-  def getDataProcessingUnitDesc(b: Bundle): List[String] = {
-    val entries = b.getEntryPaths(KNOWING_FOLDER)
-    val convert = (entries: java.util.Enumeration[String]) => {
-      //Remove KNOWING-INF/ from string
-      entries.map(e => e.substring(KNOWING_FOLDER.length + 1)).toList
-    }
-
-    b.getHeaders.get(KNOWING_DPU_MANIFEST_HEADER) match {
-      case null =>
-        (b.getEntryPaths(KNOWING_FOLDER), loadAll) match {
-          case (null, _) =>
-            List()
-          case (entries, false) =>
-            log.warn("Bundle " + b.getSymbolicName + " has DPUs, but doesnt export them. Add '" + KNOWING_DPU_MANIFEST_HEADER + "': *' to MANIFEST.MF or set service to loadAll=true")
-            List()
-          case (entries, true) =>
-            convert(entries)
-        }
-
-      case DPU_WILDCARD => convert(entries)
-      case header => header.split(DPU_SEPARATOR).toList
-    }
-  }
 
   /*======================================*/
   /*====== Activation / Deactivation =====*/
   /*======================================*/
 
-  def activate(context: ComponentContext, properties: java.util.Map[String, Object]) {
+  def configure(properties: java.util.Map[String, Object]) {
     loadAll = properties.get(LOAD_ALL).asInstanceOf[Boolean]
-    context.getBundleContext.addBundleListener(this)
-    checkAllBundles(context.getBundleContext)
-    log.debug("DPUDirectory service activated. LoadAll = " + loadAll)
-  }
-
-  def deactivate(context: ComponentContext) {
-    context.getBundleContext.removeBundleListener(this)
-    log.debug("DPUDirectory service deactivated")
-  }
-
-  //TODO check if this implementation works properly
-  def modified(context: ComponentContext, properties: java.util.Map[String, Object]) {
-    bundleProviders.clear
-    loadAll = properties.get(LOAD_ALL).asInstanceOf[Boolean]
-    checkAllBundles(context.getBundleContext)
-    log.debug("DPUDirectory service modified. LoadAll = " + loadAll)
   }
 
   /* ======================= */
