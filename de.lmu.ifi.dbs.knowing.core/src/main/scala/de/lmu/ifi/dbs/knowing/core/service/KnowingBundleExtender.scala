@@ -53,7 +53,7 @@ trait KnowingBundleExtender extends SynchronousBundleListener {
 
       //Manifest header defined, but no entries!
       case (header, null) =>
-        log.warn("Bundle " + b.getSymbolicName + " has NO DPUs, but exports [" + header + "] Remove '" + MANIFEST_HEADER + " or add DPUs")
+        log.warn("Bundle " + b.getSymbolicName + " has NO files, but exports [" + header + "] Remove '" + MANIFEST_HEADER + " or add files")
         List()
 
       //No Manifest header, but entries founds
@@ -62,7 +62,7 @@ trait KnowingBundleExtender extends SynchronousBundleListener {
           case (null, _) =>
             List()
           case (entries, false) =>
-            log.warn("Bundle " + b.getSymbolicName + " has DPUs, but doesnt exports them. Add '" + MANIFEST_HEADER + "': *' to MANIFEST.MF or set service to loadAll=true")
+            log.warn("Bundle " + b.getSymbolicName + " has files, but doesnt exports them. Add '" + MANIFEST_HEADER + "': *' to MANIFEST.MF or set service to loadAll=true")
             List()
           case (entries, true) => entries.toList
         }

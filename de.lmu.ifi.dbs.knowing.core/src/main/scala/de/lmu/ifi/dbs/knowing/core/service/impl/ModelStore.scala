@@ -1,7 +1,6 @@
 package de.lmu.ifi.dbs.knowing.core.service.impl
 
-import de.lmu.ifi.dbs.knowing.core.service.{ IModelProvider, IModelStore }
-import de.lmu.ifi.dbs.knowing.core.service.IModelStore._
+import de.lmu.ifi.dbs.knowing.core.service.{ IModelProvider, IModelStore,KnowingBundleExtender }
 import de.lmu.ifi.dbs.knowing.core.model.INode
 import de.lmu.ifi.dbs.knowing.core.util.DPUUtil.nodeProperties
 import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties
@@ -12,7 +11,6 @@ import org.osgi.service.component.ComponentContext
 import org.slf4j.LoggerFactory
 import scala.collection.mutable.{ HashMap, HashSet }
 import scala.collection.JavaConversions._
-import de.lmu.ifi.dbs.knowing.core.service.KnowingBundleExtender
 
 /**
  * @author Nepomuk Seiler
@@ -64,10 +62,9 @@ class ModelStore extends IModelStore with KnowingBundleExtender {
   }
 
   /**
-   * Add DPU to internal store
+   * Add model to internal store
    */
   def addModel(b: Bundle) = getResourceDescription(b)
-    .filter(!_.endsWith(".dpu"))
     .foreach { model =>
       val entry = b.getEntry(model)
       bundleProviders.contains(model) match {
@@ -81,7 +78,7 @@ class ModelStore extends IModelStore with KnowingBundleExtender {
     }
 
   /**
-   * Remove DPU from internal store
+   * Remove model from internal store
    */
   def removeModel(b: Bundle) = getResourceDescription(b)
     .filter(!_.endsWith(".dpu"))

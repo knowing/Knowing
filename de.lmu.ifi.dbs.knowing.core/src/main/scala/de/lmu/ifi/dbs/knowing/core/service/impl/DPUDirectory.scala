@@ -10,7 +10,6 @@ import org.osgi.service.component.ComponentContext
 import org.osgi.framework.{ Bundle, BundleEvent, BundleContext, SynchronousBundleListener }
 import org.osgi.framework.BundleEvent._
 import org.slf4j.LoggerFactory
-import IDPUDirectory._
 
 /**
  * Standard implementation of a DPU-Directory service.

@@ -14,6 +14,9 @@ import java.net.URL
  */
 trait IDPUDirectory {
 
+  //service properties
+  val LOAD_ALL = "knowing.dpudirectory.loadAll"
+  
   /**
    * Searches all registered dpus
    * @return Some(dpu) else None
@@ -32,6 +35,3 @@ trait IDPUDirectory {
   def getDPUs(): Array[IDataProcessingUnit]
 }
 
-object IDPUDirectory {
-  val LOAD_ALL = "knowing.dpudirectory.loadAll"
-}

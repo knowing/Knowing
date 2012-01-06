@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="de.lmu.ifi.dbs.knowing.core.ResourceStore">
+   <implementation class="de.lmu.ifi.dbs.knowing.core.service.impl.ResourceStore"/>
+   <reference bind="bindResourceProvider" cardinality="0..1" interface="de.lmu.ifi.dbs.knowing.core.service.IResourceProvider" name="IResourceProvider" policy="dynamic" unbind="unbindResourceProvider"/>
+   <property name="knowing.resourceStore.loadAll" type="Boolean" value="true"/>
+   <service>
+      <provide interface="de.lmu.ifi.dbs.knowing.core.service.IResourceStore"/>
+   </service>
+</scr:component>

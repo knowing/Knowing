@@ -12,6 +12,9 @@ import java.net.URL
  */
 trait IModelStore {
 
+  //Service properties
+  val LOAD_ALL = "knowing.modelstore.loadAll"
+
   /**
    *
    * @param node - INode which needs a model
@@ -26,11 +29,3 @@ trait IModelStore {
   def getModel(model: String): Option[URL]
 }
 
-/**
- * Constants
- */
-object IModelStore {
-
-  //Service properties
-  val LOAD_ALL = "knowing.modelstore.loadAll"
-}
