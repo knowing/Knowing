@@ -1,9 +1,9 @@
 package de.lmu.ifi.dbs.knowing.core.service.impl
 
-import de.lmu.ifi.dbs.knowing.core.service.{ IModelProvider, IModelStore,KnowingBundleExtender }
+import de.lmu.ifi.dbs.knowing.core.service.{ IModelProvider, IModelStore, KnowingBundleExtender }
 import de.lmu.ifi.dbs.knowing.core.model.INode
 import de.lmu.ifi.dbs.knowing.core.util.DPUUtil.nodeProperties
-import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties
+import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties.DESERIALIZE
 import java.net.URL
 import org.osgi.framework.{ Bundle, BundleEvent, BundleListener, BundleContext }
 import org.osgi.framework.BundleEvent._
@@ -19,25 +19,34 @@ import scala.collection.JavaConversions._
 class ModelStore extends IModelStore with KnowingBundleExtender {
 
   val log = LoggerFactory.getLogger(classOf[IModelStore])
-  
+
   val MANIFEST_HEADER = "Knowing-DPU-Model"
   val RESOURCE_FOLDER = "KNOWING-INF/model"
 
   /** IDPUProvider services */
-  private lazy val serviceProviders = new HashSet[IModelProvider]
+  lazy val serviceProviders = new HashSet[IModelProvider]
 
   /** Detected via Bundle Manifest Header */
-  private lazy val bundleProviders = new HashMap[String, URL]
+  lazy val bundleProviders = new HashMap[String, URL]
 
   private var loadAll = true
 
   /**
-   * This current implementation only respects Bundle Manifest Headers
+   * Searches for DESERIALIZE property and searches for
+   * the bundleProviders and serviceProviders for their property.value.
+   *
+   * @param node
+   * @return Some(url) or None
    */
-  def getModel(node: INode): Option[URL] = {
-    node.getProperties
-      .find(_.getKey.getContent.equals(INodeProperties.DESERIALIZE))
-      .flatMap(p => bundleProviders.get(p.getValue.getContent))
+  def getModel(node: INode): Option[URL] = node.getProperties.find(_.getKey.getContent.equals(DESERIALIZE)) match {
+    case None => None
+    case Some(p) => bundleProviders.get(p.getValue.getContent)
+      .orElse {
+        serviceProviders
+          .find(_.getModels.containsKey(p.getValue.getContent))
+          .map(prov => prov.getModel(p.getValue.getContent))
+      }
+
   }
 
   /**

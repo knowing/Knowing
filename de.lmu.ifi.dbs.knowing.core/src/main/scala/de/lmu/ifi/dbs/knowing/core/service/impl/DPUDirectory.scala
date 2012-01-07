@@ -26,10 +26,10 @@ class DPUDirectory extends IDPUDirectory with KnowingBundleExtender {
   val RESOURCE_FOLDER = "KNOWING-INF/dpu"
 
   /** IDPUProvider services */
-  private lazy val serviceProviders = new HashSet[IDPUProvider]
+  lazy val serviceProviders = new HashSet[IDPUProvider]
 
   /** Detected via Bundle Manifest Header */
-  private lazy val bundleProviders = new HashMap[String, URL]
+  lazy val bundleProviders = new HashMap[String, URL]
 
   private var loadAll = true
 

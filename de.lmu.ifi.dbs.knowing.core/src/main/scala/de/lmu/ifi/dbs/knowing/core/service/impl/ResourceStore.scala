@@ -25,41 +25,32 @@ class ResourceStore extends IResourceStore with KnowingBundleExtender {
   val RESOURCE_FOLDER = "KNOWING-INF/resource"
 
   /** IDPUProvider services */
-  private lazy val serviceProviders = new HashSet[IResourceProvider]
+  lazy val serviceProviders = new HashSet[IResourceProvider]
 
   /** Detected via Bundle Manifest Header */
-  private lazy val bundleProviders = new HashMap[String, URL]
+  lazy val bundleProviders = new HashMap[String, URL]
 
   private var loadAll = true
 
   /**
-   * Searches for FILE and URL property and searches for
-   * the bundleProviders for their property.value.
+   * Searches for FILE property and searches for
+   * the bundleProviders and serviceProviders  for their property.value.
    *
    * @param node
    * @return Some(url) or None
    */
-  def getResource(node: INode): Option[URL] = {
-    //    val resources = node.getProperties
-    //      .filter {
-    //        _.getKey.getContent match {
-    //          case INodeProperties.URL | FILE => false
-    //          case _ => true
-    //        }
-    //      }
-    //
-    //    resources.size match {
-    //      case 0 => None
-    //      case 1 => bundleProviders.get(resources(0).getValue.getContent)
-    //      case _ => bundleProviders.get(resources(0).getValue.getContent)
-    //    }
-    node.getProperties
-      .find(_.getKey.getContent.equals(FILE))
-      .flatMap(p => bundleProviders.get(p.getValue.getContent))
+  def getResource(node: INode): Option[URL] = node.getProperties.find(_.getKey.getContent.equals(FILE)) match {
+    case None => None
+    case Some(p) => bundleProviders.get(p.getValue.getContent)
+      .orElse {
+        serviceProviders
+          .find(_.getResources.containsKey(p.getValue.getContent))
+          .map(prov => prov.getResource(p.getValue.getContent))
+      }
   }
 
   /**
-   *
+   * This current implementation only respects Bundle Manifest Headers
    */
   def getResource(resource: String): Option[URL] = bundleProviders.get(resource)
 
