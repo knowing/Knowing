@@ -2,7 +2,7 @@ package de.lmu.ifi.dbs.knowing.core.swt
 
 import org.eclipse.swt.layout.FillLayout
 import org.eclipse.swt.SWT
-import org.eclipse.swt.widgets.{ Control, Composite, Label, Listener }
+import org.eclipse.swt.widgets.{ Display, Control, Composite, Label, Listener }
 import weka.core.Instances
 import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.processing.TPresenter
@@ -42,9 +42,18 @@ abstract class SWTPresenter extends TPresenter[Composite] {
    * @param syncFun - function which will be executed on the UI thread
    */
   def sync(c: Composite)(syncFun: => Unit) {
-    c.getDisplay.syncExec(new Runnable {
-      def run = syncFun
-    })
+    c match {
+      case null =>
+        warning(this, "Composite to sync on is null => [" + c + "]. Trying Display.getDefault()")
+        Display.getDefault.syncExec(new Runnable {
+          def run = syncFun
+        })
+      case _ =>
+        c.getDisplay.syncExec(new Runnable {
+          def run = syncFun
+        })
+    }
+
   }
 
   /**

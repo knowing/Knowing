@@ -54,6 +54,7 @@ abstract class AbstractChartPresenter(val name: String) extends SWTPresenter {
     progressListener = Nil
     changeListener foreach (l => chart.addChangeListener(l))
     changeListener = Nil
+    setParent(parent)
   }
 
   def updateChart {

@@ -62,7 +62,8 @@ class ProgressDialog(shell: Shell, var disposed: Boolean = false) extends Dialog
         supervisor.stop
       }
     }
-    table.dispose()
+    if (table != null)
+      table.dispose()
     table = null
     rows = Map()
     supervisor = null
@@ -109,7 +110,7 @@ class ProgressDialog(shell: Shell, var disposed: Boolean = false) extends Dialog
 
       //Should set ProgressBar to intermediate
       case Running() => changed(actor, 0, "Running")
-      
+
       //Close ProgressDialog
       case Shutdown() => close
 
