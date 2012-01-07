@@ -3,6 +3,7 @@ package de.lmu.ifi.dbs.knowing.core.japi;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.util.Properties;
 
 import akka.actor.ActorRef;
@@ -100,7 +101,7 @@ public interface IProcessor {
 	 * <p>If property INodeProperties.DESERIALIZE is set,
 	 * this methods creates an @InputStream </p>
 	 */
-	InputStream getInputStream() throws IOException;
+	InputStream getInputStream() throws IOException, MalformedURLException;
 	
 	/**
 	 * <p>If property INodeProperties.SERIALIZE is set,

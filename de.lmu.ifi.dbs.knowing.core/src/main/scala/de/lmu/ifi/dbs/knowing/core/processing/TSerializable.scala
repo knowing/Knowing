@@ -8,9 +8,9 @@ import java.net.{ URI, URL }
 import java.nio.file.{ Files, Path, Paths, DirectoryStream }
 import java.nio.file.Files.{ newInputStream, newOutputStream, exists, deleteIfExists, createDirectories, createFile }
 import scala.collection.JavaConversions._
-
 import INodeProperties.{ SERIALIZE, DESERIALIZE }
 import TLoader._
+import java.net.MalformedURLException
 
 /**
  * <p>Makes a TProcessor serialiazable</p>
@@ -21,6 +21,7 @@ import TLoader._
 trait TSerializable extends TStreamResolver { this: TProcessor =>
 
   @throws(classOf[IOException])
+  @throws(classOf[MalformedURLException])
   def inputStream(): Option[InputStream] = resolveSerializeProperty(properties, DESERIALIZE) match {
     //Input successfully created
     case Some(p) if exists(p) => Some(newInputStream(p))

@@ -1,15 +1,14 @@
 package de.lmu.ifi.dbs.knowing.core.japi
 
-import java.util.Properties
 import akka.event.EventHandler
 import weka.core.{ Instances, Instance }
-import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
+import de.lmu.ifi.dbs.knowing.core.processing.{TSerializable,TProcessor}
 import de.lmu.ifi.dbs.knowing.core.processing.TSender._
-import de.lmu.ifi.dbs.knowing.core.events.Event
-import de.lmu.ifi.dbs.knowing.core.processing.TSerializable
-import java.io.InputStream
-import java.io.OutputStream
-import de.lmu.ifi.dbs.knowing.core.events.Status
+import de.lmu.ifi.dbs.knowing.core.events._
+import java.io.{OutputStream,InputStream,IOException}
+import java.net.MalformedURLException
+import java.util.Properties
+
 
 /**
  * <p>This wrapper class provides a wrapper for processors developed in Java.
@@ -46,7 +45,11 @@ abstract class JProcessor extends TProcessor with TSerializable {
   /* ===== Util methods for (de)serialization ===== */
   /* ============================================== */
 
+  @throws(classOf[IOException])
+  @throws(classOf[MalformedURLException])
   def getInputStream(): InputStream = inputStream().getOrElse(null)
+
+  @throws(classOf[IOException])
   def getOutputStream(): OutputStream = outputStream getOrElse (null)
 
   /* ============================================== */

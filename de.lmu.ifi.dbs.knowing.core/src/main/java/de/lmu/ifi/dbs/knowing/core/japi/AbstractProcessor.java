@@ -3,6 +3,7 @@ package de.lmu.ifi.dbs.knowing.core.japi;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 
 import weka.core.Instances;
 import de.lmu.ifi.dbs.knowing.core.events.Event;
@@ -49,12 +50,12 @@ public abstract class AbstractProcessor implements IProcessor {
 	}
 
 	@Override
-	public InputStream getInputStream() throws IOException {
+	public InputStream getInputStream() throws IOException,MalformedURLException {
 		return wrapper.getInputStream();
 	}
 
 	@Override
-	public OutputStream getOutputStream() {
+	public OutputStream getOutputStream() throws IOException {
 		return wrapper.getOutputStream();
 	}
 	
