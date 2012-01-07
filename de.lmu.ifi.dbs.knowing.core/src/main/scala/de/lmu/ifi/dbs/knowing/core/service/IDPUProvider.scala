@@ -1,17 +1,20 @@
 package de.lmu.ifi.dbs.knowing.core.service
 
 import java.net.URL
-import org.osgi.framework.Bundle
+import org.osgi.framework.{ ServiceRegistration, Bundle }
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
-import de.lmu.ifi.dbs.knowing.core.util.DPUUtil.copy
-import org.eclipse.sapphire.modeling.xml.{RootXmlResource,XmlResourceStore}
-import org.eclipse.sapphire.modeling.{ResourceStoreException,UrlResourceStore}
+import de.lmu.ifi.dbs.knowing.core.util.DPUUtil.deserialize
+import org.eclipse.sapphire.modeling.xml.{ RootXmlResource, XmlResourceStore }
+import org.eclipse.sapphire.modeling.{ ResourceStoreException, UrlResourceStore }
+import scala.collection.mutable.HashMap
+import scala.collection.JavaConversions._
+import BundleDPUProvider._
 
 /**
  * OSGi service interface to provide DPUs stored somewhere
  * to the knowing framework.
- * 
- * @Nepomuk Seiler
+ *
+ * @author Nepomuk Seiler
  * @version 1.0
  */
 trait IDPUProvider {
@@ -36,19 +39,19 @@ trait IDPUProvider {
 /**
  * Provides DPUs stored internally in a bundle. Default path is
  * \/KNOWING-INF . Searches automatically for all DPUs residing there.
- * 
+ *
  * @author Nepomuk Seiler
  * @version 0.1
  */
-class BundleDPUProvider(bundle: Bundle, dir: String = "/KNOWING-INF") extends IDPUProvider {
+class BundleDPUProvider(bundle: Bundle, dir: String = CUSTOM_FOLDER) extends IDPUProvider {
 
-  private var dpuMap: Map[String, (IDataProcessingUnit, URL)] = Map()
+  private val dpuMap = HashMap[String, URL]()
   init
 
   /**
    *
    */
-  def getDataProcessingUnits: Array[IDataProcessingUnit] = dpuMap map { case (_, (dpu, _)) => dpu } toArray
+  def getDataProcessingUnits: Array[IDataProcessingUnit] = dpuMap map { case (_, url) => deserialize(url) } toArray
 
   /**
    * Doesn't handle non existing DPUs yet!
@@ -56,19 +59,14 @@ class BundleDPUProvider(bundle: Bundle, dir: String = "/KNOWING-INF") extends ID
   def getDataProcessingUnit(name: String): Option[IDataProcessingUnit] = {
     dpuMap.get(name) match {
       case None => None
-      case Some(e) => Some(e._1)
+      case Some(url) => Some(deserialize(url))
     }
   }
 
   /**
    * Doesn't handle non existing DPUs yet!
    */
-  def getURL(name: String): Option[URL] = {
-    dpuMap.get(name) match {
-      case None => None
-      case Some(entry) => Some(entry._2)
-    }
-  }
+  def getURL(name: String): Option[URL] = dpuMap.get(name)
 
   /**
    * reads all .dpu files in the given dir property
@@ -78,21 +76,13 @@ class BundleDPUProvider(bundle: Bundle, dir: String = "/KNOWING-INF") extends ID
     if (entries == null)
       return
 
-    var urls: List[URL] = Nil
-    while (entries.hasMoreElements)
-      urls = entries.nextElement.asInstanceOf[URL] :: urls
-
     try {
-      val dpus = urls map { url =>
-        val store = new XmlResourceStore(new UrlResourceStore(url))
-        val resource = new RootXmlResource(store)
-        val dpu: IDataProcessingUnit = IDataProcessingUnit.TYPE.instantiate(resource)
-        (copy(dpu), url)
-      }
       //TODO BundleDPUProvider => handle dpu's with identical name
-      dpuMap = dpus map { case (dpu, url) => (dpu.getName.getContent, (dpu, url)) } toMap
+      entries foreach { url =>
+        val dpu = deserialize(url)
+        dpuMap += (dpu.getName.getContent -> url)
+      }
     } catch {
-      case e: ResourceStoreException => e.printStackTrace
       case e: Exception => e.printStackTrace
     }
   }
@@ -103,6 +93,18 @@ class BundleDPUProvider(bundle: Bundle, dir: String = "/KNOWING-INF") extends ID
  */
 object BundleDPUProvider {
 
+  val CUSTOM_FOLDER = "/KNOWING-INF/custom"
+
   def newInstance(bundle: Bundle): BundleDPUProvider = new BundleDPUProvider(bundle)
   def newInstance(bundle: Bundle, dir: String): BundleDPUProvider = new BundleDPUProvider(bundle, dir)
+
+  def newRegisteredInstance(bundle: Bundle): ServiceRegistration[IDPUProvider] = {
+    val provider = newInstance(bundle)
+    bundle.getBundleContext.registerService(classOf[IDPUProvider], provider, null)
+  }
+
+  def newRegisteredInstance(bundle: Bundle, dir: String): ServiceRegistration[IDPUProvider] = {
+    val provider = newInstance(bundle,dir)
+    bundle.getBundleContext.registerService(classOf[IDPUProvider], provider, null)
+  }
 }

@@ -8,19 +8,40 @@ import knowing.test.loader._
 import knowing.test.processor._
 import knowing.test.filter._
 
-import org.osgi.framework.ServiceReference
-import org.osgi.framework.ServiceRegistration
-import org.osgi.framework.BundleContext
-import org.osgi.framework.BundleActivator
-import org.osgi.util.tracker.ServiceTrackerCustomizer
-import org.osgi.util.tracker.ServiceTracker
+import org.osgi.framework.{ BundleActivator, ServiceRegistration, BundleContext }
 
+/**
+ *
+ * @author Nepomuk Seiler
+ * @version 0.1
+ */
 class Activator extends BundleActivator {
 
+  /** Demo how to register DPUs in a custom folder via a serviceProvider */
+  private var provider: ServiceRegistration[IDPUProvider] = _
+
+  /** Register your services programmatically via the OSGIUtil*/
+  private var util: OSGIUtil = _
+
   def start(context: BundleContext) = {
+    provider = BundleDPUProvider.newRegisteredInstance(context.getBundle)
+
+    util = new OSGIUtil(context)
+    util.registerProcessor(new TestLoaderFactory)
+    util.registerProcessor(new EmptyLoaderFactory)
+    util.registerProcessor(new SplitProcessorFactory)
+    util.registerProcessor(new TestJavaProcessorFactory)
+    util.registerProcessor(new SourceSplitFilterFactory)
+    util.registerProcessor(new SerializableProcessorFactory)
+    util.registerProcessor(new EmptyQueryProcessorFactory)
+    util.registerProcessor(new ExceptionProcessorFactory)
+    util.registerProcessor(new TestWekaFilterFactory)
   }
 
   def stop(context: BundleContext) = {
+    provider.unregister
+    util.deregisterAll
+    util = null
   }
 
 }

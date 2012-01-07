@@ -1,15 +1,16 @@
 package de.lmu.ifi.dbs.knowing.core.util
 
-import org.osgi.framework.BundleContext
-import org.osgi.framework.ServiceRegistration
-import org.osgi.framework.InvalidSyntaxException
+import org.osgi.framework.{InvalidSyntaxException,ServiceRegistration,BundleContext}
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
+import de.lmu.ifi.dbs.knowing.core.factory.TFactory._
 import de.lmu.ifi.dbs.knowing.core.processing._
 import de.lmu.ifi.dbs.knowing.core.internal.Activator
 import de.lmu.ifi.dbs.knowing.core.service.IDPUProvider
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
 import java.net.URL
+import java.util.{Dictionary,Hashtable}
 import OSGIUtil._
+
 
 
 /**
@@ -23,13 +24,13 @@ class OSGIUtil(context: BundleContext) {
 
   private var registrations: List[ServiceRegistration[_]] = Nil
 
-  def registerLoader(factory: TFactory) = registrations = context.registerService(FACTORY_CLASS, factory, null) :: registrations
+  def registerLoader(factory: TFactory) = registrations = context.registerService(FACTORY_CLASS, factory, createServiceProperties(factory)) :: registrations
 
-  def registerSaver(factory: TFactory) = registrations = context.registerService(FACTORY_CLASS, factory, null) :: registrations
+  def registerSaver(factory: TFactory) = registrations = context.registerService(FACTORY_CLASS, factory, createServiceProperties(factory)) :: registrations
 
-  def registerProcessor(factory: TFactory) = registrations = context.registerService(FACTORY_CLASS, factory, null) :: registrations
+  def registerProcessor(factory: TFactory) = registrations = context.registerService(FACTORY_CLASS, factory, createServiceProperties(factory)) :: registrations
 
-  def registerPresenter(factory: TFactory) = registrations = context.registerService(FACTORY_CLASS, factory, null) :: registrations
+  def registerPresenter(factory: TFactory) = registrations = context.registerService(FACTORY_CLASS, factory, createServiceProperties(factory)) :: registrations
 
   /* ================================== */
   /* == 							 == */
@@ -38,25 +39,25 @@ class OSGIUtil(context: BundleContext) {
   //TODO OSGIUtil -> register only with real class, not custom ID
 
   def registerLoader(factory: TFactory, clazz: String) {
-    registrations = context.registerService(FACTORY_CLASS, factory, null) :: registrations
+    registrations = context.registerService(FACTORY_CLASS, factory, createServiceProperties(factory)) :: registrations
     //    registrations = context.registerService(LOADER_CLASS, factory, null) :: registrations
     //    registrations = context.registerService(clazz, factory, null) :: registrations
   }
 
   def registerSaver(factory: TFactory, clazz: String) {
-    registrations = context.registerService(FACTORY_CLASS, factory, null) :: registrations
+    registrations = context.registerService(FACTORY_CLASS, factory, createServiceProperties(factory)) :: registrations
     //    registrations = context.registerService(LOADER_CLASS, factory, null) :: registrations
     //    registrations = context.registerService(clazz, factory, null) :: registrations
   }
 
   def registerProcessor(factory: TFactory, clazz: String) {
-    registrations = context.registerService(FACTORY_CLASS, factory, null) :: registrations
+    registrations = context.registerService(FACTORY_CLASS, factory, createServiceProperties(factory)) :: registrations
     //    registrations = context.registerService(PROCESSOR_CLASS, factory, null) :: registrations
     //    registrations = context.registerService(clazz, factory, null) :: registrations
   }
 
   def registerPresenter(factory: TFactory, clazz: String) {
-    registrations = context.registerService(FACTORY_CLASS, factory, null) :: registrations
+    registrations = context.registerService(FACTORY_CLASS, factory, createServiceProperties(factory)) :: registrations
     //    registrations = context.registerService(PRESENTER_CLASS, factory, null) :: registrations
     //    registrations = context.registerService(clazz, factory, null) :: registrations
   }
@@ -143,6 +144,13 @@ object OSGIUtil {
         e printStackTrace;
         None
     }
+  }
+  
+  def createServiceProperties(factory: TFactory): Dictionary[String, _] = {
+    val properties = new Hashtable[String, Object]
+    properties.put(FACTORY_ID, factory.id)
+    properties.put(FACTORY_NAME, factory.name)
+    properties
   }
 }
 

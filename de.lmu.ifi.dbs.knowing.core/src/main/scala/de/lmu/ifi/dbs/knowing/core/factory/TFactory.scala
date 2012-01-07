@@ -21,7 +21,7 @@ trait TFactory {
 
   /** human readable name */
   val name: String
-  
+
   /** unique identifier to retrieve this factory */
   val id: String
 
@@ -45,17 +45,23 @@ trait TFactory {
 
 object TFactory {
   val BOOLEAN_PROPERTY = Array("true", "false")
+
+  //OSGi service properties
+  val UI_SYSTEM = "knowing.ui"
+  val PROCESSOR_CLASS = "knowing.processor.class"
+  val FACTORY_ID = "knowing.factory.id"
+  val FACTORY_NAME = "knowing.factory.name"
 }
 
 /**
  * <p>Standard factory with default values for each method:
- * 
+ *
  * <li>name: processor.getSimpleName</li>
  * <li>id: processor.getName</li>
  * <li>getInstance: actorOf(processor.newInstance)</li>
  * <li>Properties: empty maps / Properties</li>
  * </p>
- *  
+ *
  * @author Nepomuk Seiler
  * @version 1.0
  */

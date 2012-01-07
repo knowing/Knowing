@@ -80,7 +80,11 @@ class DPUDirectory extends IDPUDirectory with KnowingBundleExtender {
    */
   def getDPUs(): Array[IDataProcessingUnit] = {
     val dpuArrays = serviceProviders map (_.getDataProcessingUnits.toList)
-    val providerDPUs = Nil//dpuArrays.reduceLeft((head, next) => head ::: next)
+    val providerDPUs = dpuArrays.size match {
+      case 0 => Nil
+      case 1 => dpuArrays.head
+      case _ => dpuArrays.reduceLeft((head, next) => head ::: next).toList
+    }
     val bundleDPUs = bundleProviders.map { case (_, url) => deserialize(url) }.toList
     (bundleDPUs ::: providerDPUs).toArray
   }
@@ -110,8 +114,8 @@ class DPUDirectory extends IDPUDirectory with KnowingBundleExtender {
       val entry = b.getEntry(dpuEntry)
       bundleProviders.contains(dpuEntry) match {
         case false if entry != null =>
-          val dpu =  deserialize(entry)
-          
+          val dpu = deserialize(entry)
+
           bundleProviders += (dpu.getName.getContent -> entry)
           log.debug("Added DPU " + dpuEntry)
         case false if entry == null =>
