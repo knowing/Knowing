@@ -1,4 +1,5 @@
 package de.lmu.ifi.dbs.knowing.core.service
+
 import java.net.URL
 
 /**
@@ -11,7 +12,7 @@ trait IResourceProvider {
    *
    * @return Map with filename -> model
    */
-  def getResources(): Map[String, URL]
+  def getResources(): java.util.Map[String, URL]
 
   /**
    * @param name - filename of model

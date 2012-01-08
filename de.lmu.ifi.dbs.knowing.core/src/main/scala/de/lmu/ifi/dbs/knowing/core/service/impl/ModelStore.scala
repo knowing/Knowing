@@ -38,21 +38,23 @@ class ModelStore extends IModelStore with KnowingBundleExtender {
    * @param node
    * @return Some(url) or None
    */
-  def getModel(node: INode): Option[URL] = node.getProperties.find(_.getKey.getContent.equals(DESERIALIZE)) match {
-    case None => None
-    case Some(p) => bundleProviders.get(p.getValue.getContent)
-      .orElse {
-        serviceProviders
-          .find(_.getModels.containsKey(p.getValue.getContent))
-          .map(prov => prov.getModel(p.getValue.getContent))
-      }
-
-  }
+  def getModel(node: INode): Option[URL] = node.getProperties
+    .find(_.getKey.getContent.equals(DESERIALIZE))
+    .flatMap(p => getModel(p.getValue.getContent))
 
   /**
-   * This current implementation only respects Bundle Manifest Headers
+   * Searches for DESERIALIZE property and searches for
+   * the bundleProviders and serviceProviders for their property.value.
+   *
+   * @param model name - IProperty.value
+   * @return Some(url) or None
    */
   def getModel(model: String): Option[URL] = bundleProviders.get(model)
+    .orElse {
+      serviceProviders
+        .find(_.getModels.containsKey(model))
+        .map(prov => prov.getModel(model))
+    }
 
   /*======================================*/
   /*===== Bundle Handling - Manifest =====*/

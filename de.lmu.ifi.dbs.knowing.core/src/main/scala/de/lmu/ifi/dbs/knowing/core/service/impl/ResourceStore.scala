@@ -39,20 +39,23 @@ class ResourceStore extends IResourceStore with KnowingBundleExtender {
    * @param node
    * @return Some(url) or None
    */
-  def getResource(node: INode): Option[URL] = node.getProperties.find(_.getKey.getContent.equals(FILE)) match {
-    case None => None
-    case Some(p) => bundleProviders.get(p.getValue.getContent)
-      .orElse {
-        serviceProviders
-          .find(_.getResources.containsKey(p.getValue.getContent))
-          .map(prov => prov.getResource(p.getValue.getContent))
-      }
-  }
+  def getResource(node: INode): Option[URL] = node.getProperties
+    .find(_.getKey.getContent.equals(FILE))
+    .flatMap(p => getResource(p.getValue.getContent))
 
   /**
-   * This current implementation only respects Bundle Manifest Headers
+   * Searches for FILE property and searches for
+   * the bundleProviders and serviceProviders for their property.value.
+   *
+   * @param model name - IProperty.value
+   * @return Some(url) or None
    */
   def getResource(resource: String): Option[URL] = bundleProviders.get(resource)
+    .orElse {
+      serviceProviders
+        .find(_.getResources.containsKey(resource))
+        .map(prov => prov.getResource(resource))
+    }
 
   /*======================================*/
   /*===== Bundle Handling - Manifest =====*/
