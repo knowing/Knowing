@@ -38,8 +38,6 @@ class DPUDirectory extends IDPUDirectory with KnowingBundleExtender {
    * @return dpu first found with id
    */
   def getDPU(id: String): Option[IDataProcessingUnit] = {
-    println("Get DPU with id " + id)
-    println("Stored DPUs " + bundleProviders.keySet)
     bundleProviders.get(id) match {
       case Some(e) => return Some(deserialize(e))
       case None =>
