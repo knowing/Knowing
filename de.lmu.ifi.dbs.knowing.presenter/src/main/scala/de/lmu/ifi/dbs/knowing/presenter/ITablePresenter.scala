@@ -51,9 +51,15 @@ trait ITablePresenter[T] extends TPresenter[T] {
       case true =>
         appendInstances(content, instances)
     }
+    addRows(0)
+  }
 
-    for (i <- 0 until Math.min(rowsPerPage,instances.numInstances)) {
-      val inst = instances.get(i)
+  /**
+   * Converts instances to string and calls addRow(Array[String]) 
+   */
+  def addRows(from: Int) {
+    for (i <- from until Math.min(from + rowsPerPage - 1, content.numInstances)) {
+      val inst = content.get(i)
       val row = attributes map {
         case a if a.`type`.equals(NUMERIC) => decimalFormat.format(inst.value(a))
         case a if a.`type`.equals(NOMINAL) => a.value(inst.value(a).toInt)
@@ -62,6 +68,42 @@ trait ITablePresenter[T] extends TPresenter[T] {
       }
       addRow(row)
     }
+  }
+
+  /**
+   * Calls the addRows method with position information,
+   * which instances to display
+   */
+  def nextPage() {
+    val lefPos = page * rowsPerPage
+    val rigPos = lefPos + rowsPerPage
+    if (hasNextPage) {
+      page += 1
+      addRows(rigPos + 1)
+    }
+  }
+
+  def hasNextPage(): Boolean = {
+    val lefPos = page * rowsPerPage
+    val rigPos = lefPos + rowsPerPage
+    rigPos < content.numInstances
+  }
+
+  /**
+   * Calls the addRows method with position information,
+   * which instances to display
+   */
+  def previousPage() {
+    val lefPos = page * rowsPerPage
+    if (lefPos > 0) {
+      page -= 1
+      addRows(lefPos - rowsPerPage)
+    }
+  }
+
+  def hasPreviousPage(): Boolean = {
+    val lefPos = page * rowsPerPage
+    lefPos > 0
   }
 
   /**

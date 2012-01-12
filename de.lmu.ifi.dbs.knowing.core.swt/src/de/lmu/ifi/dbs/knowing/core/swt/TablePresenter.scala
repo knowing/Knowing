@@ -1,6 +1,6 @@
 package de.lmu.ifi.dbs.knowing.core.swt
 
-import java.util.{LinkedList,Properties}
+import java.util.{ LinkedList, Properties }
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
@@ -12,8 +12,9 @@ import org.eclipse.swt.SWT
 import org.eclipse.swt.graphics.Image
 import org.eclipse.swt.widgets.{ Composite, Button, Label, Spinner, Listener }
 import org.eclipse.swt.layout.{ GridData, GridLayout }
+import org.eclipse.swt.events.{ SelectionEvent, SelectionAdapter }
 import org.eclipse.jface.layout.TableColumnLayout
-import org.eclipse.jface.viewers.{ArrayContentProvider,ITableLabelProvider}
+import org.eclipse.jface.viewers.{ ArrayContentProvider, ITableLabelProvider }
 import weka.core.{ Instances, Attribute }
 
 /**
@@ -29,7 +30,10 @@ class TablePresenter extends SWTPresenter with ITablePresenter[Composite] {
   private var viewer: TableViewer = _
   private var layout: TableColumnLayout = _
   private var columnsInit = false
-  
+
+  private var bLeft: Button = _
+  private var bRight: Button = _
+
   private var model = new LinkedList[Array[String]]
 
   /**
@@ -61,8 +65,10 @@ class TablePresenter extends SWTPresenter with ITablePresenter[Composite] {
   /**
    * @param content - string values containing column content
    */
-  def addRow(content: Array[String]) {
-    model.add(content)
+  def addRow(content: Array[String]) = model.add(content)
+
+  override def addRows(from: Int) {
+    super.addRows(from)
     viewer.refresh()
   }
 
@@ -70,7 +76,7 @@ class TablePresenter extends SWTPresenter with ITablePresenter[Composite] {
     val composite = new Composite(parent, SWT.NONE)
     composite.setLayout(new GridLayout(4, false))
 
-    val bLeft = new Button(composite, SWT.NONE)
+    bLeft = new Button(composite, SWT.NONE)
     val gd_bLeft = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1)
     gd_bLeft.widthHint = 40
     gd_bLeft.minimumWidth = 40
@@ -78,7 +84,14 @@ class TablePresenter extends SWTPresenter with ITablePresenter[Composite] {
     gd_bLeft.verticalIndent = -1
     bLeft.setLayoutData(gd_bLeft)
     bLeft.setText("<-")
-    bLeft.setEnabled(false)
+    bLeft.addSelectionListener(new SelectionAdapter {
+      override def widgetSelected(event: SelectionEvent) {
+        model.clear()
+        previousPage()
+        bRight.setEnabled(hasNextPage)
+        bLeft.setEnabled(hasPreviousPage)
+      }
+    });
 
     val lPageIndex = new Label(composite, SWT.NONE)
     lPageIndex.setAlignment(SWT.CENTER)
@@ -87,12 +100,19 @@ class TablePresenter extends SWTPresenter with ITablePresenter[Composite] {
     lPageIndex.setLayoutData(gd_lPageIndex)
     lPageIndex.setText("- / -")
 
-    val bRight = new Button(composite, SWT.NONE)
+    bRight = new Button(composite, SWT.NONE)
     val gd_button = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1)
     gd_button.widthHint = 40
     bRight.setLayoutData(gd_button)
     bRight.setText("->")
-    bRight.setEnabled(false)
+    bRight.addSelectionListener(new SelectionAdapter {
+      override def widgetSelected(event: SelectionEvent) {
+        model.clear()
+        nextPage()
+        bRight.setEnabled(hasNextPage)
+        bLeft.setEnabled(hasPreviousPage)
+      }
+    });
 
     val sRows = new Spinner(composite, SWT.BORDER)
     val gd_spinner = new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1)
@@ -142,7 +162,7 @@ class TablePresenter extends SWTPresenter with ITablePresenter[Composite] {
 
 }
 
-class TablePresenterFactory extends PresenterFactory(classOf[TablePresenter],classOf[ITablePresenter[Composite]]) {
+class TablePresenterFactory extends PresenterFactory(classOf[TablePresenter], classOf[ITablePresenter[Composite]]) {
 
   override def createDefaultProperties: Properties = {
     val properties = new Properties
