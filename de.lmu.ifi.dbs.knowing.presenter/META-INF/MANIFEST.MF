@@ -5,7 +5,9 @@ Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.presenter
 Bundle-Version: 0.1.2.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: LMU Munich - Database Systems Group
-Require-Bundle: de.lmu.ifi.dbs.knowing.core;bundle-version="0.1.1"
+Require-Bundle: de.lmu.ifi.dbs.knowing.core;bundle-version="0.1.1",
+ org.scalatest;bundle-version="1.6.1";resolution:=optional,
+ org.junit;bundle-version="4.8.2";resolution:=optional
 Import-Package: org.eclipse.sapphire.java,
  org.eclipse.sapphire.modeling,
  org.eclipse.sapphire.modeling.annotations,

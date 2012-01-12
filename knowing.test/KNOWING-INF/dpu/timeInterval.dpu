@@ -20,7 +20,7 @@
 				<property key="file" value="timeInterval.arff" />
 			</properties>
 		</node>
-		<node id="TablePresenter" factoryId="de.lmu.ifi.dbs.knowing.core.swt.TablePresenter"
+		<node id="TablePresenter" factoryId="de.lmu.ifi.dbs.knowing.presenter.ITablePresenter"
 			type="presenter">
 			<properties />
 		</node>
