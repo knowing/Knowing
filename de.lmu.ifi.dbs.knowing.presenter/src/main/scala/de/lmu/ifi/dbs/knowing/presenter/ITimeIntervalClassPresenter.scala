@@ -5,6 +5,7 @@ import de.lmu.ifi.dbs.knowing.core.processing.TPresenter
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil.{ appendInstances, timeIntervalResult, ATTRIBUTE_CLASS, ATTRIBUTE_FROM, ATTRIBUTE_TO }
 import weka.core.{ Attribute, Instances }
 import weka.core.Attribute.{ NUMERIC, NOMINAL, DATE, RELATIONAL }
+import akka.event.EventHandler.debug
 
 /**
  * Provides a Presenter for the
@@ -37,7 +38,6 @@ trait ITimeIntervalClassPresenter[T] extends TPresenter[T] {
     isBuild match {
       case false =>
         val classAttr = instances.attribute(ATTRIBUTE_CLASS)
-        instances.setClass(classAttr)
         header = new Instances(instances, 0)
         content = instances
         classes = { for (i <- 0 until classAttr.numValues) yield classAttr.value(i)}.toArray
@@ -46,7 +46,6 @@ trait ITimeIntervalClassPresenter[T] extends TPresenter[T] {
         appendInstances(content, instances)
     }
     val classAttr = instances.attribute(ATTRIBUTE_CLASS)
-    instances.setClass(classAttr)
 
     val fromAttr = instances.attribute(ATTRIBUTE_FROM)
     val toAttr = instances.attribute(ATTRIBUTE_TO)

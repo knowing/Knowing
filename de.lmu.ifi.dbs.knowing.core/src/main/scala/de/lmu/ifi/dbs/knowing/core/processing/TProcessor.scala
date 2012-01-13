@@ -259,7 +259,9 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 
   def throwException(err: Throwable, details: String = "") = self.supervisor match {
     case Some(s) => s ! ExceptionEvent(err, details)
-    case None => warning(this, "No supervisor defined!")
+    case None => 
+      warning(this, "No supervisor defined! Exception thrown [" + err.getMessage + "] with details " + details)
+      err.printStackTrace()
   }
 }
 
