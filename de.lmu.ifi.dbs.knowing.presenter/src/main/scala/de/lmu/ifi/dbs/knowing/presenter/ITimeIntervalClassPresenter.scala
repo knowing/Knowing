@@ -29,6 +29,12 @@ trait ITimeIntervalClassPresenter[T] extends TPresenter[T] {
    *
    */
   def addInterval(clazz: String, from: Date, to: Date)
+  
+  /**
+   * Update the chart. Is called after
+   * adding all intervals.
+   */
+  def update()
 
   /**
    * Init header, categories and add intervals
@@ -46,7 +52,7 @@ trait ITimeIntervalClassPresenter[T] extends TPresenter[T] {
         appendInstances(content, instances)
     }
     val classAttr = instances.attribute(ATTRIBUTE_CLASS)
-
+    instances.setClass(classAttr)
     val fromAttr = instances.attribute(ATTRIBUTE_FROM)
     val toAttr = instances.attribute(ATTRIBUTE_TO)
 
@@ -57,5 +63,6 @@ trait ITimeIntervalClassPresenter[T] extends TPresenter[T] {
       val to = new Date(inst.value(toAttr).toLong)
       addInterval(clazz, from, to)
     }
+    update()
   }
 }

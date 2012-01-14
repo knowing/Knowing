@@ -50,4 +50,7 @@ Import-Package: org.eclipse.sapphire.java,
  scala.util.parsing.json;version="[2.9.0.1,2.9.3.0]",
  scala.util.parsing.syntax;version="[2.9.0.1,2.9.3.0]",
  scala.util.regexp;version="[2.9.0.1,2.9.3.0]"
-Export-Package: de.lmu.ifi.dbs.knowing.test
+Export-Package: akka.testkit,
+ de.lmu.ifi.dbs.knowing.test
+Bundle-ClassPath: src/test/resources/akka-testkit-1.2.jar,
+ .

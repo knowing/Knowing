@@ -8,7 +8,8 @@ Export-Package: de.lmu.ifi.dbs.knowing.core.swt.charts,
  de.lmu.ifi.dbs.knowing.core.swt.charts.events
 Require-Bundle: de.lmu.ifi.dbs.knowing.core,
  de.lmu.ifi.dbs.knowing.core.swt,
- org.eclipse.ui;bundle-version="3.6.0"
+ de.lmu.ifi.dbs.knowing.presenter;bundle-version="0.1.2",
+ org.eclipse.ui;bundle-version="3.7.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.jfree,
  org.jfree.base,

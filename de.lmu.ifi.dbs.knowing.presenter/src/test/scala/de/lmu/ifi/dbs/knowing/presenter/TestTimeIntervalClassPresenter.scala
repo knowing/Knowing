@@ -22,5 +22,7 @@ class TestTimeIntervalClassPresenter extends ITimeIntervalClassPresenter[Any] wi
   def addInterval(clazz: String, from: Date, to: Date) {
 	  self.sender.get ! (clazz, from.getTime, to.getTime)
   }
+  
+  def update() = {}
 
 }

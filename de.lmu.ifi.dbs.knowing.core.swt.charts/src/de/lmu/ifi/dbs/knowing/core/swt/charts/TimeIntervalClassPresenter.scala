@@ -2,13 +2,9 @@ package de.lmu.ifi.dbs.knowing.core.swt.charts
 
 import java.util.{ Properties, Date }
 import java.awt.Color
-
 import scala.collection.mutable.{ Map => MutableMap }
-
 import akka.event.EventHandler.{ debug, info, warning, error }
-import akka.actor.ActorRef
-import akka.actor.Actor.actorOf
-
+import org.eclipse.swt.widgets.Composite
 import org.jfree.chart.{ JFreeChart, ChartFactory }
 import org.jfree.chart.plot.{ Plot, XYPlot, PlotOrientation }
 import org.jfree.chart.axis.{ SymbolAxis, DateAxis }
@@ -16,10 +12,9 @@ import org.jfree.chart.renderer.xy.XYBarRenderer
 import org.jfree.data.general.Dataset
 import org.jfree.data.xy.{ IntervalXYDataset, XYIntervalSeriesCollection, XYIntervalSeries }
 import org.jfree.data.time.{ RegularTimePeriod, Second, Millisecond }
-
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
-import de.lmu.ifi.dbs.knowing.core.factory.TFactory
-
+import de.lmu.ifi.dbs.knowing.core.factory.PresenterFactory
+import de.lmu.ifi.dbs.knowing.presenter.ITimeIntervalClassPresenter
 import weka.core.{ Instance, Instances }
 
 /**
@@ -28,7 +23,7 @@ import weka.core.{ Instance, Instances }
  * @since 29.05.2011
  *
  */
-class TimeIntervalClassPresenter extends AbstractChartPresenter("Time Interval Class Presenter") {
+class TimeIntervalClassPresenter extends AbstractChartPresenter("Time Interval Class Presenter") with ITimeIntervalClassPresenter[Composite] {
 
   private var series: MutableMap[String, (XYIntervalSeries, Int)] = null
 
@@ -58,61 +53,57 @@ class TimeIntervalClassPresenter extends AbstractChartPresenter("Time Interval C
     xyplot.setRangeGridlinePaint(Color.white)
   }
 
-  def buildPresentation(instances: Instances) = {
-    //TODO TimeIntervalClassPresenter -> Check for right Instances format
-    guessAndSetClassLabel(instances)
-    //First buildContent call
-    if (series == null) {
-      series = MutableMap()
-      val classes = instances.classAttribute.enumerateValues
-      var index = 0
-      var labels: List[String] = Nil
-      while (classes.hasMoreElements) {
-        val clazz = classes.nextElement.asInstanceOf[String]
-        val s = new XYIntervalSeries(clazz.asInstanceOf[String])
-        //        dataset.asInstanceOf[XYIntervalSeriesCollection].addSeries(s)
-        series += (clazz -> (s, index))
-        index += 1
-        labels = clazz :: labels
-      }
+  /**
+   * Add classes to the TimeIntervalChart
+   */
+  def buildCategories(classes: Array[String]) {
+    series = MutableMap()
+    var index = 0
+    var labels: List[String] = Nil
+    for (clazz <- classes) {
+      val s = new XYIntervalSeries(clazz.asInstanceOf[String])
+      //        dataset.asInstanceOf[XYIntervalSeriesCollection].addSeries(s)
+      series += (clazz -> (s, index))
+      index += 1
+      labels = clazz :: labels
+      dataset.asInstanceOf[XYIntervalSeriesCollection].addSeries(s)
+    }
 
-      //Update DomainAxis with labels
-      val xyplot = plot.asInstanceOf[XYPlot]
-      val xAxisLabel = xyplot.getDomainAxis().getLabel
-      val xAxis = new SymbolAxis(xAxisLabel, labels.reverse.toArray)
-      xAxis.setGridBandsVisible(false)
-      xyplot.setDomainAxis(xAxis)
-    } else {
-      series foreach {
-        case (_, (s, _)) => dataset.asInstanceOf[XYIntervalSeriesCollection].removeSeries(s)
-      }
-    }
-    //Fill content
-    val enum = instances.enumerateInstances
-    val classAttr = instances.classAttribute
-    val fromAttr = instances.attribute(ResultsUtil.ATTRIBUTE_FROM)
-    val toAttr = instances.attribute(ResultsUtil.ATTRIBUTE_TO)
-    while (enum.hasMoreElements) {
-      val inst = enum.nextElement.asInstanceOf[Instance]
-      val label = classAttr.value(inst.classValue.toInt)
-      val from = inst.value(fromAttr)
-      val to = inst.value(toAttr)
+    //Update DomainAxis with labels
+    val xyplot = plot.asInstanceOf[XYPlot]
+    val xAxisLabel = xyplot.getDomainAxis().getLabel
+    val xAxis = new SymbolAxis(xAxisLabel, labels.reverse.toArray)
+    xAxis.setGridBandsVisible(false)
+    xyplot.setDomainAxis(xAxis)
 
-      val value = series(label)
-      //TODO TimeIntervalClassPresenter -> Compute intervall size!
-      value match {
-        case (s, index) => addItem(s, new Second(new Date(from.toLong)), new Second(new Date(to.toLong)), index)
-        case _ => warning(this, "Unkown value")
-      }
-    }
-    series foreach {
-      case (_, (s, _)) => dataset.asInstanceOf[XYIntervalSeriesCollection].addSeries(s)
-    }
-    updateChart
   }
 
-  private def addItem(s: XYIntervalSeries, p0: RegularTimePeriod, p1: RegularTimePeriod, index: Int) {
-    s.add(index, index - 0.25, index + 0.25, p0.getFirstMillisecond(), p0.getFirstMillisecond(), p1.getLastMillisecond())
+  /**
+   *
+   */
+  def addInterval(clazz: String, from: Date, to: Date) {
+    val value = series(clazz)
+    //TODO TimeIntervalClassPresenter -> Compute interval size!
+    value match {
+      case (s, index) => addItem(s, new Second(from), new Second(to), index)
+      case _ => warning(this, "Unkown value")
+    }
+  }
+
+  /**
+   * Update chart
+   */
+  def update() = updateChart()
+
+  /**
+   * Adds an item to the series 
+   * @param s - series to add
+   * @param p0 - start period
+   * @param p1 - end period
+   * @param index <-> class index to determine category bar
+   */
+  def addItem(s: XYIntervalSeries, p0: RegularTimePeriod, p1: RegularTimePeriod, index: Int) {
+    s.add(index, index - 0.25, index + 0.25, p0.getFirstMillisecond, p0.getFirstMillisecond, p1.getLastMillisecond)
   }
 
   def configure(properties: Properties) = {}
@@ -123,16 +114,4 @@ object TimeIntervalClassPresenter {
   val name = "Time Interval Class Presenter"
 }
 
-class TimeIntervalClassPresenterFactory extends TFactory {
-
-  val name: String = TimeIntervalClassPresenter.name
-  val id: String = classOf[TimeIntervalClassPresenter].getName
-
-  def getInstance(): ActorRef = actorOf[TimeIntervalClassPresenter]
-
-  def createDefaultProperties: Properties = new Properties
-
-  def createPropertyValues: Map[String, Array[_ <: Any]] = Map()
-
-  def createPropertyDescription: Map[String, String] = Map()
-}
+class TimeIntervalClassPresenterFactory extends PresenterFactory(classOf[TimeIntervalClassPresenter], classOf[ITimeIntervalClassPresenter[_]])

@@ -25,7 +25,7 @@
 			<properties />
 		</node>
 		<node id="BarChartPresenter"
-			factoryId="de.lmu.ifi.dbs.knowing.core.swt.charts.TimeIntervalClassPresenter"
+			factoryId="de.lmu.ifi.dbs.knowing.presenter.ITimeIntervalClassPresenter"
 			type="presenter">
 			<properties />
 		</node>

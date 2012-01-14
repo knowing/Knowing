@@ -57,7 +57,7 @@ abstract class AbstractChartPresenter(val name: String) extends SWTPresenter {
     setParent(parent)
   }
 
-  def updateChart {
+  def updateChart() {
     if (chart != null)
       chart.fireChartChanged
   }

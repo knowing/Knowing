@@ -38,24 +38,34 @@ trait ITablePresenter[T] extends TPresenter[T] {
   def addRow(content: Array[String])
 
   /**
+   * Update the table after all rows are added.
+   */
+  def update()
+
+  /**
    * Init header and add rows
    */
   def buildPresentation(instances: Instances) {
-    //Create header or add content to existing model
-    isBuild match {
-      case false =>
-        header = new Instances(instances, 0)
-        content = instances
-        attributes = { for (i <- 0 until instances.numAttributes) yield instances.attribute(i) }.toArray
-        buildTableHeader(attributes)
-      case true =>
-        appendInstances(content, instances)
-    }
+    init(instances)
     addRows(0)
+    update()
   }
 
   /**
-   * Converts instances to string and calls addRow(Array[String]) 
+   * Create header or add content to existing model
+   */
+  def init(instances: Instances) = isBuild match {
+    case false =>
+      header = new Instances(instances, 0)
+      content = instances
+      attributes = { for (i <- 0 until instances.numAttributes) yield instances.attribute(i) }.toArray
+      buildTableHeader(attributes)
+    case true =>
+      appendInstances(content, instances)
+  }
+
+  /**
+   * Converts instances to string and calls addRow(Array[String])
    */
   def addRows(from: Int) {
     for (i <- from until Math.min(from + rowsPerPage - 1, content.numInstances)) {

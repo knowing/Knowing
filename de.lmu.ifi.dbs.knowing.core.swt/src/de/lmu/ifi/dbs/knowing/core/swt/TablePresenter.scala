@@ -67,10 +67,7 @@ class TablePresenter extends SWTPresenter with ITablePresenter[Composite] {
    */
   def addRow(content: Array[String]) = model.add(content)
 
-  override def addRows(from: Int) {
-    super.addRows(from)
-    viewer.refresh()
-  }
+  def update() = viewer.refresh()
 
   def createContainer(parent: Composite) {
     val composite = new Composite(parent, SWT.NONE)
