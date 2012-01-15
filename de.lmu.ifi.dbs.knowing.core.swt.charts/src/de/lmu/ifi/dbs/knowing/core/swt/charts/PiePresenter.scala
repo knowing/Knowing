@@ -168,8 +168,6 @@ class PiePresenter extends AbstractChartPresenter("Pie Presenter") {
     redraw
   }
   
-  def configure(properties:Properties) = {}
-
   /* ========================== */
   /* ===== Chart creation ===== */
   /* ========================== */

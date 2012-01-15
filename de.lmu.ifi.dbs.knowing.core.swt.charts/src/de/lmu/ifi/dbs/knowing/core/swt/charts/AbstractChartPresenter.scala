@@ -1,6 +1,6 @@
 package de.lmu.ifi.dbs.knowing.core.swt.charts
 
-import java.awt.Point
+import java.util.{Date,Properties}
 import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.swt.SWTPresenter
 import de.lmu.ifi.dbs.knowing.core.swt.handler.SWTListener
@@ -11,11 +11,13 @@ import org.jfree.chart.JFreeChart
 import org.jfree.chart.{ ChartMouseListener, ChartMouseEvent }
 import org.jfree.chart.event.{ ChartChangeListener, ChartChangeEvent, ChartProgressListener, ChartProgressEvent }
 import org.jfree.chart.plot.{ Plot, Zoomable }
+import org.jfree.data.time.{ RegularTimePeriod, Millisecond, Second, Minute, Hour }
 import org.jfree.experimental.chart.swt.ChartComposite
 import org.eclipse.swt.widgets.{ Composite, Listener, Event, Widget }
 import org.eclipse.swt.SWT
 import org.eclipse.swt.events.{ MouseEvent, MouseWheelListener }
 import weka.core.Instances
+
 
 /**
  * @author Nepomuk Seiler
@@ -25,11 +27,14 @@ import weka.core.Instances
  */
 abstract class AbstractChartPresenter(val name: String) extends SWTPresenter {
 
+  import AbstractChartPresenter._
+
   private var chart: JFreeChart = _
 
   protected var chartComposite: ChartComposite = _
   protected var plot: Plot = _
   protected var dataset: Dataset = createDataset
+  protected var timeUnit = TIME_UNIT_MILLISECOND
 
   private var progressListener: List[ChartProgressListener] = Nil
   private var changeListener: List[ChartChangeListener] = Nil
@@ -38,6 +43,10 @@ abstract class AbstractChartPresenter(val name: String) extends SWTPresenter {
     case ChartProgressListenerRegister(l) => addProgressListener(l)
     case ChartChangeListenerRegister(l) => addChangeListener(l)
     case SWTListener(typ, listener) => super.customReceive { SWTListener(typ, listener) }
+  }
+
+  def configure(properties: Properties) {
+    timeUnit = properties.getProperty(TIME_UNIT, TIME_UNIT_MILLISECOND)
   }
 
   /**
@@ -104,9 +113,22 @@ abstract class AbstractChartPresenter(val name: String) extends SWTPresenter {
     chart.addProgressListener(handler)
   }
 
+  /**
+   * Is called once to create the JFreeChart
+   */
   protected def createChart(dataset: Dataset): JFreeChart
 
+  /**
+   * Is called once to create the Dataset
+   */
   protected def createDataset: Dataset
+
+  def newRegularTimePeriod(date: Date): RegularTimePeriod = timeUnit match {
+    case TIME_UNIT_MILLISECOND => new Millisecond(date)
+    case TIME_UNIT_SECOND => new Second(date)
+    case TIME_UNIT_MINUTE => new Minute(date)
+    case TIME_UNIT_HOUR => new Hour(date)
+  }
 
 }
 
@@ -138,9 +160,12 @@ class SWTMouseListenerProxy(typ: Int, listener: Listener) extends ChartMouseList
   }
 }
 
-object ChartPresenter {
-  val PIE_PRESENTER = classOf[PiePresenter].getName
-  val TIME_INTERVAL_CLASS_PRESENTER = classOf[TimeIntervalClassPresenter].getName
-  val TIME_SERIES_PRESENTER = classOf[TimeSeriesPresenter].getName
+object AbstractChartPresenter {
+
+  val TIME_UNIT = "jfreechart.time.unit"
+  val TIME_UNIT_MILLISECOND = "millisecond"
+  val TIME_UNIT_SECOND = "second"
+  val TIME_UNIT_MINUTE = "minute"
+  val TIME_UNIT_HOUR = "hour"
 }
 

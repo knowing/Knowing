@@ -17,7 +17,6 @@ import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import weka.core.{ Instances, Instance, Attribute }
 
-
 /**
  * @author Nepomuk Seiler
  * @version 0.1
@@ -28,12 +27,9 @@ class TimeSeriesPresenter extends AbstractChartPresenter("Time Series Presenter"
 
   private var series: MutableMap[String, TimeSeries] = null
 
-  protected def createChart(dataset: Dataset): JFreeChart = {
-    ChartFactory.createTimeSeriesChart(name, "", "",
-      dataset.asInstanceOf[XYDataset], false, false, false)
-  }
-
-  protected def createDataset(): Dataset = new TimeSeriesCollection
+  /* ========================== */
+  /* == Dataset manipulation == */
+  /* ========================== */
 
   def buildPresentation(instances: Instances) = {
     debug(this, "Create content in TimeSeries: " + instances.relationName)
@@ -71,14 +67,23 @@ class TimeSeriesPresenter extends AbstractChartPresenter("Time Series Presenter"
     series foreach { case (name, s) => dataset.addSeries(s) }
     updateChart
   }
-  
+
+  /* ========================== */
+  /* ===== Chart creation ===== */
+  /* ========================== */
+
+  protected def createChart(dataset: Dataset): JFreeChart = {
+    ChartFactory.createTimeSeriesChart(name, "", "",
+      dataset.asInstanceOf[XYDataset], false, false, false)
+  }
+
+  protected def createDataset(): Dataset = new TimeSeriesCollection
+
   override def configurePlot(plot: Plot) {
     val xyplot = plot.asInstanceOf[XYPlot]
     xyplot.setDomainCrosshairVisible(true);
   }
 
-  def configure(properties: Properties) {}
-  
   /**
    * <p>Initialize TimeSeries internal model</p>
    */

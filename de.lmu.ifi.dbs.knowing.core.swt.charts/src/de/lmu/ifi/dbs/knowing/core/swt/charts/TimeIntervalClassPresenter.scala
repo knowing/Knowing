@@ -11,7 +11,6 @@ import org.jfree.chart.axis.{ SymbolAxis, DateAxis }
 import org.jfree.chart.renderer.xy.XYBarRenderer
 import org.jfree.data.general.Dataset
 import org.jfree.data.xy.{ IntervalXYDataset, XYIntervalSeriesCollection, XYIntervalSeries }
-import org.jfree.data.time.{ RegularTimePeriod, Second, Millisecond }
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.core.factory.PresenterFactory
 import de.lmu.ifi.dbs.knowing.presenter.ITimeIntervalClassPresenter
@@ -85,7 +84,7 @@ class TimeIntervalClassPresenter extends AbstractChartPresenter("Time Interval C
     val value = series(clazz)
     //TODO TimeIntervalClassPresenter -> Compute interval size!
     value match {
-      case (s, index) => addItem(s, new Second(from), new Second(to), index)
+      case (s, index) => addItem(s, index, from, to)
       case _ => warning(this, "Unkown value")
     }
   }
@@ -102,11 +101,9 @@ class TimeIntervalClassPresenter extends AbstractChartPresenter("Time Interval C
    * @param p1 - end period
    * @param index <-> class index to determine category bar
    */
-  def addItem(s: XYIntervalSeries, p0: RegularTimePeriod, p1: RegularTimePeriod, index: Int) {
-    s.add(index, index - 0.25, index + 0.25, p0.getFirstMillisecond, p0.getFirstMillisecond, p1.getLastMillisecond)
+  def addItem(s: XYIntervalSeries,index: Int, from: Date, to:Date) {
+    s.add(index, index - 0.25, index + 0.25, from.getTime, from.getTime, to.getTime)
   }
-
-  def configure(properties: Properties) = {}
 
 }
 
