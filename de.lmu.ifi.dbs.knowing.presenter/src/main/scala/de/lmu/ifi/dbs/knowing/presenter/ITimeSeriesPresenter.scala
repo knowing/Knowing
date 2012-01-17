@@ -9,7 +9,7 @@ import java.util.Date
 trait ITimeSeriesPresenter[T] extends TPresenter[T] {
 
   protected var header: Instances = _
-  protected var series = Map[String, Attribute]()
+  protected var attribute = Map[String, Attribute]()
 
   protected var content: Instances = _
 
@@ -38,8 +38,8 @@ trait ITimeSeriesPresenter[T] extends TPresenter[T] {
       case false =>
         header = new Instances(instances, 0)
         content = instances
-        series = findValueAttributesAsMap(content)
-        buildSeries(series.values.toArray)
+        attribute = findValueAttributesAsMap(content)
+        buildSeries(attribute.values.toArray)
       case true =>
         appendInstances(content, instances)
     }
@@ -48,9 +48,9 @@ trait ITimeSeriesPresenter[T] extends TPresenter[T] {
     
     for (i <- 0 until instances.numInstances) {
       val inst = instances.get(i)
-      val values = new Array[Double](series.size)
+      val values = new Array[Double](attribute.size)
       var index = 0
-      for(attr <- series.values) {
+      for(attr <- attribute.values) {
         values(index) = inst.value(attr)
         index += 1
       }

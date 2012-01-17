@@ -17,7 +17,7 @@
 			<properties />
 		</node>
 		<node id="TimeSeriesChartPresenter"
-			factoryId="de.lmu.ifi.dbs.knowing.core.swt.charts.TimeSeriesPresenter"
+			factoryId="de.lmu.ifi.dbs.knowing.presenter.ITimeSeriesPresenter"
 			type="presenter">
 			<properties />
 		</node>
