@@ -170,7 +170,7 @@ object ResultsUtil {
    * <li>relation name: {@link #NAME_DATE_AND_VALUES}
    * <li>attributes: {@link #ATTRIBUTE_TIMESTAMP}, {@link #ATTRIBUTE_VALUE}+index
    * </p>
-   * @param names - the numeric attributes names -] accessable via meta data
+   * @param names - the numeric attributes names -] accessible via meta data
    * @return
    */
   def timeSeriesResult(names: List[String], datePattern: String): Instances = {
