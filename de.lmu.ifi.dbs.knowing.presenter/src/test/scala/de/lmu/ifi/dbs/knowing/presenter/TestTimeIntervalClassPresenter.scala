@@ -7,8 +7,6 @@ import de.lmu.ifi.dbs.knowing.test.TestPresenter
 
 class TestTimeIntervalClassPresenter extends ITimeIntervalClassPresenter[Any] with TestPresenter {
 
-  val name = "Test TimeIntervalClassPresenter"
-  
   /**
    * Add classes to the TimeIntervalChart
    */

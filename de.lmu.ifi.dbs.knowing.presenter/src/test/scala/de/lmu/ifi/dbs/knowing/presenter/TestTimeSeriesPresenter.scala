@@ -9,8 +9,6 @@ import weka.core.{ Instances, Attribute }
  */
 class TestTimeSeriesPresenter extends ITimeSeriesPresenter[Any] with TestPresenter {
 
-  val name = "Test TimeSeries Presenter"
-
   def buildSeries(series: Array[Attribute]) = {
     self.sender.get ! (series.toList)
   }

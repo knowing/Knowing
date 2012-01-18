@@ -43,9 +43,9 @@ object ResultsUtil {
 
   val UNKOWN_SOURCE = "unkown"
 
-  /* ========================= */
-  /* ==== Result Creation ==== */
-  /* ========================= */
+  /* ======================================================= */
+  /* =================== Result Creation =================== */
+  /* ======================================================= */
 
   /**
    * <p>Empty Instances. This Instances object has
@@ -192,18 +192,13 @@ object ResultsUtil {
   def timeSeriesResult(names: List[String]): Instances = timeSeriesResult(names, DATETIME_PATTERN)
 
   /**
-   * <p>
-   * Creates an Instances object with a DATE column and [code]names.size()[/code]
-   * nummeric attributes. [br] All numeric attributes provide meta data with one
-   * property {@link #META_ATTRIBUTE_NAME}.
-   * <li>relation name: {@link #NAME_DATE_AND_VALUES}
-   * <li>attributes: {@link #ATTRIBUTE_TIMESTAMP}, {@link #ATTRIBUTE_VALUE}+index
-   * </p>
-   * @param names - the numeric attributes names -] accessable via meta data
-   * @return
+   * @see timeSeriesResult(names, datePattern)
    */
   def timeSeriesResult(names: JList[String]): Instances = timeSeriesResult(names.toList)
 
+    /**
+   * @see timeSeriesResult(names, datePattern)
+   */
   def timeSeriesResult(names: JList[String], datePattern: String): Instances = timeSeriesResult(names.toList, datePattern)
 
   /**
@@ -237,16 +232,19 @@ object ResultsUtil {
 
   /**
    * <p>Creates a Result-Instance for TimeInterval data</p>
-   *
-   * from | to | class
-   *
+   * <p>
+   * Date | Date | Nominal <br>
+   * ##################### <br>
+   * from | to   | class   <br>
+   * </p>
    * @param lables - class labels
+   * @param datePattern - which pattern should the Instances object use
    * @return Instances
    */
-  def timeIntervalResult(labels: List[String]): Instances = {
+  def timeIntervalResult(labels: List[String], datePattern: String): Instances = {
     val attributes = new ArrayList[Attribute]
-    attributes.add(new Attribute(ATTRIBUTE_FROM, DATETIME_PATTERN))
-    attributes.add(new Attribute(ATTRIBUTE_TO, DATETIME_PATTERN))
+    attributes.add(new Attribute(ATTRIBUTE_FROM, datePattern))
+    attributes.add(new Attribute(ATTRIBUTE_TO, datePattern))
     attributes.add(new Attribute(ATTRIBUTE_CLASS, labels))
     val dataset = new Instances(NAME_TIME_INTERVAL, attributes, 0)
     dataset.setClass(dataset.attribute(ATTRIBUTE_CLASS))
@@ -254,18 +252,23 @@ object ResultsUtil {
   }
 
   /**
-   * <p>Creates a Result-Instance for TimeInterval data</p>
-   *
-   * from | to | class
-   *
-   * @param lables - class labels
-   * @return Instances
+   * @see timeIntervalResult()
+   */
+  def timeIntervalResult(labels: List[String]): Instances = timeIntervalResult(labels, DATETIME_PATTERN)
+
+  /**
+   * @see timeIntervalResult()
    */
   def timeIntervalResult(labels: JList[String]): Instances = timeIntervalResult(labels.toList)
+  
+  /**
+   * @see timeIntervalResult()
+   */
+  def timeIntervalResult(labels: JList[String], datePattern: String): Instances = timeIntervalResult(labels.toList, datePattern)
 
-  /* ========================= */
-  /* === Result validation === */
-  /* ========================= */
+  /* ======================================================= */
+  /* ================== Result validation ================== */
+  /* ======================================================= */
 
   def isEmptyResult(dataset: Instances): Boolean = {
     dataset.relationName.equals(NAME_EMPTY) || (dataset.numAttributes == 1 && dataset.numInstances == 0)
@@ -293,9 +296,9 @@ object ResultsUtil {
     classAttribute != null && probaAttribute != null
   }
 
-  /* ========================= */
-  /* ========= Utils ========= */
-  /* ========================= */
+  /* ======================================================= */
+  /* ======================== Utils ======================== */
+  /* ======================================================= */
 
   /**
    *  <p>Checks the dataset for class attribute in this order

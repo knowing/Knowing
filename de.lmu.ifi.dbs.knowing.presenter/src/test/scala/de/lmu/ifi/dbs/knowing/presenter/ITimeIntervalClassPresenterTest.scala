@@ -12,7 +12,6 @@ import akka.testkit.TestKit
 import akka.actor.Actor.actorOf
 import akka.actor.ActorRef
 import akka.util.duration._
-import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil._
 import de.lmu.ifi.dbs.knowing.core.events._
 import scala.collection.mutable.ArrayBuffer
 
@@ -33,7 +32,7 @@ class ITimeIntervalClassPresenterTest extends FunSuite with ShouldMatchers with 
 
   before {
     presenter = actorOf[TestTimeIntervalClassPresenter].start
-    testInstances = timeIntervalResult(classes)
+    testInstances = ITimeIntervalClassPresenter.newInstances(classes)
   }
 
   after {

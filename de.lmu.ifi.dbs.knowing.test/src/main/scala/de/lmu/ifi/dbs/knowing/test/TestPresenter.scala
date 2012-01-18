@@ -13,6 +13,8 @@ import weka.core.Instances
  */
 trait TestPresenter extends TPresenter[Any] {
 
+  val name = getClass.getName
+  
   /**
    * just executes syncFun
    * @param parent - can be anything

@@ -29,7 +29,7 @@ trait ITimeIntervalClassPresenter[T] extends TPresenter[T] {
    *
    */
   def addInterval(clazz: String, from: Date, to: Date)
-  
+
   /**
    * Update the chart. Is called after
    * adding all intervals.
@@ -46,7 +46,7 @@ trait ITimeIntervalClassPresenter[T] extends TPresenter[T] {
         val classAttr = instances.attribute(ATTRIBUTE_CLASS)
         header = new Instances(instances, 0)
         content = instances
-        classes = { for (i <- 0 until classAttr.numValues) yield classAttr.value(i)}.toArray
+        classes = { for (i <- 0 until classAttr.numValues) yield classAttr.value(i) }.toArray
         buildCategories(classes)
       case true =>
         appendInstances(content, instances)
@@ -65,4 +65,41 @@ trait ITimeIntervalClassPresenter[T] extends TPresenter[T] {
     }
     update()
   }
+}
+
+/**
+ * @author Nepomuk Seiler
+ * @version 0.1
+ */
+object ITimeIntervalClassPresenter {
+
+  import java.util.{ List => JList }
+
+  /**
+   * <p>
+   * Date | Date | Nominal <br>
+   * ##################### <br>
+   * from | to	 | class <br>
+   * </p>
+   * Uses ResultsUtil to generate Instances.
+   *
+   * @param labels
+   * @return dataset fitting the ITimeIntervalClass scheme
+   */
+  def newInstances(classes: List[String], datePattern: String): Instances = timeIntervalResult(classes, datePattern)
+
+  /**
+   * @see newInstances(classes, datePattern)
+   */
+  def newInstances(classes: List[String]): Instances = timeIntervalResult(classes)
+
+  /**
+   * @see newInstances(classes, datePattern)
+   */
+  def newInstances(classes: JList[String]): Instances = timeIntervalResult(classes)
+  
+    /**
+   * @see newInstances(classes, datePattern)
+   */
+  def newInstances(classes: JList[String], datePattern: String): Instances = timeIntervalResult(classes, datePattern)
 }
