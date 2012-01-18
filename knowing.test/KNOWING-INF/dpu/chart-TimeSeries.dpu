@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DataProcessingUnit name="TimeSeries Test DPU">
+<DataProcessingUnit name="Chart TimeSeries Test DPU">
 	<description>Simple Description here</description>
 	<tags>Tag1, Tag2</tags>
 	<configuration>

@@ -77,7 +77,3 @@ class ProcessorFactory(processor: Class[_ <: TProcessor]) extends TFactory {
 
   def createPropertyDescription: Map[String, String] = Map()
 }
-
-class PresenterFactory(processor: Class[_ <: TProcessor], presenter: Class[_ <: TProcessor]) extends ProcessorFactory(processor) {
-  override val id = presenter.getName
-}

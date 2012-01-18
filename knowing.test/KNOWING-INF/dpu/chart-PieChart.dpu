@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataProcessingUnit name="Chart PieChart DPU">
+    <configuration>
+        <history>false</history>
+        <output>
+            <absolute>true</absolute>
+        </output>
+    </configuration>
+    <nodes>
+        <node id="ArffLoader" factoryId="weka.core.converters.ArffLoader" type="loader">
+            <properties>
+                <property key="file" value="pieChart.arff"></property>
+            </properties>
+        </node>
+        <node id="PieChart" factoryId="de.lmu.ifi.dbs.knowing.presenter.IPieChartPresenter" type="presenter"></node>
+    </nodes>
+    <edges>
+        <edge source="ArffLoader" target="PieChart" id="loader2Chart"></edge>
+    </edges>
+</DataProcessingUnit>

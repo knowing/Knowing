@@ -1,0 +1,10 @@
+@RELATION pieChart
+
+@ATTRIBUTE class {A,B,C}
+@ATTRIBUTE probability	REAL
+
+@DATA
+A,70.32
+B,35.88
+C,55.16
+

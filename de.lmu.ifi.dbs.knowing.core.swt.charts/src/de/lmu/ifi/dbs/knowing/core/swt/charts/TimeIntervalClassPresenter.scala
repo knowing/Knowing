@@ -12,8 +12,7 @@ import org.jfree.chart.renderer.xy.XYBarRenderer
 import org.jfree.data.general.Dataset
 import org.jfree.data.xy.{ IntervalXYDataset, XYIntervalSeriesCollection, XYIntervalSeries }
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
-import de.lmu.ifi.dbs.knowing.core.factory.PresenterFactory
-import de.lmu.ifi.dbs.knowing.presenter.ITimeIntervalClassPresenter
+import de.lmu.ifi.dbs.knowing.presenter.{PresenterFactory,ITimeIntervalClassPresenter}
 import weka.core.{ Instance, Instances }
 
 /**
@@ -111,4 +110,4 @@ object TimeIntervalClassPresenter {
   val name = "Time Interval Class Presenter"
 }
 
-class TimeIntervalClassPresenterFactory extends PresenterFactory(classOf[TimeIntervalClassPresenter], classOf[ITimeIntervalClassPresenter[_]])
+class TimeIntervalClassPresenterFactory extends PresenterFactory(classOf[TimeIntervalClassPresenter], classOf[ITimeIntervalClassPresenter[Composite]])

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DataProcessingUnit name="TimeInterval DPU">
+<DataProcessingUnit name="Chart TimeInterval DPU">
 	<description>Simple Description here</description>
 	<tags>Tag1, Tag2</tags>
 	<configuration>
-		<history>true</history>
-		<output>/home/muki/output.hst</output>
+		<history>false</history>
 		<!--  <absolute>true</absolute></output> -->
 		<event-constraints>
 			<!--  <constraint type="status"></constraint> -->
@@ -13,6 +12,9 @@
 		<node-constraints>
 			<constraint node="TablePresenter"></constraint>
 		</node-constraints>
+        <output>
+            <absolute>true</absolute>
+        </output>
 	</configuration>
 	<nodes>
 		<node id="ARFF" factoryId="weka.core.converters.ArffLoader" type="loader">

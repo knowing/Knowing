@@ -4,9 +4,8 @@ import java.util.{ LinkedList, Properties }
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
-import de.lmu.ifi.dbs.knowing.core.factory.PresenterFactory
 import de.lmu.ifi.dbs.knowing.core.swt.provider.{ InstanceContentProvider, InstanceLabelProvider }
-import de.lmu.ifi.dbs.knowing.presenter.ITablePresenter
+import de.lmu.ifi.dbs.knowing.presenter.{PresenterFactory,ITablePresenter}
 import org.eclipse.jface.viewers.{ TableViewerColumn, TableViewer, LabelProvider, ColumnWeightData }
 import org.eclipse.swt.SWT
 import org.eclipse.swt.graphics.Image
