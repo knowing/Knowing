@@ -10,6 +10,7 @@ import java.nio.file.Files.{ newInputStream, newOutputStream, newDirectoryStream
 import java.net.{ URI, URL }
 import scala.collection.JavaConversions._
 import INodeProperties.{ ABSOLUTE_PATH, FILE, FILE_EXTENSIONS, DIR, URL => URL_PROP, EXE_PATH }
+import java.nio.file.InvalidPathException
 
 /**
  * <p>Creates Input/OutputStreams based on DPU properties.</p>
@@ -232,7 +233,14 @@ object TStreamResolver {
       return None
 
     debug(this, "Trying resolve [" + key + "]...")
-    val path = Paths.get(properties.getProperty(key))
+    var path: Path = null
+    try {
+      path = Paths.get(properties.getProperty(key))
+    } catch {
+      case e:InvalidPathException =>
+        warning(this, "Error resolving from filesystem. " + e.getMessage)
+        return None
+    }
     val absolute = properties.getProperty(ABSOLUTE_PATH, "false").toBoolean
 
     (path.isAbsolute, absolute) match {

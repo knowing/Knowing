@@ -122,9 +122,19 @@ class DPUExecutor(dpu: IDataProcessingUnit,
    * Create and configure actors for each node
    */
   def initialize() {
+    initializeUIFactory()
+    initializeNodes()
+    checkInputOutputMaps()
+    uifactory update (self, Finished())
+  }
+
+  def initializeUIFactory() {
     uifactory setSupervisor (self)
     uifactory update (self, Created())
     uifactory update (self, Progress("initialize", 0, dpu.getNodes.size))
+  }
+
+  def initializeNodes() {
     dpu.getNodes foreach (node => {
       //      val factory = OSGIUtil.getFactoryService()
       val factory = directory.getFactory(node.getFactoryId.getText)
@@ -161,8 +171,9 @@ class DPUExecutor(dpu: IDataProcessingUnit,
           self ! PoisonPill
       }
     })
+  }
 
-    //Check if all input/output maps have been processed
+  def checkInputOutputMaps() {
     (loaderInput.nonEmpty, saverOutput.nonEmpty) match {
       case (true, true) =>
         self ! ExceptionEvent(new Exception,
@@ -178,8 +189,6 @@ class DPUExecutor(dpu: IDataProcessingUnit,
         self ! PoisonPill
       case (false, false) => debug(this, "All input/output maps have been processed successfully")
     }
-
-    uifactory update (self, Finished())
   }
 
   /*=======================================================*/
@@ -229,11 +238,12 @@ class DPUExecutor(dpu: IDataProcessingUnit,
       case (_, false, dir) =>
       case (_, _, _) =>
     }
-
     //Check DESERIALIZE property
     properties.containsKey(DESERIALIZE) match {
-      case true => TStreamResolver.resolveFromFileSystem(properties, DESERIALIZE, TStreamResolver.acceptAbsoluteFile) match {
-        case Some(p) if Files.exists(p) => //perfect!
+      case true => 
+        debug(this,"Node " + node.getId.getContent + " has deserialize property")
+        TStreamResolver.resolveFromFileSystem(properties, DESERIALIZE, TStreamResolver.acceptAbsoluteFile) match {
+        case Some(p) if Files.exists(p) => debug(this, " File exists " + p)//perfect!
         case Some(p) if !Files.exists(p) =>
           warning(this, "Deserialize input for Node " + node.getId.getContent + " could be resolved, but doesn't exists " + p)
           modelStore.getModel(node) match {
@@ -242,7 +252,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
               debug(this, "Set input DESERIALIZE to " + url.toString)
               properties.setProperty(DESERIALIZE, url.toString)
           }
-          
+
         case None =>
           warning(this, "Deserialize input for Node " + node.getId.getContent + " could not be resolved. Wrong filename or path.")
           val file = properties.getProperty(DESERIALIZE)
@@ -253,7 +263,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
               properties.setProperty(DESERIALIZE, url.toString)
           }
       }
-      case false =>
+      case false => debug(this,"Node " + node.getId.getContent + " has NO deserialize property")
     }
 
     properties foreach { case (v, k) => defProperties setProperty (v, k) }

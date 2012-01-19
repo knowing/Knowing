@@ -27,9 +27,15 @@ trait TSerializable extends TStreamResolver { this: TProcessor =>
     case Some(p) if exists(p) => Some(newInputStream(p))
     case _ => properties.getProperty(DESERIALIZE) match {
       case null => None
-      case url => 
+
+      case url => try {
         val model = new URL(url)
         Some(model.openStream)
+      } catch {
+        case e: MalformedURLException =>
+          throwException(e, "Could not deserialize model")
+          None
+      }
     }
   }
 

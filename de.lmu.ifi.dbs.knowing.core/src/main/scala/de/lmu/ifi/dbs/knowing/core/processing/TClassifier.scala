@@ -53,7 +53,7 @@ trait TClassifier extends TProcessor with TSerializable {
    * and deserialize an existing classifier. If no inpustream
    * is found, just a fresh classifier will be started.
    */
-  override def start = inputStream match {
+  override def start = inputStream() match {
     case None => debug(this, "Nothing to deserialize in " + getClass.getSimpleName)
     case Some(in) =>
       deserialize(in)

@@ -1,7 +1,7 @@
 package de.lmu.ifi.dbs.knowing.core.service.impl
 
 import de.lmu.ifi.dbs.knowing.core.service.{ IModelProvider, IModelStore, KnowingBundleExtender }
-import de.lmu.ifi.dbs.knowing.core.model.INode
+import de.lmu.ifi.dbs.knowing.core.model.{IProperty,INode}
 import de.lmu.ifi.dbs.knowing.core.util.DPUUtil.nodeProperties
 import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties.DESERIALIZE
 import java.net.URL
@@ -11,6 +11,7 @@ import org.osgi.service.component.ComponentContext
 import org.slf4j.LoggerFactory
 import scala.collection.mutable.{ HashMap, HashSet }
 import scala.collection.JavaConversions._
+import java.nio.file.Paths
 
 /**
  * @author Nepomuk Seiler
@@ -40,7 +41,7 @@ class ModelStore extends IModelStore with KnowingBundleExtender {
    */
   def getModel(node: INode): Option[URL] = node.getProperties
     .find(_.getKey.getContent.equals(DESERIALIZE))
-    .flatMap(p => getModel(p.getValue.getContent))
+    .flatMap(p => getModel(resolveFilename(p)))
 
   /**
    * Searches for DESERIALIZE property and searches for
@@ -55,6 +56,11 @@ class ModelStore extends IModelStore with KnowingBundleExtender {
         .find(_.getModels.containsKey(model))
         .map(prov => prov.getModel(model))
     }
+  
+  private def resolveFilename(property: IProperty):String = {
+    val path = Paths.get(property.getValue.getContent)
+    path.getFileName.toString
+  }
 
   /*======================================*/
   /*===== Bundle Handling - Manifest =====*/
