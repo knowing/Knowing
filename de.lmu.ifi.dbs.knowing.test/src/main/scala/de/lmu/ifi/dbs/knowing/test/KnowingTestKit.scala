@@ -10,6 +10,8 @@ import org.eclipse.sapphire.modeling.UrlResourceStore
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
 import java.net.{ URI, URL }
+import weka.core.{ Attribute, Instances }
+import org.scalatest.matchers._
 
 /**
  * Mixin with scalatest.org test to reduce boilerplate code.
@@ -17,7 +19,7 @@ import java.net.{ URI, URL }
  * @author Nepomuk Seiler
  * @version 0.1
  */
-trait KnowingTest {
+trait KnowingTestKit {
 
   /* ===================================== */
   /* ==== DataProcessingUnit Loading ===== */
@@ -52,5 +54,9 @@ trait KnowingTest {
     resourceStore: IResourceStore): ActorRef = {
     actorOf(new DPUExecutor(dpu, uiFactory, exePath, factoryDirectory, modelStore, resourceStore))
   }
+
+  /* ===================================== */
+  /* ======== Matching Instances  ======== */
+  /* ===================================== */
 
 }

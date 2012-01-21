@@ -18,7 +18,7 @@ import org.eclipse.sapphire.modeling.{ ResourceStoreException, UrlResourceStore 
 import weka.core.Attribute
 
 @RunWith(classOf[JUnitRunner])
-class ArffLoaderTest extends FunSuite with ShouldMatchers with BeforeAndAfter with KnowingTest {
+class ArffLoaderTest extends FunSuite with ShouldMatchers with InstancesMatchers with BeforeAndAfter with KnowingTestKit {
 
   var dpuExecutor: ActorRef = _
   var uiFactory: EmbeddedUIFactory = _
@@ -71,6 +71,8 @@ class ArffLoaderTest extends FunSuite with ShouldMatchers with BeforeAndAfter wi
     for(i <- 0 until 4) attributes(i).`type` should equal(Attribute.NUMERIC)
     attributes(4).name should equal("class")
     attributes(4).`type` should equal(Attribute.NOMINAL)
+    
+//    dataset should have(attribute("class"))
   }
 
 }
