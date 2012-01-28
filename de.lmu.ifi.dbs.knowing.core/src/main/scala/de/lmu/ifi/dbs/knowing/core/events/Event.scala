@@ -11,13 +11,14 @@ import weka.core.{Instance,Instances}
 trait Event
 trait Status extends Event
 trait UIEvent extends Event
+trait ResultsEvent extends Event
 
 /* ======================== */
 /* == Data Exchange ======= */
 /* ======================== */
-case class Results(instances: Instances, port: Option[String] = None) extends Event
-case class QueryResults(instances: Instances, query: Instance) extends Event
-case class QueriesResults(results: List[(Instance, Instances)]) extends Event //query, results
+case class Results(instances: Instances, port: Option[String] = None) extends ResultsEvent
+case class QueryResults(instances: Instances, query: Instance) extends ResultsEvent
+case class QueriesResults(results: List[(Instance, Instances)]) extends ResultsEvent //query, results
 case class Query(query: Instance) extends Event
 case class Queries(queries: Instances, id: String = "") extends Event
 case class UIFactoryEvent(factory: UIFactory[_], node: INode) extends Event
