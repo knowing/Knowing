@@ -65,20 +65,18 @@ class ArffLoaderTest extends FunSuite with ShouldMatchers /*with InstancesMatche
 
     dataset.relationName should equal("iris")
 
-    //Check attributes are correct
-    val attributes = for (i <- 0 until dataset.numAttributes) yield dataset.attribute(i)
-    attributes should have length 5
-
-    for (i <- 0 until 4) attributes(i).`type` should equal(Attribute.NUMERIC)
-    attributes(4).name should equal("class")
-    attributes(4).`type` should equal(Attribute.NOMINAL)
-
     //dataset should have(attribute("class"))
     val results = new Results(dataset, Some("train"))
+
+    //Check attributes are correct
+    results should have(attribute(Attribute.NUMERIC, 4))
+    results should have(attribute("class"))
     
-    results should have (attribute("class"))
-    results should have (port("train"))
-    results should be (aResult)
+    
+
+    results should have(port("train"))
+    results should be(aResult)
+
   }
 
 }
