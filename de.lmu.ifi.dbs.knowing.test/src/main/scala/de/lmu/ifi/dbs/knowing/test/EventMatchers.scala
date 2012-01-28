@@ -1,10 +1,13 @@
 package de.lmu.ifi.dbs.knowing.test
 
+import org.scalatest._
 import org.scalatest.matchers._
 import weka.core.{ Instances, Instance, Attribute }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties._
 import de.lmu.ifi.dbs.knowing.core.model.IEdge.DEFAULT_PORT
+import java.util.Date
+import java.util.Arrays
 
 /**
  *
@@ -12,7 +15,7 @@ import de.lmu.ifi.dbs.knowing.core.model.IEdge.DEFAULT_PORT
  * @author Nepomuk Seiler
  * @version 0.1
  */
-trait EventMatchers {
+trait EventMatchers extends ShouldMatchers {
 
   /* ========================================== */
   /* ========== HaveProperty Matcher ========== */
@@ -30,6 +33,61 @@ trait EventMatchers {
         "port",
         port,
         actualPort)
+    }
+  }
+
+  /**
+   * The list can contain the following types
+   *
+   * <li> Int, Long, Double, Float for numeric attributes<li>
+   * <li> String for nominal attributes <li>
+   * <li> Date for date attributes <li>
+   *
+   * @param content - List of type Any
+   */
+  def instance(content: List[Any]) = new HavePropertyMatcher[Results, String] {
+    def apply(result: Results): HavePropertyMatchResult[String] = {
+      val instances = result.instances
+      if (instances.numAttributes != content.size) {
+        return HavePropertyMatchResult(
+          false,
+          "instance",
+          listToString(content),
+          "[Header not equal. Wrong number of attributes]")
+      }
+      //this could perform better `content.view.zipWithIndex`
+      val contentArray = content.zipWithIndex.map {
+        case (x: Double, _) => x
+        case (x: Float, _) => x.toDouble
+        case (x: Long, _) => x.toDouble
+        case (x: Int, _) => x.toDouble
+        case (nom: String, index) =>
+          val attr = instances.attribute(index)
+          if (attr.`type` == Attribute.NUMERIC || attr.`type` == Attribute.DATE) {
+            throw new Exception("String " + nom + " doesn't fit to attribute[ " + attributeToString(attr.`type`) + "]")
+          }
+          attr.indexOfValue(nom).toDouble
+        case (date: Date, _) => date.getTime.toDouble
+        case (c, index) => throw new Exception("No matching attribute for content type [" + c + "] at index [" + index + "]")
+      }.toArray
+
+      
+      for (i <- 0 until instances.numInstances) {
+        val inst = instances.get(i)
+        val actual = inst.toDoubleArray
+        if (Arrays.equals(actual, contentArray)) {
+          return HavePropertyMatchResult(
+            true,
+            "instance",
+            listToString(content),
+            "")
+        }
+      }
+      HavePropertyMatchResult(
+        false,
+        "instance",
+        listToString(content),
+        "<not available>")
     }
   }
 
@@ -143,6 +201,12 @@ trait EventMatchers {
         left.toString + " is instance of Results.",
         left.toString + " is not an instance of Results.")
   }
+
+  /* ========================================== */
+  /* =========== Custom Matchers ============== */
+  /* ========================================== */
+
+  private def listToString(list: List[Any]) = list.toString.substring(5, list.toString.size - 1)
 
 }
 

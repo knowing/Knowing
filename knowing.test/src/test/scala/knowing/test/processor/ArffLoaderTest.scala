@@ -19,7 +19,7 @@ import org.eclipse.sapphire.modeling.{ ResourceStoreException, UrlResourceStore 
 import weka.core.Attribute
 
 @RunWith(classOf[JUnitRunner])
-class ArffLoaderTest extends FunSuite with ShouldMatchers /*with InstancesMatchers */ with EventMatchers with BeforeAndAfter with KnowingTestKit {
+class ArffLoaderTest extends FunSuite with KnowingTestKit with BeforeAndAfter {
 
   var dpuExecutor: ActorRef = _
   var uiFactory: EmbeddedUIFactory = _
@@ -71,11 +71,11 @@ class ArffLoaderTest extends FunSuite with ShouldMatchers /*with InstancesMatche
     //Check attributes are correct
     results should have(attribute(Attribute.NUMERIC, 4))
     results should have(attribute("class"))
-    
-    
 
     results should have(port("train"))
     results should be(aResult)
+    
+    results should have (instance(List(4.7,3.2,1.3,0.2,"Iris-setosa")))
 
   }
 

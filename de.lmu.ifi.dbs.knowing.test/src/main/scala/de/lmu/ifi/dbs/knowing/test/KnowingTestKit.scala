@@ -19,7 +19,7 @@ import org.scalatest.matchers._
  * @author Nepomuk Seiler
  * @version 0.1
  */
-trait KnowingTestKit {
+trait KnowingTestKit extends EventMatchers {
 
   /* ===================================== */
   /* ==== DataProcessingUnit Loading ===== */
