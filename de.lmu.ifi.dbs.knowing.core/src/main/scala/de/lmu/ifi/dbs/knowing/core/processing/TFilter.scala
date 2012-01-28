@@ -38,8 +38,9 @@ trait TFilter extends TProcessor {
   /**
    * @return merged instances or emptyResult
    */
-  protected def mergeResults(results: List[(Instance, Instances)]): Instances = {
-    val instances = results map(_._2)
+  protected def mergeResults(results: Map[Instance, Instances]): Instances = {
+    //A lot of conversion going on here
+    val instances = results.values.toList
     instances.headOption match {
       case Some(head) => 
         val header = new Instances(head, 0)

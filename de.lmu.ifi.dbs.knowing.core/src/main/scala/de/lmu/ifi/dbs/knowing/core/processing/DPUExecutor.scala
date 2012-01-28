@@ -455,7 +455,7 @@ class LoggableDispatcher(name: String, supervisor: DPUExecutor) extends Executor
   private def logEvent(src: String, trg: String, msg: Event) = msg match {
     case Results(content, port) => log(src + ":" + port.getOrElse(""), trg, content, EventType.RESULTS)
     case QueryResults(content, _) => log(src, trg, content, EventType.QUERYRESULTS)
-    case QueriesResults(c) => log(src, trg, c(0)._2, EventType.QUERIESRESULTS)
+    case QueriesResults(c) => log(src, trg, c.values.head, EventType.QUERIESRESULTS)
     case Query(q) => log(src, trg, q.dataset, EventType.QUERY)
     case Queries(content, _) => log(src, trg, content, EventType.QUERIES)
     case msg: Status => log(src, trg, ResultsUtil.emptyResult, EventType.STATUS)

@@ -11,8 +11,8 @@ import akka.actor.ActorRef
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import weka.core.{ Attribute, Instance, Instances }
-
 import TSender.DEFAULT_PORT
+import scala.collection.mutable.HashMap
 
 /**
  * <p>An IProcessor encapsulates a data processing algorithm.
@@ -151,18 +151,18 @@ trait TProcessor extends Actor with TSender with TConfigurable {
   /**
    *
    */
-  def queries(queries: Instances): List[(Instance, Instances)] = {
+  def queries(queries: Instances): Map[Instance, Instances] = {
     val enum = queries.enumerateInstances
-    val results = new ListBuffer[(Instance, Instances)]
+    val results = HashMap[Instance, Instances]()
     var i = 0
     while (enum.hasMoreElements) {
       val instance = enum.nextElement.asInstanceOf[Instance]
-      results += ((instance, query(instance)))
+      results += (instance -> query(instance))
       statusChanged(Progress(queries.relationName, i, queries.numInstances))
       i += 1
     }
     statusChanged(Ready())
-    results toList
+    results toMap
   }
 
   /**

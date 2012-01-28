@@ -220,12 +220,12 @@ class CrossValidator extends TProcessor {
    * @param queries - queries forwared to classifier
    * @return always Nil (empty list)
    */
-  override def queries(queries: Instances): List[(Instance, Instances)] = {
+  override def queries(queries: Instances): Map[Instance, Instances] = {
     statusChanged(Running())
     numInstancesTest = queries.numInstances
     val enum = queries.enumerateInstances
     while (enum.hasMoreElements) query(enum.nextElement.asInstanceOf[Instance])
-    Nil
+    Map()
   }
 
   /**
