@@ -25,6 +25,9 @@ trait EventMatchers extends ShouldMatchers {
   /* ====== Results ====== */
   /* ===================== */
 
+  /**
+   *
+   */
   def port(port: String) = new HavePropertyMatcher[Results, String] {
     def apply(result: Results) = {
       val actualPort = result.port.getOrElse(DEFAULT_PORT)
@@ -36,6 +39,20 @@ trait EventMatchers extends ShouldMatchers {
     }
   }
 
+  /**
+   *
+   */
+  def size(expectedSize: Int) = new HavePropertyMatcher[Results, Int] {
+    def apply(result: Results) = {
+      val instances = result.instances
+      HavePropertyMatchResult(
+        instances.size == expectedSize,
+        "port",
+        expectedSize,
+        instances.size)
+    }
+  }
+  
   /**
    * The list can contain the following types
    *
@@ -71,7 +88,6 @@ trait EventMatchers extends ShouldMatchers {
         case (c, index) => throw new Exception("No matching attribute for content type [" + c + "] at index [" + index + "]")
       }.toArray
 
-      
       for (i <- 0 until instances.numInstances) {
         val inst = instances.get(i)
         val actual = inst.toDoubleArray

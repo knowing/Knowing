@@ -69,6 +69,7 @@ class ArffLoaderTest extends FunSuite with KnowingTestKit with BeforeAndAfter {
     val results = new Results(dataset, Some("train"))
 
     //Check attributes are correct
+    results should have (size(150))
     results should have(attribute(Attribute.NUMERIC, 4))
     results should have(attribute("class"))
 
