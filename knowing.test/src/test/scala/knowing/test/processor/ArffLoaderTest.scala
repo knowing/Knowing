@@ -63,20 +63,22 @@ class ArffLoaderTest extends FunSuite with KnowingTestKit with BeforeAndAfter {
     dataset.isEmpty should be(false)
     dataset.size should equal(150)
 
-    dataset.relationName should equal("iris")
-
-    //dataset should have(attribute("class"))
     val results = new Results(dataset, Some("train"))
 
+    //Check Results object
+    results should be(aResult)
+    results should have(port("train"))
+
+    //Check Instances are correct
+    results should have(name("iris")) 	//equal to: dataset.relationName should equal("iris")
+    results should have(size(150))		//equal to: dataset.size should equal(150)
+
     //Check attributes are correct
-    results should have (size(150))
     results should have(attribute(Attribute.NUMERIC, 4))
     results should have(attribute("class"))
 
-    results should have(port("train"))
-    results should be(aResult)
-    
-    results should have (instance(List(4.7,3.2,1.3,0.2,"Iris-setosa")))
+    //Check content
+    results should have(instance(List(4.7, 3.2, 1.3, 0.2, "Iris-setosa")))
 
   }
 
