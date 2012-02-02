@@ -64,8 +64,10 @@ trait TStreamResolver { this: TProcessor =>
 
   /**
    * Resolves all InputStreams described in the given properties.
+   * The returning map structure is [FileName -> InputStream]
+   * Duplicated filenames in different folders cannot be handled.
    *
-   * @return array with InputStreams. Empty Array on failure
+   * @return Map with InputStreams. Empty Map on failure
    * @throws IOException
    */
   @throws(classOf[IOException])
@@ -75,21 +77,21 @@ trait TStreamResolver { this: TProcessor =>
 
       //Input successfully created
       case Some(p) =>
-        debug(this, "Resolved resource: " + p.getFileName())
+        debug(this, "Resolved resource: [" + p.getFileName + "] in [" + p.getParent + "]")
         return Map(p.getFileName.toString -> newInputStream(p))
     }
     resolveDirPath(properties) match {
       case None =>
-      case Some(p) =>
+      case Some(dir) =>
         //Add all sources from directory stream
         var stream: DirectoryStream[Path] = null
         var inputMap = Map[String, InputStream]()
         try {
           val fileExt = properties.getProperty(FILE_EXTENSIONS)
-          stream = newDirectoryStream(p)
-          for (f <- stream if f.getFileName.toString.endsWith(fileExt)) {
-            debug(this, "Resolved input resource: " + f.getFileName())
-            inputMap += (f.getFileName.toString -> newInputStream(f))
+          stream = newDirectoryStream(dir)
+          for (file <- stream if file.getFileName.toString.endsWith(fileExt)) {
+            debug(this, "Resolved input resource: [" + file.getFileName + "] in [" + dir.normalize + "]")
+            inputMap += (file.getFileName.toString -> newInputStream(file))
           }
         } catch {
           case e: IOException => e.printStackTrace()
