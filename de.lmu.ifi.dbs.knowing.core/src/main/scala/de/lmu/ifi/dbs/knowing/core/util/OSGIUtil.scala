@@ -1,17 +1,15 @@
 package de.lmu.ifi.dbs.knowing.core.util
 
-import org.osgi.framework.{InvalidSyntaxException,ServiceRegistration,BundleContext}
+import org.osgi.framework.{ InvalidSyntaxException, ServiceRegistration, BundleContext }
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory._
 import de.lmu.ifi.dbs.knowing.core.processing._
 import de.lmu.ifi.dbs.knowing.core.internal.Activator
-import de.lmu.ifi.dbs.knowing.core.service.IDPUProvider
+import de.lmu.ifi.dbs.knowing.core.service._
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
 import java.net.URL
-import java.util.{Dictionary,Hashtable}
+import java.util.{ Dictionary, Hashtable }
 import OSGIUtil._
-
-
 
 /**
  * <p>Util for (de)register DataMining-Factory-Services</p>
@@ -102,6 +100,12 @@ object OSGIUtil {
   }
 
   /**
+   * assumes activated knowing.core bundle!
+   */
+  def getFactoryDirectory(): IFactoryDirectory = Activator.factoryDirectory.getService()
+  //TODO OSGIUtil: getFactoryDirectory
+
+  /**
    * <p>Obtain factory service by two attempts</p>
    * [1] get serviceReference via 'id + "Factory"'
    * [2] if no service found, retrieve all TFactory services and check ids
@@ -145,7 +149,7 @@ object OSGIUtil {
         None
     }
   }
-  
+
   def createServiceProperties(factory: TFactory): Dictionary[String, _] = {
     val properties = new Hashtable[String, Object]
     properties.put(FACTORY_ID, factory.id)

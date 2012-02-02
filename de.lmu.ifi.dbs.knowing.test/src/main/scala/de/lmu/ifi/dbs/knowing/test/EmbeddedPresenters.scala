@@ -1,17 +1,18 @@
 package de.lmu.ifi.dbs.knowing.test
 
 import de.lmu.ifi.dbs.knowing.presenter._
+import de.lmu.ifi.dbs.knowing.core.events._
 import weka.core.{ Instances, Attribute }
 
 object EmbeddedPresenters {
 
   val EmbeddedUIComponentFactory = new EmbeddedUIComponentPresenterFactory
-  
+
   val TablePresenterFactory = new EmbeddedUIComponentTablePresenterFactory()
 }
 
 /**
- * 
+ *
  * @author Nepomuk Seiler
  * @version 0.1
  */

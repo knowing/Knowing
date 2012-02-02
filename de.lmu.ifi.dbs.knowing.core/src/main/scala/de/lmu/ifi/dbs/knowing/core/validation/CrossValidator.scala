@@ -6,12 +6,13 @@ import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
-import de.lmu.ifi.dbs.knowing.core.util.OSGIUtil.getFactoryService
+import de.lmu.ifi.dbs.knowing.core.util.OSGIUtil.getFactoryDirectory
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import java.util.Properties
 import weka.core.{ Attribute, Instance, Instances }
 import scala.collection.mutable.{ Map => MutableMap }
 import java.util.ArrayList
+import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
 
 /**
  * Single CrossValidation step
@@ -21,7 +22,7 @@ import java.util.ArrayList
  * @since 13.05.2011
  *
  */
-class CrossValidator extends TProcessor {
+class CrossValidator(val factoryDirectory: Option[IFactoryDirectory]) extends TProcessor {
 
   var filterFactory: TFactory = _
   var classifierFactory: TFactory = _
@@ -289,14 +290,15 @@ class CrossValidator extends TProcessor {
 
   def configure(properties: Properties) = {
     val cFactoryId = properties.getProperty(CrossValidatorFactory.CLASSIFIER)
-    val cFactory = getFactoryService(cFactoryId)
+    val factoryDir = factoryDirectory.getOrElse(getFactoryDirectory)
+    val cFactory = factoryDir.getFactory(cFactoryId)
     cFactory match {
       case Some(f) => classifierFactory = f
       case None => throw new Exception("No Factory with " + cFactoryId + " found!")
     }
 
     val fFactoryId = properties.getProperty(CrossValidatorFactory.FILTER)
-    val fFactory = getFactoryService(fFactoryId)
+    val fFactory = factoryDir.getFactory(fFactoryId)
     fFactory match {
       case Some(f) => filterFactory = f
       case None => debug(this, "Unfiltered CrossValidation")
@@ -338,12 +340,12 @@ class CrossValidator extends TProcessor {
 
 }
 
-class CrossValidatorFactory extends TFactory {
+class CrossValidatorFactory(factoryDirectory: Option[IFactoryDirectory] = None) extends TFactory {
 
   val name: String = CrossValidatorFactory.name
   val id: String = CrossValidatorFactory.id
 
-  def getInstance(): ActorRef = actorOf[CrossValidator]
+  def getInstance(): ActorRef = actorOf(new CrossValidator(factoryDirectory))
 
   def createDefaultProperties: Properties = {
     val props = new Properties();

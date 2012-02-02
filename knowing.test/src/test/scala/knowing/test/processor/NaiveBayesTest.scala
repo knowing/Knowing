@@ -31,11 +31,12 @@ class NaiveBayesTest extends FunSuite with KnowingTestKit with BeforeAndAfter {
 
   before {
     //Add processor factories
-    factoryDirectory = new EmbeddedFactoryDirectory()
+    factoryDirectory = new EmbeddedFactoryDirectory
+    factoryDirectory
       .add(new WekaArffLoaderFactory)
       .add(new NaiveBayesFactory)
       .add(new ConfusionMatrixFactory)
-      .add(new XCrossValidatorFactory)
+      .add(new XCrossValidatorFactory(Some(factoryDirectory)))
       .add(TablePresenterFactory)
       .add(EmbeddedUIComponentFactory)
 

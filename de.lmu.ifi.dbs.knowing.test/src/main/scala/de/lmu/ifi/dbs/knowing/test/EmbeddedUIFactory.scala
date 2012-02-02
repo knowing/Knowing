@@ -39,7 +39,7 @@ class EmbeddedUIFactory extends UIFactory[IEmbeddedUIComponent] {
     status match {
       case ExceptionEvent(e, details) => e.printStackTrace()
       case Shutdown() => rendevouz.put(containers)
-      case _ =>
+      case _ => //println("Update " + status + " from " + actor.actorClassName)
     }
   }
 

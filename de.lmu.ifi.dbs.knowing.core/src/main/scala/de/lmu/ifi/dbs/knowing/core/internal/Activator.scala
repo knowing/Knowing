@@ -21,14 +21,21 @@ class Activator extends BundleActivator {
 
     dpuDirectory = new ServiceTracker[IDPUDirectory, IDPUDirectory](context, classOf[IDPUDirectory], null)
     dpuDirectory.open
+
+    factoryDirectory = new ServiceTracker[IFactoryDirectory, IFactoryDirectory](context, classOf[IFactoryDirectory], null)
+    factoryDirectory.open
   }
 
   def stop(context: BundleContext) = {
-    Activator.context = null;
+    Activator.context = null
     osgiUtil.deregisterAll
     osgiUtil = null
+    
     dpuDirectory.close
     dpuDirectory = null
+    
+    factoryDirectory.close
+    factoryDirectory = null
   }
 
   private def registerServices {
@@ -48,12 +55,13 @@ class Activator extends BundleActivator {
 object Activator {
 
   val PLUGIN_ID = "de.lmu.ifi.dbs.knowing.core"
-  
+
   private var context: BundleContext = null
   private var osgiUtil: OSGIUtil = _
 
   var providerTracker: ServiceTracker[IDPUProvider, IDPUProvider] = _
   var dpuDirectory: ServiceTracker[IDPUDirectory, IDPUDirectory] = _
+  var factoryDirectory: ServiceTracker[IFactoryDirectory, IFactoryDirectory] = _
 
   def getContext(): BundleContext = context
 }

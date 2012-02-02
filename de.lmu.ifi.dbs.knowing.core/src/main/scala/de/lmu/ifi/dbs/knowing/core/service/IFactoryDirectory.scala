@@ -15,6 +15,9 @@ trait IFactoryDirectory {
    */
   def getFactory(id: String): Option[TFactory]
   
+  //Check for java compatibility
+  //def apply(id: String): Option[TFactory] = getFactory(id)
+  
   /**
    * @return all registered TFactory services
    */

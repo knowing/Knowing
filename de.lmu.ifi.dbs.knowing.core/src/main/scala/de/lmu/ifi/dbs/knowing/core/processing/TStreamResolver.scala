@@ -108,7 +108,7 @@ trait TStreamResolver { this: TProcessor =>
       case None => Map()
 
       //Input successfully created
-      case Some(in) => Map(ResultsUtil.UNKOWN_SOURCE -> in)
+      case Some(in) => Map(in._1 -> in._2)
     }
   }
 
@@ -169,11 +169,11 @@ trait TStreamResolver { this: TProcessor =>
   }
 
   /**
-   * @return None if property not available, else Some(InputStream)
+   * @return None if property not available, else Some(Filename, InputStream)
    * @throws IOException - malformed URL,..
    */
   @throws(classOf[IOException])
-  protected def resolveInputFromURL(properties: Properties): Option[InputStream] = {
+  protected def resolveInputFromURL(properties: Properties): Option[(String,InputStream)] = {
     (properties.containsKey(URL_PROP), properties.containsKey(FILE)) match {
       case (false, false) => None
 
@@ -182,8 +182,8 @@ trait TStreamResolver { this: TProcessor =>
         debug(this, "Trying resolve input via executionPath[" + properties.getProperty(EXE_PATH) + "] and FILE[" + properties.getProperty(FILE) + "]...")
         val execURI = new URI(properties.getProperty(EXE_PATH))
         val fileName = properties.getProperty(FILE)
-        val file = execURI.resolve(fileName)
-        Some(file.toURL.openStream)
+        val file = Paths.get(execURI).resolve(fileName)
+        Some(file.getFileName.toString, Files.newInputStream(file))
 
       //Resolve URL from URL property
       case (true, _) =>
@@ -196,9 +196,9 @@ trait TStreamResolver { this: TProcessor =>
             props.setProperty(FILE, url.getFile)
             resolveFilePath(props) match {
               case None => None
-              case Some(p) => Some(Files.newInputStream(p))
+              case Some(p) => Some(p.getFileName.toString,Files.newInputStream(p))
             }
-          case _ => Some(url.openStream)
+          case _ => Some(url.getFile,url.openStream)
         }
     }
   }

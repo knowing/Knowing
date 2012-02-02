@@ -6,11 +6,13 @@ import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 import de.lmu.ifi.dbs.knowing.core.factory.{ TFactory, ProcessorFactory }
 import de.lmu.ifi.dbs.knowing.core.util.{ OSGIUtil, ResultsUtil }
+import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
 import de.lmu.ifi.dbs.knowing.core.events._
 import java.util.Properties
 import weka.core.{ Instance, Instances }
 import com.eaio.uuid.UUID
 import weka.core.Attribute
+
 
 /**
  * Performs a crossvalidation on the given input.
@@ -20,8 +22,12 @@ import weka.core.Attribute
  * @author Nepomuk Seiler
  * @version 0.1
  */
-class XCrossValidator(var factory: TFactory, var folds: Int, var validator_properties: Properties) extends TProcessor {
+class XCrossValidator(val factoryDirectory: Option[IFactoryDirectory] = None) extends TProcessor {
 
+  protected var factory: TFactory = _
+  protected var folds: Int = _
+  protected var validator_properties: Properties = _
+  
   protected var resultHeader: Instances = _
   protected var results: List[Instances] = Nil
   protected var relAttribute = -1
@@ -30,8 +36,6 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
 
   private var first_run = true
   private var sortAttribute = ""
-
-  def this() = this(null, 10, new Properties)
 
   override def customReceive = {
     case status: Status => //statusChanged(status) handle it!
@@ -134,12 +138,7 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
   }
 
   def configure(properties: Properties) = {
-    //Retrieve CrossValidator factory
-    val factory = OSGIUtil.getFactoryService(CrossValidatorFactory.id)
-    factory match {
-      case Some(f) => this.factory = f
-      case None => throw new Exception("No Factory with " + CrossValidatorFactory.id + " found!")
-    }
+    factory = new CrossValidatorFactory(factoryDirectory)
     //Set properties for this XCrossValidator
     val strFolds = properties.getProperty(CrossValidatorFactory.FOLDS, "10")
     folds = strFolds.toInt
@@ -164,8 +163,10 @@ class XCrossValidator(var factory: TFactory, var folds: Int, var validator_prope
 
 }
 
-class XCrossValidatorFactory extends ProcessorFactory(classOf[XCrossValidator]) {
+class XCrossValidatorFactory(val factoryDirectory: Option[IFactoryDirectory] = None) extends ProcessorFactory(classOf[XCrossValidator]) {
 
+  override def getInstance(): ActorRef = actorOf(new XCrossValidator(factoryDirectory))
+  
   override def createDefaultProperties: Properties = {
     val props = new Properties();
     props.setProperty(CrossValidatorFactory.CLASSIFIER, "")
