@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DataProcessingUnit name="Classification Training">
+    <description>PeakPrediction -> Segmentation -> FV -> CrossValidation(LDA -> NaiveBayes) -> TablePresenter</description>
+    <tags></tags>
+    <nodes>                        
+        <node id="ARFF" type="loader" factoryId="weka.core.converters.ArffLoader" >
+			<properties>
+				<property key="dir" value="./inputdata" />
+				<property key="extensions" value="arff" />
+				<property key="source" value="true" />
+			</properties>
+		</node>
+		
+		<node id="ARFF2" type="loader" factoryId="weka.core.converters.ArffLoader">
+			<properties>
+				<property key="dir" value="./inputdata" />
+				<property key="extensions" value="arff" />
+				<property key="source" value="true" />
+			</properties>
+		</node>
+        
+        <node id="SourceToClassConverter" type="processor" factoryId="de.sendsor.accelerationSensor.algorithm.moennig.preprocessing.SourceToClassConverter">
+            <properties>            
+            	<property key="delimiter" value="-" />
+            	<property key="position" value="1" />            	            	            
+            </properties>
+        </node>
+        
+        <node id="TruncatedPeakPrediction" type="processor" factoryId="de.sendsor.accelerationSensor.algorithm.moennig.preprocessing.TruncatedPeakPrediction">
+            <properties>            
+            	<property key="normalize" value="true" />
+            	<property key="minValue" value="-128" />
+            	<property key="maxValue" value="127" />
+            	<property key="normalizationRange" value="2.0" />            	            	
+            </properties>
+        </node>
+        
+        <node id="Segmentation" type="processor" factoryId="de.sendsor.accelerationSensor.algorithm.moennig.segmentation.Segmentation">
+            <properties>            
+            	<property key="debug" value="false" />
+            	<property key="minCorrelation" value="0.75" />
+            	<property key="patternSize" value="25" />
+            	<property key="minSegmentLength" value="100" />
+            	<property key="shiftSampleLength" value="100" />
+            	<property key="minAttributesWithSegments" value="1" />
+            </properties>
+        </node>      
+        
+         <node id="AugmentedFVSegments" type="processor" factoryId="de.sendsor.accelerationSensor.algorithm.moennig.fv.AugmentedFV">
+            <properties>            
+            	<property key="debug" value="false" />               	
+            	<property key="useAR" value="true" />
+            	<property key="useSMA" value="true" />
+            	<property key="useTA" value="true" />
+            	<property key="useAPA" value="true" />
+            	<property key="useSSR" value="true" />
+            	<property key="useMV" value="false" />
+            	<property key="useIAC" value="false" />
+            	<property key="splitData" value="false" />
+            </properties>
+        </node>                
+		
+        <node id="AugmentedFVNonSegments" type="processor" factoryId="de.sendsor.accelerationSensor.algorithm.moennig.fv.AugmentedFV">
+            <properties>            
+            	<property key="debug" value="false" />               	
+            	<property key="useAR" value="true" />
+            	<property key="useSMA" value="true" />
+            	<property key="useTA" value="true" />
+            	<property key="useAPA" value="true" />
+            	<property key="useSSR" value="true" />
+            	<property key="useMV" value="false" />
+            	<property key="useIAC" value="false" />
+            	<property key="splitData" value="true" />
+            </properties>
+        </node>
+		
+		<node id="LDASegments" type="filter" factoryId="de.sendsor.accelerationSensor.algorithm.moennig.lda.LDAFilter">
+			<properties>				
+				<property key="serialize" value="lda_segments.mdl" />
+				
+				<property key="class" value="source" />
+				<property key="debug" value="false" />
+				   
+            	<property key="dimensionreduction" value="false" />
+            	<property key="attributeNamePrefix" value="FV_" />
+
+				<property key="kernel-estimator" value="false" />
+				<property key="supervised-discretization" value="false" />
+			</properties>
+		</node>
+        <node id="LDANonSegments" type="filter" factoryId="de.sendsor.accelerationSensor.algorithm.moennig.lda.LDAFilter">
+			<properties> 
+				<property key="serialize" value="lda_non_segments.mdl" />
+				
+				<property key="class" value="source" />
+				<property key="debug" value="false" />
+				   
+            	<property key="dimensionreduction" value="false" />
+            	<property key="attributeNamePrefix" value="FV_" />
+
+				<property key="kernel-estimator" value="false" />
+				<property key="supervised-discretization" value="false" />
+			</properties>
+		</node>
+        <node id="BayesNonSegments" type="classifier" factoryId="de.sendsor.accelerationSensor.algorithm.moennig.classifier.MyNaiveBayesImpl">
+            <properties>
+                <property key="serialize" value="bayes_non_segments.mdl"></property>
+            </properties>
+        </node>
+        <node id="BayesSegments" factoryId="de.sendsor.accelerationSensor.algorithm.moennig.classifier.MyNaiveBayesImpl" type="classifier">
+            <properties>
+                <property key="serialize" value="bayes_segments.mdl"></property>
+            </properties>
+        </node>
+    </nodes>
+    <edges>
+    	<edge id="arff_test" source="ARFF" target="SourceToClassConverter"  />        
+        <edge id="source_peak" source="SourceToClassConverter" target="TruncatedPeakPrediction" />
+        <edge id="peak_segmentation" source="TruncatedPeakPrediction" target="Segmentation" />
+        <edge id="segmentation_segments_fv" source="Segmentation" sourcePort="segments" target="AugmentedFVSegments" />
+        <edge id="segmentation_nonsegments_fv" source="Segmentation" sourcePort="nonsegments" target="AugmentedFVNonSegments" />
+        <edge source="AugmentedFVNonSegments" target="LDANonSegments" id="fv_lda_nonsegments"></edge>
+        <edge source="AugmentedFVSegments" target="LDASegments" id="fv_lda_segments"></edge>
+        <edge source="LDANonSegments" target="BayesNonSegments" id="build_NonSegments"></edge>
+        <edge source="LDASegments" target="BayesSegments" id="buildSegements"></edge>
+        <edge source="ARFF2" target="SourceToClassConverter" id="arff_train"></edge>		
+    </edges>
+</DataProcessingUnit>
+

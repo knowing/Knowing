@@ -290,6 +290,8 @@ object TProcessor {
    * @return class attribute index or -1
    */
   def guessAndSetClassLabel(dataset: Instances, default: Int = -1): Int = {
+    if(dataset == null)
+      return default
     val index = dataset.classIndex
     index match {
       case -1 =>

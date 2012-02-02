@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DataProcessingUnit name="ARFF Classification Testing">
+    <description>PeakPrediction -> Segmentation -> FV -> CrossValidation(LDA -> NaiveBayes) -> TablePresenter</description>
+    <tags></tags>
+    <nodes>                        
+        <node id="ARFF" type="loader" factoryId="weka.core.converters.ArffLoader">
+			<properties>
+				<property key="dir" value="./inputdata" />
+				<property key="extensions" value="arff" />
+				<property key="source" value="true" />
+			</properties>
+		</node>
+        <node factoryId="de.lmu.ifi.dbs.knowing.core.common.AddClassAttribute" id="AddClassAttribute" type="filter">
+            <properties>
+                <property key="deserialize" value="classAttributes.mdl"></property>
+                <property key="classes" value="Joggen,Skaten,spazieren,biken,crosstrainer"></property>
+            </properties>
+        </node>
+        
+        <node id="TruncatedPeakPrediction" type="processor" factoryId="de.sendsor.accelerationSensor.algorithm.moennig.preprocessing.TruncatedPeakPrediction">
+            <properties>            
+            	<property key="normalize" value="true" />
+            	<property key="minValue" value="-128" />
+            	<property key="maxValue" value="127" />
+            	<property key="normalizationRange" value="2.0" />            	            	
+            </properties>
+        </node>
+        
+        <node id="Segmentation" type="processor" factoryId="de.sendsor.accelerationSensor.algorithm.moennig.segmentation.Segmentation">
+            <properties>            
+            	<property key="debug" value="false" />
+            	<property key="minCorrelation" value="0.75" />
+            	<property key="patternSize" value="25" />
+            	<property key="minSegmentLength" value="100" />
+            	<property key="shiftSampleLength" value="100" />
+            	<property key="minAttributesWithSegments" value="1" />
+            </properties>
+        </node>      
+        
+         <node id="AugmentedFVSegments" type="processor" factoryId="de.sendsor.accelerationSensor.algorithm.moennig.fv.AugmentedFV">
+            <properties>            
+            	<property key="debug" value="false" />               	
+            	<property key="useAR" value="true" />
+            	<property key="useSMA" value="true" />
+            	<property key="useTA" value="true" />
+            	<property key="useAPA" value="true" />
+            	<property key="useSSR" value="true" />
+            	<property key="useMV" value="false" />
+            	<property key="useIAC" value="false" />
+            	<property key="splitData" value="false" />
+            </properties>
+        </node>                
+		
+        <node id="AugmentedFVNonSegments" type="processor" factoryId="de.sendsor.accelerationSensor.algorithm.moennig.fv.AugmentedFV">
+            <properties>            
+            	<property key="debug" value="false" />               	
+            	<property key="useAR" value="true" />
+            	<property key="useSMA" value="true" />
+            	<property key="useTA" value="true" />
+            	<property key="useAPA" value="true" />
+            	<property key="useSSR" value="true" />
+            	<property key="useMV" value="false" />
+            	<property key="useIAC" value="false" />
+            	<property key="splitData" value="true" />
+            </properties>
+        </node>
+		
+		<node id="LDASegments" type="filter" factoryId="de.sendsor.accelerationSensor.algorithm.moennig.lda.LDAFilter">
+			<properties>				
+				<property key="deserialize" value="lda_segments.mdl" />
+				
+				<property key="class" value="source" />
+				<property key="debug" value="false" />
+				   
+            	<property key="dimensionreduction" value="false" />
+            	<property key="attributeNamePrefix" value="FV_" />
+
+				<property key="kernel-estimator" value="false" />
+				<property key="supervised-discretization" value="false" />
+			</properties>
+		</node>
+        <node id="LDANonSegments" type="filter" factoryId="de.sendsor.accelerationSensor.algorithm.moennig.lda.LDAFilter">
+			<properties> 
+				<property key="deserialize" value="lda_non_segments.mdl" />
+				
+				<property key="class" value="source" />
+				<property key="debug" value="false" />
+				   
+            	<property key="dimensionreduction" value="false" />
+            	<property key="attributeNamePrefix" value="FV_" />
+
+				<property key="kernel-estimator" value="false" />
+				<property key="supervised-discretization" value="false" />
+			</properties>
+		</node>
+        <node id="BayesNonSegments" type="classifier" factoryId="de.sendsor.accelerationSensor.algorithm.moennig.classifier.MyNaiveBayesImpl">
+            <properties>
+                <property key="deserialize" value="bayes_non_segments.mdl"></property>
+                <property key="setClass" value="true"></property>
+            </properties>
+        </node>
+        <node id="BayesSegments" factoryId="de.sendsor.accelerationSensor.algorithm.moennig.classifier.MyNaiveBayesImpl" type="classifier">
+            <properties>
+                <property key="deserialize" value="bayes_segments.mdl"></property>
+                <property key="setClass" value="true"></property>
+            </properties>
+        </node>
+        <node id="ResultMerge" type="processor" factoryId="de.sendsor.accelerationSensor.algorithm.moennig.classifier.ResultMergeProcessor"></node>
+        <node id="reClassification" factoryId="de.sendsor.accelerationSensor.algorithm.moennig.classifier.ReClassification" type="processor"></node>
+        <node id="TablePresenter" type="presenter" factoryId="de.lmu.ifi.dbs.knowing.presenter.ITablePresenter"></node>
+        <node id="BarChartFilter" type="filter" factoryId="de.sendsor.accelerationSensor.algorithm.presentation.BarChartFilter"></node>
+        <node id="BarChart" type="presenter" factoryId="de.lmu.ifi.dbs.knowing.presenter.ITimeIntervalClassPresenter"></node>
+        <node id="ResultSaver" type="saver" factoryId="weka.core.converters.ArffSaver">
+            <properties>
+                <property key="file" value="results.arff"></property>
+                <property key="extensions" value="arff"></property>
+                <property key="override" value="true"></property>
+            </properties>
+        </node>
+    </nodes>
+    <edges>
+        <edge id="peak_segmentation" source="TruncatedPeakPrediction" target="Segmentation" />
+        <edge id="segmentation_segments_fv" source="Segmentation" sourcePort="segments" target="AugmentedFVSegments" />
+        <edge id="segmentation_nonsegments_fv" source="Segmentation" sourcePort="nonsegments" target="AugmentedFVNonSegments" />
+        <edge source="AugmentedFVNonSegments" target="LDANonSegments" id="fv_lda_nonsegments"></edge>
+        <edge source="AugmentedFVSegments" target="LDASegments" id="fv_lda_segments"></edge>
+        <edge source="LDANonSegments" target="BayesNonSegments" id="build_NonSegments" targetPort="test"></edge>
+        <edge source="LDASegments" target="BayesSegments" id="buildSegements" targetPort="test"></edge>
+        <edge source="TruncatedPeakPrediction" target="ResultMerge" id="rawData" targetPort="rawdata"></edge>
+        <edge source="BayesNonSegments" target="ResultMerge" id="nonSegMerge" targetPort="nonsegments"></edge>
+        <edge source="BayesSegments" target="ResultMerge" id="SegMerge" targetPort="segments"></edge>
+        <edge source="ResultMerge" target="reClassification" id="reClass"></edge>
+        <edge source="reClassification" target="BarChartFilter" id="reClass2BarChartFilter"></edge>
+        <edge source="BarChartFilter" target="TablePresenter" id="tablePresenter"></edge>
+        <edge source="BarChartFilter" target="BarChart" id="2BarChart"></edge>
+        <edge source="AddClassAttribute" target="TruncatedPeakPrediction" id="class2Peak"></edge>
+        <edge source="ARFF" target="AddClassAttribute" id="source2Attribute"></edge>
+        <edge source="BarChartFilter" target="ResultSaver" id="2ResultSaver"></edge>		
+    </edges>
+    <configuration>
+        <history>false</history>
+        <output></output>
+    </configuration>
+</DataProcessingUnit>
+

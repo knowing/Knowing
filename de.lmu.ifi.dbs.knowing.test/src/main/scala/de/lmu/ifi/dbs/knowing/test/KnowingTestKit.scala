@@ -38,6 +38,7 @@ trait KnowingTestKit extends EventMatchers {
    * @return dpu - copy of the original dpu
    */
   def loadDPU(name: String): IDataProcessingUnit = {
+    //TODO implement different search paths
     val url = getClass.getResource(name)
     loadDPU(url)
   }

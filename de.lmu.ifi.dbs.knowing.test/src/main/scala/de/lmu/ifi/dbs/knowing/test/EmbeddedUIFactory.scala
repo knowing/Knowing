@@ -24,6 +24,8 @@ class EmbeddedUIFactory extends UIFactory[IEmbeddedUIComponent] {
   /**
    * Waits until the process finishes and return the
    * Map with all presenters wrapped inside a IEmbeddedUIComponent
+   * 
+   * @return map with [Node.id -> IEmbeddedUIComponent]
    */
   def await(): HashMap[String, IEmbeddedUIComponent] = rendevouz.take
 
