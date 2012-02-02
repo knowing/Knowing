@@ -19,7 +19,7 @@ trait IPieChartPresenter[T] extends TPresenter[T] {
    */
   def update()
 
-  def buildPresentation(instances: Instances) = {
+  override def buildPresentation(instances: Instances) = {
     //Create header or add content to existing model
     isBuild match {
       case false =>

@@ -12,6 +12,7 @@ import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.test._
 import de.lmu.ifi.dbs.knowing.test.EventMatchers._
+import de.lmu.ifi.dbs.knowing.test.EmbeddedPresenters._
 import de.lmu.ifi.dbs.knowing.core.weka._
 import de.lmu.ifi.dbs.knowing.core.validation._
 import java.nio.file.Paths
@@ -30,12 +31,13 @@ class NaiveBayesTest extends FunSuite with KnowingTestKit with BeforeAndAfter {
 
   before {
     //Add processor factories
-    val factoryDirectory = new EmbeddedFactoryDirectory()
+    factoryDirectory = new EmbeddedFactoryDirectory()
       .add(new WekaArffLoaderFactory)
       .add(new NaiveBayesFactory)
       .add(new ConfusionMatrixFactory)
-      .add(new XCrossValidatorFactory())
-      .add(new EmbeddedUIComponentPresenterFactory)
+      .add(new XCrossValidatorFactory)
+      .add(TablePresenterFactory)
+      .add(EmbeddedUIComponentFactory)
 
     //Load the DPU
     //TODO this must work!
@@ -47,14 +49,15 @@ class NaiveBayesTest extends FunSuite with KnowingTestKit with BeforeAndAfter {
   test("Compare ConfusionMatrices") {
     //resolves the path relative to the project directory. Just a dummy
     val exePath = Paths.get("src").toUri
-    val resourceStore = new EmbeddedResourceStore
+    val modelStore = new EmbeddedModelStore
 
     val iris01 = Paths.get("src", "test", "resources", "iris01.arff").toUri.toURL
     val iris02 = Paths.get("src", "test", "resources", "iris02.arff").toUri.toURL
 
-    val modelStore1 = new EmbeddedModelStore()
+    val resourceStore1 = new EmbeddedResourceStore()
       .put("iris.arff", iris01)
-    val modelStore2 = new EmbeddedModelStore()
+
+    val resourceStore2 = new EmbeddedResourceStore()
       .put("iris.arff", iris02)
 
     //Create UIFactory to access results
@@ -62,8 +65,8 @@ class NaiveBayesTest extends FunSuite with KnowingTestKit with BeforeAndAfter {
     val uiFactory2 = new EmbeddedUIFactory
 
     //Create the dpuExectuor running the test
-    dpuExecutor1 = createDPUExecutor(dpu, uiFactory1, exePath, factoryDirectory, modelStore1, resourceStore).start
-    dpuExecutor2 = createDPUExecutor(dpu, uiFactory2, exePath, factoryDirectory, modelStore1, resourceStore).start
+    dpuExecutor1 = createDPUExecutor(dpu, uiFactory1, exePath, factoryDirectory, modelStore, resourceStore1).start
+    dpuExecutor2 = createDPUExecutor(dpu, uiFactory2, exePath, factoryDirectory, modelStore, resourceStore2).start
 
     dpuExecutor1 ! Start()
     dpuExecutor2 ! Start()

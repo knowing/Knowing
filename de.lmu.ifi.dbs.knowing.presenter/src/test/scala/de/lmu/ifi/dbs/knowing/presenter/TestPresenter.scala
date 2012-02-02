@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.knowing.test
+package de.lmu.ifi.dbs.knowing.presenter
 
 import de.lmu.ifi.dbs.knowing.core.processing.TPresenter
 import java.util.Properties

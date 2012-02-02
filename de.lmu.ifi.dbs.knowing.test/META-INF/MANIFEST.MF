@@ -6,7 +6,9 @@ Bundle-Version: 0.1.2.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: LMU Munich - Database Systems Group
 Require-Bundle: de.lmu.ifi.dbs.knowing.core;bundle-version="0.1.1"
-Import-Package: org.eclipse.sapphire.java,
+Import-Package: akka.testkit;version="1.2.0",
+ de.lmu.ifi.dbs.knowing.presenter,
+ org.eclipse.sapphire.java,
  org.eclipse.sapphire.modeling,
  org.eclipse.sapphire.modeling.annotations,
  org.eclipse.sapphire.modeling.util,
@@ -61,7 +63,5 @@ Import-Package: org.eclipse.sapphire.java,
  scala.util.parsing.json;version="[2.9.0.1,2.9.3.0]",
  scala.util.parsing.syntax;version="[2.9.0.1,2.9.3.0]",
  scala.util.regexp;version="[2.9.0.1,2.9.3.0]"
-Export-Package: akka.testkit,
- de.lmu.ifi.dbs.knowing.test
-Bundle-ClassPath: src/test/resources/akka-testkit-1.2.jar,
- .
+Export-Package: de.lmu.ifi.dbs.knowing.test
+Bundle-ClassPath: .

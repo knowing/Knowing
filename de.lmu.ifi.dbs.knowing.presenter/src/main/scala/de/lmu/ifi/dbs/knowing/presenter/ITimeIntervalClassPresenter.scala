@@ -39,7 +39,7 @@ trait ITimeIntervalClassPresenter[T] extends TPresenter[T] {
   /**
    * Init header, categories and add intervals
    */
-  def buildPresentation(instances: Instances) {
+  override def buildPresentation(instances: Instances) {
     //Create header or add content to existing model
     isBuild match {
       case false =>

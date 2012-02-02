@@ -3,7 +3,6 @@ package de.lmu.ifi.dbs.knowing.presenter
 import java.util.{ Date, Properties }
 import weka.core.{ Instance, Instances }
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
-import de.lmu.ifi.dbs.knowing.test.TestPresenter
 
 class TestTimeIntervalClassPresenter extends ITimeIntervalClassPresenter[Any] with TestPresenter {
 

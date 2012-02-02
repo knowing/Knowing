@@ -1,6 +1,5 @@
 package de.lmu.ifi.dbs.knowing.presenter
 
-import de.lmu.ifi.dbs.knowing.test.TestPresenter
 import java.util.Date
 import weka.core.{ Instances, Attribute }
 

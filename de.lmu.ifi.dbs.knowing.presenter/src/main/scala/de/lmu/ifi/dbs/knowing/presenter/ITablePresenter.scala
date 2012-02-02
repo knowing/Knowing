@@ -45,7 +45,7 @@ trait ITablePresenter[T] extends TPresenter[T] {
   /**
    * Init header and add rows
    */
-  def buildPresentation(instances: Instances) {
+  override def buildPresentation(instances: Instances) {
     init(instances)
     addRows(0)
     update()
@@ -120,7 +120,7 @@ trait ITablePresenter[T] extends TPresenter[T] {
    * Initializes the decimal and date formatter.
    * Could be overridden by clients
    */
-  def configure(properties: Properties) = {
+  override def configure(properties: Properties) = {
     val datePattern = properties.getProperty(DATE_PATTERN, DATE_PATTERN_DEFAULT)
     dateFormat = new SimpleDateFormat(datePattern)
     val decimalPattern = properties.getProperty(DECIMAL_PATTERN, DECIMAL_PATTERN_DEFAULT)

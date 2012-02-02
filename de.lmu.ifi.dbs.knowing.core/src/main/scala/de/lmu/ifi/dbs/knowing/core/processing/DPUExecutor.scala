@@ -136,7 +136,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
 
   def initializeNodes() {
     dpu.getNodes foreach (node => {
-      //      val factory = OSGIUtil.getFactoryService()
+      
       val factory = directory.getFactory(node.getFactoryId.getText)
       factory match {
         case Some(f) =>
@@ -214,7 +214,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
       case (_, true, _) => TStreamResolver.resolveFromFileSystem(properties, FILE, TStreamResolver.acceptAbsoluteFile) match {
         case Some(p) if Files.exists(p) => debug(this, "File found " + p) //perfect!
         case Some(p) if !Files.exists(p) =>
-          warning(this, "File input for Node " + node.getId.getContent + "could be resolved, but doesn't exists " + p)
+          warning(this, "File input for Node " + node.getId.getContent + " could be resolved, but doesn't exists " + p)
           resourceStore.getResource(node) match {
             case None => warning(this, "Default resource [" + properties.getProperty(FILE) + "] for Node " + node.getId.getContent + " couldn't be found")
             case Some(url) =>
