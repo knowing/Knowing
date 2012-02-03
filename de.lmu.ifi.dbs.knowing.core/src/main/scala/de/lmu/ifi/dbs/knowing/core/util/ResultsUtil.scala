@@ -2,10 +2,12 @@ package de.lmu.ifi.dbs.knowing.core.util
 
 import java.util.{ ArrayList, Arrays, Collections, List => JList, Properties, Map => JMap }
 import scala.collection.JavaConversions._
+import scala.collection.mutable.ListBuffer
 import weka.core.{ Attribute, DenseInstance, Instances, Instance, ProtectedProperties, WekaException }
 import weka.core.SparseInstance
 import de.lmu.ifi.dbs.knowing.core.processing.ImmutableInstances
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
+
 
 /**
  * @author Nepomuk Seiler
@@ -381,12 +383,12 @@ object ResultsUtil {
    * @return list with all numeric attributes
    */
   def findNumericAttributes(dataset: Instances): JList[Attribute] = {
-    val returns = new ArrayList[Attribute]()
-    val attributes = dataset.enumerateAttributes()
+    val returns = new ArrayList[Attribute]
+    val attributes = dataset.enumerateAttributes
     while (attributes.hasMoreElements) {
       val attribute = attributes.nextElement.asInstanceOf[Attribute]
-      if (attribute.isNumeric())
-        returns add (attribute)
+      if (attribute.isNumeric)
+        returns.add(attribute)
     }
     returns
   }
@@ -521,11 +523,8 @@ object ResultsUtil {
   /**
    * @param distribution - must have been created with @link{classAndProbabilityResult(classes, distribution)}
    * @return (probability, class) or (0, NOT_CLASSIFIED)
-   * @throws Exception - if distribution wasn't created via @link{classAndProbabilityResult(classes, distribution)}
    */
   def highestProbability(distribution: Instances): (Double, String) = {
-    if (!distribution.relationName.equals(NAME_CLASS_AND_PROBABILITY))
-      throw new Exception("Wrong instances name -> maybe wrong format")
     val classAttr = distribution.attribute(ATTRIBUTE_CLASS)
     val probAttr = distribution.attribute(ATTRIBUTE_PROBABILITY)
     var ret = (0.0, NOT_CLASSIFIED)
@@ -539,6 +538,35 @@ object ResultsUtil {
       }
     }
     ret
+  }
+  
+  /**
+   * Find all attributes indicating the class distribution.
+   * 
+   * @param distribution
+   * @return attributes starting with "class" and not equally class
+   */
+  def findClassDistributionAttributes(distribution: Instances): List[Attribute] = {
+    val attrEnum = distribution.enumerateAttributes
+    val attributes = new ListBuffer[Attribute]
+    while(attrEnum.hasNext) {
+      val attr = attrEnum.nextElement.asInstanceOf[Attribute]
+      if(attr.name.startsWith(ATTRIBUTE_CLASS) && !attr.name.equals(ATTRIBUTE_CLASS))
+        attributes += attr
+    }
+    attributes.toList
+  }
+  
+  /**
+   * Finds all class distribution values and returns a map
+   * where the raw class name is mapped to the containing attribute.
+   * 
+   * 
+   * @param distribution
+   * @return Map[String, Instances] == class name -> attribute 
+   */
+  def findClassDistributionAttributesAsMap(distribution: Instances): Map[String,Attribute] = {
+    findClassDistributionAttributes(distribution) map(attr => (attr.name.substring(ATTRIBUTE_CLASS.length) -> attr)) toMap
   }
 
   /**
@@ -555,7 +583,7 @@ object ResultsUtil {
     val head = new Instances(header, inst.size)
     val classIndex = TProcessor.guessAndSetClassLabel(head)
     val labels = header.classAttribute.enumerateValues.toList
-    labels foreach (l => head.insertAttributeAt(new Attribute("class" + l), head.numAttributes))
+    labels foreach (l => head.insertAttributeAt(new Attribute(ATTRIBUTE_CLASS + l), head.numAttributes))
     inst.foldLeft(head) {
       case (head, (query, dist)) =>
         val inst = new DenseInstance(head.numAttributes)
@@ -572,4 +600,5 @@ object ResultsUtil {
         head
     }
   }
+  
 }

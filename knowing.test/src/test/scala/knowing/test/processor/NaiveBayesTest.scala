@@ -15,10 +15,12 @@ import de.lmu.ifi.dbs.knowing.test.EventMatchers._
 import de.lmu.ifi.dbs.knowing.test.EmbeddedPresenters._
 import de.lmu.ifi.dbs.knowing.core.weka._
 import de.lmu.ifi.dbs.knowing.core.validation._
+import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil._
 import java.nio.file.Paths
 import org.eclipse.sapphire.modeling.xml.{ RootXmlResource, XmlResourceStore }
 import org.eclipse.sapphire.modeling.{ ResourceStoreException, UrlResourceStore }
-import weka.core.Attribute
+import weka.core.{ Instances, Attribute }
+import scala.collection.JavaConversions._
 
 @RunWith(classOf[JUnitRunner])
 class NaiveBayesTest extends FunSuite with KnowingTestKit with BeforeAndAfter {
@@ -72,15 +74,47 @@ class NaiveBayesTest extends FunSuite with KnowingTestKit with BeforeAndAfter {
     dpuExecutor1 ! Start()
     dpuExecutor2 ! Start()
 
+    //Wait for process is finished
     val containers1 = uiFactory1.await
     val containers2 = uiFactory2.await
 
-    val matrix1 = containers1("RawMatrixPresenter").getInstances()(0)
-    val matrix2 = containers2("RawMatrixPresenter").getInstances()(0)
+    //Receive RawMatrix Instances
+    val dist1 = containers1("RawMatrixPresenter").getInstances()(0)
+    val dist2 = containers2("RawMatrixPresenter").getInstances()(0)
 
-    println(matrix1)
-    println(matrix2)
+    val distAttrs = findClassDistributionAttributesAsMap(dist1)
 
+    //Split by class
+    val classes1 = splitInstanceByAttribute(dist1, "class", false)
+    val classes2 = splitInstanceByAttribute(dist2, "class", false)
+
+    // doesn't work :(
+    //    val funAvg = (clazz:String, instances: Instances) => {
+    //        val distAttr = distAttrs(clazz)
+    //        val avg = instances.foldLeft(0.0)((avg,inst) => avg + inst.value(distAttr))
+    //        (clazz -> avg)
+    //    } 
+
+    //Average classification of dataset 1
+    val avg1 = classes1 map {
+      case (clazz, instances) =>
+        val distAttr = distAttrs(clazz)
+        val sum = instances.foldLeft(0.0)((avg, inst) => avg + inst.value(distAttr))
+        val avg = sum / instances.numInstances
+        (clazz -> avg)
+    }
+
+    //Average classification of dataset 2
+    val avg2 = classes2 map {
+      case (clazz, instances) =>
+        val distAttr = distAttrs(clazz)
+        val sum = instances.foldLeft(0.0)((avg, inst) => avg + inst.value(distAttr))
+        val avg = sum / instances.numInstances
+        (clazz -> avg)
+    }
+
+    println(avg1)
+    println(avg2)
   }
 
 }
