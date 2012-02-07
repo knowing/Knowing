@@ -26,6 +26,7 @@ class AddClassAttribute extends TFilter with TSerializable {
       case Some(in) =>
         val reader = new LineNumberReader(new InputStreamReader(in))
         classes = reader.readLine.split(",")
+        reader.close()
     }
   }
 

@@ -355,7 +355,7 @@ object ResultsUtil {
    * @return map with META_ATTRIBUTE_NAME -> Attribute
    */
   def findValueAttributesAsMap(dataset: Instances): Map[String, Attribute] = {
-    var returns: Map[String, Attribute] = Map()
+    var returns = Map[String, Attribute]()
     var i = 0
     var attribute = dataset.attribute(ATTRIBUTE_VALUE + i)
     while (attribute != null) {
