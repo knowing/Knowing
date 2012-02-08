@@ -586,8 +586,11 @@ object ResultsUtil {
     labels foreach (l => head.insertAttributeAt(new Attribute(ATTRIBUTE_CLASS + l), head.numAttributes))
     inst.foldLeft(head) {
       case (head, (query, dist)) =>
+      	val numAttr = query.numAttributes
+      	if(head.numAttributes != numAttr + labels.size) 
+      		throw new Exception("Wrong number of class values. " + head.numAttributes + " != " + (numAttr + labels.size))
+      	
         val inst = new DenseInstance(head.numAttributes)
-        val numAttr = query.numAttributes
         //Copy values
         for (i <- 0 until numAttr) inst.setValue(i, query.value(i))
         //Fill in distribution
