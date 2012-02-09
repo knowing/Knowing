@@ -107,6 +107,8 @@ class WekaClassifierFactory[T <: WekaClassifier, S <: Classifier](wrapper: Class
 
 object WekaClassifierFactory {
 	val DEBUG = INodeProperties.DEBUG
+	val ESTIMATOR = "estimator"
+	val SEARCH_ALGORITHM = "searchAlgorithm"
 }
 
 /* =========================== */

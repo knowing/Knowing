@@ -1,29 +1,28 @@
-package de.lmu.ifi.dbs.knowing.core.weka
+/*																*\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
+** 																**
+** Knowing Framework											**
+** Apache License - http://www.apache.org/licenses/				**
+** LMU Munich - Database Systems Group							**
+** http://www.dbs.ifi.lmu.de/									**
+\*																*/
+package de.lmu.ifi.dbs.knowing.weka.classifier
 
-import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
-import de.lmu.ifi.dbs.knowing.core.processing.{ TProcessor, TSender }
-import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory._
+import de.lmu.ifi.dbs.knowing.core.weka._
 import de.lmu.ifi.dbs.knowing.core.weka.WekaClassifierFactory._
-import de.lmu.ifi.dbs.knowing.core.weka.NaiveBayesFactory._
-
-import weka.core.{ Instance, Instances }
-
-import akka.actor.ActorRef
-import akka.actor.Actor.actorOf
-
 import java.util.Properties
-
-import scala.collection.JavaConversions._
+import WekaNaiveBayesFactory._
 
 /**
  * @author Nepomuk Seiler
  * @version 0.1
  * @since 21.04.2011
  */
-@Deprecated
-class NaiveBayes extends WekaClassifier(new weka.classifiers.bayes.NaiveBayes) {
+class WekaNaiveBayes extends WekaClassifier(new weka.classifiers.bayes.NaiveBayes) {
 
 	override def configure(properties: Properties) = {
 		val bayes = classifier.asInstanceOf[weka.classifiers.bayes.NaiveBayes]
@@ -40,22 +39,12 @@ class NaiveBayes extends WekaClassifier(new weka.classifiers.bayes.NaiveBayes) {
 	}
 }
 
-/* =========================== */
-/* ==== Processor Factory ==== */
-/* =========================== */
-@Deprecated
-object NaiveBayesFactory {
-	val KERNEL_ESTIMATOR = "kernel-estimator"
-	val SUPERVISED_DISCRETIZATION = "supervised-discretization"
-}
-
 /**
  * @author Nepomuk Seiler
  * @version 0.1
  * @since 21.04.2011
  */
-@Deprecated
-class NaiveBayesFactory extends WekaClassifierFactory[NaiveBayes, weka.classifiers.bayes.NaiveBayes](classOf[NaiveBayes], classOf[weka.classifiers.bayes.NaiveBayes]) {
+class WekaNaiveBayesFactory extends WekaClassifierFactory[NaiveBayes, weka.classifiers.bayes.NaiveBayes](classOf[NaiveBayes], classOf[weka.classifiers.bayes.NaiveBayes]) {
 
 	override def createDefaultProperties: Properties = {
 		val returns = new Properties
@@ -76,4 +65,9 @@ class NaiveBayesFactory extends WekaClassifierFactory[NaiveBayes, weka.classifie
 			SUPERVISED_DISCRETIZATION -> "?",
 			DEBUG -> "Debug true/false")
 	}
+}
+
+object WekaNaiveBayesFactory {
+	val KERNEL_ESTIMATOR = "kernel-estimator"
+	val SUPERVISED_DISCRETIZATION = "supervised-discretization"
 }
