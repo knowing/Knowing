@@ -23,7 +23,7 @@ import java.nio.file.InvalidPathException
  * <li>overridden by: 	FILE</li>
  *
  * @author Nepomuk Seiler
- * @version 0.1
+ * @version 0.2
  * @since 2011-11-27
  */
 trait TStreamResolver { this: TProcessor =>
@@ -204,6 +204,16 @@ trait TStreamResolver { this: TProcessor =>
   }
 }
 
+/**
+ * Static methods for resolving properties from the
+ * filesystem or another source.
+ * 
+ * Note: Method calls could only be made inside an actor.
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.2
+ * @since 2011-11-27
+ */
 object TStreamResolver {
 
   val acceptAbsoluteFile = (isAbs: Boolean, isDir: Boolean) => (isAbs, isDir) match {
