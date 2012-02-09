@@ -1,3 +1,13 @@
+/*																*\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
+** 																**
+** Knowing Framework											**
+** Apache License - http://www.apache.org/licenses/				**
+** LMU Munich - Database Systems Group							**
+** http://www.dbs.ifi.lmu.de/									**
+\*																*/
 package de.lmu.ifi.dbs.knowing.core.service.impl
 
 import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
@@ -8,28 +18,28 @@ import de.lmu.ifi.dbs.knowing.core.internal.Activator
 
 /**
  * Default implemenation for IFactoryDirectory
- * 
+ *
  * @author Nepomuk Seiler
  * @version 0.1
  */
 class FactoryDirectory extends IFactoryDirectory {
 
-  private val log = LoggerFactory.getLogger(classOf[FactoryDirectory])
-  
-  /** 0..n relation */
-  private val factories = new HashMap[String, TFactory]
+	private val log = LoggerFactory.getLogger(classOf[FactoryDirectory])
 
-  def getFactory(id: String): Option[TFactory] = factories.get(id)
+	/** 0..n relation */
+	private val factories = new HashMap[String, TFactory]
 
-  def getFactories(): Array[TFactory] = factories map (_._2) toArray
+	def getFactory(id: String): Option[TFactory] = factories.get(id)
 
-  def bindFactoryService(service: TFactory) {
-    factories.contains(service.id) match {
-      case true => log.warn("Factory already exists: " + service.id)
-      case false => factories += (service.id -> service)
-    }
-  }
+	def getFactories(): Array[TFactory] = factories map (_._2) toArray
 
-  def unbindFactoryService(service: TFactory) = factories -= service.id
+	def bindFactoryService(service: TFactory) {
+		factories.contains(service.id) match {
+			case true => log.warn("Factory already exists: " + service.id)
+			case false => factories += (service.id -> service)
+		}
+	}
+
+	def unbindFactoryService(service: TFactory) = factories -= service.id
 
 }

@@ -1,3 +1,13 @@
+/*																*\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
+** 																**
+** Knowing Framework											**
+** Apache License - http://www.apache.org/licenses/				**
+** LMU Munich - Database Systems Group							**
+** http://www.dbs.ifi.lmu.de/									**
+\*																*/
 package de.lmu.ifi.dbs.knowing.core.factory
 
 import java.util.Properties
@@ -19,38 +29,38 @@ import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
  */
 trait TFactory {
 
-  /** human readable name */
-  val name: String
+	/** human readable name */
+	val name: String
 
-  /** unique identifier to retrieve this factory */
-  val id: String
+	/** unique identifier to retrieve this factory */
+	val id: String
 
-  protected val properties = createDefaultProperties
-  protected val values = createPropertyValues
-  protected val description = createPropertyDescription
+	protected val properties = createDefaultProperties
+	protected val values = createPropertyValues
+	protected val description = createPropertyDescription
 
-  /** factory method - creates actor instance */
-  def getInstance(): ActorRef
+	/** factory method - creates actor instance */
+	def getInstance(): ActorRef
 
-  /* ===================== */
-  /* === Configuration === */
-  /* ===================== */
+	/* ===================== */
+	/* === Configuration === */
+	/* ===================== */
 
-  def createDefaultProperties: Properties
+	def createDefaultProperties: Properties
 
-  def createPropertyValues: Map[String, Array[_ <: Any]]
+	def createPropertyValues: Map[String, Array[_ <: Any]]
 
-  def createPropertyDescription: Map[String, String]
+	def createPropertyDescription: Map[String, String]
 }
 
 object TFactory {
-  val BOOLEAN_PROPERTY = Array("true", "false")
+	val BOOLEAN_PROPERTY = Array("true", "false")
 
-  //OSGi service properties
-  val UI_SYSTEM = "knowing.ui"
-  val PROCESSOR_CLASS = "knowing.processor.class"
-  val FACTORY_ID = "knowing.factory.id"
-  val FACTORY_NAME = "knowing.factory.name"
+	//OSGi service properties
+	val UI_SYSTEM = "knowing.ui"
+	val PROCESSOR_CLASS = "knowing.processor.class"
+	val FACTORY_ID = "knowing.factory.id"
+	val FACTORY_NAME = "knowing.factory.name"
 }
 
 /**
@@ -66,14 +76,14 @@ object TFactory {
  * @version 1.0
  */
 class ProcessorFactory(processor: Class[_ <: TProcessor]) extends TFactory {
-  val name = processor.getSimpleName
-  val id = processor.getName
+	val name = processor.getSimpleName
+	val id = processor.getName
 
-  def getInstance(): ActorRef = actorOf(processor.newInstance)
+	def getInstance(): ActorRef = actorOf(processor.newInstance)
 
-  def createDefaultProperties: Properties = new Properties
+	def createDefaultProperties: Properties = new Properties
 
-  def createPropertyValues: Map[String, Array[_ <: Any]] = Map()
+	def createPropertyValues: Map[String, Array[_ <: Any]] = Map()
 
-  def createPropertyDescription: Map[String, String] = Map()
+	def createPropertyDescription: Map[String, String] = Map()
 }

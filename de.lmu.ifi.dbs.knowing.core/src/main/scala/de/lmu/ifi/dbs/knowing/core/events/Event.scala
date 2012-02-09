@@ -1,3 +1,13 @@
+/*																*\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
+** 																**
+** Knowing Framework											**
+** Apache License - http://www.apache.org/licenses/				**
+** LMU Munich - Database Systems Group							**
+** http://www.dbs.ifi.lmu.de/									**
+\*																*/
 package de.lmu.ifi.dbs.knowing.core.events
 
 import java.util.Properties
@@ -8,6 +18,11 @@ import de.lmu.ifi.dbs.knowing.core.model.INode
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import weka.core.{Instance,Instances}
 
+/**
+ * Events to send between processors. Currently this
+ * trait is not been sealed for further extensions by
+ * third party developers. 
+ */
 trait Event
 trait Status extends Event
 trait UIEvent extends Event

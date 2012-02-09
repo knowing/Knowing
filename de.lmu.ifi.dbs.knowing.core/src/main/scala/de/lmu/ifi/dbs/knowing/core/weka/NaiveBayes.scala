@@ -1,7 +1,7 @@
 package de.lmu.ifi.dbs.knowing.core.weka
 
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
-import de.lmu.ifi.dbs.knowing.core.processing.{ TProcessor , TSender }
+import de.lmu.ifi.dbs.knowing.core.processing.{ TProcessor, TSender }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory._
@@ -24,19 +24,19 @@ import scala.collection.JavaConversions._
  */
 class NaiveBayes extends WekaClassifier(new weka.classifiers.bayes.NaiveBayes) {
 
-  override def configure(properties:Properties) = {
-    val bayes = classifier.asInstanceOf[weka.classifiers.bayes.NaiveBayes]
-    
-    val kernel = properties.getProperty(KERNEL_ESTIMATOR, "false")
-    val boolKernel = kernel.toBoolean
-    bayes.setUseKernelEstimator(boolKernel)
-    
-    val supervised = properties.getProperty(SUPERVISED_DISCRETIZATION, "false")
-    bayes.setUseSupervisedDiscretization(supervised.toBoolean)
-    
-    val debug = properties.getProperty(DEBUG, "false")
-    bayes.setDebug(debug.toBoolean)
-  }
+	override def configure(properties: Properties) = {
+		val bayes = classifier.asInstanceOf[weka.classifiers.bayes.NaiveBayes]
+
+		val kernel = properties.getProperty(KERNEL_ESTIMATOR, "false")
+		val boolKernel = kernel.toBoolean
+		bayes.setUseKernelEstimator(boolKernel)
+
+		val supervised = properties.getProperty(SUPERVISED_DISCRETIZATION, "false")
+		bayes.setUseSupervisedDiscretization(supervised.toBoolean)
+
+		val debug = properties.getProperty(DEBUG, "false")
+		bayes.setDebug(debug.toBoolean)
+	}
 }
 
 /* =========================== */
@@ -55,23 +55,23 @@ object NaiveBayesFactory {
  */
 class NaiveBayesFactory extends WekaClassifierFactory[NaiveBayes, weka.classifiers.bayes.NaiveBayes](classOf[NaiveBayes], classOf[weka.classifiers.bayes.NaiveBayes]) {
 
-  override def createDefaultProperties: Properties = {
-    val returns = new Properties
-    returns.setProperty(KERNEL_ESTIMATOR, "false")
-    returns.setProperty(SUPERVISED_DISCRETIZATION, "false")
-    returns.setProperty(DEBUG, "false")
-    returns
-  }
+	override def createDefaultProperties: Properties = {
+		val returns = new Properties
+		returns.setProperty(KERNEL_ESTIMATOR, "false")
+		returns.setProperty(SUPERVISED_DISCRETIZATION, "false")
+		returns.setProperty(DEBUG, "false")
+		returns
+	}
 
-  override def createPropertyValues: Map[String, Array[_<:Any]] = {
-    Map(KERNEL_ESTIMATOR -> BOOLEAN_PROPERTY,
-        SUPERVISED_DISCRETIZATION -> BOOLEAN_PROPERTY,
-        DEBUG -> BOOLEAN_PROPERTY)
-  }
+	override def createPropertyValues: Map[String, Array[_ <: Any]] = {
+		Map(KERNEL_ESTIMATOR -> BOOLEAN_PROPERTY,
+			SUPERVISED_DISCRETIZATION -> BOOLEAN_PROPERTY,
+			DEBUG -> BOOLEAN_PROPERTY)
+	}
 
-  override def createPropertyDescription: Map[String, String] = {
-        Map(KERNEL_ESTIMATOR -> "?",
-        SUPERVISED_DISCRETIZATION -> "?",
-        DEBUG -> "Debug true/false")
-  }
+	override def createPropertyDescription: Map[String, String] = {
+		Map(KERNEL_ESTIMATOR -> "?",
+			SUPERVISED_DISCRETIZATION -> "?",
+			DEBUG -> "Debug true/false")
+	}
 }

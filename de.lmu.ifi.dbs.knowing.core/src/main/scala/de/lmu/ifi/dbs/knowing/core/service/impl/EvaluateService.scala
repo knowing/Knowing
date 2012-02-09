@@ -1,3 +1,13 @@
+/*																*\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
+** 																**
+** Knowing Framework											**
+** Apache License - http://www.apache.org/licenses/				**
+** LMU Munich - Database Systems Group							**
+** http://www.dbs.ifi.lmu.de/									**
+\*																*/
 package de.lmu.ifi.dbs.knowing.core.service.impl
 
 import java.net.URI
@@ -22,111 +32,111 @@ import org.slf4j.LoggerFactory
  */
 class EvaluateService extends IEvaluateService {
 
-  private lazy val log = LoggerFactory.getLogger(classOf[IEvaluateService])
+	private lazy val log = LoggerFactory.getLogger(classOf[IEvaluateService])
 
-  /** 1..1 relation */
-  private var factoryDirectory: IFactoryDirectory = _
+	/** 1..1 relation */
+	private var factoryDirectory: IFactoryDirectory = _
 
-  /** 1..1 relation */
-  private var modelStore: IModelStore = _
+	/** 1..1 relation */
+	private var modelStore: IModelStore = _
 
-  /** 1..1 relation */
-  private var resourceStore: IResourceStore = _
+	/** 1..1 relation */
+	private var resourceStore: IResourceStore = _
 
-  /** 0..n relation */
-  private var uiFactories = new ArrayBuffer[UIFactory[_]]()
+	/** 0..n relation */
+	private var uiFactories = new ArrayBuffer[UIFactory[_]]()
 
-  /**
-   * Instantiates DPUExecutor and runs the DPU
-   * @see IEvaluationService
-   */
-  @throws(classOf[Exception])
-  def evaluate(dpu: IDataProcessingUnit, execPath: URI): ActorRef = {
-    uiFactories.size match {
-      case 0 => throw new Exception("No UIFactory registered")
-      case 1 => evaluate(dpu, execPath, uiFactories(0), HashMap[String, InputStream](), HashMap[String, OutputStream]())
-      case x =>
-        //TODO search for best fitting UI factory. Use service properties and presenter properties
-        evaluate(dpu, execPath, uiFactories(0), HashMap[String, InputStream](), HashMap[String, OutputStream]())
-    }
-  }
+	/**
+	 * Instantiates DPUExecutor and runs the DPU
+	 * @see IEvaluationService
+	 */
+	@throws(classOf[Exception])
+	def evaluate(dpu: IDataProcessingUnit, execPath: URI): ActorRef = {
+		uiFactories.size match {
+			case 0 => throw new Exception("No UIFactory registered")
+			case 1 => evaluate(dpu, execPath, uiFactories(0), HashMap[String, InputStream](), HashMap[String, OutputStream]())
+			case x =>
+				//TODO search for best fitting UI factory. Use service properties and presenter properties
+				evaluate(dpu, execPath, uiFactories(0), HashMap[String, InputStream](), HashMap[String, OutputStream]())
+		}
+	}
 
-  /**
-   * @param dpu - the DataProcessingUnit
-   * @param uiFactoryId - Id of the registered UIFactory
-   * @param execPath - executionPath to resolve relative properties
-   */
-  @throws(classOf[Exception])
-  def evaluate(dpu: IDataProcessingUnit, execPath: URI, uiFactoryId: String): ActorRef = {
-    evaluate(dpu, execPath, uiFactoryId, HashMap[String, InputStream](), HashMap[String, OutputStream]())
-  }
+	/**
+	 * @param dpu - the DataProcessingUnit
+	 * @param uiFactoryId - Id of the registered UIFactory
+	 * @param execPath - executionPath to resolve relative properties
+	 */
+	@throws(classOf[Exception])
+	def evaluate(dpu: IDataProcessingUnit, execPath: URI, uiFactoryId: String): ActorRef = {
+		evaluate(dpu, execPath, uiFactoryId, HashMap[String, InputStream](), HashMap[String, OutputStream]())
+	}
 
-  /**
-   * @param dpu - the DataProcessingUnit
-   * @param uiFactory - choose uiSystem and where to present
-   * @param execPath - executionPath to resolve relative properties
-   */
-  @throws(classOf[Exception])
-  def evaluate(dpu: IDataProcessingUnit, execPath: URI, uiFactory: UIFactory[_]): ActorRef = {
-    evaluate(dpu, execPath, uiFactory, HashMap[String, InputStream](), HashMap[String, OutputStream]())
-  }
+	/**
+	 * @param dpu - the DataProcessingUnit
+	 * @param uiFactory - choose uiSystem and where to present
+	 * @param execPath - executionPath to resolve relative properties
+	 */
+	@throws(classOf[Exception])
+	def evaluate(dpu: IDataProcessingUnit, execPath: URI, uiFactory: UIFactory[_]): ActorRef = {
+		evaluate(dpu, execPath, uiFactory, HashMap[String, InputStream](), HashMap[String, OutputStream]())
+	}
 
-  /**
-   * Instantiates DPUExecturo and runs the DPU
-   * @see IEvaluationService
-   */
-  @throws(classOf[Exception])
-  def evaluate(dpu: IDataProcessingUnit, execPath: URI,
-    uiFactoryId: String,
-    input: MutableMap[String, InputStream],
-    output: MutableMap[String, OutputStream]): ActorRef = {
-    uiFactories.find(e => e.getId.equals(uiFactoryId)) match {
-      case None => throw new Exception("No UIFactory with id " + uiFactoryId + " found")
-      case Some(uiFac) => evaluate(dpu, execPath, uiFac, input, output)
-    }
-  }
+	/**
+	 * Instantiates DPUExecturo and runs the DPU
+	 * @see IEvaluationService
+	 */
+	@throws(classOf[Exception])
+	def evaluate(dpu: IDataProcessingUnit, execPath: URI,
+		uiFactoryId: String,
+		input: MutableMap[String, InputStream],
+		output: MutableMap[String, OutputStream]): ActorRef = {
+		uiFactories.find(e => e.getId.equals(uiFactoryId)) match {
+			case None => throw new Exception("No UIFactory with id " + uiFactoryId + " found")
+			case Some(uiFac) => evaluate(dpu, execPath, uiFac, input, output)
+		}
+	}
 
-  /**
-   * Instantiates DPUExecturo and runs the DPU
-   * @see IEvaluationService
-   */
-  @throws(classOf[Exception])
-  def evaluate(dpu: IDataProcessingUnit, execPath: URI,
-    ui: UIFactory[_],
-    input: MutableMap[String, InputStream],
-    output: MutableMap[String, OutputStream]): ActorRef = {
+	/**
+	 * Instantiates DPUExecturo and runs the DPU
+	 * @see IEvaluationService
+	 */
+	@throws(classOf[Exception])
+	def evaluate(dpu: IDataProcessingUnit, execPath: URI,
+		ui: UIFactory[_],
+		input: MutableMap[String, InputStream],
+		output: MutableMap[String, OutputStream]): ActorRef = {
 
-    val executor = actorOf(new DPUExecutor(dpu, ui, execPath, factoryDirectory, modelStore, resourceStore, input, output)).start
-    executor ! Start()
-    executor
-  }
+		val executor = actorOf(new DPUExecutor(dpu, ui, execPath, factoryDirectory, modelStore, resourceStore, input, output)).start
+		executor ! Start()
+		executor
+	}
 
-  def activate() {
-    log.debug("EvaluateSerive activated")
-  }
+	def activate() {
+		log.debug("EvaluateSerive activated")
+	}
 
-  /** bind factory service */
-  def bindDirectoryService(service: IFactoryDirectory) = factoryDirectory = service
+	/** bind factory service */
+	def bindDirectoryService(service: IFactoryDirectory) = factoryDirectory = service
 
-  /** unbind factory service */
-  def unbindDirectoryService(service: IFactoryDirectory) = factoryDirectory = null
+	/** unbind factory service */
+	def unbindDirectoryService(service: IFactoryDirectory) = factoryDirectory = null
 
-  /** bind factory service */
-  def bindModelStoreService(service: IModelStore) = modelStore = service
+	/** bind factory service */
+	def bindModelStoreService(service: IModelStore) = modelStore = service
 
-  /** unbind factory service */
-  def unbindModelStoreService(service: IModelStore) = modelStore = null
+	/** unbind factory service */
+	def unbindModelStoreService(service: IModelStore) = modelStore = null
 
-  /** bind factory service */
-  def bindResourceStoreService(service: IResourceStore) = resourceStore = service
+	/** bind factory service */
+	def bindResourceStoreService(service: IResourceStore) = resourceStore = service
 
-  /** unbind factory service */
-  def unbindResourceStoreService(service: IResourceStore) = resourceStore = null
+	/** unbind factory service */
+	def unbindResourceStoreService(service: IResourceStore) = resourceStore = null
 
-  /** bind UIFactory service */
-  def bindUIFactory(service: UIFactory[_]) = uiFactories += service
+	/** bind UIFactory service */
+	def bindUIFactory(service: UIFactory[_]) = uiFactories += service
 
-  /** unbind UIFactory service */
-  def unbindUIFactory(service: UIFactory[_]) = uiFactories -= service
+	/** unbind UIFactory service */
+	def unbindUIFactory(service: UIFactory[_]) = uiFactories -= service
 
 }

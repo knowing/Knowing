@@ -1,3 +1,13 @@
+/*																*\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
+** 																**
+** Knowing Framework											**
+** Apache License - http://www.apache.org/licenses/				**
+** LMU Munich - Database Systems Group							**
+** http://www.dbs.ifi.lmu.de/									**
+\*																*/
 package de.lmu.ifi.dbs.knowing.core.processing
 
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
@@ -12,58 +22,58 @@ import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
  */
 object INodeProperties {
 
-  /* ========================= */
-  /* ===== TSerializable ===== */
-  /* ========================= */
-  val SERIALIZE = "serialize"
-  val DESERIALIZE = "deserialize"
+	/* ========================= */
+	/* ===== TSerializable ===== */
+	/* ========================= */
+	val SERIALIZE = "serialize"
+	val DESERIALIZE = "deserialize"
 
-  /* ========================= */
-  /* === TLoader / TSaver ==== */
-  /* ========================= */
-  val ABSOLUTE_PATH = "absolute-path"
-  val FILE = "file"
-  val URL = "url"
-  val DIR = "dir"
-  val FILE_EXTENSIONS = "extensions"
+	/* ========================= */
+	/* === TLoader / TSaver ==== */
+	/* ========================= */
+	val ABSOLUTE_PATH = "absolute-path"
+	val FILE = "file"
+	val URL = "url"
+	val DIR = "dir"
+	val FILE_EXTENSIONS = "extensions"
 
-  val SOURCE_ATTRIBUTE = ResultsUtil.ATTRIBUTE_SOURCE
-  val CLASS_ATTRIBUTE = ResultsUtil.ATTRIBUTE_CLASS
+	val SOURCE_ATTRIBUTE = ResultsUtil.ATTRIBUTE_SOURCE
+	val CLASS_ATTRIBUTE = ResultsUtil.ATTRIBUTE_CLASS
 
-  val OUTPUT = "output"
-  val OUTPUT_SINGLE = "single"
-  val OUTPUT_MULTIPLE = "multiple"
+	val OUTPUT = "output"
+	val OUTPUT_SINGLE = "single"
+	val OUTPUT_MULTIPLE = "multiple"
 
-  val WRITE_MODE = "mode"
-  val WRITE_MODE_NONE = "none"
-  val WRITE_MODE_BATCH = "batch"
-  val WRITE_MODE_INCREMENTAL = "incremental"
-  val WRITE_OVERRIDE_EXISTING = "override"
+	val WRITE_MODE = "mode"
+	val WRITE_MODE_NONE = "none"
+	val WRITE_MODE_BATCH = "batch"
+	val WRITE_MODE_INCREMENTAL = "incremental"
+	val WRITE_OVERRIDE_EXISTING = "override"
 
-  /* ========================= */
-  /* ====== Classifier ======= */
-  /* ========================= */
+	/* ========================= */
+	/* ====== Classifier ======= */
+	/* ========================= */
 
-  val SET_CLASS = "setClass"
+	val SET_CLASS = "setClass"
 
-  /* ========================= */
-  /* == By GraphSupervisor === */
-  /* ========================= */
-  val EXE_PATH = "execution"
+	/* ========================= */
+	/* == By GraphSupervisor === */
+	/* ========================= */
+	val EXE_PATH = "execution"
 
-  /* ========================= */
-  /* ==== General purpose ==== */
-  /* ========================= */
-  val DEBUG = "debug"
+	/* ========================= */
+	/* ==== General purpose ==== */
+	/* ========================= */
+	val DEBUG = "debug"
 }
 
 object IProcessorPorts {
 
-  /* ========================= */
-  /* ====== Classifier ======= */
-  /* ========================= */
+	/* ========================= */
+	/* ====== Classifier ======= */
+	/* ========================= */
 
-  val TRAIN = "train"
-  val TEST = "test"
+	val TRAIN = "train"
+	val TEST = "test"
 
 }

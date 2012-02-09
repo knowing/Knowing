@@ -1,3 +1,13 @@
+/*																*\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
+** 																**
+** Knowing Framework											**
+** Apache License - http://www.apache.org/licenses/				**
+** LMU Munich - Database Systems Group							**
+** http://www.dbs.ifi.lmu.de/									**
+\*																*/
 package de.lmu.ifi.dbs.knowing.core.service
 
 import java.net.URL
@@ -19,20 +29,20 @@ import BundleDPUProvider._
  */
 trait IDPUProvider {
 
-  /**
-   * @return all provided DPUs
-   */
-  def getDataProcessingUnits: Array[IDataProcessingUnit]
+	/**
+	 * @return all provided DPUs
+	 */
+	def getDataProcessingUnits: Array[IDataProcessingUnit]
 
-  /**
-   * @return specified DPU
-   */
-  def getDataProcessingUnit(name: String): Option[IDataProcessingUnit]
+	/**
+	 * @return specified DPU
+	 */
+	def getDataProcessingUnit(name: String): Option[IDataProcessingUnit]
 
-  /**
-   * @return url to specified DPU
-   */
-  def getURL(name: String): Option[URL]
+	/**
+	 * @return url to specified DPU
+	 */
+	def getURL(name: String): Option[URL]
 
 }
 
@@ -45,47 +55,47 @@ trait IDPUProvider {
  */
 class BundleDPUProvider(bundle: Bundle, dir: String = CUSTOM_FOLDER) extends IDPUProvider {
 
-  private val dpuMap = HashMap[String, URL]()
-  init
+	private val dpuMap = HashMap[String, URL]()
+	init
 
-  /**
-   *
-   */
-  def getDataProcessingUnits: Array[IDataProcessingUnit] = dpuMap map { case (_, url) => deserialize(url) } toArray
+	/**
+	 *
+	 */
+	def getDataProcessingUnits: Array[IDataProcessingUnit] = dpuMap map { case (_, url) => deserialize(url) } toArray
 
-  /**
-   * Doesn't handle non existing DPUs yet!
-   */
-  def getDataProcessingUnit(name: String): Option[IDataProcessingUnit] = {
-    dpuMap.get(name) match {
-      case None => None
-      case Some(url) => Some(deserialize(url))
-    }
-  }
+	/**
+	 * Doesn't handle non existing DPUs yet!
+	 */
+	def getDataProcessingUnit(name: String): Option[IDataProcessingUnit] = {
+		dpuMap.get(name) match {
+			case None => None
+			case Some(url) => Some(deserialize(url))
+		}
+	}
 
-  /**
-   * Doesn't handle non existing DPUs yet!
-   */
-  def getURL(name: String): Option[URL] = dpuMap.get(name)
+	/**
+	 * Doesn't handle non existing DPUs yet!
+	 */
+	def getURL(name: String): Option[URL] = dpuMap.get(name)
 
-  /**
-   * reads all .dpu files in the given dir property
-   */
-  private def init {
-    val entries = bundle.findEntries(dir, "*.dpu", true)
-    if (entries == null)
-      return
+	/**
+	 * reads all .dpu files in the given dir property
+	 */
+	private def init {
+		val entries = bundle.findEntries(dir, "*.dpu", true)
+		if (entries == null)
+			return
 
-    try {
-      //TODO BundleDPUProvider => handle dpu's with identical name
-      entries foreach { url =>
-        val dpu = deserialize(url)
-        dpuMap += (dpu.getName.getContent -> url)
-      }
-    } catch {
-      case e: Exception => e.printStackTrace
-    }
-  }
+		try {
+			//TODO BundleDPUProvider => handle dpu's with identical name
+			entries foreach { url =>
+				val dpu = deserialize(url)
+				dpuMap += (dpu.getName.getContent -> url)
+			}
+		} catch {
+			case e: Exception => e.printStackTrace
+		}
+	}
 }
 
 /**
@@ -93,18 +103,18 @@ class BundleDPUProvider(bundle: Bundle, dir: String = CUSTOM_FOLDER) extends IDP
  */
 object BundleDPUProvider {
 
-  val CUSTOM_FOLDER = "/KNOWING-INF/custom"
+	val CUSTOM_FOLDER = "/KNOWING-INF/custom"
 
-  def newInstance(bundle: Bundle): BundleDPUProvider = new BundleDPUProvider(bundle)
-  def newInstance(bundle: Bundle, dir: String): BundleDPUProvider = new BundleDPUProvider(bundle, dir)
+	def newInstance(bundle: Bundle): BundleDPUProvider = new BundleDPUProvider(bundle)
+	def newInstance(bundle: Bundle, dir: String): BundleDPUProvider = new BundleDPUProvider(bundle, dir)
 
-  def newRegisteredInstance(bundle: Bundle): ServiceRegistration[IDPUProvider] = {
-    val provider = newInstance(bundle)
-    bundle.getBundleContext.registerService(classOf[IDPUProvider], provider, null)
-  }
+	def newRegisteredInstance(bundle: Bundle): ServiceRegistration[IDPUProvider] = {
+		val provider = newInstance(bundle)
+		bundle.getBundleContext.registerService(classOf[IDPUProvider], provider, null)
+	}
 
-  def newRegisteredInstance(bundle: Bundle, dir: String): ServiceRegistration[IDPUProvider] = {
-    val provider = newInstance(bundle,dir)
-    bundle.getBundleContext.registerService(classOf[IDPUProvider], provider, null)
-  }
+	def newRegisteredInstance(bundle: Bundle, dir: String): ServiceRegistration[IDPUProvider] = {
+		val provider = newInstance(bundle, dir)
+		bundle.getBundleContext.registerService(classOf[IDPUProvider], provider, null)
+	}
 }

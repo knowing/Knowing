@@ -1,7 +1,21 @@
+/*																*\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
+** 																**
+** Knowing Framework											**
+** Apache License - http://www.apache.org/licenses/				**
+** LMU Munich - Database Systems Group							**
+** http://www.dbs.ifi.lmu.de/									**
+\*																*/
 package de.lmu.ifi.dbs.knowing.core.util;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.InvalidPropertiesFormatException;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Immutable version of Properties object. Instances work transparently as
@@ -16,6 +30,8 @@ import java.util.*;
  * @version 1.1
  */
 public class ImmutableProperties extends java.util.Properties {
+
+	private static final long serialVersionUID = -6583829605292217614L;
 
 	/**
 	 * Constructs an immutable copy of the given Properties object.

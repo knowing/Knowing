@@ -1,3 +1,13 @@
+/*																*\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
+** 																**
+** Knowing Framework											**
+** Apache License - http://www.apache.org/licenses/				**
+** LMU Munich - Database Systems Group							**
+** http://www.dbs.ifi.lmu.de/									**
+\*																*/
 package de.lmu.ifi.dbs.knowing.core.validation
 
 import akka.actor.ActorRef
@@ -13,174 +23,173 @@ import weka.core.{ Instance, Instances }
 import com.eaio.uuid.UUID
 import weka.core.Attribute
 
-
 /**
  * Performs a crossvalidation on the given input.
  * Splits the dataset with Instances.train/test.
  * Uses CrossValidator.class for each crossvaldation step.
- * 
+ *
  * @author Nepomuk Seiler
- * @version 0.1
+ * @version 0.2
  */
 class XCrossValidator(val factoryDirectory: Option[IFactoryDirectory] = None) extends TProcessor {
 
-  protected var factory: TFactory = _
-  protected var folds: Int = _
-  protected var validator_properties: Properties = _
-  
-  protected var resultHeader: Instances = _
-  protected var results: List[Instances] = Nil
-  protected var relAttribute = -1
-  protected var classLabels: Array[String] = Array()
-  protected var currentFold: Int = 0
+	protected var factory: TFactory = _
+	protected var folds: Int = _
+	protected var validator_properties: Properties = _
 
-  private var first_run = true
-  private var sortAttribute = ""
+	protected var resultHeader: Instances = _
+	protected var results: List[Instances] = Nil
+	protected var relAttribute = -1
+	protected var classLabels: Array[String] = Array()
+	protected var currentFold: Int = 0
 
-  override def customReceive = {
-    case status: Status => //statusChanged(status) handle it!
-  }
+	private var first_run = true
+	private var sortAttribute = ""
 
-  def build(instances: Instances) {
-    //Init classlabels
-    val index = guessAndSetClassLabel(instances)
-    index match {
-      case -1 =>
-        classLabels = Array()
-        warning(this, "No classLabel found in " + instances.relationName)
-      case x => classLabels = classLables(instances.attribute(x))
-    }
-    //Create crossValidator actors for each fold
-    val crossValidators = initCrossValidators(folds)
-    debug(this, "Fold-Actors created!")
-    statusChanged(Progress("validation", 0, folds))
-    startCrossValidation(crossValidators, instances)
-    debug(this, "Fold-Actors configured and training started")
-  }
+	override def customReceive = {
+		case status: Status => //statusChanged(status) handle it!
+	}
 
-  def result(result: Instances, query: Instance) {
-    //First run - init header and relationalAttribute
-    if (resultHeader == null) {
-      resultHeader = new Instances(result, result.size * folds)
-      val attr = result.enumerateAttributes
-      while (attr.hasMoreElements) {
-        val a = attr.nextElement.asInstanceOf[Attribute]
-        relAttribute = a.`type` match {
-          case Attribute.RELATIONAL => a.index
-          case _ => relAttribute
-        }
-      }
-    }
+	def build(instances: Instances) {
+		//Init classlabels
+		val index = guessAndSetClassLabel(instances)
+		index match {
+			case -1 =>
+				classLabels = Array()
+				warning(this, "No classLabel found in " + instances.relationName)
+			case x => classLabels = classLables(instances.attribute(x))
+		}
+		//Create crossValidator actors for each fold
+		val crossValidators = initCrossValidators(folds)
+		debug(this, "Fold-Actors created!")
+		statusChanged(Progress("validation", 0, folds))
+		startCrossValidation(crossValidators, instances)
+		debug(this, "Fold-Actors configured and training started")
+	}
 
-    results = result :: results
-    addRelationalInstances(result)
-    currentFold += 1
-    if (currentFold == folds) {
-      debug(this, "Last Fold " + currentFold + " results arrived")
-      debug(this, "Copy relational Attribute from index: " + relAttribute)
-      sendEvent(Results(mergeResults))
-      currentFold = 0
-    } else {
-      statusChanged(Progress("validation", 1, folds))
-      debug(this, "Fold " + currentFold + " results arrived")
-    }
-	
-  }
+	def result(result: Instances, query: Instance) {
+		//First run - init header and relationalAttribute
+		if (resultHeader == null) {
+			resultHeader = new Instances(result, result.size * folds)
+			val attr = result.enumerateAttributes
+			while (attr.hasMoreElements) {
+				val a = attr.nextElement.asInstanceOf[Attribute]
+				relAttribute = a.`type` match {
+					case Attribute.RELATIONAL => a.index
+					case _ => relAttribute
+				}
+			}
+		}
 
-  protected def initCrossValidators(folds: Int) = for (i <- 0 until folds; val actor = factory.getInstance) yield actor
+		results = result :: results
+		addRelationalInstances(result)
+		currentFold += 1
+		if (currentFold == folds) {
+			debug(this, "Last Fold " + currentFold + " results arrived")
+			debug(this, "Copy relational Attribute from index: " + relAttribute)
+			sendEvent(Results(mergeResults))
+			currentFold = 0
+		} else {
+			statusChanged(Progress("validation", 1, folds))
+			debug(this, "Fold " + currentFold + " results arrived")
+		}
 
-  protected def startCrossValidation(crossValidators: IndexedSeq[ActorRef], instances: Instances) {
-    for (j <- 0 until folds) {
-      crossValidators(j).dispatcher = self.dispatcher
-      self startLink crossValidators(j) //Start actors and link yourself as supervisor
-      crossValidators(j) ! Register(self, None) //Register so results/status events are send to us
-      crossValidators(j) ! Configure(configureProperties(validator_properties, j)) //Configure actor
-      crossValidators(j) ! Results(instances.trainCV(folds, j)) //Send the train set
-      crossValidators(j) ! Queries(instances.testCV(folds, j)) //Query the trained crossValidator instance
-    }
-  }
+	}
 
-  /**
-   * Supports only one relational attribute
-   */
-  protected def addRelationalInstances(result: Instances) {
-    //Add relations to header relational-attribute
-    relAttribute match {
-      case -1 => //no relational attribute found
-      case _ =>
-        val insts = result.enumerateInstances        
-        while (insts.hasMoreElements) {
-          val inst = insts.nextElement.asInstanceOf[Instance]
-          inst.relationalValue(relAttribute) match {
-            case null => //Do nothing
-            case relation => inst.setValue(relAttribute, resultHeader.attribute(relAttribute).addRelation(relation));            
-          }          
-        }
-    }
-  }
+	protected def initCrossValidators(folds: Int) = for (i <- 0 until folds; val actor = factory.getInstance) yield actor
 
-  /**
-   * Merge two matrices. Skips zero-values
-   */
-  protected def mergeResults: Instances = {
-    //Reverse results for ordering with relational attribute
-    val returns = ResultsUtil.appendInstances(resultHeader, results.reverse)
-    sortAttribute match {
-      case null | "" => returns
-      case name: String =>
-        returns.attribute(name) match {
-          case null => warning(this, "Attribute " + name + " not available to sort by")
-          case a => returns.sort(a)
-        }
-        returns
-      case _ => returns
-    }
-  }
+	protected def startCrossValidation(crossValidators: IndexedSeq[ActorRef], instances: Instances) {
+		for (j <- 0 until folds) {
+			crossValidators(j).dispatcher = self.dispatcher
+			self startLink crossValidators(j) //Start actors and link yourself as supervisor
+			crossValidators(j) ! Register(self, None) //Register so results/status events are send to us
+			crossValidators(j) ! Configure(configureProperties(validator_properties, j)) //Configure actor
+			crossValidators(j) ! Results(instances.trainCV(folds, j)) //Send the train set
+			crossValidators(j) ! Queries(instances.testCV(folds, j)) //Query the trained crossValidator instance
+		}
+	}
 
-  def configure(properties: Properties) = {
-    factory = new CrossValidatorFactory(factoryDirectory)
-    //Set properties for this XCrossValidator
-    val strFolds = properties.getProperty(CrossValidatorFactory.FOLDS, "10")
-    folds = strFolds.toInt
-    validator_properties = properties
-    sortAttribute = properties.getProperty(XCrossValidatorFactory.SORT_ATTRIBUTE, "")
-  }
+	/**
+	 * Supports only one relational attribute
+	 */
+	protected def addRelationalInstances(result: Instances) {
+		//Add relations to header relational-attribute
+		relAttribute match {
+			case -1 => //no relational attribute found
+			case _ =>
+				val insts = result.enumerateInstances
+				while (insts.hasMoreElements) {
+					val inst = insts.nextElement.asInstanceOf[Instance]
+					inst.relationalValue(relAttribute) match {
+						case null => //Do nothing
+						case relation => inst.setValue(relAttribute, resultHeader.attribute(relAttribute).addRelation(relation));
+					}
+				}
+		}
+	}
 
-  /**
-   * Creates properties for each CrossValidator-fold
-   */
-  protected def configureProperties(properties: Properties, fold: Int): Properties = {
-    val returns = new Properties
-    returns.putAll(properties)
-    returns.setProperty(CrossValidatorFactory.FOLD, fold.toString)
-    returns.setProperty(CrossValidatorFactory.STANDALONE, "false")
-    returns
-  }
+	/**
+	 * Merge two matrices. Skips zero-values
+	 */
+	protected def mergeResults: Instances = {
+		//Reverse results for ordering with relational attribute
+		val returns = ResultsUtil.appendInstances(resultHeader, results.reverse)
+		sortAttribute match {
+			case null | "" => returns
+			case name: String =>
+				returns.attribute(name) match {
+					case null => warning(this, "Attribute " + name + " not available to sort by")
+					case a => returns.sort(a)
+				}
+				returns
+			case _ => returns
+		}
+	}
 
-  def query(query: Instance): Instances = { null }
+	def configure(properties: Properties) = {
+		factory = new CrossValidatorFactory(factoryDirectory)
+		//Set properties for this XCrossValidator
+		val strFolds = properties.getProperty(CrossValidatorFactory.FOLDS, "10")
+		folds = strFolds.toInt
+		validator_properties = properties
+		sortAttribute = properties.getProperty(XCrossValidatorFactory.SORT_ATTRIBUTE, "")
+	}
 
-  def getClassLabels(): Array[String] = classLabels
+	/**
+	 * Creates properties for each CrossValidator-fold
+	 */
+	protected def configureProperties(properties: Properties, fold: Int): Properties = {
+		val returns = new Properties
+		returns.putAll(properties)
+		returns.setProperty(CrossValidatorFactory.FOLD, fold.toString)
+		returns.setProperty(CrossValidatorFactory.STANDALONE, "false")
+		returns
+	}
+
+	def query(query: Instance): Instances = { null }
+
+	def getClassLabels(): Array[String] = classLabels
 
 }
 
 class XCrossValidatorFactory(val factoryDirectory: Option[IFactoryDirectory] = None) extends ProcessorFactory(classOf[XCrossValidator]) {
 
-  override def getInstance(): ActorRef = actorOf(new XCrossValidator(factoryDirectory))
-  
-  override def createDefaultProperties: Properties = {
-    val props = new Properties();
-    props.setProperty(CrossValidatorFactory.CLASSIFIER, "")
-    props.setProperty(CrossValidatorFactory.FOLDS, "10")
-    props.setProperty(XCrossValidatorFactory.SORT_ATTRIBUTE, "")
-    props
-  }
+	override def getInstance(): ActorRef = actorOf(new XCrossValidator(factoryDirectory))
+
+	override def createDefaultProperties: Properties = {
+		val props = new Properties();
+		props.setProperty(CrossValidatorFactory.CLASSIFIER, "")
+		props.setProperty(CrossValidatorFactory.FOLDS, "10")
+		props.setProperty(XCrossValidatorFactory.SORT_ATTRIBUTE, "")
+		props
+	}
 
 }
 
 object XCrossValidatorFactory {
 
-  val name: String = "XCrossValidator"
-  val id: String = classOf[XCrossValidator].getName
+	val name: String = "XCrossValidator"
+	val id: String = classOf[XCrossValidator].getName
 
-  val SORT_ATTRIBUTE = "sortAttribute"
+	val SORT_ATTRIBUTE = "sortAttribute"
 }

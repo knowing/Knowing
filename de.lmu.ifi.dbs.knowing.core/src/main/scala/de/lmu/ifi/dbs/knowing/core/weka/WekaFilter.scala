@@ -1,3 +1,13 @@
+/*																*\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
+** 																**
+** Knowing Framework											**
+** Apache License - http://www.apache.org/licenses/				**
+** LMU Munich - Database Systems Group							**
+** http://www.dbs.ifi.lmu.de/									**
+\*																*/
 package de.lmu.ifi.dbs.knowing.core.weka
 
 import java.util.Properties
@@ -14,7 +24,7 @@ import akka.actor.UntypedActorFactory
 
 /**
  * Wraps the WEKA Filter class.
- * 
+ *
  * @author Nepomuk Seiler
  * @version 0.1
  * @since 18.06.2011
@@ -22,35 +32,35 @@ import akka.actor.UntypedActorFactory
  */
 class WekaFilter(val filter: Filter) extends TFilter {
 
-  /**
-   * <p>Code mainly from weka.filters.Filter</p>
-   */
-  override def filter(instances: Instances): Instances = {
-    val header = new Instances(instances, 0)
-    guessAndSetClassLabel(header)
-    filter.setInputFormat(header)
-    val results = Filter.useFilter(instances, filter)
-    
-    //this resets the RelationLocator
-    filter.setInputFormat(header)
-    
-    results
-  }
+	/**
+	 * <p>Code mainly from weka.filters.Filter</p>
+	 */
+	override def filter(instances: Instances): Instances = {
+		val header = new Instances(instances, 0)
+		guessAndSetClassLabel(header)
+		filter.setInputFormat(header)
+		val results = Filter.useFilter(instances, filter)
 
-  def query(query: Instance): Instances = {
-    filter.input(query)
-    filter.batchFinished
+		//this resets the RelationLocator
+		filter.setInputFormat(header)
 
-    val returns = new Instances(filter.getOutputFormat, 1)
-    returns.add(filter.output)
-    returns
-  }
+		results
+	}
 
-  //TODO override queries
+	def query(query: Instance): Instances = {
+		filter.input(query)
+		filter.batchFinished
 
-  def result(result: Instances, query: Instance) = {}
+		val returns = new Instances(filter.getOutputFormat, 1)
+		returns.add(filter.output)
+		returns
+	}
 
-  def configure(properties: Properties) = {}
+	//TODO override queries
+
+	def result(result: Instances, query: Instance) = {}
+
+	def configure(properties: Properties) = {}
 
 }
 
@@ -66,33 +76,33 @@ class WekaFilter(val filter: Filter) extends TFilter {
  */
 class WekaFilterFactory[T <: WekaFilter, S <: Filter](wrapper: Class[T], clazz: Class[S]) extends TFactory {
 
-  val name: String = clazz.getSimpleName
-  val id: String = clazz.getName
+	val name: String = clazz.getSimpleName
+	val id: String = clazz.getName
 
-  def getInstance(): ActorRef = {
-    classOf[ILoggableProcessor].isAssignableFrom(clazz) match {
-      case false => actorOf(wrapper)
-      case true =>
-        actorOf {
-          val w = wrapper.newInstance
-          w.filter.asInstanceOf[ILoggableProcessor].setProcessor(w)
-          w
-        }
-    }
-  }
+	def getInstance(): ActorRef = {
+		classOf[ILoggableProcessor].isAssignableFrom(clazz) match {
+			case false => actorOf(wrapper)
+			case true =>
+				actorOf {
+					val w = wrapper.newInstance
+					w.filter.asInstanceOf[ILoggableProcessor].setProcessor(w)
+					w
+				}
+		}
+	}
 
-  /* ======================= */
-  /* ==== Configuration ==== */
-  /* ======================= */
+	/* ======================= */
+	/* ==== Configuration ==== */
+	/* ======================= */
 
-  def createDefaultProperties: Properties = new Properties
+	def createDefaultProperties: Properties = new Properties
 
-  def createPropertyValues: Map[String, Array[_ <: Any]] = Map()
+	def createPropertyValues: Map[String, Array[_ <: Any]] = Map()
 
-  def createPropertyDescription: Map[String, String] = Map()
+	def createPropertyDescription: Map[String, String] = Map()
 
 }
 
 object WekaFilterFactory {
-  val DEBUG = INodeProperties.DEBUG
+	val DEBUG = INodeProperties.DEBUG
 }

@@ -1,4 +1,15 @@
+/*																*\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
+** 																**
+** Knowing Framework											**
+** Apache License - http://www.apache.org/licenses/				**
+** LMU Munich - Database Systems Group							**
+** http://www.dbs.ifi.lmu.de/									**
+\*																*/
 package de.lmu.ifi.dbs.knowing.core.service
+
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
 import java.net.URL
 
@@ -14,24 +25,24 @@ import java.net.URL
  */
 trait IDPUDirectory {
 
-  //service properties
-  val LOAD_ALL = "knowing.dpudirectory.loadAll"
-  
-  /**
-   * Searches all registered dpus
-   * @return Some(dpu) else None
-   */
-  def getDPU(id: String): Option[IDataProcessingUnit]
+	//service properties
+	val LOAD_ALL = "knowing.dpudirectory.loadAll"
 
-  /**
-   * normally inside a bundle
-   * @return URL to dpu
-   */
-  def getDPUPath(id: String): Option[URL]
+	/**
+	 * Searches all registered dpus
+	 * @return Some(dpu) else None
+	 */
+	def getDPU(id: String): Option[IDataProcessingUnit]
 
-  /**
-   * @return all registered dpus
-   */
-  def getDPUs(): Array[IDataProcessingUnit]
+	/**
+	 * normally inside a bundle
+	 * @return URL to dpu
+	 */
+	def getDPUPath(id: String): Option[URL]
+
+	/**
+	 * @return all registered dpus
+	 */
+	def getDPUs(): Array[IDataProcessingUnit]
 }
 

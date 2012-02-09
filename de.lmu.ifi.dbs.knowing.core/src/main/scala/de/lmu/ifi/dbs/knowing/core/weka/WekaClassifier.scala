@@ -1,3 +1,13 @@
+/*																*\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
+** 																**
+** Knowing Framework											**
+** Apache License - http://www.apache.org/licenses/				**
+** LMU Munich - Database Systems Group							**
+** http://www.dbs.ifi.lmu.de/									**
+\*																*/
 package de.lmu.ifi.dbs.knowing.core.weka
 
 import java.util.Properties
@@ -27,32 +37,32 @@ import de.lmu.ifi.dbs.knowing.core.japi.ILoggableProcessor
  */
 class WekaClassifier(var classifier: Classifier) extends TClassifier {
 
-  private var classLabels = Array[String]()
-  private val name = getClass.getSimpleName
+	private var classLabels = Array[String]()
+	private val name = getClass.getSimpleName
 
-  def build(instances: Instances) {
-    debug(this, "Build internal model for " + name + " ...")
-    guessAndCreateClassLabels(instances)
-    classifier.buildClassifier(instances)
-    debug(this, "... build successfull for " + name)
-    processStoredQueries
-  }
+	def build(instances: Instances) {
+		debug(this, "Build internal model for " + name + " ...")
+		guessAndCreateClassLabels(instances)
+		classifier.buildClassifier(instances)
+		debug(this, "... build successfull for " + name)
+		processStoredQueries
+	}
 
-  def guessAndCreateClassLabels(instances: Instances) = guessAndSetClassLabel(instances) match {
-    case -1 =>
-      classLabels = Array()
-      warning(this, "No classLabel found in " + name)
-    case x => classLabels = classLables(instances.attribute(x))
-  }
+	def guessAndCreateClassLabels(instances: Instances) = guessAndSetClassLabel(instances) match {
+		case -1 =>
+			classLabels = Array()
+			warning(this, "No classLabel found in " + name)
+		case x => classLabels = classLables(instances.attribute(x))
+	}
 
-  def query(query: Instance): Instances = {
-    val distribution = classifier.distributionForInstance(query)
-    ResultsUtil.classAndProbabilityResult(getClassLabels.toList, distribution)
-  }
+	def query(query: Instance): Instances = {
+		val distribution = classifier.distributionForInstance(query)
+		ResultsUtil.classAndProbabilityResult(getClassLabels.toList, distribution)
+	}
 
-  def getClassLabels(): Array[String] = classLabels
+	def getClassLabels(): Array[String] = classLabels
 
-  def result(result: Instances, query: Instance) {} //Override for special behaviour
+	def result(result: Instances, query: Instance) {} //Override for special behaviour
 
 }
 
@@ -68,35 +78,35 @@ class WekaClassifier(var classifier: Classifier) extends TClassifier {
  */
 class WekaClassifierFactory[T <: WekaClassifier, S <: Classifier](wrapper: Class[T], clazz: Class[S]) extends TFactory {
 
-  val name: String = clazz.getSimpleName
-  val id: String = clazz.getName
+	val name: String = clazz.getSimpleName
+	val id: String = clazz.getName
 
-  def getInstance(): ActorRef = {
-    classOf[ILoggableProcessor].isAssignableFrom(clazz) match {
-      case false => actorOf(wrapper)
-      case true =>
-        actorOf {
-          val w = wrapper.newInstance
-          w.classifier.asInstanceOf[ILoggableProcessor].setProcessor(w)
-          w
-        }
-    }
-  }
+	def getInstance(): ActorRef = {
+		classOf[ILoggableProcessor].isAssignableFrom(clazz) match {
+			case false => actorOf(wrapper)
+			case true =>
+				actorOf {
+					val w = wrapper.newInstance
+					w.classifier.asInstanceOf[ILoggableProcessor].setProcessor(w)
+					w
+				}
+		}
+	}
 
-  /* ======================= */
-  /* ==== Configuration ==== */
-  /* ======================= */
+	/* ======================= */
+	/* ==== Configuration ==== */
+	/* ======================= */
 
-  def createDefaultProperties: Properties = new Properties
+	def createDefaultProperties: Properties = new Properties
 
-  def createPropertyValues: Map[String, Array[_ <: Any]] = Map()
+	def createPropertyValues: Map[String, Array[_ <: Any]] = Map()
 
-  def createPropertyDescription: Map[String, String] = Map()
+	def createPropertyDescription: Map[String, String] = Map()
 
 }
 
 object WekaClassifierFactory {
-  val DEBUG = INodeProperties.DEBUG
+	val DEBUG = INodeProperties.DEBUG
 }
 
 /* =========================== */

@@ -1,3 +1,13 @@
+/*																*\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
+** 																**
+** Knowing Framework											**
+** Apache License - http://www.apache.org/licenses/				**
+** LMU Munich - Database Systems Group							**
+** http://www.dbs.ifi.lmu.de/									**
+\*																*/
 package de.lmu.ifi.dbs.knowing.core.service
 
 import de.lmu.ifi.dbs.knowing.core.model.INode
@@ -11,20 +21,20 @@ import java.net.URL
  */
 trait IResourceStore {
 
-  //Service properties
-  val LOAD_ALL = "knowing.resourceStore.loadAll"
+	//Service properties
+	val LOAD_ALL = "knowing.resourceStore.loadAll"
 
-  /**
-   *
-   * @param node - INode which needs a resource.
-   * @return URI to model or None
-   */
-  def getResource(node: INode): Option[URL]
+	/**
+	 *
+	 * @param node - INode which needs a resource.
+	 * @return URI to model or None
+	 */
+	def getResource(node: INode): Option[URL]
 
-  /**
-   * @param model - name of resource.
-   * @return URI to model or None
-   */
-  def getResource(resource: String): Option[URL]
+	/**
+	 * @param model - name of resource.
+	 * @return URI to model or None
+	 */
+	def getResource(resource: String): Option[URL]
 
 }
