@@ -14,7 +14,6 @@ import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory._
 import de.lmu.ifi.dbs.knowing.core.weka._
 import de.lmu.ifi.dbs.knowing.core.weka.WekaClassifierFactory._
-import de.lmu.ifi.dbs.knowing.core.weka.NaiveBayesFactory._
 import java.util.Properties
 import weka.classifiers.bayes.BayesNet
 import WekaBayesNetFactory._
@@ -56,8 +55,7 @@ class WekaBayesNetFactory extends WekaClassifierFactory[WekaBayesNet, BayesNet](
 	}
 
 	override def createPropertyDescription: Map[String, String] = {
-		Map(KERNEL_ESTIMATOR -> "?",
-			ADTREE -> ADTREE_DESCR,
+		Map(ADTREE -> ADTREE_DESCR,
 			SEARCH_ALGORITHM -> SEARCH_ALGORITHM_DESCRIPTION,
 			ESTIMATOR -> ESTIMATOR_DESCR,
 			BIFFILE -> BIFFILE_DESCR,
@@ -87,9 +85,9 @@ object WekaBayesNetFactory {
 
 	val BIFFILE = "biffile"
 	val BIFFILE_DESCR = new StringBuilder()
-	.append("Set the name of a file in BIF XML format. A Bayes network learned")
-	.append(" from data can be compared with the Bayes network represented by the BIF file.")
-	.append(" Statistics calculated are o.a. the number of missing and extra arcs.")
-	.toString
+		.append("Set the name of a file in BIF XML format. A Bayes network learned")
+		.append(" from data can be compared with the Bayes network represented by the BIF file.")
+		.append(" Statistics calculated are o.a. the number of missing and extra arcs.")
+		.toString
 
 }

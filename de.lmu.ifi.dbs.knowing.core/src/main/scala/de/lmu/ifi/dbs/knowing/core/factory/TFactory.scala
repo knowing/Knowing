@@ -54,6 +54,7 @@ trait TFactory {
 }
 
 object TFactory {
+	//Default values for factory properties
 	val BOOLEAN_PROPERTY = Array("true", "false")
 
 	//OSGi service properties

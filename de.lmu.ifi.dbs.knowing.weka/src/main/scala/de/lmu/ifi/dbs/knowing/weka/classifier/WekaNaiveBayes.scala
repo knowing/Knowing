@@ -44,7 +44,7 @@ class WekaNaiveBayes extends WekaClassifier(new weka.classifiers.bayes.NaiveBaye
  * @version 0.1
  * @since 21.04.2011
  */
-class WekaNaiveBayesFactory extends WekaClassifierFactory[NaiveBayes, weka.classifiers.bayes.NaiveBayes](classOf[NaiveBayes], classOf[weka.classifiers.bayes.NaiveBayes]) {
+class WekaNaiveBayesFactory extends WekaClassifierFactory[WekaNaiveBayes, weka.classifiers.bayes.NaiveBayes](classOf[WekaNaiveBayes], classOf[weka.classifiers.bayes.NaiveBayes]) {
 
 	override def createDefaultProperties: Properties = {
 		val returns = new Properties

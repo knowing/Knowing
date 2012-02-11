@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="de.lmu.ifi.dbs.knowing.test.feature"
+      label="Knowing Test Feature"
+      version="0.1.2.qualifier"
+      provider-name="LMU Munich - Database Systems Group"
+      license-feature="de.lmu.ifi.dbs.knowing.core.feature"
+      license-feature-version="0.1.2.qualifier">
+
+   <description url="http://www.example.com/description">
+      Adds testing features for Knowing including
+
+* scalatest.org
+* JUnit
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <requires>
+      <import feature="de.lmu.ifi.dbs.knowing.core.feature" version="0.1.2.qualifier"/>
+   </requires>
+
+   <plugin
+         id="akka.testkit"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.lmu.ifi.dbs.knowing.test"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.scalatest"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

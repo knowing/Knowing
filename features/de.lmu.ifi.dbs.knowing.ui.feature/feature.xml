@@ -3,7 +3,9 @@
       id="de.lmu.ifi.dbs.knowing.ui.feature"
       label="Knowing IDE Feature"
       version="0.1.2.qualifier"
-      provider-name="LMU Munich - Database Systems Group">
+      provider-name="LMU Munich - Database Systems Group"
+      license-feature="de.lmu.ifi.dbs.knowing.core.feature"
+      license-feature-version="0.1.2.qualifier">
 
    <description url="https://github.com/knowing/Knowing">
       Provides an IDE for creating DataProcessingUnits (DPUs)

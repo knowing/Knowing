@@ -53,9 +53,9 @@ class Activator extends BundleActivator {
 		osgiUtil.registerLoader(new WekaArffLoaderFactory, WekaArffLoaderFactory.id)
 		osgiUtil.registerSaver(new WekaArffSaverFactory, WekaArffSaverFactory.id)
 		
-		//DEPRECATED!
-		osgiUtil.registerProcessor(new NaiveBayesFactory, classOf[weka.classifiers.bayes.NaiveBayes].getName)
+		//deprecated
 		osgiUtil.registerProcessor(new OneRFactory, classOf[weka.classifiers.rules.OneR].getName)
+		
 		osgiUtil.registerProcessor(new CrossValidatorFactory, CrossValidatorFactory.id)
 		osgiUtil.registerProcessor(new XCrossValidatorFactory, XCrossValidatorFactory.id)
 		osgiUtil.registerProcessor(new AttributeCrossValidatorFactory)

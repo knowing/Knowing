@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="de.lmu.ifi.dbs.knowing.weka.feature"
+      label="Knowing WEKA Feature"
+      version="0.1.2.qualifier"
+      provider-name="LMU Munich - Database Systems Group"
+      license-feature="de.lmu.ifi.dbs.knowing.core.feature"
+      license-feature-version="0.1.2.qualifier">
+
+   <description url="http://www.example.com/description">
+      Provides all WEKA algorithms as Knowing Processors
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <plugin
+         id="de.lmu.ifi.dbs.knowing.weka"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
