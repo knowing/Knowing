@@ -48,12 +48,15 @@ class WekaArffLoader extends TLoader {
 			case (src, in) =>
 				val loader = new ArffLoader
 				loader.setSource(in)
-				(src -> loader)
+				(src -> (loader, in))
 		} map {
-			case (src, loader) =>
+			case (src, (loader,in)) =>
 				statusChanged(new Progress("Loading", count, inputs.size + 1))
 				count += 1
-				(src, loader.getDataSet)
+				val dataset = loader.getDataSet
+				loader.reset
+				in.close
+				(src, dataset)
 		} toList;
 		datasets.size match {
 			case 0 => ResultsUtil.emptyResult // Nothing generated

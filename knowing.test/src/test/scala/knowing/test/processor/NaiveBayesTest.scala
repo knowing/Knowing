@@ -16,11 +16,13 @@ import de.lmu.ifi.dbs.knowing.test.EmbeddedPresenters._
 import de.lmu.ifi.dbs.knowing.core.weka._
 import de.lmu.ifi.dbs.knowing.core.validation._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil._
+import de.lmu.ifi.dbs.knowing.weka.classifier.WekaNaiveBayesFactory
 import java.nio.file.Paths
 import org.eclipse.sapphire.modeling.xml.{ RootXmlResource, XmlResourceStore }
 import org.eclipse.sapphire.modeling.{ ResourceStoreException, UrlResourceStore }
 import weka.core.{ Instances, Attribute }
 import scala.collection.JavaConversions._
+
 
 @RunWith(classOf[JUnitRunner])
 class NaiveBayesTest extends FunSuite with KnowingTestKit with BeforeAndAfter {
@@ -36,7 +38,7 @@ class NaiveBayesTest extends FunSuite with KnowingTestKit with BeforeAndAfter {
     factoryDirectory = new EmbeddedFactoryDirectory
     factoryDirectory
       .add(new WekaArffLoaderFactory)
-      .add(new NaiveBayesFactory)
+      .add(new WekaNaiveBayesFactory)
       .add(new ConfusionMatrixFactory)
       .add(new XCrossValidatorFactory(Some(factoryDirectory)))
       .add(TablePresenterFactory)
