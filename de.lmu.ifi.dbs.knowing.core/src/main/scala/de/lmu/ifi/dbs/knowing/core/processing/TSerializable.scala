@@ -40,6 +40,7 @@ trait TSerializable extends TStreamResolver { this: TProcessor =>
 	 * @return Some(InputStream) with opened InputStream or None
 	 *
 	 */
+	@throws(classOf[IOException])
 	def inputStream(): Option[InputStream] = resolveProperty(properties, DESERIALIZE) match {
 		//Input successfully created
 		case Some(p) if exists(p) => Some(newInputStream(p))
@@ -54,12 +55,7 @@ trait TSerializable extends TStreamResolver { this: TProcessor =>
 					Some(in)
 				} catch {
 					case e: MalformedURLException =>
-						throwException(e, "Could not deserialize model.")
-						None
-					case e: IOException =>
-						if (in != null) in.close()
-						throwException(e, "Could not deserialize model.")
-						None
+						throw new IOException("Malformed URL. Could not deserialize model due to " + e.getMessage, e)
 				}
 		}
 	}
@@ -89,7 +85,7 @@ trait TSerializable extends TStreamResolver { this: TProcessor =>
 
 	/**
 	 * Generic method to resolve a Path from given properties object.
-	 * 
+	 *
 	 * @param properties - the java.util.Properties instance to search for
 	 * @param key - the property key which should be used as location target
 	 */

@@ -9,6 +9,7 @@ import java.util.Properties
 import java.io.{ InputStreamReader, LineNumberReader, PrintWriter }
 import scala.collection.JavaConversions._
 import AddClassAttribute._
+import java.io.IOException
 
 /**
  * <p> Adds a class-attribute to the instances </p>
@@ -21,14 +22,21 @@ class AddClassAttribute extends TFilter with TSerializable {
 
 	private var classes = Array[String]()
 
-	override def start() = inputStream() match {
-		case None => warning(this, "No classAttributes to deserialize")
-		case Some(in) =>
-			val reader = new LineNumberReader(new InputStreamReader(in))
-			classes = reader.readLine.split(",")
-			val classStr = classes.reduce((str, c) => str + "," + c)
-			debug(this, "Loaded classes " + classStr)
-			reader.close()
+	override def start() = try {
+		inputStream() match {
+			case None => warning(this, "No classAttributes to deserialize")
+			case Some(in) =>
+				val reader = new LineNumberReader(new InputStreamReader(in))
+				classes = reader.readLine.split(",")
+				val classStr = classes.reduce((str, c) => str + "," + c)
+				debug(this, "Loaded classes " + classStr)
+				reader.close()
+		}
+	} catch {
+		case e: IOException => 
+			warning(this, "classAttribute.mdl could not be found")
+			if(classes.isEmpty)
+				throwException(e, "classAttribute.mdl could not be found")
 	}
 
 	override def postStop() {

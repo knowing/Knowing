@@ -13,9 +13,9 @@ package de.lmu.ifi.dbs.knowing.core.japi;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 
 import weka.core.Instances;
+import akka.actor.ActorRef;
 import de.lmu.ifi.dbs.knowing.core.events.Event;
 import de.lmu.ifi.dbs.knowing.core.events.Status;
 
@@ -60,7 +60,7 @@ public abstract class AbstractProcessor implements IProcessor {
 	}
 
 	@Override
-	public InputStream getInputStream() throws IOException,MalformedURLException {
+	public InputStream getInputStream() throws IOException {
 		return wrapper.getInputStream();
 	}
 
