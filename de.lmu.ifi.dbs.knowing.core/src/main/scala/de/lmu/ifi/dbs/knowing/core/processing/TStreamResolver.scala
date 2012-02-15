@@ -104,9 +104,11 @@ trait TStreamResolver { this: TProcessor =>
 						inputMap += (file.getFileName.toString -> newInputStream(file))
 					}
 				} catch {
-					case e: IOException => e.printStackTrace()
+					case e: IOException => 
+						warning(this, e.getMessage + "\n" + e.getStackTraceString)
 				} finally {
-					stream.close
+					if (stream != null)
+						stream.close
 					//Input successfully created
 					return inputMap
 				}

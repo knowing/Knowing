@@ -10,4 +10,4 @@
 \*																*/
 package de.lmu.ifi.dbs.knowing.core.events
 
-class KnowingException(error: Throwable, msg:String) extends Exception
+class KnowingException(msg:String, cause: Throwable = null) extends Exception(msg, cause)
