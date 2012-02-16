@@ -40,14 +40,14 @@ class ConfusionMatrix extends TProcessor {
 	private var classLabels = Array[String]()
 
 	//properties
-	private var percentage = PERCENTAGE_RELATIVE
+	private var percentage = PERCENTAGE_ABSOLUTE
 
 	def build(instances: Instances) {
 		init(instances)
 		ensureOrder(instances)
 
 		percentage match {
-			case PERCENTAGE_RELATIVE => relativeMatrix(instances)
+			case PERCENTAGE_DISTRIBUTION => distributedMatrix(instances)
 			case PERCENTAGE_ABSOLUTE => absoluteMatrix(instances)
 		}
 
@@ -115,7 +115,7 @@ class ConfusionMatrix extends TProcessor {
 		}
 	}
 
-	private def relativeMatrix(instances: Instances) {
+	private def distributedMatrix(instances: Instances) {
 		//Create confusion matrix
 		val classIndex = instances.classIndex
 		val attributes = findClassDistributionAttributes(instances)
@@ -167,7 +167,7 @@ class ConfusionMatrix extends TProcessor {
 	def result(result: Instances, query: Instance) = throw new UnsupportedOperationException("result(..) on ConfusionMatrix is not defined")
 
 	def configure(properties: Properties) = {
-		percentage = properties.getProperty(PERCENTAGE, PERCENTAGE_RELATIVE)
+		percentage = properties.getProperty(PERCENTAGE, PERCENTAGE_ABSOLUTE)
 	}
 
 }
@@ -177,7 +177,7 @@ object ConfusionMatrix {
 
 	val PERCENTAGE = "percentage"
 	val PERCENTAGE_ABSOLUTE = "absolute"
-	val PERCENTAGE_RELATIVE = "relative"
+	val PERCENTAGE_DISTRIBUTION = "distribution"
 }
 
 class ConfusionMatrixFactory extends ProcessorFactory(classOf[ConfusionMatrix]) {
