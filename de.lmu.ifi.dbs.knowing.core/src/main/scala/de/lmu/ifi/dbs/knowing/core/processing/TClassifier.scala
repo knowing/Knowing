@@ -36,26 +36,19 @@ trait TClassifier extends TProcessor with TSerializable {
 	 *
 	 * @param PartialFunction[Instances, Option[String]] - match on (message, port)
 	 */
-	override def build = {
-		case (instances, Some(TEST)) =>
+	override def process(instances: Instances) = {
+		case (Some(TEST), None) =>
 			guessAndSetClassLabel(instances)
 			isBuild match {
-				case false => queriesQueue += ((self.sender, Queries(instances, instances.relationName)))
+				case false => cacheQuery(instances)
 				case true =>
 					processStoredQueries
-					val results = queries(instances)
-					results.headOption match {
-						case None => //nothing
-						case Some(h) =>
-							val header = new Instances(h._1.dataset, instances.size)
-							val result = ResultsUtil.appendClassDistribution(header, results.toMap)
-							sendResults(result)
-					}
+					sendResults(query(instances))
 			}
 
-		case (instances, Some(TRAIN)) => build(instances)
-		case (instances, None) => build(instances)
-		case (instances, Some(port)) => error(this, "Incompatible target port: " + port)
+		case (Some(TRAIN), None) => build(instances)
+		case (None, None) => build(instances)
+		case (Some(port), _) => error(this, "Incompatible target port: " + port)
 	}
 
 	/**

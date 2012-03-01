@@ -18,13 +18,15 @@ import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.core.processing.TClassifier
 import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties
+import de.lmu.ifi.dbs.knowing.core.japi.ILoggableProcessor
+import de.lmu.ifi.dbs.knowing.core.results.ClassDistributionBuilder
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
 import weka.classifiers.Classifier
 import weka.core.{ Instance, Instances }
 import weka.core.SerializationHelper
-import de.lmu.ifi.dbs.knowing.core.japi.ILoggableProcessor
+
 
 /**
  *
@@ -55,14 +57,16 @@ class WekaClassifier(var classifier: Classifier) extends TClassifier {
 		case x => classLabels = classLables(instances.attribute(x))
 	}
 
-	def query(query: Instance): Instances = {
-		val distribution = classifier.distributionForInstance(query)
-		ResultsUtil.classAndProbabilityResult(getClassLabels.toList, distribution)
+	def query(query: Instances): Instances = {
+		val builder = new ClassDistributionBuilder(classLabels.toList)
+		for(i <- 0 until query.numInstances) {
+			val inst = query.get(i)
+			builder + classifier.distributionForInstance(inst)
+		}
+		builder.instances
 	}
 
 	def getClassLabels(): Array[String] = classLabels
-
-	def result(result: Instances, query: Instance) {} //Override for special behaviour
 
 }
 

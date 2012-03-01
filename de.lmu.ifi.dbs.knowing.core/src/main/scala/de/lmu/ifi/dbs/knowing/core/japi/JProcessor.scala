@@ -13,7 +13,7 @@ package de.lmu.ifi.dbs.knowing.core.japi
 import akka.event.EventHandler
 import weka.core.{ Instances, Instance }
 import de.lmu.ifi.dbs.knowing.core.processing.{ TSerializable, TProcessor }
-import de.lmu.ifi.dbs.knowing.core.processing.TSender._
+import de.lmu.ifi.dbs.knowing.core.model.IEdge.DEFAULT_PORT
 import de.lmu.ifi.dbs.knowing.core.events._
 import java.io.{ OutputStream, InputStream, IOException }
 import java.net.MalformedURLException
@@ -40,11 +40,11 @@ abstract class JProcessor extends TProcessor with TSerializable {
 
 	override def postStop = processor.stop
 
-	def build(instances: Instances) = processor.build(instances)
+	def process(instances: Instances) = {
+		case (port, query) => processor.process(instances, port.getOrElse(null), query.getOrElse(null))
+	}
 
-	def query(query: Instance): Instances = processor.query(query, self)
-
-	def result(result: Instances, query: Instance) = processor.result(result, query)
+	def query(query: Instances): Instances = processor.query(query, self)
 
 	override def messageException(message: Any) = processor.messageException(message)
 

@@ -50,7 +50,7 @@ class WekaArffLoader extends TLoader {
 				loader.setSource(in)
 				(src -> (loader, in))
 		} map {
-			case (src, (loader,in)) =>
+			case (src, (loader, in)) =>
 				statusChanged(new Progress("Loading", count, inputs.size + 1))
 				count += 1
 				val dataset = loader.getDataSet
@@ -95,7 +95,9 @@ class WekaArffLoader extends TLoader {
 	/**
 	 * Forward if there were multiple loaders
 	 */
-	override def build(inst: Instances) = sendEvent(new Results(inst))
+	override def process(inst: Instances) = {
+		case _ => sendEvent(new Results(inst))
+	}
 
 	private def extractFilename(uri: URI): String = {
 		val sep = System.getProperty("file.separator")

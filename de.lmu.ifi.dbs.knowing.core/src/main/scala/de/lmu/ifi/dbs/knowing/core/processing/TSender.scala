@@ -13,12 +13,11 @@ package de.lmu.ifi.dbs.knowing.core.processing
 import akka.actor.{ Actor, ActorRef }
 import akka.event.EventHandler.{ debug, info, warning, error }
 import com.eaio.uuid.UUID
-import scala.collection.mutable.Map
-import scala.collection.mutable.Set
+import scala.collection.mutable.{Set,Map}
 import de.lmu.ifi.dbs.knowing.core.events._
-import TSender._
+import de.lmu.ifi.dbs.knowing.core.model.IEdge.DEFAULT_PORT
 import weka.core.Instances
-import de.lmu.ifi.dbs.knowing.core.model.IEdge
+
 
 /**
  * <p>This actor is able to send Events to registered actors</p>
@@ -101,26 +100,24 @@ trait TSender { this: Actor =>
 	 * @param event - Event to send
 	 * @param output - the output the event comes from - can be null (send to DEFAULT_PORT)
 	 */
-	protected def sendEvent(event: Event, output: String) {
-		(event, output) match {
-			//Handle Results explicite
-			case (Results(results, _), null) => sendResults(results, Some(DEFAULT_PORT))
-			case (Results(results, _), out) => sendResults(results, Some(out))
+	protected def sendEvent(event: Event, output: String) = (event, output) match {
+		//Handle Results explicit
+		case (Results(results, _, q), null) => sendResults(results, Some(DEFAULT_PORT), q)
+		case (Results(results, _, q), out) => sendResults(results, Some(out), q)
 
-			//Send to DEFAULT_PORT
-			case (_, null) => listeners.get(DEFAULT_PORT) match {
-				case Some(e) => e foreach { case (_, (listener, _)) => sendToActor(listener, event) }
-				case None => warning(this, "Event " + event + " could not be send")
-			}
-			//Send to specified port
-			case (_, out) => listeners.get(out) match {
-				case Some(e) => e foreach { case (_, (listener, _)) => sendToActor(listener, event) }
-				case None => warning(this, "Event " + event + " could not be send")
-			}
+		//Send to DEFAULT_PORT
+		case (_, null) => listeners.get(DEFAULT_PORT) match {
+			case Some(e) => e foreach { case (_, (listener, _)) => sendToActor(listener, event) }
+			case None => warning(this, "Event " + event + " could not be send")
+		}
+		//Send to specified port
+		case (_, out) => listeners.get(out) match {
+			case Some(e) => e foreach { case (_, (listener, _)) => sendToActor(listener, event) }
+			case None => warning(this, "Event " + event + " could not be send")
 		}
 	}
 
-	protected def sendResults(results: Instances, output: Option[String] = None) {
+	protected def sendResults(results: Instances, output: Option[String] = None, query: Option[Instances] = None) {
 		//Make instances immutable
 		val Immutable = classOf[ImmutableInstances] //to pattern match on
 		val immutableInstances = results.getClass match {
@@ -145,14 +142,11 @@ trait TSender { this: Actor =>
 	}
 
 	protected def sendToActor(actor: ActorRef, event: Event) {
+		debug(this, "SEND " + event + " to " + actor.getActorClassName)
 		if (actor.isRunning)
 			actor ! event
 	}
 
-}
-
-object TSender {
-	val DEFAULT_PORT = IEdge.DEFAULT_PORT
 }
 
  

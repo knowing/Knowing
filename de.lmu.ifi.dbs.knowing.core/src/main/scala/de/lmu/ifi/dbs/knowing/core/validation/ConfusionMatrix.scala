@@ -42,24 +42,25 @@ class ConfusionMatrix extends TProcessor {
 	//properties
 	private var percentage = PERCENTAGE_ABSOLUTE
 
-	def build(instances: Instances) {
-		init(instances)
-		ensureOrder(instances)
+	def process(instances: Instances) = {
+		case (_, _) =>
+			init(instances)
+			ensureOrder(instances)
 
-		percentage match {
-			case PERCENTAGE_DISTRIBUTION => distributedMatrix(instances)
-			case PERCENTAGE_ABSOLUTE => absoluteMatrix(instances)
-		}
+			percentage match {
+				case PERCENTAGE_DISTRIBUTION => distributedMatrix(instances)
+				case PERCENTAGE_ABSOLUTE => absoluteMatrix(instances)
+			}
 
-		merge()
+			merge()
 
-		if (unclassified.size > 0)
-			warning(this, "Unclassified: " + unclassified.size)
+			if (unclassified.size > 0)
+				warning(this, "Unclassified: " + unclassified.size)
 
-		sendResults(confusionMatrix)
-		sendResults(unclassified, Some(UNCLASSIFIED_PORT))
+			sendResults(confusionMatrix)
+			sendResults(unclassified, Some(UNCLASSIFIED_PORT))
 
-		clean()
+			clean()
 	}
 
 	private def init(instances: Instances) {
@@ -162,9 +163,7 @@ class ConfusionMatrix extends TProcessor {
 		classLabels = Array[String]()
 	}
 
-	def query(query: Instance): Instances = throw new UnsupportedOperationException("query(..) on ConfusionMatrix is not defined")
-
-	def result(result: Instances, query: Instance) = throw new UnsupportedOperationException("result(..) on ConfusionMatrix is not defined")
+	def query(query: Instances): Instances = throw new UnsupportedOperationException("query(..) on ConfusionMatrix is not defined")
 
 	def configure(properties: Properties) = {
 		percentage = properties.getProperty(PERCENTAGE, PERCENTAGE_ABSOLUTE)

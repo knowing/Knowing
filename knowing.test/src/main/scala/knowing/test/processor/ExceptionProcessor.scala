@@ -7,22 +7,18 @@ import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
 
 class ExceptionProcessor extends TProcessor {
 
-  def build(instances: Instances) = {
-    throwException(new Exception("BUILDING"), "no details")
-  }
+	def process(instances: Instances) = {
+		case _ => throwException(new Exception("BUILDING"), "no details")
+	}
 
-  def query(query: Instance): Instances = {
-    throwException(new Exception("QUERY"), "no details")
-    null
-  }
+	def query(query: Instances): Instances = {
+		throwException(new Exception("QUERY"), "no details")
+		null
+	}
 
-  def result(result: Instances, query: Instance) = {
-    throwException(new Exception("RESULT"), "no details")
-  }
-
-  def configure(properties: Properties): Unit = {
-    throwException(new Exception("CONFIGURE"), "no details")
-  }
+	def configure(properties: Properties): Unit = {
+		throwException(new Exception("CONFIGURE"), "no details")
+	}
 
 }
 

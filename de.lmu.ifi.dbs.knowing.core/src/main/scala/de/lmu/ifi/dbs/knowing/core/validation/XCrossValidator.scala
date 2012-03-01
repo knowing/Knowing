@@ -14,6 +14,7 @@ import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
+import de.lmu.ifi.dbs.knowing.core.processing.IProcessorPorts.{ TRAIN, TEST }
 import de.lmu.ifi.dbs.knowing.core.factory.{ TFactory, ProcessorFactory }
 import de.lmu.ifi.dbs.knowing.core.util.{ OSGIUtil, ResultsUtil }
 import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
@@ -50,24 +51,27 @@ class XCrossValidator(val factoryDirectory: Option[IFactoryDirectory] = None) ex
 		case status: Status => //statusChanged(status) handle it!
 	}
 
-	def build(instances: Instances) {
-		//Init classlabels
-		val index = guessAndSetClassLabel(instances)
-		index match {
-			case -1 =>
-				classLabels = Array()
-				warning(this, "No classLabel found in " + instances.relationName)
-			case x => classLabels = classLables(instances.attribute(x))
-		}
-		//Create crossValidator actors for each fold
-		val crossValidators = initCrossValidators(folds)
-		debug(this, "Fold-Actors created!")
-		statusChanged(Progress("validation", 0, folds))
-		startCrossValidation(crossValidators, instances)
-		debug(this, "Fold-Actors configured and training started")
+	def process(instances: Instances) = {
+		case (None, None) | (Some(DEFAULT_PORT), None) =>
+			//Init classlabels
+			val index = guessAndSetClassLabel(instances)
+			index match {
+				case -1 =>
+					classLabels = Array()
+					warning(this, "No classLabel found in " + instances.relationName)
+				case x => classLabels = classLables(instances.attribute(x))
+			}
+			//Create crossValidator actors for each fold
+			val crossValidators = initCrossValidators(folds)
+			debug(this, "Fold-Actors created!")
+			statusChanged(Progress("validation", 0, folds))
+			startCrossValidation(crossValidators, instances)
+			debug(this, "Fold-Actors configured and training started")
+		case (None, Some(query)) => result(instances,query)
+		case (Some(DEFAULT_PORT), Some(query)) => result(instances,query)
 	}
 
-	def result(result: Instances, query: Instance) {
+	def result(result: Instances, query: Instances) {
 		//First run - init header and relationalAttribute
 		if (resultHeader == null) {
 			resultHeader = new Instances(result, result.size * folds)
@@ -104,8 +108,8 @@ class XCrossValidator(val factoryDirectory: Option[IFactoryDirectory] = None) ex
 			self startLink crossValidators(j) //Start actors and link yourself as supervisor
 			crossValidators(j) ! Register(self, None) //Register so results/status events are send to us
 			crossValidators(j) ! Configure(configureProperties(validator_properties, j)) //Configure actor
-			crossValidators(j) ! Results(instances.trainCV(folds, j)) //Send the train set
-			crossValidators(j) ! Queries(instances.testCV(folds, j)) //Query the trained crossValidator instance
+			crossValidators(j) ! Results(instances.trainCV(folds, j), Some(TRAIN)) //Send the train set
+			crossValidators(j) ! Results(instances.testCV(folds, j), Some(TEST)) //Query the trained crossValidator instance
 		}
 	}
 
@@ -166,7 +170,7 @@ class XCrossValidator(val factoryDirectory: Option[IFactoryDirectory] = None) ex
 		returns
 	}
 
-	def query(query: Instance): Instances = { null }
+	def query(query: Instances): Instances = throw new UnsupportedOperationException("XCrossValidator accepts Results() on port " + TRAIN + " and " + TEST)
 
 	def getClassLabels(): Array[String] = classLabels
 

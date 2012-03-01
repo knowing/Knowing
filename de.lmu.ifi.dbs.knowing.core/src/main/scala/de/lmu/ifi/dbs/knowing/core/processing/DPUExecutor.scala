@@ -463,11 +463,8 @@ class LoggableDispatcher(name: String, supervisor: DPUExecutor) extends Executor
 	 * Creates the content which should be logged.
 	 */
 	private def logEvent(src: String, trg: String, msg: Event) = msg match {
-		case Results(content, port) => log(src + ":" + port.getOrElse(""), trg, content, EventType.RESULTS)
-		case QueryResults(content, _) => log(src, trg, content, EventType.QUERYRESULTS)
-		case QueriesResults(c) => log(src, trg, c.values.head, EventType.QUERIESRESULTS)
-		case Query(q) => log(src, trg, q.dataset, EventType.QUERY)
-		case Queries(content, _) => log(src, trg, content, EventType.QUERIES)
+		case Results(content, port, q) => log(src + ":" + port.getOrElse(""), trg, content, EventType.RESULTS)
+		case Query(q) => log(src, trg, q, EventType.QUERY)
 		case msg: Status => log(src, trg, ResultsUtil.emptyResult, EventType.STATUS)
 		case msg: UIEvent => log(src, trg, ResultsUtil.emptyResult, EventType.UIEVENT)
 		case _ => log(src, trg, ResultsUtil.emptyResult, EventType.EVENT)

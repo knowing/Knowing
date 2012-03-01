@@ -70,10 +70,6 @@ class AddClassAttribute extends TFilter with TSerializable {
 		ret
 	}
 
-	def result(result: Instances, query: Instance) {
-
-	}
-
 	def configure(properties: Properties) {
 		classes.length match {
 			case 0 => classes = properties.getProperty(PROP_CLASSES, "").split(",")

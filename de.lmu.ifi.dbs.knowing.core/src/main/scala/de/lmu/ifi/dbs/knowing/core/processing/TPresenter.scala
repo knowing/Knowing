@@ -28,7 +28,7 @@ trait TPresenter[T] extends TProcessor {
 
 	/** Name of this component */
 	val name: String
-
+	
 	override final protected def customReceive: Receive = presenterReceive orElse defaultReceive
 
 	protected def presenterReceive: Receive = defaultReceive
@@ -46,7 +46,6 @@ trait TPresenter[T] extends TProcessor {
 
 			if (self.getSender.isDefined) self reply Ready()
 			statusChanged(Ready())
-		case QueryResults(instances, _) => buildPresentation(instances)
 	}
 
 	/**
@@ -68,13 +67,16 @@ trait TPresenter[T] extends TProcessor {
 	/**
 	 *
 	 */
-	def build(instances: Instances) {
-		statusChanged(Running())
-		sync(getParent) {
-			buildPresentation(instances)
-		}
-		statusChanged(UpdateUI())
-		statusChanged(Ready())
+	def process(instances: Instances) = {
+		//(None, _) | (Some(DEFAULT_PORT), _)
+		case _ =>
+			debug(this, "RECEIVE + " + instances)
+			statusChanged(Running())
+			sync(getParent) {
+				buildPresentation(instances)
+			}
+			statusChanged(UpdateUI())
+			statusChanged(Ready())
 	}
 
 	/**
@@ -104,8 +106,7 @@ trait TPresenter[T] extends TProcessor {
 	def getParent(): T
 
 	/* == Doesn't needed by TPresenter == */
-	def query(instance: Instance): Instances = ResultsUtil.emptyResult
-
-	def result(results: Instances, query: Instance) = {}
+	@throws(classOf[KnowingException])
+	def query(query: Instances): Instances = throw new UnsupportedOperationException("Presenter doesn't support queries")
 
 }

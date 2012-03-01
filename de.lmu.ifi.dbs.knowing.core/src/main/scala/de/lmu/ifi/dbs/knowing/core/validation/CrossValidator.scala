@@ -15,6 +15,7 @@ import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
+import de.lmu.ifi.dbs.knowing.core.processing.IProcessorPorts.{ TRAIN, TEST }
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import de.lmu.ifi.dbs.knowing.core.util.OSGIUtil.getFactoryDirectory
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
@@ -54,93 +55,88 @@ class CrossValidator(val factoryDirectory: Option[IFactoryDirectory]) extends TP
 	private var queriesFiltered = false
 
 	/** Instances to train classifier with filtered train-data */
-	private var numInstancesTrain = 0
-	private var currentInstTrain = 0
-	private var filteredTrainData: Instances = _
-
-	private var numInstancesTest = 0
-	private var currentInstTest = 0
-	private var filteredTestData: Instances = _
-
+	private var testInstances: Instances = _
+	
 	private var first_run = true
 
 	override def customReceive = {
-		case Query(q) =>
-			numInstancesTest = 1
-			statusChanged(Running())
-			query(q)
 		case status: Status => statusChanged(status)
 	}
 
-	def build(instances: Instances) {
-		//    debug(this, "Build CrossValidator " + instances.relationName)
-		val index = guessAndSetClassLabel(instances)
-		index match {
-			case -1 =>
-				classLabels = Array()
-				warning(this, "No classLabel found in " + instances.relationName)
-			case x =>
-				classLabels = classLables(instances.attribute(x))
-				nonZeroValues = new Array(classLabels.length)
-				for (i <- 0 until classLabels.length) nonZeroValues(i) = new Array[Int](classLabels.length).map(_ => 1)
-		}
-		//Clean up
-		(classifier, filter) match {
-			case (Some(c), Some(f)) => c stop; f stop
-			case (Some(c), None) => c stop
-			case (None, None) =>
-		}
-		//Init filter if available
-		filterFactory match {
-			case null => filterTrained = true
-			case f =>
-				filter = Some(filterFactory.getInstance)
-				filter.get.dispatcher = self.dispatcher
-				self startLink filter.get
-				filter.get ! Configure(classifierProperties)
-		}
+	def process(instances: Instances) = {
+		case (None, None) | (Some(DEFAULT_PORT), None) | (Some(TRAIN), None) =>
+			//    debug(this, "Build CrossValidator " + instances.relationName)
+			val index = guessAndSetClassLabel(instances)
+			index match {
+				case -1 =>
+					classLabels = Array()
+					warning(this, "No classLabel found in " + instances.relationName)
+				case x =>
+					classLabels = classLables(instances.attribute(x))
+					nonZeroValues = new Array(classLabels.length)
+					for (i <- 0 until classLabels.length) nonZeroValues(i) = new Array[Int](classLabels.length).map(_ => 1)
+			}
+			//Clean up
+			(classifier, filter) match {
+				case (Some(c), Some(f)) => c stop; f stop
+				case (Some(c), None) => c stop
+				case (None, None) =>
+			}
+			//Init filter if available
+			filterFactory match {
+				case null => filterTrained = true
+				case f =>
+					filter = Some(filterFactory.getInstance)
+					filter.get.dispatcher = self.dispatcher
+					self startLink filter.get
+					filter.get ! Configure(classifierProperties)
+			}
 
-		//Init classifier
-		classifier = Some(classifierFactory.getInstance)
-		classifier.get.dispatcher = self.dispatcher
-		self startLink classifier.get
-		classifier.get ! Configure(classifierProperties)
+			//Init classifier
+			classifier = Some(classifierFactory.getInstance)
+			classifier.get.dispatcher = self.dispatcher
+			self startLink classifier.get
+			classifier.get ! Configure(classifierProperties)
 
-		//Start with filter or directly the classifier
-		filterTrained match {
-			case true =>
-				//No filter, classifier gets trained directly
-				debug(this, "Build CrossValidator[unfiltered] with " + instances.relationName)
-				classifierTrained = true
-				queriesFiltered = true
-				startValidation(instances, classifier.get)
-			case false =>
-				debug(this, "Build CrossValidator[filtered] with" + instances.relationName)
-				startValidation(instances, filter.get, true)
-		}
+			//Start with filter or directly the classifier
+			filterTrained match {
+				case true =>
+					//No filter, classifier gets trained directly
+					debug(this, "Build CrossValidator[unfiltered] with " + instances.relationName)
+					classifierTrained = true
+					queriesFiltered = true
+					startValidation(instances, classifier.get)
+				case false =>
+					debug(this, "Build CrossValidator[filtered] with" + instances.relationName)
+					startValidation(instances, filter.get, true)
+			}
+
+		case (Some(TEST), _) => 
+			testInstances = instances
+			query(instances)
+
+		case (None, Some(q)) => result(instances, q)
+
+		case (Some(DEFAULT_PORT), Some(q)) => result(instances, q)
 	}
 
 	/**
 	 * Standalone = true => Splits instances, train and test actor
 	 * Standalone = false => Trains actor with instances
 	 */
-	private def startValidation(instances: Instances, processor: ActorRef, filtered: Boolean = false) {
-		standalone match {
-			case true =>
-				val train = instances.trainCV(folds, fold)
-				//Train filter
-				processor ! Results(train)
-				//Filter training data with trained filter
-				if (filtered) { processor ! Queries(train) }
-				val testSet = instances.testCV(folds, fold)
-				numInstancesTest = testSet.numInstances
-				processor ! Queries(testSet)
-			case false =>
-				processor ! Results(instances)
-				numInstancesTrain = instances.numInstances
-				//Filter training data with trained filter
-				if (filtered) { processor ! Queries(instances) }
-		}
+	private def startValidation(instances: Instances, processor: ActorRef, filtered: Boolean = false) = standalone match {
+		case true =>
+			val train = instances.trainCV(folds, fold)
+			//Train filter
+			processor ! Results(train)
+			//Filter training data with trained filter
+			if (filtered) { processor ! Query(train) }
+			val testSet = instances.testCV(folds, fold)
+			processor ! Query(testSet)
+		case false =>
+			processor ! Results(instances)
+			//Filter training data with trained filter
+			if (filtered) { processor ! Query(instances) }
 	}
 
 	/**
@@ -164,79 +160,29 @@ class CrossValidator(val factoryDirectory: Option[IFactoryDirectory]) extends TP
 	 *
 	 *
 	 */
-	def result(result: Instances, query: Instance) {
+	def result(result: Instances, query: Instances) {
 
-		val CurrentTrain = currentInstTrain + 1
-		val CurrentTest = currentInstTest + 1
 		(classifierTrained, queriesFiltered) match {
 
-			// Nothing trained or filtered yet
-			case (false, false) => numInstancesTrain match {
-				case CurrentTrain =>
-					classifier.get ! Results(filteredTrainData)
-					filterTrained = true
-					classifierTrained = true
-					numInstancesTrain = cacheSize
-					processStoredQueries
-				case _ =>
-					// If training data isn't completely filtered yet
-					// Create if not existed
-					if (filteredTrainData == null) filteredTrainData = new Instances(result, numInstancesTrain)
-
-					val enum = result.enumerateInstances
-					while (enum.hasMoreElements) filteredTrainData.add(enum.nextElement.asInstanceOf[Instance])
-					currentInstTrain += 1
-				// If training data isn't completely filtered yet
-			}
+			// Nothing trained or filtered yet. Must be filtered results.
+			case (false, false) =>
+				classifier.get ! Results(result)
+				filterTrained = true
+				classifierTrained = true
+				processStoredQueries
 
 			// Classifier was trained with filtered data, filter test data
-			case (true, false) => numInstancesTest match {
-				case CurrentTest =>
-					queriesFiltered = true
-					currentInstTest = 0
-					numInstancesTest = filteredTestData.numInstances
-					classifier.get ! Queries(filteredTestData)
-				case _ =>
-					// If testing data isn't completely filtered yet
-					// Create if not existed
-					if (filteredTestData == null) filteredTestData = new Instances(result, numInstancesTest)
-
-					val enum = result.enumerateInstances
-					while (enum.hasMoreElements) filteredTestData.add(enum.nextElement.asInstanceOf[Instance])
-					currentInstTest += 1
-			}
+			case (true, false) =>
+				queriesFiltered = true
+				classifier.get ! Query(result)
 
 			// Classifier trained and test data filtered
 			case (true, true) =>
-				resultInstances += (query -> result)
-
-				currentInstTest += 1
 				// Send Results if currentInst processed is the total numInstances
-				if (currentInstTest == numInstancesTest) {
-					val header = new Instances(query.dataset, numInstancesTest)
-					val results = ResultsUtil.appendClassDistribution(header, resultInstances.toMap)
-					sendEvent(QueryResults(results, query))
-					numInstancesTest = 0
-					currentInstTest = 0
-					resultInstances = MutableMap()
-					statusChanged(Ready())
-				}
+				sendEvent(Results(result, None, Some(testInstances)))
+				statusChanged(Ready())
 		}
 
-	}
-
-	/**
-	 * <p>Override queries, because query is forwarded to classifier</p>
-	 *
-	 * @param queries - queries forwared to classifier
-	 * @return always Nil (empty list)
-	 */
-	override def queries(queries: Instances): Map[Instance, Instances] = {
-		statusChanged(Running())
-		numInstancesTest = queries.numInstances
-		val enum = queries.enumerateInstances
-		while (enum.hasMoreElements) query(enum.nextElement.asInstanceOf[Instance])
-		Map()
 	}
 
 	/**
@@ -245,7 +191,7 @@ class CrossValidator(val factoryDirectory: Option[IFactoryDirectory]) extends TP
 	 * @param query - forwarded to classifier
 	 * @returns Instances - ConfusionMatrix
 	 */
-	def query(query: Instance): Instances = {
+	def query(query: Instances): Instances = {
 		(filter, filterTrained, classifier, classifierTrained, queriesFiltered) match {
 			case (_, _, None, _, _) => warning(this, "No classifier found")
 			//cache if filtered isn't trained yet
@@ -271,30 +217,22 @@ class CrossValidator(val factoryDirectory: Option[IFactoryDirectory]) extends TP
 				case Some(_) => query(e._2.query)
 			}
 		}
-		while (queriesQueue.nonEmpty) {
-			val e = queriesQueue.dequeue
-			e._1 match {
-				case None => //nothing
-				//TODO Id must be send 
-				case Some(_) => queries(e._2.queries)
-			}
-		}
 	}
 
-	private def createHeader(query: Instance, result: Instances): Instances = {
-		//Generate AttributeList
-		val attr = new ArrayList[Attribute](query.numAttributes + result.numAttributes)
-		val qAttr = query.enumerateAttributes
-		while (qAttr.hasMoreElements) {
-			attr.add(qAttr.nextElement.asInstanceOf[Attribute])
-		}
-
-		val ret = new Instances(ResultsUtil.NAME_CLASS_DISTRIBUTION, attr, numInstancesTest)
-		debug(this, "Attributes: " + query.numAttributes + " / " + result.numAttributes)
-		debug(this, "Header: " + ret)
-		guessAndSetClassLabel(ret)
-		ret
-	}
+//	private def createHeader(query: Instance, result: Instances): Instances = {
+//		//Generate AttributeList
+//		val attr = new ArrayList[Attribute](query.numAttributes + result.numAttributes)
+//		val qAttr = query.enumerateAttributes
+//		while (qAttr.hasMoreElements) {
+//			attr.add(qAttr.nextElement.asInstanceOf[Attribute])
+//		}
+//
+//		val ret = new Instances(ResultsUtil.NAME_CLASS_DISTRIBUTION, attr, numInstancesTest)
+//		debug(this, "Attributes: " + query.numAttributes + " / " + result.numAttributes)
+//		debug(this, "Header: " + ret)
+//		guessAndSetClassLabel(ret)
+//		ret
+//	}
 
 	def getClassLabels(): Array[String] = classLabels
 
@@ -340,12 +278,6 @@ class CrossValidator(val factoryDirectory: Option[IFactoryDirectory]) extends TP
 			}
 		}
 		index
-	}
-
-	private def cacheSize: Int = {
-		val size = queriesQueue.foldLeft(0)((size, q) => size + q._2.queries.numInstances)
-		val completeSize = size + queryQueue.size
-		completeSize
 	}
 
 }

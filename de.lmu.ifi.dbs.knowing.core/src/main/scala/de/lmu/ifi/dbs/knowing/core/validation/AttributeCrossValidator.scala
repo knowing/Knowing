@@ -30,48 +30,51 @@ class AttributeCrossValidator extends XCrossValidator {
 	import AttributeCrossValidator._
 	private var splitAttr = ResultsUtil.ATTRIBUTE_SOURCE
 
-	override def build(instances: Instances) {
-		//Init classlabels
-		val index = guessAndSetClassLabel(instances)
-		index match {
-			case -1 =>
-				classLabels = Array()
-				warning(this, "No classLabel found in " + instances.relationName)
-			case x => classLabels = classLables(instances.attribute(x))
-		}
-		val instMaps = ResultsUtil.splitInstanceByAttribute(instances, splitAttr, false)
+	override def process(instances: Instances) = {
+		case (None, None) | (Some(DEFAULT_PORT), None) =>
+			//Init classlabels
+			val index = guessAndSetClassLabel(instances)
+			index match {
+				case -1 =>
+					classLabels = Array()
+					warning(this, "No classLabel found in " + instances.relationName)
+				case x => classLabels = classLables(instances.attribute(x))
+			}
+			val instMaps = ResultsUtil.splitInstanceByAttribute(instances, splitAttr, false)
 
-		//Map test-data -> train-data 
-		val instMap = for (e <- instMaps) yield instMaps.partition(e2 => e._1.equals(e2._1))
-		folds = instMap.size
-		debug(this, "Fold-Actors created!")
-		statusChanged(Progress("validation", 0, folds))
-		val crossValidators = initCrossValidators(folds)
-		var i = 0
-		instMap foreach {
-			case (test, train) =>
-				//Debug purpose
-				val sb = new StringBuffer
-				sb.append("test[")
-				sb.append(test.head._1)
-				sb.append("] -> train ")
-				train foreach (elem => sb.append(elem._1 + ","))
-				debug(this, sb.toString)
+			//Map test-data -> train-data 
+			val instMap = for (e <- instMaps) yield instMaps.partition(e2 => e._1.equals(e2._1))
+			folds = instMap.size
+			debug(this, "Fold-Actors created!")
+			statusChanged(Progress("validation", 0, folds))
+			val crossValidators = initCrossValidators(folds)
+			var i = 0
+			instMap foreach {
+				case (test, train) =>
+					//Debug purpose
+					val sb = new StringBuffer
+					sb.append("test[")
+					sb.append(test.head._1)
+					sb.append("] -> train ")
+					train foreach (elem => sb.append(elem._1 + ","))
+					debug(this, sb.toString)
 
-				val testData = test.head._2
-				val trainData = ResultsUtil.appendInstances(new Instances(testData, 0), train map (_._2) toList)
-				guessAndSetClassLabel(testData)
-				guessAndSetClassLabel(trainData)
-				//Logic
-				self startLink crossValidators(i)
-				crossValidators(i) ! Register(self, None)
-				crossValidators(i) ! Configure(configureProperties(validator_properties, i))
-				crossValidators(i) ! Results(trainData)
-				crossValidators(i) ! Queries(testData)
-				i += 1
-		}
+					val testData = test.head._2
+					val trainData = ResultsUtil.appendInstances(new Instances(testData, 0), train map (_._2) toList)
+					guessAndSetClassLabel(testData)
+					guessAndSetClassLabel(trainData)
+					//Logic
+					self startLink crossValidators(i)
+					crossValidators(i) ! Register(self, None)
+					crossValidators(i) ! Configure(configureProperties(validator_properties, i))
+					crossValidators(i) ! Results(trainData)
+					crossValidators(i) ! Query(testData)
+					i += 1
+			}
 
-		debug(this, "Fold-Actors configured and training started")
+			debug(this, "Fold-Actors configured and training started")
+		case (None, Some(query)) => result(instances, query)
+		case (Some(DEFAULT_PORT), Some(query)) => result(instances, query)
 	}
 
 	override def configure(properties: Properties) {

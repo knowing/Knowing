@@ -65,7 +65,9 @@ trait TSaver extends TProcessor with TStreamResolver {
 	/**
 	 * <p>Just delegating to write(instances)</p>
 	 */
-	def build(instances: Instances) = write(instances)
+	def process(instances: Instances) = {
+		case _ => write(instances)
+	}
 
 	/* === Getter Methods === */
 	def url: String = _url
@@ -79,9 +81,8 @@ trait TSaver extends TProcessor with TStreamResolver {
 	def isIncremental = _mode equals (WRITE_MODE_INCREMENTAL)
 
 	/* == Doesn't needed by TSaver == */
-	def query(instance: Instance): Instances = ResultsUtil.emptyResult
+	def query(instance: Instances): Instances = throw new UnsupportedOperationException("Saver implementation doesn't support query")
 
-	def result(results: Instances, query: Instance) = {}
 }
 
 object TSaver {
