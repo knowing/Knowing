@@ -134,15 +134,15 @@ trait TSender { this: Actor =>
 			case Some(outs) => outs foreach {
 				case (_, (listener, inputs)) =>
 					inputs foreach {
-						case DEFAULT_PORT => sendToActor(listener, new Results(immutableInstances, None))
-						case in => sendToActor(listener, new Results(immutableInstances, Some(in)))
+						case DEFAULT_PORT => sendToActor(listener, new Results(immutableInstances, None, query))
+						case in => sendToActor(listener, new Results(immutableInstances, Some(in), query))
 					}
 			}
 		}
 	}
 
 	protected def sendToActor(actor: ActorRef, event: Event) {
-		debug(this, "SEND " + event + " to " + actor.getActorClassName)
+//		debug(this, "SEND " + event + " to " + actor.getActorClassName)
 		if (actor.isRunning)
 			actor ! event
 	}

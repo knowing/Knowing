@@ -29,7 +29,7 @@ import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
  * Single CrossValidation step
  *
  * @author Nepomuk Seiler
- * @version 0.2
+ * @version 0.3
  * @since 13.05.2011
  *
  */
@@ -56,7 +56,7 @@ class CrossValidator(val factoryDirectory: Option[IFactoryDirectory]) extends TP
 
 	/** Instances to train classifier with filtered train-data */
 	private var testInstances: Instances = _
-	
+
 	private var first_run = true
 
 	override def customReceive = {
@@ -65,7 +65,6 @@ class CrossValidator(val factoryDirectory: Option[IFactoryDirectory]) extends TP
 
 	def process(instances: Instances) = {
 		case (None, None) | (Some(DEFAULT_PORT), None) | (Some(TRAIN), None) =>
-			//    debug(this, "Build CrossValidator " + instances.relationName)
 			val index = guessAndSetClassLabel(instances)
 			index match {
 				case -1 =>
@@ -102,21 +101,22 @@ class CrossValidator(val factoryDirectory: Option[IFactoryDirectory]) extends TP
 			filterTrained match {
 				case true =>
 					//No filter, classifier gets trained directly
-					debug(this, "Build CrossValidator[unfiltered] with " + instances.relationName)
 					classifierTrained = true
 					queriesFiltered = true
 					startValidation(instances, classifier.get)
 				case false =>
-					debug(this, "Build CrossValidator[filtered] with" + instances.relationName)
 					startValidation(instances, filter.get, true)
 			}
 
-		case (Some(TEST), _) => 
+		/** Handle test instances*/
+		case (Some(TEST), _) =>
 			testInstances = instances
 			query(instances)
 
+		/** Results from Classifier/Filter are back */
 		case (None, Some(q)) => result(instances, q)
 
+		/** Results from Classifier/Filter are back */
 		case (Some(DEFAULT_PORT), Some(q)) => result(instances, q)
 	}
 
@@ -218,21 +218,6 @@ class CrossValidator(val factoryDirectory: Option[IFactoryDirectory]) extends TP
 			}
 		}
 	}
-
-//	private def createHeader(query: Instance, result: Instances): Instances = {
-//		//Generate AttributeList
-//		val attr = new ArrayList[Attribute](query.numAttributes + result.numAttributes)
-//		val qAttr = query.enumerateAttributes
-//		while (qAttr.hasMoreElements) {
-//			attr.add(qAttr.nextElement.asInstanceOf[Attribute])
-//		}
-//
-//		val ret = new Instances(ResultsUtil.NAME_CLASS_DISTRIBUTION, attr, numInstancesTest)
-//		debug(this, "Attributes: " + query.numAttributes + " / " + result.numAttributes)
-//		debug(this, "Header: " + ret)
-//		guessAndSetClassLabel(ret)
-//		ret
-//	}
 
 	def getClassLabels(): Array[String] = classLabels
 
