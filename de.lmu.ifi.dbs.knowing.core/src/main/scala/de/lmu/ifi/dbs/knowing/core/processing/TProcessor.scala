@@ -12,17 +12,18 @@ package de.lmu.ifi.dbs.knowing.core.processing
 
 import java.util.Properties
 import scala.collection.JavaConversions._
-import scala.collection.mutable.Queue
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.{ListBuffer,Queue}
 import akka.actor.Actor
+import akka.actor.ActorRef
 import akka.event.EventHandler.{ debug, info, warning, error }
 import akka.config.Supervision.Temporary
-import akka.actor.ActorRef
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.core.model.IEdge
+import de.lmu.ifi.dbs.knowing.core.results.ResultsType
 import weka.core.{ Attribute, Instance, Instances }
 import scala.collection.mutable.HashMap
+
 
 /**
  * <p>An IProcessor encapsulates a data processing algorithm.
@@ -270,7 +271,7 @@ object TProcessor {
 	 */
 	def guessClassLabel(dataset: Instances): Int = {
 		//TODO TProcessor.guesClassLabel -> guess class labels in relational datasets
-		val classAttribute = dataset.attribute("class")
+		val classAttribute = dataset.attribute(ResultsType.ATTRIBUTE_CLASS)
 		if (classAttribute != null)
 			return classAttribute.index
 

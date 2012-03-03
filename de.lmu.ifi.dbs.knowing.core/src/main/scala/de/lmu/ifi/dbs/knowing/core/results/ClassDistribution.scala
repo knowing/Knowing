@@ -57,15 +57,18 @@ object ClassDistribution extends ResultsType {
 	}
 
 	/**
-	 * Generates attributes for given classes input
+	 * Generates attributes for given classes input.
+	 * Ordering is preserved. Last attribute is the (actual)
+	 * class attribute.
+	 *
 	 * @param classes
 	 */
 	def attributes(classes: List[String]): ArrayList[Attribute] = {
 		val attributes = new ArrayList[Attribute]
-		attributes.add(new Attribute(ATTRIBUTE_CLASS, classes))
 		for (clazz <- classes) {
 			attributes.add(new Attribute(ATTRIBUTE_CLASS_PREFIX + clazz))
 		}
+		attributes.add(new Attribute(ATTRIBUTE_CLASS, classes))
 		attributes
 	}
 
@@ -99,8 +102,7 @@ object ClassDistribution extends ResultsType {
 				case p if p <= probability => probability
 			}
 		}
-		//-1, because first attribute is class attribute
-		attrIndex-1
+		attrIndex
 	}
 
 	/**
@@ -138,10 +140,10 @@ class ClassDistributionBuilder(classes: List[String], size: Int = 0) {
 		if (instances.numAttributes != distribution.length + 1)
 			throw new IllegalArgumentException("ClassDistribution-Attributes length must be equal to distribution array. " + instances.numAttributes + " != " + distribution.length)
 		val newDist = new Array[Double](distribution.length + 1)
-		newDist(0) = classValueIndex // Missing class
-		for (i <- 1 until newDist.length)
-			newDist(i) = distribution(i - 1)
+		for (i <- 0 until distribution.length)
+			newDist(i) = distribution(i)
 
+		newDist(newDist.length - 1) = classValueIndex // Missing class
 		instances.add(new DenseInstance(1, newDist))
 		this
 	}
