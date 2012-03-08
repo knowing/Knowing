@@ -58,9 +58,7 @@ trait TClassifier extends TProcessor with TSerializable {
 	 */
 	override def start = inputStream() match {
 		case None => debug(this, "Nothing to deserialize in " + getClass.getSimpleName)
-		case Some(in) =>
-			deserialize(in)
-			isBuild = true
+		case Some(in) => isBuild = deserialize(in)
 	}
 
 	/**
@@ -84,8 +82,9 @@ trait TClassifier extends TProcessor with TSerializable {
 
 	/**
 	 * @param in -> never null nor invalid
+	 * @return if serialization was successfull
 	 */
-	def deserialize(in: InputStream) = {}
+	def deserialize(in: InputStream): Boolean = false
 
 	/**
 	 * <p>This method build the internal model which is used<br>

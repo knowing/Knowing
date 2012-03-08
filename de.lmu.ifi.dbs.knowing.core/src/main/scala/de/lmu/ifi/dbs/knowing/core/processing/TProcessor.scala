@@ -83,7 +83,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 			statusChanged(Running())
 			try {
 				process(inst).apply(port, queries)
-				isBuild = true
+				isBuild = true	//TODO isBuild = true on processing results. Dangerous!
 				processStoredQueries
 				self.sender match {
 					case Some(s) => s ! Finished()
@@ -120,7 +120,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 		configure(properties)
 	}
 
-	def start = debug(this, "Running " + self.getActorClassName)
+	def start() = debug(this, "Running " + self.getActorClassName)
 
 	@throws(classOf[KnowingException])
 	def process(instances: Instances): ResultsContext
