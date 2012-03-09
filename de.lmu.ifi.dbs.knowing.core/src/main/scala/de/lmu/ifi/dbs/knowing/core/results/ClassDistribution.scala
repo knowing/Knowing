@@ -1,9 +1,10 @@
 package de.lmu.ifi.dbs.knowing.core.results
 
 import java.util.{ ArrayList }
-import weka.core.{ Instances, Attribute, DenseInstance }
+import weka.core.{ Instances, Attribute, DenseInstance, Utils }
 import scala.collection.JavaConversions._
-import weka.core.Utils
+import de.lmu.ifi.dbs.knowing.core.events.KnowingException
+import de.lmu.ifi.dbs.knowing.core.processing.TProcessor.guessAndSetClassLabel
 
 /**
  * <p>Represents a class distribution format.</p>
@@ -115,6 +116,50 @@ object ClassDistribution extends ResultsType {
 				&& !classDistribution.attribute(i).name.equals(ATTRIBUTE_CLASS))
 		) yield classDistribution.attribute(i).name.substring(ATTRIBUTE_CLASS_PREFIX.length)
 		classes.toArray
+	}
+
+	/**
+	 * Appends class+<classlabel> attributes with distribution
+	 * to the given query Instances parameter.
+	 *
+	 * @param query - to which the results should be appended
+	 * @param distribution - appended to query instances
+	 * @return new Instances object with (query+distribution)
+	 */
+	def appendClassDistribution(query: Instances, distribution: Instances, setClass: Boolean = true): Instances = {
+		if (query.numInstances != distribution.numInstances)
+			throw new KnowingException("Query Instances and distribution Instances have different number of instances: "
+				+ query.numInstances + " != " + distribution.numInstances, null)
+
+		val returns = new Instances(query, 0)
+		val classIndex = guessAndSetClassLabel(returns) match {
+			case -1 => throw new KnowingException("No class index found", null)
+			case i => i
+		}
+
+		val labels = returns.classAttribute.enumerateValues.toList
+		labels foreach (l => returns.insertAttributeAt(new Attribute(ATTRIBUTE_CLASS + l), returns.numAttributes))
+		
+		for (i <- 0 until query.numInstances) {
+			val numAttr = query.numAttributes
+			val inst = new DenseInstance(returns.numAttributes)
+
+			//Copy values
+			for (j <- 0 until numAttr)
+				inst.setValue(j, query.get(i).value(j))
+				
+			//Fill in distribution
+			for (j <- numAttr until (numAttr + labels.size))
+				inst.setValue(j, distribution.get(i).value(j - numAttr))
+				
+			returns.add(inst)
+			if (setClass) {
+				val clazz = highestProbabilityIndex(distribution, i)
+				returns.lastInstance.setClassValue(clazz)
+			}
+		}
+
+		returns
 	}
 
 }

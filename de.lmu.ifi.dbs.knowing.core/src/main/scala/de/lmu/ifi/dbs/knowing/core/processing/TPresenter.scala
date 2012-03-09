@@ -70,7 +70,6 @@ trait TPresenter[T] extends TProcessor {
 	def process(instances: Instances) = {
 		//(None, _) | (Some(DEFAULT_PORT), _)
 		case _ =>
-			debug(this, "RECEIVE + " + instances)
 			statusChanged(Running())
 			sync(getParent) {
 				buildPresentation(instances)

@@ -16,7 +16,7 @@ import weka.core.{ Instance, Instances }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.processing.IProcessorPorts.{ TRAIN, TEST }
 import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties.{ SET_CLASS }
-import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
+import de.lmu.ifi.dbs.knowing.core.results.ClassDistribution._
 import java.io.OutputStream
 import java.io.InputStream
 
@@ -43,7 +43,9 @@ trait TClassifier extends TProcessor with TSerializable {
 				case false => cacheQuery(instances)
 				case true =>
 					processStoredQueries
-					sendResults(query(instances))
+					//TODO TClassifier. Append distribution to query should be configurable
+					val results = query(instances)
+					sendResults(appendClassDistribution(instances, results), None, Some(instances))
 			}
 
 		case (Some(TRAIN), None) => build(instances)
