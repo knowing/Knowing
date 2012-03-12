@@ -19,7 +19,7 @@ import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.core.processing.TClassifier
 import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties
 import de.lmu.ifi.dbs.knowing.core.japi.ILoggableProcessor
-import de.lmu.ifi.dbs.knowing.core.results.ClassDistributionBuilder
+import de.lmu.ifi.dbs.knowing.core.results.ClassDistributionResultsBuilder
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
@@ -58,7 +58,7 @@ class WekaClassifier(var classifier: Classifier) extends TClassifier {
 	}
 
 	def query(query: Instances): Instances = {
-		val builder = new ClassDistributionBuilder(classLabels.toList)
+		val builder = new ClassDistributionResultsBuilder(classLabels.toList)
 		for(i <- 0 until query.numInstances) {
 			val inst = query.get(i)
 			builder + classifier.distributionForInstance(inst)

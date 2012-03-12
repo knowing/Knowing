@@ -1,7 +1,9 @@
 package de.lmu.ifi.dbs.knowing.presenter
 
 import de.lmu.ifi.dbs.knowing.core.processing.TPresenter
-import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil.{ appendInstances, timeSeriesResult, findValueAttributesAsMap, ATTRIBUTE_TIMESTAMP }
+import de.lmu.ifi.dbs.knowing.core.results.TimeSeriesResults
+import de.lmu.ifi.dbs.knowing.core.results.TimeSeriesResults._
+import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil.appendInstances
 import weka.core.{ Attribute, Instances }
 import weka.core.Attribute.{ NUMERIC, NOMINAL, DATE, RELATIONAL }
 import java.util.Date
@@ -77,20 +79,20 @@ object ITimeSeriesPresenter {
    * @param labels
    * @return dataset fitting the ITimeIntervalClass scheme
    */
-  def newInstances(classes: List[String], datePattern: String): Instances = timeSeriesResult(classes, datePattern)
+  def newInstances(classes: List[String], datePattern: String): Instances = TimeSeriesResults(classes, datePattern)
 
   /**
    * @see newInstances(classes, datePattern)
    */
-  def newInstances(classes: List[String]): Instances = timeSeriesResult(classes)
+  def newInstances(classes: List[String]): Instances = TimeSeriesResults(classes)
 
   /**
    * @see newInstances(classes, datePattern)
    */
-  def newInstances(classes: JList[String], datePattern: String): Instances = timeSeriesResult(classes, datePattern)
+  def newInstances(classes: JList[String], datePattern: String): Instances = TimeSeriesResults.newInstances(classes, datePattern)
   
     /**
    * @see newInstances(classes, datePattern)
    */
-  def newInstances(classes: JList[String]): Instances = timeSeriesResult(classes)
+  def newInstances(classes: JList[String]): Instances = TimeSeriesResults.newInstances(classes)
 }

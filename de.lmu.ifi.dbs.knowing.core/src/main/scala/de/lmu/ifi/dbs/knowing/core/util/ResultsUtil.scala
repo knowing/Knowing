@@ -174,74 +174,6 @@ object ResultsUtil {
 	def classAndProbabilityResult(labels: JList[String], distribution: Array[Double]): Instances = classAndProbabilityResult(labels.toList)
 
 	/**
-	 * <p>
-	 * Creates an Instances object with a DATE column and [code]names.size()[/code]
-	 * nummeric attributes. [br] All numeric attributes provide meta data with one
-	 * property {@link #META_ATTRIBUTE_NAME}.
-	 * <li>relation name: {@link #NAME_DATE_AND_VALUES}
-	 * <li>attributes: {@link #ATTRIBUTE_TIMESTAMP}, {@link #ATTRIBUTE_VALUE}+index
-	 * </p>
-	 * @param names - the numeric attributes names -] accessible via meta data
-	 * @return
-	 */
-	def timeSeriesResult(names: List[String], datePattern: String): Instances = {
-		val attributes = new ArrayList[Attribute]
-
-		attributes.add(new Attribute(ATTRIBUTE_TIMESTAMP, datePattern))
-		for (i <- 0 until names.size) {
-			val props = new Properties()
-			props.setProperty(META_ATTRIBUTE_NAME, names.get(i))
-			val attribute = new Attribute(ATTRIBUTE_VALUE + i, new ProtectedProperties(props))
-			attributes.add(attribute)
-		}
-		new Instances(NAME_TIME_SERIES, attributes, 0)
-	}
-
-	/**
-	 * @see timeSeriesResult(names, datePattern)
-	 */
-	def timeSeriesResult(names: List[String]): Instances = timeSeriesResult(names, DATETIME_PATTERN)
-
-	/**
-	 * @see timeSeriesResult(names, datePattern)
-	 */
-	def timeSeriesResult(names: JList[String]): Instances = timeSeriesResult(names.toList)
-
-	/**
-	 * @see timeSeriesResult(names, datePattern)
-	 */
-	def timeSeriesResult(names: JList[String], datePattern: String): Instances = timeSeriesResult(names.toList, datePattern)
-
-	/**
-	 * Columns: One column for every label
-	 * Rows: One row for every label
-	 *
-	 * index of row/column -> names.index
-	 *
-	 * @param names - class label names
-	 * @return
-	 */
-	def confusionMatrix(classes: List[String]): Instances = {
-		val attributes = new ArrayList[Attribute]
-		classes foreach (name => attributes.add(new Attribute(name)))
-		val dataset = new Instances(NAME_CROSS_VALIDATION, attributes, classes.length)
-		for (i <- 0 until classes.length)
-			dataset.add(i, new DenseInstance(1.0, Array.fill(classes.length) { 0.0 }))
-		dataset
-	}
-
-	/**
-	 * <p>Columns: One column for every label</p>
-	 * <li>Rows: One row for every label</li>
-	 *
-	 * <p>index of row/column -> names.index</p>
-	 *
-	 * @param names - class label names
-	 * @return
-	 */
-	def confusionMatrix(classes: JList[String]): Instances = confusionMatrix(classes.toList)
-
-	/**
 	 * <p>Creates a Result-Instance for TimeInterval data</p>
 	 * <p>
 	 * Date | Date | Nominal <br>
@@ -339,52 +271,6 @@ object ResultsUtil {
 		}
 		-1;
 	}
-
-	/**
-	 *
-	 * @param dataset
-	 * @return list with all numeric attributes created with {@link #ATTRIBUTE_VALUE} naming scheme
-	 */
-	def findValueAttributes(dataset: Instances): JList[Attribute] = {
-		val returns = new ArrayList[Attribute]
-		var i = 0
-		var attribute = dataset.attribute(ATTRIBUTE_VALUE + i)
-		while (attribute != null) {
-			returns.add(attribute)
-			i += 1
-			attribute = dataset.attribute(ATTRIBUTE_VALUE + i)
-		}
-		returns
-
-	}
-
-	/**
-	 *
-	 * @param dataset
-	 * @return map with META_ATTRIBUTE_NAME -> Attribute
-	 */
-	def findValueAttributesAsMap(dataset: Instances): Map[String, Attribute] = {
-		var returns = Map[String, Attribute]()
-		var i = 0
-		var attribute = dataset.attribute(ATTRIBUTE_VALUE + i)
-		while (attribute != null) {
-			val name = attribute.getMetadata.getProperty(META_ATTRIBUTE_NAME)
-			if (name == null || name.isEmpty)
-				returns += (attribute.name -> attribute)
-			else
-				returns += (name -> attribute)
-			i += 1
-			attribute = dataset.attribute(ATTRIBUTE_VALUE + i)
-		}
-		returns
-	}
-
-	/**
-	 *
-	 * @param dataset
-	 * @return map with META_ATTRIBUTE_NAME -> Attribute
-	 */
-	def findValueAttributesAsJavaMap(dataset: Instances): java.util.Map[String, Attribute] = findValueAttributesAsMap(dataset).toMap[String, Attribute]
 
 	/**
 	 *
@@ -547,70 +433,6 @@ object ResultsUtil {
 			}
 		}
 		ret
-	}
-
-	/**
-	 * Find all attributes indicating the class distribution.
-	 *
-	 * @param distribution
-	 * @return attributes starting with "class" and not equally class
-	 */
-	def findClassDistributionAttributes(distribution: Instances): List[Attribute] = {
-		val attrEnum = distribution.enumerateAttributes
-		val attributes = new ListBuffer[Attribute]
-		while (attrEnum.hasNext) {
-			val attr = attrEnum.nextElement.asInstanceOf[Attribute]
-			if (attr.name.startsWith(ATTRIBUTE_CLASS) && !attr.name.equals(ATTRIBUTE_CLASS))
-				attributes += attr
-		}
-		attributes.toList
-	}
-
-	/**
-	 * Finds all class distribution values and returns a map
-	 * where the raw class name is mapped to the containing attribute.
-	 *
-	 *
-	 * @param distribution
-	 * @return Map[String, Instances] == class name -> attribute
-	 */
-	def findClassDistributionAttributesAsMap(distribution: Instances): Map[String, Attribute] = {
-		findClassDistributionAttributes(distribution) map (attr => (attr.name.substring(ATTRIBUTE_CLASS.length) -> attr)) toMap
-	}
-
-	/**
-	 * class_and_probability must contain ALL class labels.
-	 *
-	 * Appends classDistribution as follows: Instances-Attributes + class + classA + classB + classC..
-	 * TODO class is set to highestProbability
-	 *
-	 * @param header - is used for dataset creation
-	 * @param inst - contains query -> class_and_probability
-	 * @return new Instances object with appended classDistribution
-	 */
-	def appendClassDistribution(header: Instances, inst: Map[Instance, Instances], setClass: Boolean = true): Instances = {
-		val head = new Instances(header, inst.size)
-		val classIndex = TProcessor.guessAndSetClassLabel(head)
-		val labels = header.classAttribute.enumerateValues.toList
-		labels foreach (l => head.insertAttributeAt(new Attribute(ATTRIBUTE_CLASS + l), head.numAttributes))
-		inst.foldLeft(head) {
-			case (head, (query, dist)) =>
-				val numAttr = query.numAttributes
-				if (head.numAttributes != numAttr + labels.size)
-					throw new Exception("Wrong number of class values. " + head.numAttributes + " != " + (numAttr + labels.size))
-
-				val inst = new DenseInstance(head.numAttributes)
-				//Copy values
-				for (i <- 0 until numAttr) inst.setValue(i, query.value(i))
-				//Fill in distribution
-				for (i <- numAttr until (numAttr + labels.size)) inst.setValue(i, dist.get(i - numAttr).value(1))
-				head.add(inst)
-				if (setClass) {
-					val clazz = highestProbability(dist)._2
-					head.lastInstance.setClassValue(clazz)
-				}
-				head
-		}
 	}
 
 }

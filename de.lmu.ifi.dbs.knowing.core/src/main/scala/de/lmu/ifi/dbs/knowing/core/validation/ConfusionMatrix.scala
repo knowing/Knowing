@@ -1,25 +1,23 @@
-/*																*\
-** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
-** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
-** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
-** 																**
-** Knowing Framework											**
-** Apache License - http://www.apache.org/licenses/				**
-** LMU Munich - Database Systems Group							**
-** http://www.dbs.ifi.lmu.de/									**
-\*																*/
+/*                                                              *\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|  **
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---, **
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|  **
+**                                                              **
+** Knowing Framework                                            **
+** Apache License - http://www.apache.org/licenses/             **
+** LMU Munich - Database Systems Group                          **
+** http://www.dbs.ifi.lmu.de/                                   **
+\*                                                              */
 package de.lmu.ifi.dbs.knowing.core.validation
 
 import java.util.Properties
 import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 import de.lmu.ifi.dbs.knowing.core.events.KnowingException
-import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil.{ confusionMatrix => createMatrix }
-import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil._
+import de.lmu.ifi.dbs.knowing.core.results.{ConfusionMatrixResults,ClassDistributionResults}
 import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
 import weka.core.{ Attribute, Instances, Instance }
 import ConfusionMatrix._
-import de.lmu.ifi.dbs.knowing.core.results.ClassDistribution
 
 /**
  * Creates a ConfusionMatrix Instances object.
@@ -65,8 +63,8 @@ class ConfusionMatrix extends TProcessor {
 	}
 
 	private def init(instances: Instances) {
-		classLabels = ClassDistribution.extractClassLabels(instances)
-		confusionMatrix = createMatrix(classLabels.toList)
+		classLabels = ClassDistributionResults.extractClassLabels(instances).toArray
+		confusionMatrix = ConfusionMatrixResults(classLabels.toList)
 		unclassified = new Instances(instances, instances.size / 100) //1% unclassified
 	}
 
@@ -75,7 +73,7 @@ class ConfusionMatrix extends TProcessor {
 		for (i <- 0 until instances.numInstances) {
 			val inst = instances.get(i)
 			val rowIndex = inst.classValue.toInt //actual class
-			val colIndex = ClassDistribution.highestProbabilityIndex(instances, i)
+			val colIndex = ClassDistributionResults.highestProbabilityIndex(instances, i)
 
 			val row = confusionMatrix.get(rowIndex)
 			val oldCount = row.value(colIndex)

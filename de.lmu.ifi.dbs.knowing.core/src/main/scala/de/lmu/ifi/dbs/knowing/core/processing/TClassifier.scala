@@ -16,7 +16,7 @@ import weka.core.{ Instance, Instances }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.processing.IProcessorPorts.{ TRAIN, TEST }
 import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties.{ SET_CLASS }
-import de.lmu.ifi.dbs.knowing.core.results.ClassDistribution._
+import de.lmu.ifi.dbs.knowing.core.results.ClassDistributionResults._
 import java.io.OutputStream
 import java.io.InputStream
 

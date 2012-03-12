@@ -42,7 +42,7 @@ import de.lmu.ifi.dbs.knowing.core.processing.TProcessor.guessAndSetClassLabel
  * @author Nepomuk Seiler
  * @version 0.1
  */
-object ClassDistribution extends ResultsType {
+object ClassDistributionResults extends ResultsType {
 
 	val ATTRIBUTE_CLASS_PREFIX = ResultsType.ATTRIBUTE_CLASS_PREFIX
 	val ATTRIBUTE_CLASS = ResultsType.ATTRIBUTE_CLASS
@@ -64,7 +64,7 @@ object ClassDistribution extends ResultsType {
 	 *
 	 */
 	def newInstances(classes: List[String], distributions: List[Array[Double]]): Instances = {
-		distributions.foldLeft(new ClassDistributionBuilder(classes, distributions.size))((builder, dist) => (builder + dist)).instances
+		distributions.foldLeft(new ClassDistributionResultsBuilder(classes, distributions.size))((builder, dist) => (builder + dist)).instances
 	}
 
 	/**
@@ -120,12 +120,34 @@ object ClassDistribution extends ResultsType {
 	 * @param the classDistribution
 	 * @return an array with all attribute names starting with ATTRIBUTE_CLASS_PREFIX, where ATTRIBUTE_CLASS_PREFIX is removed
 	 */
-	def extractClassLabels(classDistribution: Instances): Array[String] = {
-		val classes = for (
+	def extractClassLabels(classDistribution: Instances): List[String] = findClassDistributionAttributes(classDistribution) map {
+		attr => attr.name.substring(ATTRIBUTE_CLASS_PREFIX.length)
+	}
+
+	/**
+	 * Finds all class distribution values and returns a map
+	 * where the raw class name is mapped to the containing attribute.
+	 *
+	 *
+	 * @param distribution
+	 * @return Map[String, Instances] == class name -> attribute
+	 */
+	def findClassDistributionAttributesAsMap(distribution: Instances): Map[String, Attribute] = {
+		findClassDistributionAttributes(distribution) map (attr => (attr.name.substring(ATTRIBUTE_CLASS.length) -> attr)) toMap
+	}
+
+	/**
+	 * Find all attributes indicating the class distribution.
+	 *
+	 * @param distribution
+	 * @return attributes starting with "class" and not equally class
+	 */
+	def findClassDistributionAttributes(classDistribution: Instances): List[Attribute] = {
+		val attributes = for (
 			i <- 0 until classDistribution.numAttributes if (classDistribution.attribute(i).name.startsWith(ATTRIBUTE_CLASS_PREFIX)
 				&& !classDistribution.attribute(i).name.equals(ATTRIBUTE_CLASS))
-		) yield classDistribution.attribute(i).name.substring(ATTRIBUTE_CLASS_PREFIX.length)
-		classes.toArray
+		) yield classDistribution.attribute(i)
+		attributes.toList
 	}
 
 	/**
@@ -149,7 +171,7 @@ object ClassDistribution extends ResultsType {
 
 		val labels = returns.classAttribute.enumerateValues.toList
 		labels foreach (l => returns.insertAttributeAt(new Attribute(ATTRIBUTE_CLASS + l), returns.numAttributes))
-		
+
 		for (i <- 0 until query.numInstances) {
 			val numAttr = query.numAttributes
 			val inst = new DenseInstance(returns.numAttributes)
@@ -157,11 +179,11 @@ object ClassDistribution extends ResultsType {
 			//Copy values
 			for (j <- 0 until numAttr)
 				inst.setValue(j, query.get(i).value(j))
-				
+
 			//Fill in distribution
 			for (j <- numAttr until (numAttr + labels.size))
 				inst.setValue(j, distribution.get(i).value(j - numAttr))
-				
+
 			returns.add(inst)
 			if (setClass) {
 				val clazz = highestProbabilityIndex(distribution, i)
@@ -177,21 +199,21 @@ object ClassDistribution extends ResultsType {
 /**
  *
  */
-class ClassDistributionBuilder(classes: List[String], size: Int = 0) {
+class ClassDistributionResultsBuilder(classes: List[String], size: Int = 0) {
 
-	val instances = ClassDistribution.newInstances(classes, size)
-
-	/**
-	 * Add distribution to classDistribution
-	 * Class will be set to unkown
-	 */
-	def +(distribution: Array[Double]): ClassDistributionBuilder = this.+(distribution, Utils.missingValue)
+	val instances = ClassDistributionResults.newInstances(classes, size)
 
 	/**
 	 * Add distribution to classDistribution
 	 * Class will be set to unkown
 	 */
-	def +(distribution: Array[Double], classValueIndex: Double): ClassDistributionBuilder = {
+	def +(distribution: Array[Double]): ClassDistributionResultsBuilder = this.+(distribution, Utils.missingValue)
+
+	/**
+	 * Add distribution to classDistribution
+	 * Class will be set to unkown
+	 */
+	def +(distribution: Array[Double], classValueIndex: Double): ClassDistributionResultsBuilder = {
 		if (instances.numAttributes != distribution.length + 1)
 			throw new IllegalArgumentException("ClassDistribution-Attributes length must be equal to distribution array. " + instances.numAttributes + " != " + distribution.length)
 		val newDist = new Array[Double](distribution.length + 1)
