@@ -58,18 +58,7 @@ object ResultsUtil {
 	/* =================== Result Creation =================== */
 	/* ======================================================= */
 
-	/**
-	 * <p>Empty Instances. This Instances object has
-	 * one Attribute (ATTRIBUTE_DUMMY) as you can't load
-	 * an Instances object without any attributes</p>
-	 *
-	 * @return Instances with Attribute "dummy"
-	 */
-	def emptyResult: Instances = {
-		val attributes = new ArrayList[Attribute]
-		attributes.add(new Attribute(ATTRIBUTE_DUMMY))
-		new Instances(NAME_EMPTY, attributes, 0)
-	}
+
 
 	/**
 	 * <p>
@@ -173,41 +162,6 @@ object ResultsUtil {
 	 */
 	def classAndProbabilityResult(labels: JList[String], distribution: Array[Double]): Instances = classAndProbabilityResult(labels.toList)
 
-	/**
-	 * <p>Creates a Result-Instance for TimeInterval data</p>
-	 * <p>
-	 * Date | Date | Nominal <br>
-	 * ##################### <br>
-	 * from | to   | class   <br>
-	 * </p>
-	 * @param lables - class labels
-	 * @param datePattern - which pattern should the Instances object use
-	 * @return Instances
-	 */
-	def timeIntervalResult(labels: List[String], datePattern: String): Instances = {
-		val attributes = new ArrayList[Attribute]
-		attributes.add(new Attribute(ATTRIBUTE_FROM, datePattern))
-		attributes.add(new Attribute(ATTRIBUTE_TO, datePattern))
-		attributes.add(new Attribute(ATTRIBUTE_CLASS, labels))
-		val dataset = new Instances(NAME_TIME_INTERVAL, attributes, 0)
-		dataset.setClass(dataset.attribute(ATTRIBUTE_CLASS))
-		dataset
-	}
-
-	/**
-	 * @see timeIntervalResult()
-	 */
-	def timeIntervalResult(labels: List[String]): Instances = timeIntervalResult(labels, DATETIME_PATTERN)
-
-	/**
-	 * @see timeIntervalResult()
-	 */
-	def timeIntervalResult(labels: JList[String]): Instances = timeIntervalResult(labels.toList)
-
-	/**
-	 * @see timeIntervalResult()
-	 */
-	def timeIntervalResult(labels: JList[String], datePattern: String): Instances = timeIntervalResult(labels.toList, datePattern)
 
 	/* ======================================================= */
 	/* ================== Result validation ================== */

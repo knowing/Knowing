@@ -2,7 +2,9 @@ package de.lmu.ifi.dbs.knowing.presenter
 
 import java.util.Date
 import de.lmu.ifi.dbs.knowing.core.processing.TPresenter
-import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil.{ appendInstances, timeIntervalResult, ATTRIBUTE_CLASS, ATTRIBUTE_FROM, ATTRIBUTE_TO }
+import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil.appendInstances
+import de.lmu.ifi.dbs.knowing.core.results.TimeIntervalResults
+import de.lmu.ifi.dbs.knowing.core.results.TimeIntervalResults._
 import weka.core.{ Attribute, Instances }
 import weka.core.Attribute.{ NUMERIC, NOMINAL, DATE, RELATIONAL }
 import akka.event.EventHandler.debug
@@ -86,20 +88,20 @@ object ITimeIntervalClassPresenter {
    * @param labels
    * @return dataset fitting the ITimeIntervalClass scheme
    */
-  def newInstances(classes: List[String], datePattern: String): Instances = timeIntervalResult(classes, datePattern)
+  def newInstances(classes: List[String], datePattern: String): Instances = TimeIntervalResults(classes, datePattern)
 
   /**
    * @see newInstances(classes, datePattern)
    */
-  def newInstances(classes: List[String]): Instances = timeIntervalResult(classes)
+  def newInstances(classes: List[String]): Instances = TimeIntervalResults(classes)
 
   /**
    * @see newInstances(classes, datePattern)
    */
-  def newInstances(classes: JList[String]): Instances = timeIntervalResult(classes)
+  def newInstances(classes: JList[String]): Instances = TimeIntervalResults.newInstances(classes)
   
     /**
    * @see newInstances(classes, datePattern)
    */
-  def newInstances(classes: JList[String], datePattern: String): Instances = timeIntervalResult(classes, datePattern)
+  def newInstances(classes: JList[String], datePattern: String): Instances = TimeIntervalResults.newInstances(classes, datePattern)
 }

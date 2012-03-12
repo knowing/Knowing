@@ -16,6 +16,7 @@ import de.lmu.ifi.dbs.knowing.core.factory.TFactory._
 import de.lmu.ifi.dbs.knowing.core.processing.TLoader
 import de.lmu.ifi.dbs.knowing.core.processing.TLoader._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
+import de.lmu.ifi.dbs.knowing.core.results.EmptyResults
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
@@ -59,7 +60,7 @@ class WekaArffLoader extends TLoader {
 				(src, dataset)
 		} toList;
 		datasets.size match {
-			case 0 => ResultsUtil.emptyResult // Nothing generated
+			case 0 => EmptyResults() // Nothing generated
 			case 1 => datasets.head._2 // Just one input
 			case _ => // hell yeah, more than one input
 				val head = datasets.head._2

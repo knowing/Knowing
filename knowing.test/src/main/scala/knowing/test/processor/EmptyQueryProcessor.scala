@@ -6,6 +6,7 @@ import weka.core.{ Instances, Instance, DenseInstance }
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
+import de.lmu.ifi.dbs.knowing.core.results.EmptyResults
 import de.lmu.ifi.dbs.knowing.core.events._
 
 class EmptyQueryProcessor extends TProcessor {
@@ -13,7 +14,7 @@ class EmptyQueryProcessor extends TProcessor {
 	def process(instances: Instances) = {
 		case _ =>
 			debug(this, "Build EmptyQueryProcessor")
-			sendEvent(Query(ResultsUtil.emptyResult))
+			sendEvent(Query(EmptyResults()))
 	}
 
 	def query(query: Instances): Instances = throw new UnsupportedOperationException
