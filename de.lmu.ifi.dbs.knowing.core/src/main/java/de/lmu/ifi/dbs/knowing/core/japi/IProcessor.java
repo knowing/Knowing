@@ -18,7 +18,6 @@ import java.util.Properties;
 
 import akka.actor.ActorRef;
 
-import weka.core.Instance;
 import weka.core.Instances;
 import de.lmu.ifi.dbs.knowing.core.events.Event;
 import de.lmu.ifi.dbs.knowing.core.events.Status;
@@ -51,7 +50,7 @@ public interface IProcessor {
 	 * 
 	 * @param instances
 	 */
-	void build(Instances instances);
+	void process(Instances instances, String port, Instances query);
 
 	/**
 	 * <p>
@@ -68,9 +67,7 @@ public interface IProcessor {
 	 * @param query
 	 * @return
 	 */
-	Instances query(Instance query, ActorRef ref);
-
-	void result(Instances result, Instance query);
+	Instances query(Instances query, ActorRef ref);
 
 	/**
 	 * <p>

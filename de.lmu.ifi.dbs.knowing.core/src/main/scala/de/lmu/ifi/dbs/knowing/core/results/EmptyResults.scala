@@ -8,21 +8,34 @@
 ** LMU Munich - Database Systems Group                          **
 ** http://www.dbs.ifi.lmu.de/                                   **
 \*                                                              */
-package de.lmu.ifi.dbs.knowing.core.processing
+package de.lmu.ifi.dbs.knowing.core.results
 
-import java.util.Properties
+import weka.core.{Attribute,Instances}
+import java.util.ArrayList
 
 /**
- * Make a class configurable
- * 
+ *
  * @author Nepomuk Seiler
- * @version 1.0
+ * @version 0.1
+ * @since 12.03.2012
  */
-trait TConfigurable {
+object EmptyResults extends ResultsType {
+
+	val name = "empty"
+
+	val ATTRIBUTE_EMPTY = "empty"
 
 	/**
-	 * Configure this loader. URL, password, file-extension
-	 * @param properties
+	 * <p>Empty Instances. This Instances object has
+	 * one Attribute (ATTRIBUTE_DUMMY) as you can't load
+	 * an Instances object without any attributes</p>
+	 *
+	 * @return Instances with Attribute "dummy"
 	 */
-	def configure(properties: Properties)
+	def newInstances: Instances = {
+		val attributes = new ArrayList[Attribute]
+		attributes.add(new Attribute(ATTRIBUTE_EMPTY))
+		new Instances(name, attributes, 0)
+	}
+
 }

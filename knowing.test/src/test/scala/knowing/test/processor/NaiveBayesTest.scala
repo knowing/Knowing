@@ -16,6 +16,7 @@ import de.lmu.ifi.dbs.knowing.test.EmbeddedPresenters._
 import de.lmu.ifi.dbs.knowing.core.weka._
 import de.lmu.ifi.dbs.knowing.core.validation._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil._
+import de.lmu.ifi.dbs.knowing.core.results.ClassDistributionResults._
 import de.lmu.ifi.dbs.knowing.weka.classifier.WekaNaiveBayesFactory
 import java.nio.file.Paths
 import org.eclipse.sapphire.modeling.xml.{ RootXmlResource, XmlResourceStore }

@@ -1,28 +1,29 @@
-/*																*\
-** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
-** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
-** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
-** 																**
-** Knowing Framework											**
-** Apache License - http://www.apache.org/licenses/				**
-** LMU Munich - Database Systems Group							**
-** http://www.dbs.ifi.lmu.de/									**
-\*																*/
+/*                                                              *\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|  **
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---, **
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|  **
+**                                                              **
+** Knowing Framework                                            **
+** Apache License - http://www.apache.org/licenses/             **
+** LMU Munich - Database Systems Group                          **
+** http://www.dbs.ifi.lmu.de/                                   **
+\*                                                              */
 package de.lmu.ifi.dbs.knowing.core.processing
 
 import java.util.Properties
 import scala.collection.JavaConversions._
-import scala.collection.mutable.Queue
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.{ListBuffer,Queue}
 import akka.actor.Actor
+import akka.actor.ActorRef
 import akka.event.EventHandler.{ debug, info, warning, error }
 import akka.config.Supervision.Temporary
-import akka.actor.ActorRef
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
+import de.lmu.ifi.dbs.knowing.core.model.IEdge
+import de.lmu.ifi.dbs.knowing.core.results.ResultsType
 import weka.core.{ Attribute, Instance, Instances }
-import TSender.DEFAULT_PORT
 import scala.collection.mutable.HashMap
+
 
 /**
  * <p>An IProcessor encapsulates a data processing algorithm.
@@ -38,14 +39,17 @@ import scala.collection.mutable.HashMap
  */
 trait TProcessor extends Actor with TSender with TConfigurable {
 
+	type ResultsContext = TProcessor.ResultsContext
+	
+	val DEFAULT_PORT = IEdge.DEFAULT_PORT
+
 	//Current status of processor
 	protected var status: Status = Created()
 	protected var isBuild = false
 	protected val properties: Properties = new Properties
-
+	
 	//Stored Queries
 	protected val queryQueue = Queue[(Option[ActorRef], Query)]()
-	protected val queriesQueue = Queue[(Option[ActorRef], Queries)]()
 
 	//Default lifeCylce 
 	self.lifeCycle = Temporary
@@ -75,11 +79,11 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 		case Start | Start() => start
 
 		//Process results
-		case Results(inst, port) =>
+		case Results(inst, port, queries) =>
 			statusChanged(Running())
 			try {
-				build(inst, port)
-				isBuild = true
+				process(inst).apply(port, queries)
+				isBuild = true	//TODO isBuild = true on processing results. Dangerous!
 				processStoredQueries
 				self.sender match {
 					case Some(s) => s ! Finished()
@@ -91,35 +95,15 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 			}
 
 		//Process single query
-		case Query(q) => try isBuild match {
+		case Query(q) => isBuild match {
 			case true =>
 				statusChanged(Running())
 				processStoredQueries
-				self reply QueryResults(query(q), q)
+				self reply Results(query(q), None, Some(q))
 				statusChanged(Ready())
 			case false => queryQueue += ((self.sender, Query(q)))
 		}
 
-		//Process multiple query
-		case Queries(q, id) => isBuild match {
-			case true =>
-				statusChanged(Running())
-				processStoredQueries
-				self reply QueriesResults(queries(q))
-				statusChanged(Ready())
-			case false => queriesQueue += ((self.sender, Queries(q, id)))
-		}
-		//Process query result
-		case QueryResults(r, q) =>
-			statusChanged(Running())
-			try {
-				result(r, q)
-				statusChanged(Ready())
-			} catch {
-				case e: Exception => throwException(e, "Error while processing QueryResults")
-			}
-
-		case QueriesResults(r) => r foreach { case (query, results) => result(results, query) }
 		case Alive | Alive() => statusChanged(status)
 		case msg => messageException(msg)
 	}
@@ -129,7 +113,6 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 		isBuild = false
 		status = Created()
 		queryQueue.clear
-		queriesQueue.clear
 	}
 
 	override def postRestart(reason: Throwable) {
@@ -137,13 +120,10 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 		configure(properties)
 	}
 
-	def start = debug(this, "Running " + self.getActorClassName)
+	def start() = debug(this, "Running " + self.getActorClassName)
 
 	@throws(classOf[KnowingException])
-	def build: PartialFunction[(Instances, Option[String]), Unit] = { case (instances, _) => build(instances) }
-
-	@throws(classOf[KnowingException])
-	def build(instances: Instances)
+	def process(instances: Instances): ResultsContext
 
 	/**
 	 * <p>A query is answered via the interal model build by the buildModel method.<br>
@@ -156,34 +136,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 	 * @return Instances - Query result
 	 */
 	@throws(classOf[KnowingException])
-	def query(query: Instance): Instances
-
-	/**
-	 *
-	 */
-	def queries(queries: Instances): Map[Instance, Instances] = {
-		val enum = queries.enumerateInstances
-		val results = HashMap[Instance, Instances]()
-		var i = 0
-		while (enum.hasMoreElements) {
-			val instance = enum.nextElement.asInstanceOf[Instance]
-			results += (instance -> query(instance))
-			statusChanged(Progress(queries.relationName, i, queries.numInstances))
-			i += 1
-		}
-		statusChanged(Ready())
-		results toMap
-	}
-
-	/**
-	 * <p>After the processor sending a query, this method
-	 * is called if it gets a response</p>
-	 *
-	 * @param result - the results
-	 * @param query - the query
-	 */
-	@throws(classOf[KnowingException])
-	def result(result: Instances, query: Instance)
+	def query(query: Instances): Instances
 
 	/**
 	 * <p>Just puts a warning on the console and prints out the message</p>
@@ -228,30 +181,20 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 	 */
 	def highestProbabilityIndex(distribution: Array[Double]): Int = TProcessor.highestProbabilityIndex(distribution)
 
-	protected def cacheQuery(q: Instance) = queryQueue += ((self.sender, Query(q)))
-
-	protected def cacheQuery(q: Instances) = queriesQueue += ((self.sender, Queries(q)))
+	//TODO look over this method!!!!!
+	protected def cacheQuery(q: Instances) = queryQueue += ((self.sender, Query(q)))
 
 	protected def processStoredQueries {
 		//Does not respect arrival time
-		try {}
-		catch {
-			case e: Exception => throwException(e, "Error while processing stored Query element")
-		}
-		while (queryQueue.nonEmpty) {
-			val elem = queryQueue.dequeue
-			elem._1.foreach(_ ! QueryResults(query(elem._2.query), elem._2.query))
-		}
-
 		try {
-			while (queriesQueue.nonEmpty) {
-				val elem = queriesQueue.dequeue
-				//TODO Id must be send 
-				elem._1.foreach(_ ! QueriesResults(queries(elem._2.queries)))
+			while (queryQueue.nonEmpty) {
+				val elem = queryQueue.dequeue
+				elem._1.foreach(_ ! Results(query(elem._2.query), None, Some(elem._2.query)))
 			}
 		} catch {
-			case e: Exception => throwException(e, "Error while processing stored Queries element")
+			case e: Exception => throwException(e, "Error while processing stored Query element")
 		}
+
 	}
 
 	/**
@@ -276,6 +219,13 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 }
 
 object TProcessor {
+
+	/**
+	 * This partial function contains the Results() context:
+	 * <li>port: Option[String] to match on port the result is send to</li>
+	 * <li>query: Option[Instances] to match on if a query was requested
+	 */
+	type ResultsContext = PartialFunction[(Option[String], Option[Instances]), Unit]
 
 	val ABSOLUTE_PATH = INodeProperties.ABSOLUTE_PATH
 
@@ -321,7 +271,7 @@ object TProcessor {
 	 */
 	def guessClassLabel(dataset: Instances): Int = {
 		//TODO TProcessor.guesClassLabel -> guess class labels in relational datasets
-		val classAttribute = dataset.attribute("class")
+		val classAttribute = dataset.attribute(ResultsType.ATTRIBUTE_CLASS)
 		if (classAttribute != null)
 			return classAttribute.index
 

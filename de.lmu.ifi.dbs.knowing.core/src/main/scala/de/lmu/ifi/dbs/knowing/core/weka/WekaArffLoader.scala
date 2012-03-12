@@ -16,6 +16,7 @@ import de.lmu.ifi.dbs.knowing.core.factory.TFactory._
 import de.lmu.ifi.dbs.knowing.core.processing.TLoader
 import de.lmu.ifi.dbs.knowing.core.processing.TLoader._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
+import de.lmu.ifi.dbs.knowing.core.results.EmptyResults
 import akka.actor.ActorRef
 import akka.actor.Actor.actorOf
 import akka.event.EventHandler.{ debug, info, warning, error }
@@ -50,7 +51,7 @@ class WekaArffLoader extends TLoader {
 				loader.setSource(in)
 				(src -> (loader, in))
 		} map {
-			case (src, (loader,in)) =>
+			case (src, (loader, in)) =>
 				statusChanged(new Progress("Loading", count, inputs.size + 1))
 				count += 1
 				val dataset = loader.getDataSet
@@ -59,7 +60,7 @@ class WekaArffLoader extends TLoader {
 				(src, dataset)
 		} toList;
 		datasets.size match {
-			case 0 => ResultsUtil.emptyResult // Nothing generated
+			case 0 => EmptyResults() // Nothing generated
 			case 1 => datasets.head._2 // Just one input
 			case _ => // hell yeah, more than one input
 				val head = datasets.head._2
@@ -95,7 +96,9 @@ class WekaArffLoader extends TLoader {
 	/**
 	 * Forward if there were multiple loaders
 	 */
-	override def build(inst: Instances) = sendEvent(new Results(inst))
+	override def process(inst: Instances) = {
+		case _ => sendEvent(new Results(inst))
+	}
 
 	private def extractFilename(uri: URI): String = {
 		val sep = System.getProperty("file.separator")

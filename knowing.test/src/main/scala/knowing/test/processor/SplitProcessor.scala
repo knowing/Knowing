@@ -12,30 +12,29 @@ import weka.core.Instances
 
 class SplitProcessor extends TProcessor {
 
-  def build(inst: Instances) {
-    //Split up input into two instances
-    val toCopy = inst.numInstances / 2
-    val one = new Instances(inst, 0, toCopy)
-    val two = new Instances(inst, inst.numInstances / 2, toCopy - 1)
-    
-    //Sends to OUTPUT1, which is a port
-    sendResults(one, Some(OUTPUT1))
-    
-    //Sends to OUTPUT2, which is a port too
-    sendResults(two, Some(OUTPUT2))
-  }
+	def process(inst: Instances) = {
+		case _ =>
+			//Split up input into two instances
+			val toCopy = inst.numInstances / 2
+			val one = new Instances(inst, 0, toCopy)
+			val two = new Instances(inst, inst.numInstances / 2, toCopy - 1)
 
-  def query(query: Instance): Instances = { null }
+			//Sends to OUTPUT1, which is a port
+			sendResults(one, Some(OUTPUT1))
 
-  def result(result: Instances, query: Instance) = {}
+			//Sends to OUTPUT2, which is a port too
+			sendResults(two, Some(OUTPUT2))
+	}
 
-  def configure(properties: Properties) = {}
+	def query(query: Instances): Instances = throw new UnsupportedOperationException
+
+	def configure(properties: Properties) = {}
 
 }
 
 class SplitProcessorFactory extends ProcessorFactory(classOf[SplitProcessor])
 
 object SplitProcessorFactory {
-  val OUTPUT1 = "output1"
-  val OUTPUT2 = "output2"
+	val OUTPUT1 = "output1"
+	val OUTPUT2 = "output2"
 }

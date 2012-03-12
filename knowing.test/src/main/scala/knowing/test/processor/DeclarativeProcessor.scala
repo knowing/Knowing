@@ -12,23 +12,21 @@ import org.osgi.service.component.ComponentContext
 
 class DeclarativeProcessor extends TProcessor {
 
-  def build(instances: Instances) = { 
-	  debug(this, "Build for declarative processor")
-  }
+	def process(instances: Instances) = {
+		case _ => debug(this, "Build for declarative processor")
+	}
 
-  def query(query: Instance): Instances = { null }
+	def query(query: Instances): Instances = throw new UnsupportedOperationException
 
-  def result(result: Instances, query: Instance) = {  }
-
-  def configure(properties: Properties) = {  
-    debug(this, "Configure declarative processor")
-  }
+	def configure(properties: Properties) = {
+		debug(this, "Configure declarative processor")
+	}
 
 }
 
 class DeclarativeProcessorFactory extends ProcessorFactory(classOf[DeclarativeProcessor]) {
-  
-  def activate(context: ComponentContext) {
-   println("Declarative Processor Factory activated") 
-  }
+
+	def activate(context: ComponentContext) {
+		println("Declarative Processor Factory activated")
+	}
 }

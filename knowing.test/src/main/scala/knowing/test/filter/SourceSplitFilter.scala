@@ -3,10 +3,12 @@ package knowing.test.filter
 import de.lmu.ifi.dbs.knowing.core.processing.TFilter
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
+import de.lmu.ifi.dbs.knowing.core.results.EmptyResults
 import weka.core.{ Instances, Instance }
 import java.util.Properties
 import akka.actor.ActorRef
 import akka.actor.Actor
+
 
 class SourceSplitFilter extends TFilter {
 
@@ -16,7 +18,7 @@ class SourceSplitFilter extends TFilter {
   override def filter(instances: Instances): Instances = {
     val map = ResultsUtil.splitInstanceBySource(instances)
     println(map)
-    val ret = map.headOption getOrElse (("empty",ResultsUtil.emptyResult))
+    val ret = map.headOption getOrElse (("empty",EmptyResults()))
     ret._2
   }
 

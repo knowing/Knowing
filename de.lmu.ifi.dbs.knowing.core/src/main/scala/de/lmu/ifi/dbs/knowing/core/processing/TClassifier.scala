@@ -1,13 +1,13 @@
-/*																*\
-** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
-** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
-** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
-** 																**
-** Knowing Framework											**
-** Apache License - http://www.apache.org/licenses/				**
-** LMU Munich - Database Systems Group							**
-** http://www.dbs.ifi.lmu.de/									**
-\*																*/
+/*                                                              *\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|  **
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---, **
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|  **
+**                                                              **
+** Knowing Framework                                            **
+** Apache License - http://www.apache.org/licenses/             **
+** LMU Munich - Database Systems Group                          **
+** http://www.dbs.ifi.lmu.de/                                   **
+\*                                                              */
 package de.lmu.ifi.dbs.knowing.core.processing
 
 import akka.event.EventHandler.{ debug, info, warning, error }
@@ -16,7 +16,7 @@ import weka.core.{ Instance, Instances }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.processing.IProcessorPorts.{ TRAIN, TEST }
 import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties.{ SET_CLASS }
-import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
+import de.lmu.ifi.dbs.knowing.core.results.ClassDistributionResults._
 import java.io.OutputStream
 import java.io.InputStream
 
@@ -36,26 +36,21 @@ trait TClassifier extends TProcessor with TSerializable {
 	 *
 	 * @param PartialFunction[Instances, Option[String]] - match on (message, port)
 	 */
-	override def build = {
-		case (instances, Some(TEST)) =>
+	override def process(instances: Instances) = {
+		case (Some(TEST), None) =>
 			guessAndSetClassLabel(instances)
 			isBuild match {
-				case false => queriesQueue += ((self.sender, Queries(instances, instances.relationName)))
+				case false => cacheQuery(instances)
 				case true =>
 					processStoredQueries
-					val results = queries(instances)
-					results.headOption match {
-						case None => //nothing
-						case Some(h) =>
-							val header = new Instances(h._1.dataset, instances.size)
-							val result = ResultsUtil.appendClassDistribution(header, results.toMap)
-							sendResults(result)
-					}
+					//TODO TClassifier. Append distribution to query should be configurable
+					val results = query(instances)
+					sendResults(appendClassDistribution(instances, results), None, Some(instances))
 			}
 
-		case (instances, Some(TRAIN)) => build(instances)
-		case (instances, None) => build(instances)
-		case (instances, Some(port)) => error(this, "Incompatible target port: " + port)
+		case (Some(TRAIN), None) => build(instances)
+		case (None, None) => build(instances)
+		case (Some(port), _) => error(this, "Incompatible target port: " + port)
 	}
 
 	/**
@@ -65,9 +60,7 @@ trait TClassifier extends TProcessor with TSerializable {
 	 */
 	override def start = inputStream() match {
 		case None => debug(this, "Nothing to deserialize in " + getClass.getSimpleName)
-		case Some(in) =>
-			deserialize(in)
-			isBuild = true
+		case Some(in) => isBuild = deserialize(in)
 	}
 
 	/**
@@ -91,8 +84,9 @@ trait TClassifier extends TProcessor with TSerializable {
 
 	/**
 	 * @param in -> never null nor invalid
+	 * @return if serialization was successfull
 	 */
-	def deserialize(in: InputStream) = {}
+	def deserialize(in: InputStream): Boolean = false
 
 	/**
 	 * <p>This method build the internal model which is used<br>

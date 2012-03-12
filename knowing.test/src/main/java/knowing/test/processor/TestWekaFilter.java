@@ -6,7 +6,7 @@ import de.lmu.ifi.dbs.knowing.core.events.*;
 import de.lmu.ifi.dbs.knowing.core.japi.ILoggableProcessor;
 import de.lmu.ifi.dbs.knowing.core.japi.LoggableProcessor;
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor;
-import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil;
+import de.lmu.ifi.dbs.knowing.core.results.EmptyResults;
 
 public class TestWekaFilter extends SimpleBatchFilter implements ILoggableProcessor {
 
@@ -26,13 +26,13 @@ public class TestWekaFilter extends SimpleBatchFilter implements ILoggableProces
 			Thread.sleep(500);
 		}
 		log.warning("Just returning emptyResult");
-		return ResultsUtil.emptyResult();
+		return EmptyResults.newInstances();
 	}
 
 	@Override
 	protected Instances process(Instances instances) throws Exception {
 		log.debug("Process!");
-		return ResultsUtil.emptyResult();
+		return EmptyResults.newInstances();
 	}
 
 	@Override

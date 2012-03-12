@@ -7,6 +7,8 @@ import weka.core.converters.SerializedInstancesLoader
 import de.lmu.ifi.dbs.knowing.core.processing.TLoader
 import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
+import de.lmu.ifi.dbs.knowing.core.results.EmptyResults
+
 
 class InstancesLoader extends TLoader {
 
@@ -18,7 +20,7 @@ class InstancesLoader extends TLoader {
         loader.getDataSet
     }
     inst.size match {
-      case 0 => ResultsUtil.emptyResult
+      case 0 => EmptyResults()
       case 1 => inst.head
       case _ =>
         val header = new Instances(inst.head,0)

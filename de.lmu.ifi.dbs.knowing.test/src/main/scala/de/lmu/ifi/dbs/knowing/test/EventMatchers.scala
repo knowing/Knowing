@@ -191,9 +191,7 @@ trait EventMatchers extends ShouldMatchers {
   }
 
   private def instancesList(result: ResultsEvent) = result match {
-    case Results(inst, port) => List(inst)
-    case QueryResults(inst, query) => List(inst)
-    case QueriesResults(results) => results.values.toList
+    case Results(inst, port, query) => List(inst)
   }
 
   private def attributeToString(attrType: Int) = attrType match {

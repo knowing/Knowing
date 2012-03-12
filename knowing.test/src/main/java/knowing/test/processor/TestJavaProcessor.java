@@ -10,7 +10,6 @@ import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.Properties;
 
-import weka.core.Instance;
 import weka.core.Instances;
 import akka.actor.ActorRef;
 import de.lmu.ifi.dbs.knowing.core.japi.AbstractProcessor;
@@ -88,23 +87,18 @@ public class TestJavaProcessor extends AbstractProcessor {
 	}
 
 	@Override
-	public void build(Instances instances) {
+	public void process(Instances instances, String port, Instances query) {
 		debug("[Build] " + instances);
 	}
 
 	@Override
-	public Instances query(Instance query, ActorRef ref) {
+	public Instances query(Instances query, ActorRef ref) {
 		debug("[Query] " + query);
 		if (ref.getSender().isDefined()) {
 			ActorRef sender = ref.getSender().get();
 			sender.tell("Answer");
 		}
 		return null;
-	}
-
-	@Override
-	public void result(Instances result, Instance query) {
-		debug("[Result] " + result + " == [Query] " + query);
 	}
 
 	@Override
