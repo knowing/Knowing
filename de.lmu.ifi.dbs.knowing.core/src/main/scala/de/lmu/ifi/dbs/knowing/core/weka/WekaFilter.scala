@@ -47,18 +47,6 @@ class WekaFilter(val filter: Filter) extends TFilter {
 		results
 	}
 
-	def query(query: Instance): Instances = {
-		filter.input(query)
-		filter.batchFinished
-
-		val returns = new Instances(filter.getOutputFormat, 1)
-		returns.add(filter.output)
-		returns
-	}
-
-	//TODO override queries
-
-	def result(result: Instances, query: Instance) = {}
 
 	def configure(properties: Properties) = {}
 

@@ -9,7 +9,7 @@ import akka.testkit.TestKit
 import akka.actor.Actor.actorOf
 import akka.actor.ActorRef
 import weka.core.{ Attribute, Instances, DenseInstance }
-import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil.findValueAttributesAsMap
+import de.lmu.ifi.dbs.knowing.core.results.TimeSeriesResults
 import de.lmu.ifi.dbs.knowing.core.events._
 import scala.collection.mutable.ArrayBuffer
 import java.util.Date
@@ -26,7 +26,7 @@ class ITimeSeriesPresenterTest extends FunSuite with ShouldMatchers with BeforeA
   before {
     presenter = actorOf[TestTimeSeriesPresenter].start
     testInstances = ITimeSeriesPresenter.newInstances(List("x", "y", "z"))
-    series = findValueAttributesAsMap(testInstances)
+    series = TimeSeriesResults.findValueAttributesAsMap(testInstances)
   }
 
   after {

@@ -63,11 +63,9 @@ class SerializableProcessor extends TProcessor with TSerializable {
     debug(this, "Stop Serializable Processor and save model: " + randomNumber + " / " + randomString)
   }
 
-  def build(instances: Instances) {}
+  def process(instances: Instances) = { case _ => }
 
-  def query(query: Instance): Instances = { null }
-
-  def result(result: Instances, query: Instance) {}
+  def query(query: Instances): Instances = throw new UnsupportedOperationException
 
   def configure(properties: Properties) {}
 

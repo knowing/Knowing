@@ -6,9 +6,9 @@ import weka.core.{ Instances, Attribute }
 
 object EmbeddedPresenters {
 
-  val EmbeddedUIComponentFactory = new EmbeddedUIComponentPresenterFactory
+	val EmbeddedUIComponentFactory = new EmbeddedUIComponentPresenterFactory
 
-  val TablePresenterFactory = new EmbeddedUIComponentTablePresenterFactory()
+	val TablePresenterFactory = new EmbeddedUIComponentTablePresenterFactory()
 }
 
 /**
@@ -18,13 +18,13 @@ object EmbeddedPresenters {
  */
 class EmbeddedUIComponentTablePresenter extends EmbeddedUIComponentPresenter with ITablePresenter[IEmbeddedUIComponent] {
 
-  override def build(instances: Instances) = parent.addInstances(instances)
+	override def process(instances: Instances) = { case _ => parent.addInstances(instances) }
 
-  def buildTableHeader(attributes: Array[Attribute]) = {}
-  def addRow(content: Array[String]) = {}
-  def update() = {}
+	def buildTableHeader(attributes: Array[Attribute]) = {}
+	def addRow(content: Array[String]) = {}
+	def update() = {}
 }
 
 class EmbeddedUIComponentTablePresenterFactory extends PresenterFactory(
-  classOf[EmbeddedUIComponentTablePresenter],
-  classOf[ITablePresenter[IEmbeddedUIComponent]])
+	classOf[EmbeddedUIComponentTablePresenter],
+	classOf[ITablePresenter[IEmbeddedUIComponent]])

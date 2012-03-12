@@ -1,13 +1,13 @@
-/*																*\
-** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
-** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
-** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
-** 																**
-** Knowing Framework											**
-** Apache License - http://www.apache.org/licenses/				**
-** LMU Munich - Database Systems Group							**
-** http://www.dbs.ifi.lmu.de/									**
-\*																*/
+/*                                                              *\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|  **
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---, **
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|  **
+**                                                              **
+** Knowing Framework                                            **
+** Apache License - http://www.apache.org/licenses/             **
+** LMU Munich - Database Systems Group                          **
+** http://www.dbs.ifi.lmu.de/                                   **
+\*                                                              */
 package de.lmu.ifi.dbs.knowing.core.processing
 
 import java.net.URI
@@ -21,10 +21,11 @@ import akka.event.EventHandler.{ debug, info, warning, error }
 import akka.dispatch._
 import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.util._
+import de.lmu.ifi.dbs.knowing.core.util.DPUUtil.{ nodeProperties }
+import de.lmu.ifi.dbs.knowing.core.results.EmptyResults
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.service._
 import de.lmu.ifi.dbs.knowing.core.model._
-import de.lmu.ifi.dbs.knowing.core.util.DPUUtil.{ nodeProperties }
 import INodeProperties._
 import com.eaio.uuid.UUID
 import scala.collection.mutable.{ Map => MutableMap, ListBuffer, SynchronizedQueue }
@@ -463,14 +464,11 @@ class LoggableDispatcher(name: String, supervisor: DPUExecutor) extends Executor
 	 * Creates the content which should be logged.
 	 */
 	private def logEvent(src: String, trg: String, msg: Event) = msg match {
-		case Results(content, port) => log(src + ":" + port.getOrElse(""), trg, content, EventType.RESULTS)
-		case QueryResults(content, _) => log(src, trg, content, EventType.QUERYRESULTS)
-		case QueriesResults(c) => log(src, trg, c.values.head, EventType.QUERIESRESULTS)
-		case Query(q) => log(src, trg, q.dataset, EventType.QUERY)
-		case Queries(content, _) => log(src, trg, content, EventType.QUERIES)
-		case msg: Status => log(src, trg, ResultsUtil.emptyResult, EventType.STATUS)
-		case msg: UIEvent => log(src, trg, ResultsUtil.emptyResult, EventType.UIEVENT)
-		case _ => log(src, trg, ResultsUtil.emptyResult, EventType.EVENT)
+		case Results(content, port, q) => log(src + ":" + port.getOrElse(""), trg, content, EventType.RESULTS)
+		case Query(q) => log(src, trg, q, EventType.QUERY)
+		case msg: Status => log(src, trg, EmptyResults(), EventType.STATUS)
+		case msg: UIEvent => log(src, trg, EmptyResults(), EventType.UIEVENT)
+		case _ => log(src, trg, EmptyResults(), EventType.EVENT)
 	}
 
 	/**

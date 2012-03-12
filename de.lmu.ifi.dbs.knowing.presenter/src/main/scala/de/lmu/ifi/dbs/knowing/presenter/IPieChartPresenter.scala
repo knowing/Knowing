@@ -1,7 +1,9 @@
 package de.lmu.ifi.dbs.knowing.presenter
 
 import de.lmu.ifi.dbs.knowing.core.processing.TPresenter
-import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil.{ appendInstances, ATTRIBUTE_CLASS,ATTRIBUTE_PROBABILITY, classAndProbabilityResult}
+import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil.appendInstances
+import de.lmu.ifi.dbs.knowing.core.results.ClassAndProbability
+import de.lmu.ifi.dbs.knowing.core.results.ClassAndProbability._
 import weka.core.Instances
 
 trait IPieChartPresenter[T] extends TPresenter[T] {
@@ -58,10 +60,10 @@ object IPieChartPresenter {
    * @param classes - pieChart pieces
    * @return fitting dataset scheme
    */
-  def newInstances(classes: List[String]):Instances = classAndProbabilityResult(classes)
+  def newInstances(classes: List[String]):Instances = ClassAndProbability(classes)
   
   /**
    * @see ResultsUtil.classAndProbability(classes)
    */
-  def newInstances(classes: JList[String]):Instances = classAndProbabilityResult(classes)
+  def newInstances(classes: JList[String]):Instances = ClassAndProbability.newInstances(classes)
 }

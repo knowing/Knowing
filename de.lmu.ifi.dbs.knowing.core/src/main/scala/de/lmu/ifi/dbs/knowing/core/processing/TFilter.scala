@@ -1,19 +1,19 @@
-/*																*\
-** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
-** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
-** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
-** 																**
-** Knowing Framework											**
-** Apache License - http://www.apache.org/licenses/				**
-** LMU Munich - Database Systems Group							**
-** http://www.dbs.ifi.lmu.de/									**
-\*																*/
+/*                                                              *\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|  **
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---, **
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|  **
+**                                                              **
+** Knowing Framework                                            **
+** Apache License - http://www.apache.org/licenses/             **
+** LMU Munich - Database Systems Group                          **
+** http://www.dbs.ifi.lmu.de/                                   **
+\*                                                              */
 package de.lmu.ifi.dbs.knowing.core.processing
 
 import java.util.Properties
 import weka.core.{ Instances, Instance }
 import de.lmu.ifi.dbs.knowing.core.events._
-import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil.{ appendInstances, emptyResult }
+import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil.appendInstances
 
 /**
  *  <p>Used to filter Instances</p>
@@ -28,35 +28,22 @@ trait TFilter extends TProcessor {
 	isBuild = true
 
 	/**
-	 * Default implementation uses the query method. Override
-	 * this method for performance issues or if the input is need as a whole.
+	 *
 	 */
 	@throws(classOf[KnowingException])
-	def filter(instances: Instances): Instances = {
-		val results = queries(instances)
-		mergeResults(results)
-	}
+	def filter(instances: Instances): Instances
+
+	/**
+	 * delegate to TFilter.filter(instances)
+	 */
+	def query(instances: Instances): Instances = filter(instances)
 
 	/**
 	 * Delegates to filter method
 	 */
-	def build(instances: Instances) {
-		val filtered = filter(instances)
-		sendResults(filtered)
-	}
-
-	/**
-	 * @return merged instances or emptyResult
-	 */
-	protected def mergeResults(results: Map[Instance, Instances]): Instances = {
-		//A lot of conversion going on here
-		val instances = results.values.toList
-		instances.headOption match {
-			case Some(head) =>
-				val header = new Instances(head, 0)
-				appendInstances(header, instances)
-			case None => emptyResult
-		}
+	def process(instances: Instances) = {
+		case (None, _) | (Some(DEFAULT_PORT),_) => sendResults(filter(instances))
+		case (Some(port), _) => throwException(new KnowingException("Unkown port[" + port + "]in filter."))
 	}
 
 	//TODO TFilter => Input/Output Format configuration
