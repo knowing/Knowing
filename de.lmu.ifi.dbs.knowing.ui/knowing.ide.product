@@ -43,7 +43,7 @@
       <plugin id="de.lmu.ifi.dbs.knowing.core"/>
       <plugin id="de.lmu.ifi.dbs.knowing.core.logging" fragment="true"/>
       <plugin id="de.lmu.ifi.dbs.knowing.core.swt"/>
-      <plugin id="de.lmu.ifi.dbs.knowing.scala_library"/>
+      <plugin id="de.lmu.ifi.dbs.knowing.scala_library" fragment=""/>
       <plugin id="de.lmu.ifi.dbs.knowing.ui"/>
       <plugin id="javax.activation"/>
       <plugin id="javax.persistence"/>
@@ -70,7 +70,7 @@
       <plugin id="org.eclipse.ant.ui"/>
       <plugin id="org.eclipse.compare"/>
       <plugin id="org.eclipse.compare.core"/>
-      <plugin id="org.eclipse.contribution.weaving.jdt"/>
+      <plugin id="org.eclipse.contribution.weaving.jdt" fragment=""/>
       <plugin id="org.eclipse.core.boot"/>
       <plugin id="org.eclipse.core.commands"/>
       <plugin id="org.eclipse.core.contenttype"/>

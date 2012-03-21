@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Properties;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
@@ -20,12 +19,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
-import akka.actor.ActorRef;
-
-import weka.core.Instance;
-import weka.core.Instances;
-
-import de.lmu.ifi.dbs.knowing.core.japi.JProcessor;
 import de.lmu.ifi.dbs.knowing.ui.wizard.pages.CreateProcessorPage;
 
 public class NewProcessorWizard extends Wizard implements IWorkbenchWizard {

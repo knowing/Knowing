@@ -32,12 +32,6 @@
             id="de.lmu.ifi.dbs.knowing.ui.NewDPUWizard"
             name="New DataProcessingUnit">
       </wizard>
-      <wizard
-            category="de.lmu.ifi.dbs.knowing.ui.knowing"
-            class="de.lmu.ifi.dbs.knowing.ui.wizard.NewProcessorWizard"
-            id="de.lmu.ifi.dbs.knowing.ui.NewProcessorWizard"
-            name="New Processor">
-      </wizard>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">
