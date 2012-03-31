@@ -1,13 +1,13 @@
-/*                                                              *\
-** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|  **
-** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---, **
-** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|  **
-**                                                              **
-** Knowing Framework                                            **
-** Apache License - http://www.apache.org/licenses/             **
-** LMU Munich - Database Systems Group                          **
-** http://www.dbs.ifi.lmu.de/                                   **
-\*                                                              */
+/*																*\
+** |Â¯Â¯|/Â¯Â¯/|Â¯Â¯ \|Â¯Â¯| /Â¯Â¯/\Â¯Â¯\'|Â¯Â¯|  |Â¯Â¯||Â¯Â¯||Â¯Â¯ \|Â¯Â¯| /Â¯Â¯/|__|	**
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
+** 																**
+** Knowing Framework											**
+** Apache License - http://www.apache.org/licenses/				**
+** LMU Munich - Database Systems Group							**
+** http://www.dbs.ifi.lmu.de/									**
+\*																*/
 package de.lmu.ifi.dbs.knowing.weka.classifier
 
 import de.lmu.ifi.dbs.knowing.core.factory._
