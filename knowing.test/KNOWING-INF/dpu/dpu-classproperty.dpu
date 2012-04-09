@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataProcessingUnit name="Class Property DPU">
+    <configuration>
+        <history>false</history>
+        <output>
+            <absolute>true</absolute>
+        </output>
+    </configuration>
+    <nodes>
+        <node id="ClassProperty" type="processor" factoryId="knowing.test.processor.ClassPropertyProcessor">
+            <properties>
+                <property key="paramClassOne" value="knowing.test.processor.ParameterClass1"></property>
+                <property key="paramClassTwo" value="knowing.test.processor.ParameterClass2"></property>
+                <property key="paramClassTwo.Precision:0" value="1.0:Double"></property>
+                <property key="paramClassTwo.Description:1" value="What is this:String"></property>
+            </properties>
+        </node>
+    </nodes>
+</DataProcessingUnit>

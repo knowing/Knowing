@@ -12,7 +12,7 @@ package de.lmu.ifi.dbs.knowing.core.processing
 
 import java.util.Properties
 import scala.collection.JavaConversions._
-import scala.collection.mutable.{ListBuffer,Queue}
+import scala.collection.mutable.{ ListBuffer, Queue }
 import akka.actor.Actor
 import akka.actor.ActorRef
 import akka.event.EventHandler.{ debug, info, warning, error }
@@ -23,7 +23,6 @@ import de.lmu.ifi.dbs.knowing.core.model.IEdge
 import de.lmu.ifi.dbs.knowing.core.results.ResultsType
 import weka.core.{ Attribute, Instance, Instances }
 import scala.collection.mutable.HashMap
-
 
 /**
  * <p>An IProcessor encapsulates a data processing algorithm.
@@ -40,14 +39,14 @@ import scala.collection.mutable.HashMap
 trait TProcessor extends Actor with TSender with TConfigurable {
 
 	type ResultsContext = TProcessor.ResultsContext
-	
+
 	val DEFAULT_PORT = IEdge.DEFAULT_PORT
 
 	//Current status of processor
 	protected var status: Status = Created()
 	protected var isBuild = false
 	protected val properties: Properties = new Properties
-	
+
 	//Stored Queries
 	protected val queryQueue = Queue[(Option[ActorRef], Query)]()
 
@@ -68,9 +67,9 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 		case Register(actor, in, out) => register(actor, in, out)
 		case Configure(p) =>
 			try {
-				configure(p)
 				properties.clear
 				properties.putAll(p)
+				configure(p)
 				statusChanged(Waiting())
 			} catch {
 				case e: Exception => throwException(e, "Error while configuring")
@@ -83,7 +82,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 			statusChanged(Running())
 			try {
 				process(inst).apply(port, queries)
-				isBuild = true	//TODO isBuild = true on processing results. Dangerous!
+				isBuild = true //TODO isBuild = true on processing results. Dangerous!
 				processStoredQueries
 				self.sender match {
 					case Some(s) => s ! Finished()
