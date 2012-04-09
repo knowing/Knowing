@@ -36,6 +36,7 @@ class Activator extends BundleActivator {
     util.registerProcessor(new EmptyQueryProcessorFactory)
     util.registerProcessor(new ExceptionProcessorFactory)
     util.registerProcessor(new TestWekaFilterFactory)
+    util.registerProcessor(new ClassPropertyProcessorFactory)
   }
 
   def stop(context: BundleContext) = {

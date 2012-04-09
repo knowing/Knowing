@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DataProcessingUnit name="Arff-10fold-cross-validation-bayesNet">
+	<description>Cross Validation with NaiveBayes output to TablePresenter
+	</description>
+	<tags>Cross, Validation, Cross Validation, ARFF, NaiveBayes</tags>
+	<configuration>
+		<history>false</history>
+		<output>/home/muki/crossvald.xml</output>
+	</configuration>
+	<nodes>
+		<node id="ARFF" factoryId="weka.core.converters.ArffLoader" type="loader">
+			<properties>
+				<property key="file" value="iris.arff" />
+			</properties>
+		</node>
+		<node id="validator" factoryId="de.lmu.ifi.dbs.knowing.core.validation.XCrossValidator"
+			type="processor">
+			<properties>
+				<property key="classifier" value="weka.classifiers.bayes.BayesNet" />
+				<property key="estimator" value="weka.classifiers.bayes.net.estimate.BMAEstimator"></property>
+
+				<property key="searchAlgorithm" value="weka.classifiers.bayes.net.search.local.HillClimber"></property>
+				<property key="folds" value="10" />
+                <property key="kernel-estimator" value="false" />
+                <property key="supervised-discretization" value="false" />
+			</properties>
+		</node>
+		<node id="confusionMatrix" factoryId="de.lmu.ifi.dbs.knowing.core.validation.ConfusionMatrix" type="processor">
+			<properties>
+			</properties>
+		</node>
+		<node id="TablePresenter" type="presenter"
+			factoryId="de.lmu.ifi.dbs.knowing.presenter.ITablePresenter">
+			<properties>
+				<property key="rows" value="100" />
+			</properties>
+		</node>
+		<!-- <node id="ArffOutput" type="saver" factoryId="weka.core.converters.ArffSaver"> 
+			<properties> <property key="file" value="output.saver.arff" /> </properties> 
+			</node> -->
+        <node id="RawMatrixPresenter" factoryId="de.lmu.ifi.dbs.knowing.presenter.ITablePresenter" type="presenter"></node>
+	</nodes>
+	<edges>
+		<edge id="arff_validator" source="ARFF" target="validator" />
+		<edge id="validator_confusion" source="validator" target="confusionMatrix" />
+		<edge id="confusion_presenter" source="confusionMatrix" target="TablePresenter" />
+		<!-- <edge id="validator_arffSaver" source="validator" target="ArffOutput" /> -->
+        <edge source="validator" target="RawMatrixPresenter" id="rawMatrix2presenter"></edge>
+	</edges>
+</DataProcessingUnit>

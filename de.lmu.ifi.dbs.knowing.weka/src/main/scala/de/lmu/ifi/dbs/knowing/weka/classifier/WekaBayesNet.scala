@@ -1,13 +1,13 @@
-/*																*\
-** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
-** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
-** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
-** 																**
-** Knowing Framework											**
-** Apache License - http://www.apache.org/licenses/				**
-** LMU Munich - Database Systems Group							**
-** http://www.dbs.ifi.lmu.de/									**
-\*																*/
+/*                                                              *\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|  **
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---, **
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|  **
+**                                                              **
+** Knowing Framework                                            **
+** Apache License - http://www.apache.org/licenses/             **
+** LMU Munich - Database Systems Group                          **
+** http://www.dbs.ifi.lmu.de/                                   **
+\*                                                              */
 package de.lmu.ifi.dbs.knowing.weka.classifier
 
 import de.lmu.ifi.dbs.knowing.core.factory._
@@ -16,23 +16,24 @@ import de.lmu.ifi.dbs.knowing.core.weka._
 import de.lmu.ifi.dbs.knowing.core.weka.WekaClassifierFactory._
 import java.util.Properties
 import weka.classifiers.bayes.BayesNet
+import weka.classifiers.bayes.net.estimate.BayesNetEstimator
 import WekaBayesNetFactory._
+import weka.classifiers.bayes.net.search.SearchAlgorithm
 
 class WekaBayesNet extends WekaClassifier(new BayesNet) {
 
 	override def configure(properties: Properties) = {
 		val bayes = classifier.asInstanceOf[BayesNet]
 
-		//TODO resolve BIF file. See #32
-		//bayes.setBIFFile(resolvedFile)
+		val bifFile = properties.getProperty(BIFFILE)
+		bayes.setBIFFile(bifFile)
 
-		//TODO resolve EstimatorFactory and create one. See #32
-		//bayes.setEstimator()
+		resolveClass[BayesNetEstimator](ESTIMATOR).foreach(bayes.setEstimator(_))
 
-		//TODO resolve SearchAlgorith. See #32
-		//bayes.setSearchAlgorithm()
+		resolveClass[SearchAlgorithm](SEARCH_ALGORITHM).foreach(bayes.setSearchAlgorithm(_))
 
-		bayes.setUseADTree(true)
+		val useADTree = properties.getProperty(ADTREE, "true")
+		bayes.setUseADTree(useADTree.toBoolean)
 
 		val debug = properties.getProperty(DEBUG, "false")
 		bayes.setDebug(debug.toBoolean)
