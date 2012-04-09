@@ -7,12 +7,16 @@
 
 #IDE files to ignore (Netbeans, Eclipse)
 #Source directory should be ignored too
-.classpath
-.project
+#.classpath
+#.project
 .settings
 
 #ignore generated .class files
 *.class
+
+#ignore bin and target folders
+bin/
+target/
 
 #Scala
 *.scala_dependencies
