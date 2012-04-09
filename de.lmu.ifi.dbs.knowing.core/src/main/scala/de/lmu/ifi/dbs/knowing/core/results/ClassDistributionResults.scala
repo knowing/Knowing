@@ -13,7 +13,7 @@ package de.lmu.ifi.dbs.knowing.core.results
 import java.util.{ ArrayList }
 import weka.core.{ Instances, Attribute, DenseInstance, Utils }
 import scala.collection.JavaConversions._
-import de.lmu.ifi.dbs.knowing.core.events.KnowingException
+import de.lmu.ifi.dbs.knowing.core.exceptions.KnowingException
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor.guessAndSetClassLabel
 
 /**

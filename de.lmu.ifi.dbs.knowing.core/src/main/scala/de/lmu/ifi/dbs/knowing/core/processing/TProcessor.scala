@@ -18,6 +18,7 @@ import akka.actor.ActorRef
 import akka.event.EventHandler.{ debug, info, warning, error }
 import akka.config.Supervision.Temporary
 import de.lmu.ifi.dbs.knowing.core.events._
+import de.lmu.ifi.dbs.knowing.core.exceptions._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.core.model.IEdge
 import de.lmu.ifi.dbs.knowing.core.results.ResultsType

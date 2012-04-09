@@ -1,13 +1,13 @@
-/*																*\
-** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
-** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
-** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
-** 																**
-** Knowing Framework											**
-** Apache License - http://www.apache.org/licenses/				**
-** LMU Munich - Database Systems Group							**
-** http://www.dbs.ifi.lmu.de/									**
-\*																*/
+/*                                                              *\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|  **
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---, **
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|  **
+**                                                              **
+** Knowing Framework                                            **
+** Apache License - http://www.apache.org/licenses/             **
+** LMU Munich - Database Systems Group                          **
+** http://www.dbs.ifi.lmu.de/                                   **
+\*                                                              */
 package de.lmu.ifi.dbs.knowing.core.service
 
 import java.net.URI
@@ -15,7 +15,10 @@ import akka.actor.ActorRef
 import java.io.{ InputStream, OutputStream }
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
+import de.lmu.ifi.dbs.knowing.core.exceptions.ValidationException
+import de.lmu.ifi.dbs.knowing.core.exceptions.KnowingException
 import scala.collection.mutable.{ Map => MutableMap }
+
 
 /**
  * OSGi service responsible for starting a data mining process.
@@ -31,7 +34,8 @@ trait IEvaluateService {
 	 * @param dpu - the DataProcessingUnit
 	 * @param execPath - executionPath to resolve relative properties
 	 */
-	@throws(classOf[Exception])
+	@throws(classOf[ValidationException])
+	@throws(classOf[KnowingException])
 	def evaluate(dpu: IDataProcessingUnit, execPath: URI): ActorRef
 
 	/**
@@ -42,7 +46,8 @@ trait IEvaluateService {
 	 * @param uiFactoryId - Id of the registered UIFactory
 	 * @param execPath - executionPath to resolve relative properties
 	 */
-	@throws(classOf[Exception])
+	@throws(classOf[ValidationException])
+	@throws(classOf[KnowingException])
 	def evaluate(dpu: IDataProcessingUnit, execPath: URI, uiFactoryId: String): ActorRef
 
 	/**
@@ -53,7 +58,8 @@ trait IEvaluateService {
 	 * @param uiFactory - choose uiSystem and where to present
 	 * @param execPath - executionPath to resolve relative properties
 	 */
-	@throws(classOf[Exception])
+	@throws(classOf[ValidationException])
+	@throws(classOf[KnowingException])
 	def evaluate(dpu: IDataProcessingUnit, execPath: URI, uiFactory: UIFactory[_]): ActorRef
 
 	/**
@@ -64,7 +70,8 @@ trait IEvaluateService {
 	 * @param uiFactory - choose uiSystem and where to present
 	 * @param execPath - executionPath to resolve relative properties
 	 */
-	@throws(classOf[Exception])
+	@throws(classOf[ValidationException])
+	@throws(classOf[KnowingException])
 	def evaluate(dpu: IDataProcessingUnit, execPath: URI,
 		uiFactoryId: String,
 		input: MutableMap[String, InputStream],
@@ -78,7 +85,8 @@ trait IEvaluateService {
 	 * @param uiFactory - choose uiSystem and where to present
 	 * @param execPath - executionPath to resolve relative properties
 	 */
-	@throws(classOf[Exception])
+	@throws(classOf[ValidationException])
+	@throws(classOf[KnowingException])
 	def evaluate(dpu: IDataProcessingUnit, execPath: URI,
 		ui: UIFactory[_],
 		input: MutableMap[String, InputStream],

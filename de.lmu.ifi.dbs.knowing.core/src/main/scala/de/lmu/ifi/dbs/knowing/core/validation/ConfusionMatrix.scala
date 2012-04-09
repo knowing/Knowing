@@ -13,7 +13,7 @@ package de.lmu.ifi.dbs.knowing.core.validation
 import java.util.Properties
 import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
-import de.lmu.ifi.dbs.knowing.core.events.KnowingException
+import de.lmu.ifi.dbs.knowing.core.exceptions.KnowingException
 import de.lmu.ifi.dbs.knowing.core.results.{ConfusionMatrixResults,ClassDistributionResults}
 import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
 import weka.core.{ Attribute, Instances, Instance }

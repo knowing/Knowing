@@ -19,6 +19,7 @@ import de.lmu.ifi.dbs.knowing.core.factory.{ TFactory, ProcessorFactory }
 import de.lmu.ifi.dbs.knowing.core.util.{ OSGIUtil, ResultsUtil }
 import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
 import de.lmu.ifi.dbs.knowing.core.events._
+import de.lmu.ifi.dbs.knowing.core.exceptions._
 import java.util.Properties
 import weka.core.{ Instance, Instances,Attribute }
 import com.eaio.uuid.UUID

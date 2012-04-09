@@ -13,6 +13,7 @@ package de.lmu.ifi.dbs.knowing.core.processing
 import akka.actor.{ Actor, ActorRef }
 import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.events._
+import de.lmu.ifi.dbs.knowing.core.exceptions._
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import scala.collection.mutable.{ Set => MSet }

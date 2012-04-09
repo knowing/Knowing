@@ -13,6 +13,7 @@ package de.lmu.ifi.dbs.knowing.core.processing
 import java.util.Properties
 import weka.core.{ Instances, Instance }
 import de.lmu.ifi.dbs.knowing.core.events._
+import de.lmu.ifi.dbs.knowing.core.exceptions._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil.appendInstances
 
 /**

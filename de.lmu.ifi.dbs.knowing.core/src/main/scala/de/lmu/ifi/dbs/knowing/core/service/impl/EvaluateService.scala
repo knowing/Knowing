@@ -1,13 +1,13 @@
-/*																*\
-** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
-** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
-** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
-** 																**
-** Knowing Framework											**
-** Apache License - http://www.apache.org/licenses/				**
-** LMU Munich - Database Systems Group							**
-** http://www.dbs.ifi.lmu.de/									**
-\*																*/
+/*                                                              *\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|  **
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---, **
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|  **
+**                                                              **
+** Knowing Framework                                            **
+** Apache License - http://www.apache.org/licenses/             **
+** LMU Munich - Database Systems Group                          **
+** http://www.dbs.ifi.lmu.de/                                   **
+\*                                                              */
 package de.lmu.ifi.dbs.knowing.core.service.impl
 
 import java.net.URI
@@ -15,11 +15,12 @@ import java.io.{ InputStream, OutputStream }
 import akka.actor.Actor.actorOf
 import akka.actor.ActorRef
 import de.lmu.ifi.dbs.knowing.core.events._
+import de.lmu.ifi.dbs.knowing.core.exceptions._
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
 import de.lmu.ifi.dbs.knowing.core.processing.DPUExecutor
 import de.lmu.ifi.dbs.knowing.core.service._
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
-import de.lmu.ifi.dbs.knowing.core.util.DPUUtil
+import de.lmu.ifi.dbs.knowing.core.util.{ DPUValidation, DPUUtil }
 import scala.collection.mutable.{ Map => MutableMap, HashMap }
 import scala.collection.mutable.ArrayBuffer
 import org.slf4j.LoggerFactory
@@ -50,8 +51,15 @@ class EvaluateService extends IEvaluateService {
 	 * Instantiates DPUExecutor and runs the DPU
 	 * @see IEvaluationService
 	 */
-	@throws(classOf[Exception])
+	@throws(classOf[ValidationException])
+	@throws(classOf[KnowingException])
 	def evaluate(dpu: IDataProcessingUnit, execPath: URI): ActorRef = {
+		DPUValidation.runtime(dpu) match {
+			case validation if validation.hasErrors() => throw new ValidationException("Error on validation.", validation)
+			case validation if validation.hasWarnings() => log.warn("DPU has warnings: " + validation.getWarnings)
+			case validation => log.info("DPU validation successfull!")
+		}
+
 		uiFactories.size match {
 			case 0 => throw new Exception("No UIFactory registered")
 			case 1 => evaluate(dpu, execPath, uiFactories(0), HashMap[String, InputStream](), HashMap[String, OutputStream]())
@@ -66,7 +74,8 @@ class EvaluateService extends IEvaluateService {
 	 * @param uiFactoryId - Id of the registered UIFactory
 	 * @param execPath - executionPath to resolve relative properties
 	 */
-	@throws(classOf[Exception])
+	@throws(classOf[ValidationException])
+	@throws(classOf[KnowingException])
 	def evaluate(dpu: IDataProcessingUnit, execPath: URI, uiFactoryId: String): ActorRef = {
 		evaluate(dpu, execPath, uiFactoryId, HashMap[String, InputStream](), HashMap[String, OutputStream]())
 	}
@@ -76,7 +85,8 @@ class EvaluateService extends IEvaluateService {
 	 * @param uiFactory - choose uiSystem and where to present
 	 * @param execPath - executionPath to resolve relative properties
 	 */
-	@throws(classOf[Exception])
+	@throws(classOf[ValidationException])
+	@throws(classOf[KnowingException])
 	def evaluate(dpu: IDataProcessingUnit, execPath: URI, uiFactory: UIFactory[_]): ActorRef = {
 		evaluate(dpu, execPath, uiFactory, HashMap[String, InputStream](), HashMap[String, OutputStream]())
 	}
@@ -85,7 +95,8 @@ class EvaluateService extends IEvaluateService {
 	 * Instantiates DPUExecturo and runs the DPU
 	 * @see IEvaluationService
 	 */
-	@throws(classOf[Exception])
+	@throws(classOf[ValidationException])
+	@throws(classOf[KnowingException])
 	def evaluate(dpu: IDataProcessingUnit, execPath: URI,
 		uiFactoryId: String,
 		input: MutableMap[String, InputStream],
@@ -100,7 +111,8 @@ class EvaluateService extends IEvaluateService {
 	 * Instantiates DPUExecturo and runs the DPU
 	 * @see IEvaluationService
 	 */
-	@throws(classOf[Exception])
+	@throws(classOf[ValidationException])
+	@throws(classOf[KnowingException])
 	def evaluate(dpu: IDataProcessingUnit, execPath: URI,
 		ui: UIFactory[_],
 		input: MutableMap[String, InputStream],
@@ -112,7 +124,7 @@ class EvaluateService extends IEvaluateService {
 	}
 
 	def activate() {
-		log.debug("EvaluateSerive activated")
+		log.debug("EvaluateService activated")
 	}
 
 	/** bind factory service */
