@@ -1,13 +1,13 @@
-/*																*\
-** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
-** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
-** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
-** 																**
-** Knowing Framework											**
-** Apache License - http://www.apache.org/licenses/				**
-** LMU Munich - Database Systems Group							**
-** http://www.dbs.ifi.lmu.de/									**
-\*																*/
+/*                                                              *\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|  **
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---, **
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|  **
+**                                                              **
+** Knowing Framework                                            **
+** Apache License - http://www.apache.org/licenses/             **
+** LMU Munich - Database Systems Group                          **
+** http://www.dbs.ifi.lmu.de/                                   **
+\*                                                              */
 package de.lmu.ifi.dbs.knowing.weka.classifier
 
 import de.lmu.ifi.dbs.knowing.core.factory._
@@ -28,8 +28,7 @@ class WekaNaiveBayes extends WekaClassifier(new weka.classifiers.bayes.NaiveBaye
 		val bayes = classifier.asInstanceOf[weka.classifiers.bayes.NaiveBayes]
 
 		val kernel = properties.getProperty(KERNEL_ESTIMATOR, "false")
-		val boolKernel = kernel.toBoolean
-		bayes.setUseKernelEstimator(boolKernel)
+		bayes.setUseKernelEstimator(kernel.toBoolean)
 
 		val supervised = properties.getProperty(SUPERVISED_DISCRETIZATION, "false")
 		bayes.setUseSupervisedDiscretization(supervised.toBoolean)

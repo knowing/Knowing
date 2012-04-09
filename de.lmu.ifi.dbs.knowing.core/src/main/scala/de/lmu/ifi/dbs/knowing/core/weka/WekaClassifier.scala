@@ -16,8 +16,7 @@ import scala.collection.JavaConversions._
 import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
-import de.lmu.ifi.dbs.knowing.core.processing.TClassifier
-import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties
+import de.lmu.ifi.dbs.knowing.core.processing.{TClassifier,TClassPropertyResolver,INodeProperties}
 import de.lmu.ifi.dbs.knowing.core.japi.ILoggableProcessor
 import de.lmu.ifi.dbs.knowing.core.results.ClassDistributionResultsBuilder
 import akka.actor.ActorRef
@@ -37,7 +36,7 @@ import weka.core.SerializationHelper
  * @since 21.04.2011
  *
  */
-class WekaClassifier(var classifier: Classifier) extends TClassifier {
+class WekaClassifier(var classifier: Classifier) extends TClassifier with TClassPropertyResolver {
 
 	private var classLabels = Array[String]()
 	private val name = getClass.getSimpleName
