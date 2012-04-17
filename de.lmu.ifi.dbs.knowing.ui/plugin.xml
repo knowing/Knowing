@@ -91,4 +91,13 @@
             type="de.lmu.ifi.dbs.knowing.debug.core.DPULaunchConfigurationType">
       </launchConfigurationTabGroup>
    </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabs">
+      <tab
+            class="de.lmu.ifi.dbs.knowing.debug.ui.launching.DPULaunchConfigurationTab"
+            group="de.lmu.ifi.dbs.knowing.debug.ui.DPULauncherTabGroup"
+            id="de.lmu.ifi.dbs.knowing.debug.ui.tab.DPULaunchConfiguration"
+            name="DPU Configuration">
+      </tab>
+   </extension>
 </plugin>

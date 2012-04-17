@@ -1,3 +1,13 @@
+/*                                                               *\
+ ** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|  **
+ ** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---, **
+ ** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|  **
+ **                                                              **
+ ** Knowing Framework                                            **
+ ** Apache License - http://www.apache.org/licenses/             **
+ ** LMU Munich - Database Systems Group                          **
+ ** http://www.dbs.ifi.lmu.de/                                   **
+\*                                                               */
 package de.lmu.ifi.dbs.knowing.ui.debug.provider;
 
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -7,7 +17,12 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import de.lmu.ifi.dbs.knowing.debug.ui.adapter.IWorkbenchColumnAdapter;
 
-
+/**
+ * 
+ * @author goodtimes1
+ * @see http://www.eclipsezone.com/eclipse/forums/t64251.html
+ *
+ */
 public class WorkbenchTableLabelProvider extends WorkbenchLabelProvider implements ITableLabelProvider {
 
 	@Override

@@ -1,6 +1,14 @@
+/*                                                               *\
+ ** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|  **
+ ** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---, **
+ ** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|  **
+ **                                                              **
+ ** Knowing Framework                                            **
+ ** Apache License - http://www.apache.org/licenses/             **
+ ** LMU Munich - Database Systems Group                          **
+ ** http://www.dbs.ifi.lmu.de/                                   **
+\*                                                               */
 package de.lmu.ifi.dbs.knowing.debug.ui.wizard.pages;
-
-import java.io.File;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
