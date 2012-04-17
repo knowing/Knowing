@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate"
+            delegateName="DPU Launcher"
+            id="de.lmu.ifi.dbs.knowing.debug.core.DPULaunchConfigurationType"
+            modes="run, debug"
+            name="DPU"
+            public="true"
+            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">
+      </launchConfigurationType>
+   </extension>
+</plugin>
