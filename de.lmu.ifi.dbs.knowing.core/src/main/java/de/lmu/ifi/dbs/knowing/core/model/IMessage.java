@@ -1,13 +1,13 @@
-/*																*\
-** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
-** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
-** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
-** 																**
-** Knowing Framework											**
-** Apache License - http://www.apache.org/licenses/				**
-** LMU Munich - Database Systems Group							**
-** http://www.dbs.ifi.lmu.de/									**
-\*																*/
+/*                                                               *\
+ ** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|  **
+ ** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---, **
+ ** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|  **
+ **                                                              **
+ ** Knowing Framework                                            **
+ ** Apache License - http://www.apache.org/licenses/             **
+ ** LMU Munich - Database Systems Group                          **
+ ** http://www.dbs.ifi.lmu.de/                                   **
+\*                                                               */
 package de.lmu.ifi.dbs.knowing.core.model;
 
 import org.eclipse.sapphire.modeling.IModelElement;
@@ -25,21 +25,24 @@ import weka.core.Instances;
 import de.lmu.ifi.dbs.knowing.core.model.internal.InstancesSerializationService;
 
 /**
- * <p>String representation of a message send between two {@link INode}
- * connected by an {@link IEdge}. </p>
+ * <p>
+ * String representation of a message send between two {@link INode} connected
+ * by an {@link IEdge}.
+ * </p>
+ * 
  * @author Nepomuk Seiler
  * @version 0.1
  */
 @GenerateImpl
 public interface IMessage extends IModelElement {
 
-	ModelElementType TYPE = new ModelElementType(IMessage.class);
+	ModelElementType	TYPE		= new ModelElementType(IMessage.class);
 
 	/* === Sender === */
 
 	@XmlBinding(path = "@source")
 	@Label(standard = "Source")
-	ValueProperty PROP_SOURCE = new ValueProperty(TYPE, "Source");
+	ValueProperty		PROP_SOURCE	= new ValueProperty(TYPE, "Source");
 
 	Value<String> getSource();
 
@@ -49,7 +52,7 @@ public interface IMessage extends IModelElement {
 
 	@XmlBinding(path = "@source-port")
 	@Label(standard = "Port")
-	ValueProperty PROP_SOURCE_PORT = new ValueProperty(TYPE, "Source-Port");
+	ValueProperty	PROP_SOURCE_PORT	= new ValueProperty(TYPE, "Source-Port");
 
 	Value<String> getSourcePort();
 
@@ -59,7 +62,7 @@ public interface IMessage extends IModelElement {
 
 	@XmlBinding(path = "@target")
 	@Label(standard = "Target")
-	ValueProperty PROP_TARGET = new ValueProperty(TYPE, "Target");
+	ValueProperty	PROP_TARGET	= new ValueProperty(TYPE, "Target");
 
 	Value<String> getTarget();
 
@@ -69,7 +72,7 @@ public interface IMessage extends IModelElement {
 
 	@XmlBinding(path = "@target-port")
 	@Label(standard = "Port")
-	ValueProperty PROP_TARGET_PORT = new ValueProperty(TYPE, "Target-Port");
+	ValueProperty	PROP_TARGET_PORT	= new ValueProperty(TYPE, "Target-Port");
 
 	Value<String> getTargetPort();
 
@@ -80,7 +83,7 @@ public interface IMessage extends IModelElement {
 	@XmlBinding(path = "@type")
 	@Label(standard = "Type")
 	@Type(base = EventType.class)
-	ValueProperty PROP_TYPE = new ValueProperty(TYPE, "Type");
+	ValueProperty	PROP_TYPE	= new ValueProperty(TYPE, "Type");
 
 	Value<EventType> getType();
 
@@ -95,7 +98,7 @@ public interface IMessage extends IModelElement {
 	@Service(impl = InstancesSerializationService.class)
 	@Type(base = Instances.class)
 	@LongString
-	ValueProperty PROP_CONTENT = new ValueProperty(TYPE, "Content");
+	ValueProperty	PROP_CONTENT	= new ValueProperty(TYPE, "Content");
 
 	Value<Instances> getContent();
 
@@ -103,7 +106,8 @@ public interface IMessage extends IModelElement {
 
 	void setContent(Instances value);
 
-	// TODO Implement DelimitedListBindingImpl -> see http://www.eclipse.org/forums/index.php/t/244613/
+	// TODO Implement DelimitedListBindingImpl -> see
+	// http://www.eclipse.org/forums/index.php/t/244613/
 
 	/* === ContentList === */
 
