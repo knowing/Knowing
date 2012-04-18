@@ -31,28 +31,33 @@ import org.eclipse.sapphire.modeling.xml.annotations.XmlListBinding;
 import de.lmu.ifi.dbs.knowing.core.model.internal.IDataProcessingUnitOp;
 
 /**
- * <p> A DataProcessingUnit (DPU) encapsulates a data mining process.<br>
+ * <p>
+ * A DataProcessingUnit (DPU) encapsulates a data mining process.<br>
  * It's a simple graph where each node represents a step in the process.<br>
  * The edges symbolize the data flow inside the data mining process.
  * </p>
  * 
  * @author Nepomuk Seiler
  * @version 1.0
- * @see<a href="https://github.com/knowing/Knowing/wiki/DataProcessingUnit">GitHub Wiki - DataProcessingUnit</a>
- * @see<a href="https://github.com/knowing/Knowing/wiki/Knowing-Framework">GitHub Wiki - Knowing Framework </a>
+ * @see<a 
+ *        href="https://github.com/knowing/Knowing/wiki/DataProcessingUnit">GitHub
+ *        Wiki - DataProcessingUnit</a>
+ * @see<a 
+ *        href="https://github.com/knowing/Knowing/wiki/Knowing-Framework">GitHub
+ *        Wiki - Knowing Framework </a>
  */
 @GenerateImpl
 @XmlBinding(path = "DataProcessingUnit")
 public interface IDataProcessingUnit extends IExecutableModelElement {
 
-	ModelElementType TYPE = new ModelElementType(IDataProcessingUnit.class);
+	ModelElementType	TYPE		= new ModelElementType(IDataProcessingUnit.class);
 
 	/* === Name === */
 
 	@XmlBinding(path = "@name")
 	@Label(standard = "Name")
 	@Required
-	ValueProperty PROP_NAME = new ValueProperty(TYPE, "Name");
+	ValueProperty		PROP_NAME	= new ValueProperty(TYPE, "Name");
 
 	Value<String> getName();
 
@@ -63,28 +68,37 @@ public interface IDataProcessingUnit extends IExecutableModelElement {
 	@XmlBinding(path = "description")
 	@Label(standard = "Description")
 	@LongString
-	ValueProperty PROP_DESCRIPTION = new ValueProperty(TYPE, "Description");
+	ValueProperty	PROP_DESCRIPTION	= new ValueProperty(TYPE, "Description");
 
 	Value<String> getDescription();
 
 	void setDescription(String value);
 
-	/* ===Tags === */
+	/* === Tags === */
 
 	@XmlBinding(path = "tags")
 	@Label(standard = "Tags")
-	ValueProperty PROP_TAGS = new ValueProperty(TYPE, "Tags");
+	ValueProperty	PROP_TAGS	= new ValueProperty(TYPE, "Tags");
 
 	Value<String> getTags();
 
 	void setTags(String value);
+
+	/* === Parameters === */
+
+	@Type(base = IParameter.class)
+	@XmlListBinding(path = "parameters", mappings = { @XmlListBinding.Mapping(element = "parameter", type = IParameter.class) })
+	@Label(standard = "Parameters")
+	ListProperty	PROP_PARAMETERS	= new ListProperty(TYPE, "parameters");
+
+	ModelElementList<IParameter> getParameters();
 
 	/* === Nodes === */
 
 	@Type(base = INode.class)
 	@XmlListBinding(path = "nodes", mappings = { @XmlListBinding.Mapping(element = "node", type = INode.class) })
 	@Label(standard = "Nodes")
-	ListProperty PROP_NODES = new ListProperty(TYPE, "Nodes");
+	ListProperty	PROP_NODES	= new ListProperty(TYPE, "Nodes");
 
 	ModelElementList<INode> getNodes();
 
@@ -93,7 +107,7 @@ public interface IDataProcessingUnit extends IExecutableModelElement {
 	@Type(base = IEdge.class)
 	@XmlListBinding(path = "edges", mappings = { @XmlListBinding.Mapping(element = "edge", type = IEdge.class) })
 	@Label(standard = "Edges")
-	ListProperty PROP_EDGES = new ListProperty(TYPE, "Edges");
+	ListProperty	PROP_EDGES	= new ListProperty(TYPE, "Edges");
 
 	ModelElementList<IEdge> getEdges();
 
@@ -102,7 +116,7 @@ public interface IDataProcessingUnit extends IExecutableModelElement {
 	@XmlBinding(path = "configuration")
 	@Label(standard = "Configuration")
 	@Type(base = IConfiguration.class)
-	ImpliedElementProperty PROP_CONFIGURATION = new ImpliedElementProperty(TYPE, "Configuration");
+	ImpliedElementProperty	PROP_CONFIGURATION	= new ImpliedElementProperty(TYPE, "Configuration");
 
 	IConfiguration getConfiguration();
 

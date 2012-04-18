@@ -6,20 +6,29 @@
 		<package>de.lmu.ifi.dbs.knowing.ui.editor</package>
 	</import>
 	<dialog>
-		<id>de.mukis.sapphire.dpu.dialog</id>
+		<id>dpu.dialog</id>
 		<label>DPU Dialog</label>
 		<content>
-			<include>de.mukis.sapphire.dpu.composite</include>
+			<include>dpu.composite.general</include>
 		</content>
 	</dialog>
 	<composite>
-		<id>de.mukis.sapphire.dpu.composite</id>
+		<id>dpu.composite.general</id>
 		<content>
 			<property-editor>name</property-editor>
 			<property-editor>nodes</property-editor>
 			<property-editor>edges</property-editor>
 		</content>
 	</composite>
+    <composite>
+        <id>dpu.composite.parameters</id>
+        <content>
+            <property-editor>
+                <property>parameters</property>
+                <show-label>false</show-label>
+            </property-editor>
+        </content>
+    </composite>
 	<editor-page>
 		<id>dpu.editor.overview</id>
 		<root-node>
@@ -38,6 +47,13 @@
 							</hint>
 						</property-editor>
 						<property-editor>tags</property-editor>
+                        <property-editor>
+                            <property>parameters</property>
+                            <hint>
+                                <name>show.label</name>
+                                <value>false</value>
+                            </hint>
+                        </property-editor>
 					</content>
 				</section>
 				<node-factory>
@@ -248,12 +264,12 @@
 				<value>true</value>
 			</hint>
 			<content>
-				<include>de.mukis.sapphire.dpu.composite</include>
+				<include>dpu.composite.general</include>
 			</content>
 		</page>
 		<description>This is my Description</description>
 	</wizard>
-	<editor-page>
+    <editor-page>
 		<id>history.editor.overview</id>
 		<page-name>overview</page-name>
 		<page-header-text>overview page</page-header-text>

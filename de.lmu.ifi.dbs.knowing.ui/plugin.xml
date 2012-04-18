@@ -22,11 +22,11 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <category
-            id="de.lmu.ifi.dbs.knowing.ui.knowing"
+            id="de.lmu.ifi.dbs.knowing.debug.ui.knowing"
             name="Knowing">
       </category>
       <wizard
-            category="de.lmu.ifi.dbs.knowing.ui.knowing"
+            category="de.lmu.ifi.dbs.knowing.debug.ui.knowing"
             class="de.lmu.ifi.dbs.knowing.debug.ui.wizard.NewDPUWizard"
             icon="icons/dpu_16.png"
             id="de.lmu.ifi.dbs.knowing.ui.NewDPUWizard"
