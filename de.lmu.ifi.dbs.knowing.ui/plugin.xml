@@ -65,6 +65,16 @@
                type="org.eclipse.ui.model.IWorkbenchAdapter">
          </adapter>
       </factory>
+      <factory
+            adaptableType="de.lmu.ifi.dbs.knowing.core.model.IParameter"
+            class="de.lmu.ifi.dbs.knowing.debug.ui.adapter.ParameterAdapterFactory">
+         <adapter
+               type="de.lmu.ifi.dbs.knowing.debug.ui.adapter.IWorkbenchColumnAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+      </factory>
    </extension>
    <extension
          point="org.eclipse.core.contenttype.contentTypes">

@@ -28,6 +28,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.sapphire.workspace;bundle-version="0.4.0",
  org.eclipse.sapphire.workspace.ui;bundle-version="0.4.0",
  de.lmu.ifi.dbs.knowing.core,
+ de.lmu.ifi.dbs.knowing.debug.core;bundle-version="0.2.0",
  org.eclipse.pde;bundle-version="3.6.100",
  org.eclipse.pde.core;bundle-version="3.7.1",
  org.eclipse.pde.runtime;bundle-version="3.4.201",
@@ -61,3 +62,5 @@ Import-Package: org.eclipse.emf.edit.domain,
  scala.util;version="[2.9.0.1,2.9.3.0]",
  scala.util.logging;version="[2.9.0.1,2.9.3.0]",
  scala.util.matching;version="[2.9.0.1,2.9.3.0]"
+Export-Package: de.lmu.ifi.dbs.knowing.debug.ui.adapter,
+ de.lmu.ifi.dbs.knowing.debug.ui.launching

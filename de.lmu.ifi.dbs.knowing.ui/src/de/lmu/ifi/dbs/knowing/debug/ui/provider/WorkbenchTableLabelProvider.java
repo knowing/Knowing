@@ -8,7 +8,7 @@
  ** LMU Munich - Database Systems Group                          **
  ** http://www.dbs.ifi.lmu.de/                                   **
 \*                                                               */
-package de.lmu.ifi.dbs.knowing.ui.debug.provider;
+package de.lmu.ifi.dbs.knowing.debug.ui.provider;
 
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;

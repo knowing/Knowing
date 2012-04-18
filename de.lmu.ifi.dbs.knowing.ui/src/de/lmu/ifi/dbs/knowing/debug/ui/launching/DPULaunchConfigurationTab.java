@@ -10,16 +10,19 @@
 \*                                                               */
 package de.lmu.ifi.dbs.knowing.debug.ui.launching;
 
-import static de.lmu.ifi.dbs.knowing.debug.ui.interal.Activator.DPU_SDEF;
-import static de.lmu.ifi.dbs.knowing.debug.ui.interal.Activator.PLUGIN_ID;
+import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.DPU_PARAMETERS;
+import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.DPU_PATH;
+import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.DPU_PROJECT;
+import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.findDPUFile;
+import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.loadDPU;
+import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.parametersToString;
+import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.stringToParameters;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -27,7 +30,9 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.sapphire.ui.swt.SapphireControl;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.sapphire.modeling.ResourceStoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -43,6 +48,7 @@ import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit;
 import de.lmu.ifi.dbs.knowing.core.model.IParameter;
+import de.lmu.ifi.dbs.knowing.debug.ui.editor.ParameterTableViewer;
 
 /**
  * 
@@ -52,26 +58,17 @@ import de.lmu.ifi.dbs.knowing.core.model.IParameter;
  */
 public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 
-	private static final String	DPU_PROJECT		= "knowing.dpu.project";
+	private Text					txtDPU;
+	private Text					txtDPUPath;
+	private List<IParameter>		parameters;
 
-	/** Relative to project */
-	private static final String	DPU_PATH		= "knowing.dpu.path";
-
-	/** Absolute */
-	private static final String	DPU_URI			= "knowing.dpu.uri";
-
-	private static final String	DPU_PARAMETERS	= "knowing.dpu.parameters";
-
-	private Text				txtDPU;
-	private Text				txtDPUPath;
-	private List<IParameter>	parameters;
-
-	private SapphireControl		dpuControl;
-	private IFile				dpuFile;
+	private Group					dpuConfigGroup;
+	private ParameterTableViewer	propertyViewer;
+	private IFile					dpuFile;
+	private IDataProcessingUnit		dpu;
 
 	@Override
 	public void createControl(Composite parent) {
-
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout(1, false));
 
@@ -107,19 +104,29 @@ public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 				if (dialog.open() == Dialog.OK) {
 					dpuFile = (IFile) dialog.getResult()[0];
 					update();
+					setDirty(true);
+					updateLaunchConfigurationDialog();
 				}
 			}
 		});
 
 		/* Sapphire DPU Configuration */
 
-		Group dpuConfigComposite = new Group(container, SWT.BORDER);
-		dpuConfigComposite.setText("Parameters");
-		dpuConfigComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		dpuConfigComposite.setLayout(new FillLayout());
+		dpuConfigGroup = new Group(container, SWT.BORDER);
+		dpuConfigGroup.setText("Parameters");
+		dpuConfigGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+		dpuConfigGroup.setLayout(new FillLayout());
 
-		String def = PLUGIN_ID + DPU_SDEF + "!dpu.composite.parameters";
-		dpuControl = new SapphireControl(dpuConfigComposite, IDataProcessingUnit.TYPE.instantiate(), def);
+		propertyViewer = new ParameterTableViewer(dpuConfigGroup, SWT.SINGLE);
+		propertyViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				//Doesn't do anything
+				setDirty(true);
+				updateLaunchConfigurationDialog();
+			}
+		});
+		
 
 		setControl(container);
 	}
@@ -131,23 +138,12 @@ public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			String dpuProject = configuration.getAttribute(DPU_PROJECT, (String)null);
-			String path = configuration.getAttribute(DPU_PATH, (String)null);
-			String uri = configuration.getAttribute(DPU_URI, (String)null);
-			
-			List<?> stringParameters = configuration.getAttribute(DPU_PARAMETERS, new ArrayList<>());
-			// TODO (de)serialize method for parameters
-			if(dpuProject == null || path == null) 
-				return;
-			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			IProject project = root.getProject(dpuProject);
-			dpuFile = (IFile) project.findMember(path);
-			update();			
-			
-			System.err.println("DPU Project " + dpuProject);
-			System.err.println("DPU File " + dpuFile);
-			System.err.println("DPU URI " + uri);
-			System.err.println("DPU Parameters " + parameters);
+			String projectName = configuration.getAttribute(DPU_PROJECT, (String) null);
+			String relativePath = configuration.getAttribute(DPU_PATH, (String) null);
+
+			dpuFile = findDPUFile(projectName, relativePath);
+			update();
+			syncParameters(stringToParameters(configuration.getAttribute(DPU_PARAMETERS, new ArrayList<>())));
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
@@ -155,18 +151,37 @@ public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		if(dpuFile == null)
+		if (dpuFile == null)
 			return;
 		configuration.setAttribute(DPU_PROJECT, dpuFile.getProject().getName());
 		configuration.setAttribute(DPU_PATH, dpuFile.getProjectRelativePath().toOSString());
-		configuration.setAttribute(DPU_URI, dpuFile.getLocationURI().toString());
-		configuration.setAttribute(DPU_PARAMETERS, parameters);
-		update();
+		configuration.setAttribute(DPU_PARAMETERS, parametersToString(parameters));
+
 	}
-	
+
 	private void update() {
-		txtDPU.setText(dpuFile.getName());
-		txtDPUPath.setText(dpuFile.getFullPath().toOSString());
+		if (dpuFile == null)
+			return;
+		try {
+			dpu = loadDPU(dpuFile);
+			txtDPU.setText(dpu.getName().getContent());
+			txtDPUPath.setText(dpuFile.getFullPath().toOSString());
+			propertyViewer.setInput(parameters);
+		} catch (ResourceStoreException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void syncParameters(List<IParameter> loadedParameters) {
+		parameters = dpu.getParameters();
+		for (IParameter p : parameters) {
+			for (IParameter pLoaded : loadedParameters) {
+				if (p.getKey().getContent().equals(pLoaded.getKey().getContent()))
+					p.setValue(pLoaded.getValue().getContent());
+			}
+		}
+		propertyViewer.setInput(parameters);
 	}
 
 	@Override

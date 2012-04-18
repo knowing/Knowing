@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 import de.lmu.ifi.dbs.knowing.core.model.INode;
-import de.lmu.ifi.dbs.knowing.debug.ui.adapter.NodeAdapter;
 
 
 /**

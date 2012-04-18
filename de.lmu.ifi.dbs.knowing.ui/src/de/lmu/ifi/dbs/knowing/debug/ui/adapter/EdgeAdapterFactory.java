@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 import de.lmu.ifi.dbs.knowing.core.model.IEdge;
-import de.lmu.ifi.dbs.knowing.debug.ui.adapter.EdgeAdapter;
 
 public class EdgeAdapterFactory implements IAdapterFactory {
 
