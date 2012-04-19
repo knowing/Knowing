@@ -10,14 +10,15 @@
 \*                                                               */
 package de.lmu.ifi.dbs.knowing.debug.ui.launching;
 
-import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.DPU_PARAMETERS;
-import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.DPU_PATH;
-import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.DPU_PROJECT;
+import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.*;
 import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.findDPUFile;
 import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.loadDPU;
 import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.parametersToString;
 import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.stringToParameters;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,10 +42,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
+
+import scala.collection.mutable.StringBuilder;
 
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit;
 import de.lmu.ifi.dbs.knowing.core.model.IParameter;
@@ -60,6 +64,7 @@ public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 
 	private Text					txtDPU;
 	private Text					txtDPUPath;
+	private Text					txtExecutionPath;
 	private List<IParameter>		parameters;
 
 	private Group					dpuConfigGroup;
@@ -86,7 +91,7 @@ public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 		new Label(dpuComposite, SWT.NONE);
 
 		Label lblDPUPath = new Label(dpuComposite, SWT.NONE);
-		lblDPUPath.setText("Path: ");
+		lblDPUPath.setText("File: ");
 		txtDPUPath = new Text(dpuComposite, SWT.BORDER);
 		txtDPUPath.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -101,12 +106,29 @@ public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 				ResourceListSelectionDialog dialog = new ResourceListSelectionDialog(getShell(), root, IContainer.FILE);
 				dialog.setTitle("Select a Data Processing Unit");
 				dialog.setMessage("Choose one DPU");
-				if (dialog.open() == Dialog.OK) {
-					dpuFile = (IFile) dialog.getResult()[0];
-					update();
-					setDirty(true);
-					updateLaunchConfigurationDialog();
-				}
+				if (dialog.open() != Dialog.OK)
+					return;
+
+				dpuFile = (IFile) dialog.getResult()[0];
+				update();
+				setDirty(true);
+				updateLaunchConfigurationDialog();
+			}
+		});
+
+		Label lblExecutionPath = new Label(dpuComposite, SWT.NONE);
+		lblExecutionPath.setText("Executionpath: ");
+		txtExecutionPath = new Text(dpuComposite, SWT.BORDER);
+		txtExecutionPath.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		Button btnExecutionPath = new Button(dpuComposite, SWT.PUSH);
+		btnExecutionPath.setText("Browse");
+		btnExecutionPath.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				DirectoryDialog dialog = new DirectoryDialog(getShell());
+				dialog.setText("Select Execution Path");
+				updateExecutionPath(dialog.open());
 			}
 		});
 
@@ -121,18 +143,19 @@ public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 		propertyViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				//Doesn't do anything
+				// Doesn't do anything
 				setDirty(true);
 				updateLaunchConfigurationDialog();
 			}
 		});
-		
 
 		setControl(container);
 	}
 
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
+		StringBuilder sb = new StringBuilder(512);
+		
 	}
 
 	@Override
@@ -140,9 +163,11 @@ public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 		try {
 			String projectName = configuration.getAttribute(DPU_PROJECT, (String) null);
 			String relativePath = configuration.getAttribute(DPU_PATH, (String) null);
+			String executionPath = configuration.getAttribute(DPU_EXECUTION_PATH, System.getProperty("user.home"));
 
 			dpuFile = findDPUFile(projectName, relativePath);
 			update();
+			updateExecutionPath(executionPath);
 			syncParameters(stringToParameters(configuration.getAttribute(DPU_PARAMETERS, new ArrayList<>())));
 		} catch (CoreException e) {
 			e.printStackTrace();
@@ -155,6 +180,7 @@ public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 			return;
 		configuration.setAttribute(DPU_PROJECT, dpuFile.getProject().getName());
 		configuration.setAttribute(DPU_PATH, dpuFile.getProjectRelativePath().toOSString());
+		configuration.setAttribute(DPU_EXECUTION_PATH, txtExecutionPath.getText());
 		configuration.setAttribute(DPU_PARAMETERS, parametersToString(parameters));
 
 	}
@@ -166,14 +192,31 @@ public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 			dpu = loadDPU(dpuFile);
 			txtDPU.setText(dpu.getName().getContent());
 			txtDPUPath.setText(dpuFile.getFullPath().toOSString());
-			propertyViewer.setInput(parameters);
+			syncParameters(dpu.getParameters());
 		} catch (ResourceStoreException e) {
 			e.printStackTrace();
 		}
 
 	}
 
+	private void updateExecutionPath(String path) {
+		if (path == null || path.isEmpty())
+			return;
+		Path executionPath = Paths.get(path);
+
+		if (!Files.exists(executionPath)) {
+			//set Error
+		} else if (!Files.isDirectory(executionPath)) {
+			//set Error
+		} else {
+			//set Error null
+			txtExecutionPath.setText(path);
+		}
+	}
+
 	private void syncParameters(List<IParameter> loadedParameters) {
+		if(dpu == null)
+			return;
 		parameters = dpu.getParameters();
 		for (IParameter p : parameters) {
 			for (IParameter pLoaded : loadedParameters) {
