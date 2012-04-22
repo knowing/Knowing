@@ -1,29 +1,17 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Knowing Debug Core
-Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.debug.core;singleton:=true
-Bundle-Version: 0.2.0.qualifier
-Bundle-Activator: de.lmu.ifi.dbs.knowing.debug.core.internal.Activator
-Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.debug.core;bundle-version="3.7.0",
- org.eclipse.jdt.debug;bundle-version="3.7.1",
- org.eclipse.pde;bundle-version="3.6.100",
- org.eclipse.pde.build;bundle-version="3.7.0",
- org.eclipse.pde.core;bundle-version="3.7.1",
- org.eclipse.pde.launching;bundle-version="3.6.0",
- org.eclipse.pde.runtime;bundle-version="3.4.201",
- org.eclipse.pde.ui;bundle-version="3.6.100",
+Bundle-Name: Debug Presenter
+Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.debug.presenter
+Bundle-Version: 0.1.2.qualifier
+Bundle-Activator: de.lmu.ifi.dbs.knowing.debug.presenter.Activator
+Require-Bundle: de.lmu.ifi.dbs.knowing.core;bundle-version="0.1.2",
+ de.lmu.ifi.dbs.knowing.presenter;bundle-version="0.1.2",
  org.eclipse.sapphire.modeling;bundle-version="0.4.1",
- org.eclipse.sapphire.modeling.xml;bundle-version="0.4.0",
- org.eclipse.sapphire.platform;bundle-version="0.4.1",
- org.eclipse.sapphire.workspace;bundle-version="0.4.1",
- de.lmu.ifi.dbs.knowing.core;bundle-version="0.1.2",
- de.lmu.ifi.dbs.knowing.launcher;bundle-version="1.0.0",
- de.lmu.ifi.dbs.knowing.presenter;bundle-version="0.1.2"
+ org.eclipse.sapphire.modeling.xml;bundle-version="0.4.1",
+ org.eclipse.sapphire.osgi;bundle-version="0.4.1"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: com.typesafe.config,
- com.typesafe.config.impl,
+Import-Package: org.osgi.framework;version="1.6.0",
  scala;version="[2.9.0.1,2.9.3.0]",
  scala.collection;version="[2.9.0.1,2.9.3.0]",
  scala.collection.generic;version="[2.9.0.1,2.9.3.0]",
@@ -56,4 +44,3 @@ Import-Package: com.typesafe.config,
  scala.util.parsing.json;version="[2.9.0.1,2.9.3.0]",
  scala.util.parsing.syntax;version="[2.9.0.1,2.9.3.0]",
  scala.util.regexp;version="[2.9.0.1,2.9.3.0]"
-Export-Package: de.lmu.ifi.dbs.knowing.debug.core.launching

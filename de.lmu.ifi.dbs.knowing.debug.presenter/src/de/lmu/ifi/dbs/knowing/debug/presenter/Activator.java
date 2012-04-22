@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.knowing.debug.core.internal;
+package de.lmu.ifi.dbs.knowing.debug.presenter;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,10 +14,10 @@ import de.lmu.ifi.dbs.knowing.core.factory.UIFactory;
 
 public class Activator implements BundleActivator {
 
-	public static final String PLUGIN_ID = "de.lmu.ifi.dbs.knowing.debug.core";
-	
 	private static BundleContext context;
 
+	private ServiceRegistration<UIFactory>	uiFactory;
+	
 	static BundleContext getContext() {
 		return context;
 	}
@@ -28,6 +28,16 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
+		DebugPresenterFactories.registerAll(bundleContext);
+		UIFactory<Path> uiFactoryActor = TypedActor.newInstance(UIFactory.class, new TypedActorFactory() {
+			@Override
+			public TypedActor create() {
+				return new DebugUIFactory(Paths.get(System.getProperty("user.home")));
+			}
+		});
+		//TODO add services properties
+		uiFactory = context.registerService(UIFactory.class, uiFactoryActor, null);
+		
 	}
 
 	/*
@@ -35,6 +45,8 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext bundleContext) throws Exception {
+		DebugPresenterFactories.unregisterAll();
+		uiFactory.unregister();
 		Activator.context = null;
 	}
 
