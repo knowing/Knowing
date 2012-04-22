@@ -44,3 +44,4 @@ Import-Package: org.osgi.framework;version="1.6.0",
  scala.util.parsing.json;version="[2.9.0.1,2.9.3.0]",
  scala.util.parsing.syntax;version="[2.9.0.1,2.9.3.0]",
  scala.util.regexp;version="[2.9.0.1,2.9.3.0]"
+Export-Package: de.lmu.ifi.dbs.knowing.debug.presenter

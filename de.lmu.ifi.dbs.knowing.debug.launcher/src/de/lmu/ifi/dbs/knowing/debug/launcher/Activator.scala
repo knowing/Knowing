@@ -11,14 +11,21 @@
 package de.lmu.ifi.dbs.knowing.debug.launcher
 
 import org.osgi.framework.{ BundleContext, BundleActivator }
+
+import de.lmu.ifi.dbs.knowing.debug.presenter.DebugUIFactory
 import de.lmu.ifi.dbs.knowing.launcher.LaunchConfiguration
 import de.lmu.ifi.dbs.knowing.core.util.DPUUtil
 import de.lmu.ifi.dbs.knowing.core.service.IEvaluateService
+import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
 import de.lmu.ifi.dbs.knowing.core.exceptions.ValidationException
+
 import com.typesafe.config.ConfigFactory
+import akka.actor.TypedActor
+
 import java.net.URI
 import java.nio.file.Paths
 import org.slf4j.LoggerFactory
+
 
 
 /**
@@ -45,7 +52,8 @@ class Activator extends BundleActivator {
 			if (reference.isDefined) {
 				try {
 					val evaluateService = context.getService(reference.get)
-					evaluateService.evaluate(dpu, Paths.get(System.getProperty("user.home")).toUri)
+					val uiFactory = TypedActor.newInstance(classOf[UIFactory[_]], new DebugUIFactory(launchConfig.executionPath))
+					evaluateService.evaluate(dpu, Paths.get(launchConfig.executionPath).toUri, uiFactory)
 				} catch {
 					case e: ValidationException => System.err.println(e.getErrors());
 				}

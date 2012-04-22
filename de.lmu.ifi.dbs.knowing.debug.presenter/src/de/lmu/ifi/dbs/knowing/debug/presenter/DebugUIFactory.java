@@ -13,6 +13,7 @@ package de.lmu.ifi.dbs.knowing.debug.presenter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import de.lmu.ifi.dbs.knowing.core.events.Status;
 import de.lmu.ifi.dbs.knowing.core.model.INode;
@@ -35,6 +36,10 @@ public class DebugUIFactory extends TypedActor implements UIFactory<Path> {
 
 	public DebugUIFactory(Path executionPath) {
 		this.executionPath = executionPath;
+	}
+	
+	public DebugUIFactory(String executionPath) {
+		this(Paths.get(executionPath));
 	}
 
 	@Override

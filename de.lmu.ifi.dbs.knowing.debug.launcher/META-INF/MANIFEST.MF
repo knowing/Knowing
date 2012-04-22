@@ -7,8 +7,10 @@ Bundle-Activator: de.lmu.ifi.dbs.knowing.debug.launcher.Activator
 Require-Bundle: de.lmu.ifi.dbs.knowing.core;bundle-version="0.1.2",
  de.lmu.ifi.dbs.knowing.launcher;bundle-version="0.1.2",
  de.lmu.ifi.dbs.knowing.presenter;bundle-version="0.1.2",
+ de.lmu.ifi.dbs.knowing.debug.presenter;bundle-version="0.1.2",
  org.eclipse.sapphire.modeling;bundle-version="0.4.1",
- org.eclipse.sapphire.modeling.xml;bundle-version="0.4.1"
+ org.eclipse.sapphire.modeling.xml;bundle-version="0.4.1",
+ org.eclipse.sapphire.java;bundle-version="0.4.1"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.typesafe.config,
