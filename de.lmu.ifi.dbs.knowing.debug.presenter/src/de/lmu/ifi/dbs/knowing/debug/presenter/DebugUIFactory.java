@@ -61,6 +61,7 @@ public class DebugUIFactory extends TypedActor implements UIFactory<Path> {
 
 	@Override
 	public void update(ActorRef actor , Status status) {
+		//TODO write to log
 		System.out.println("Update " + status);
 	}
 

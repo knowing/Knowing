@@ -13,7 +13,7 @@ package de.lmu.ifi.dbs.knowing.launcher
 import de.lmu.ifi.dbs.knowing.core.util.DPUUtil._
 
 import com.typesafe.config._
-import java.util.{ Map => JMap }
+import java.util.{ Map => JMap, List => JList }
 import java.net.URI
 import scala.collection.JavaConversions._
 
@@ -41,10 +41,10 @@ object LaunchConfiguration {
 		"ch.qos.logback.classic@default:default",
 		"ch.qos.logback.core@default:default",
 		"com.typesafe.config@default:default",
-		"de.lmu.ifi.dbs.knowing.core.logging@default:false",
 		"de.lmu.ifi.dbs.knowing.core@default:true",
 		"de.lmu.ifi.dbs.knowing.debug.presenter@default:true",
-		"de.lmu.ifi.dbs.knowing.launcher@default:true",
+		"de.lmu.ifi.dbs.knowing.debug.launcher@default:true",
+		"de.lmu.ifi.dbs.knowing.launcher@default:false",
 		"de.lmu.ifi.dbs.knowing.presenter@default:default",
 		"nz.ac.waikato.cs.weka@default:default",
 		"org.codehaus.aspectwerkz@default:default",
@@ -61,7 +61,6 @@ object LaunchConfiguration {
 		"org.eclipse.equinox.preferences@default:default",
 		"org.eclipse.equinox.registry@default:default",
 		"org.eclipse.equinox.util@default:default",
-		"org.eclipse.equinox.weaving.hook@default:false",
 		"org.eclipse.osgi.services@default:default",
 		"org.eclipse.osgi@-1:true",
 		"org.eclipse.sapphire.java@default:default",
@@ -74,5 +73,7 @@ object LaunchConfiguration {
 		"org.eclipse.wst.common.uriresolver@default:default",
 		"org.scala-ide.scala.library@default:default",
 		"slf4j.api@default:default")
+		
+	def getRequiredBundles(): JList[String] = REQUIRED_BUNDLES
 		
 }

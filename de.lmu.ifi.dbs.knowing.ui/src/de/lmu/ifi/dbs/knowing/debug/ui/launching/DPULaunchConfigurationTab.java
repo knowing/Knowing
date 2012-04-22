@@ -10,7 +10,10 @@
 \*                                                               */
 package de.lmu.ifi.dbs.knowing.debug.ui.launching;
 
-import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.*;
+import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.DPU_EXECUTION_PATH;
+import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.DPU_PARAMETERS;
+import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.DPU_PATH;
+import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.DPU_PROJECT;
 import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.findDPUFile;
 import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.loadDPU;
 import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate.parametersToString;
@@ -19,7 +22,7 @@ import static de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfiguration
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -47,8 +50,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
-
-import scala.collection.mutable.StringBuilder;
 
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit;
 import de.lmu.ifi.dbs.knowing.core.model.IParameter;
@@ -154,8 +155,12 @@ public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		StringBuilder sb = new StringBuilder(512);
-		
+		BundlesResolver resolver = new BundlesResolver(configuration);
+		if(resolver.isBundleMissing()) {
+			//TODO print error
+			System.err.println("Bundles Missing: " + resolver.missingBundles());
+		}
+		configuration.setAttribute("target_bundles", resolver.selectedBundles());
 	}
 
 	@Override
@@ -168,7 +173,7 @@ public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 			dpuFile = findDPUFile(projectName, relativePath);
 			update();
 			updateExecutionPath(executionPath);
-			syncParameters(stringToParameters(configuration.getAttribute(DPU_PARAMETERS, new ArrayList<>())));
+			syncParameters(stringToParameters(configuration.getAttribute(DPU_PARAMETERS, new HashMap<>())));
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}

@@ -100,7 +100,7 @@ public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDeleg
 		confMap.put("dpu.uri", dpuFile.getLocationURI().toString());
 		confMap.put("dpu.executionpath", execPath);
 		
-		List<IParameter> parameters = stringToParameters(configuration.getAttribute(DPU_PARAMETERS, Collections.EMPTY_LIST));
+		List<IParameter> parameters = stringToParameters(configuration.getAttribute(DPU_PARAMETERS, Collections.EMPTY_MAP));
 		for (IParameter p : parameters) {
 			confMap.put("dpu.parameters." + p.getKey().getContent(), p.getValue().getContent());
 		}
@@ -138,26 +138,25 @@ public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDeleg
 		return dpu;
 	}
 
-	public static List<IParameter> stringToParameters(List<String> tokens) {
-		if(tokens == null || tokens.isEmpty())
-			return new ArrayList<>(0);
-		ArrayList<IParameter> result = new ArrayList<>(tokens.size());
-		for (String token : tokens) {
+	public static List<IParameter> stringToParameters(Map<String, String> parameters) {
+		if(parameters == null ||parameters.isEmpty())
+			return new ArrayList<>();
+		ArrayList<IParameter> result = new ArrayList<>(parameters.size());
+		for (Map.Entry<String, String> entry : parameters.entrySet()) {
 			IParameter p = IParameter.TYPE.instantiate();
-			String[] keyValue = token.split("=");
-			p.setKey(keyValue[0]);
-			p.setValue(keyValue[1]);
+			p.setKey(entry.getKey());
+			p.setValue(entry.getValue());
 			result.add(p);
 		}
 		return result;
 	}
 
-	public static List<String> parametersToString(List<IParameter> parameters) {
+	public static Map<String, String>  parametersToString(List<IParameter> parameters) {
 		if(parameters == null || parameters.isEmpty())
-			return new ArrayList<>(0);
-		ArrayList<String> result = new ArrayList<>(parameters.size());
+			return new HashMap<>();
+		Map<String, String> result = new HashMap<>();
 		for (IParameter p : parameters) {
-			result.add(p.getKey().getContent() + "=" + p.getValue().getContent());
+			result.put(p.getKey().getContent(), p.getValue().getContent());
 		}
 		return result;
 	}
