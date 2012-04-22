@@ -99,9 +99,10 @@ public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDeleg
 		confMap.put("dpu.uri", dpuFile.getLocationURI().toString());
 		confMap.put("dpu.executionpath", execPath);
 		
-		//TODO Cannot put a Config into the confMap. Will generate a list.
-		Map<String, String> parameterMap = parameterMap(configuration.getAttribute(DPU_PARAMETERS, Collections.EMPTY_LIST));
-		confMap.put("dpu.parameters", ConfigFactory.parseMap(parameterMap));
+		List<IParameter> parameters = stringToParameters(configuration.getAttribute(DPU_PARAMETERS, Collections.EMPTY_LIST));
+		for (IParameter p : parameters) {
+			confMap.put("dpu.parameters." + p.getKey().getContent(), p.getValue().getContent());
+		}
 		Config config = ConfigFactory.parseMap(confMap);
 		
 		Path applicationConf = executionPath.resolve("application.conf");
