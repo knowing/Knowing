@@ -16,6 +16,12 @@ import de.lmu.ifi.dbs.knowing.core.util.DPUUtil
 import com.typesafe.config.ConfigFactory
 import java.net.URI
 
+/**
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.1
+ * @since 2012-04-19
+ */
 class Activator extends BundleActivator {
 
 	def start(context: BundleContext) = {
@@ -29,10 +35,6 @@ class Activator extends BundleActivator {
 			val launchConfig = new LaunchConfiguration(config)
 			val dpu = launchConfig.dpu
 		}
-		
-		val defRef = ConfigFactory.defaultReference(getClass.getClassLoader)
-		val parms = defRef.getConfig("dpu.parameters")
-		println(parms)
 
 	}
 
