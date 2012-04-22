@@ -44,7 +44,6 @@ import com.typesafe.config.ConfigFactory;
 
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit;
 import de.lmu.ifi.dbs.knowing.core.model.IParameter;
-import de.lmu.ifi.dbs.knowing.debug.core.internal.Activator;
 import de.lmu.ifi.dbs.knowing.launcher.LaunchConfiguration;
 
 /**
@@ -54,6 +53,8 @@ import de.lmu.ifi.dbs.knowing.launcher.LaunchConfiguration;
  */
 public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDelegate {
 
+	public static final String PLUGIN_ID = "de.lmu.ifi.dbs.knowing.debug.core";
+	
 	/* ======================================= */
 	/* = Constants are only internally used  = */
 	/* = see knowing.launcher/reference.conf = */ 
@@ -79,20 +80,20 @@ public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDeleg
 		String vmArguments = configuration.getAttribute(VM_ARGUMENTS, (String) null);
 		IFile dpuFile = findDPUFile(projectName, relativePath);
 		if(!dpuFile.exists())
-			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "DPU doesn't exist! " + dpuFile.getLocationURI()));
+			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, "DPU doesn't exist! " + dpuFile.getLocationURI()));
 		
 		IDataProcessingUnit dpu = null;
 		try {
 			dpu = loadDPU(dpuFile);
 		} catch (ResourceStoreException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Error loading DPU!", e));
+			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, "Error loading DPU!", e));
 		}
 		
 		Path executionPath = Paths.get(execPath);
 		if(!Files.isDirectory(executionPath))
-			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Execution path is a file!"));
+			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, "Execution path is a file!"));
 		if(!Files.isWritable(executionPath))
-			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Execution path is not writeable!"));
+			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, "Execution path is not writeable!"));
 		
 		Map<String, Object> confMap = new HashMap<>();
 		confMap.put("dpu.name", dpu.getName().getContent());
