@@ -53,23 +53,26 @@ import de.lmu.ifi.dbs.knowing.launcher.LaunchConfiguration;
  */
 public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDelegate {
 
-	public static final String PLUGIN_ID = "de.lmu.ifi.dbs.knowing.debug.core";
-	
+	public static final String	PLUGIN_ID				= "de.lmu.ifi.dbs.knowing.debug.core";
+	public static final String	LAUNCH_TYPE				= "de.lmu.ifi.dbs.knowing.debug.core.DPULaunchConfigurationType";
+
 	/* ======================================= */
-	/* = Constants are only internally used  = */
-	/* = see knowing.launcher/reference.conf = */ 
+	/* = Constants are only internally used = */
+	/* = see knowing.launcher/reference.conf = */
 	/* ======================================= */
-	
-	public static final String	DPU_PROJECT			= "knowing.dpu.project";
+
+	public static final String	DPU_PROJECT				= "knowing.dpu.project";
 
 	/** Relative to project */
-	public static final String	DPU_PATH			= "knowing.dpu.path";
+	public static final String	DPU_PATH				= "knowing.dpu.path";
 
-	public static final String	DPU_EXECUTION_PATH	= "knowing.dpu.executionpath";
+	public static final String	DPU_EXECUTION_PATH		= "knowing.dpu.executionpath";
 
-	public static final String	DPU_PARAMETERS		= "knowing.dpu.parameters";
+	public static final String	DPU_PARAMETERS			= "knowing.dpu.parameters";
 
-	private static final String	VM_ARGUMENTS		= "org.eclipse.jdt.launching.VM_ARGUMENTS";
+	public static final String	VM_ARGUMENTS			= "org.eclipse.jdt.launching.VM_ARGUMENTS";
+	public static final String	PROGRAM_ARGUMENTS		= "org.eclipse.jdt.launching.PROGRAM_ARGUMENTS";
+	public static final String	SOURCE_PATH_PROVIDER	= "org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER";
 
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
@@ -79,41 +82,40 @@ public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDeleg
 		String execPath = configuration.getAttribute(DPU_EXECUTION_PATH, System.getProperty("user.home"));
 		String vmArguments = configuration.getAttribute(VM_ARGUMENTS, (String) null);
 		IFile dpuFile = findDPUFile(projectName, relativePath);
-		if(!dpuFile.exists())
+		if (!dpuFile.exists())
 			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, "DPU doesn't exist! " + dpuFile.getLocationURI()));
-		
+
 		IDataProcessingUnit dpu = null;
 		try {
 			dpu = loadDPU(dpuFile);
 		} catch (ResourceStoreException e) {
 			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, "Error loading DPU!", e));
 		}
-		
+
 		Path executionPath = Paths.get(execPath);
-		if(!Files.isDirectory(executionPath))
+		if (!Files.isDirectory(executionPath))
 			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, "Execution path is a file!"));
-		if(!Files.isWritable(executionPath))
+		if (!Files.isWritable(executionPath))
 			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, "Execution path is not writeable!"));
-		
+
 		Map<String, Object> confMap = new HashMap<>();
 		confMap.put("dpu.name", dpu.getName().getContent());
 		confMap.put("dpu.uri", dpuFile.getLocationURI().toString());
 		confMap.put("dpu.executionpath", execPath);
-		
+
 		List<IParameter> parameters = stringToParameters(configuration.getAttribute(DPU_PARAMETERS, Collections.EMPTY_MAP));
 		for (IParameter p : parameters) {
 			confMap.put("dpu.parameters." + p.getKey().getContent(), p.getValue().getContent());
 		}
 		Config config = ConfigFactory.parseMap(confMap);
-		
+
 		Path applicationConf = executionPath.resolve("application.conf");
-		try(Writer w = Files.newBufferedWriter(applicationConf, Charset.defaultCharset())) {
+		try (Writer w = Files.newBufferedWriter(applicationConf, Charset.defaultCharset())) {
 			w.write(config.root().render());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		
+
 		String arguments = vmArguments + " -D" + LaunchConfiguration.APPLICATION_CONF() + "=" + applicationConf.toUri();
 		ILaunchConfigurationWorkingCopy copy = configuration.copy("WithDPUSettings");
 		copy.setAttribute(VM_ARGUMENTS, arguments);
@@ -122,7 +124,7 @@ public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDeleg
 	}
 
 	public static IFile findDPUFile(String projectName, String relativePath) {
-		if(projectName == null || relativePath == null)
+		if (projectName == null || relativePath == null)
 			return null;
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IProject project = root.getProject(projectName);
@@ -139,7 +141,7 @@ public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDeleg
 	}
 
 	public static List<IParameter> stringToParameters(Map<String, String> parameters) {
-		if(parameters == null ||parameters.isEmpty())
+		if (parameters == null || parameters.isEmpty())
 			return new ArrayList<>();
 		ArrayList<IParameter> result = new ArrayList<>(parameters.size());
 		for (Map.Entry<String, String> entry : parameters.entrySet()) {
@@ -151,8 +153,8 @@ public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDeleg
 		return result;
 	}
 
-	public static Map<String, String>  parametersToString(List<IParameter> parameters) {
-		if(parameters == null || parameters.isEmpty())
+	public static Map<String, String> parametersToString(List<IParameter> parameters) {
+		if (parameters == null || parameters.isEmpty())
 			return new HashMap<>();
 		Map<String, String> result = new HashMap<>();
 		for (IParameter p : parameters) {
@@ -160,7 +162,7 @@ public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDeleg
 		}
 		return result;
 	}
-	
+
 	public static Map<String, String> parameterMap(List<String> tokens) {
 		Map<String, String> results = new HashMap<>();
 		for (String token : tokens) {
@@ -169,5 +171,5 @@ public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDeleg
 		}
 		return results;
 	}
-	
+
 }

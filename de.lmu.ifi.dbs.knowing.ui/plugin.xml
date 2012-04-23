@@ -110,4 +110,12 @@
             name="DPU Configuration">
       </tab>
    </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            configTypeID="de.lmu.ifi.dbs.knowing.debug.core.DPULaunchConfigurationType"
+            icon="icons/knowing-logo-trans-12.png"
+            id="de.lmu.ifi.dbs.knowing.debug.ui.DPUlaunchConfigurationTypeImage">
+      </launchConfigurationTypeImage>
+   </extension>
 </plugin>

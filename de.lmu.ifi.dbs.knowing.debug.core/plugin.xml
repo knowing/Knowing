@@ -11,6 +11,10 @@
             name="DPU"
             public="true"
             sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">
+         <fileExtension
+               default="true"
+               extension="*.dpu">
+         </fileExtension>
       </launchConfigurationType>
    </extension>
 </plugin>
