@@ -117,7 +117,7 @@ public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDeleg
 		}
 
 		String arguments = vmArguments + " -D" + LaunchConfiguration.APPLICATION_CONF() + "=" + applicationConf.toUri();
-		ILaunchConfigurationWorkingCopy copy = configuration.copy("WithDPUSettings");
+		ILaunchConfigurationWorkingCopy copy = configuration.getWorkingCopy();
 		copy.setAttribute(VM_ARGUMENTS, arguments);
 		super.launch(copy, mode, launch, monitor);
 

@@ -29,8 +29,11 @@ class LaunchConfiguration(config: Config) {
 
 	val executionPath = config.getString("dpu.executionpath")
 
-	val parameters = config.getConfig("dpu.parameters").entrySet
-		.map(e => (e.getKey -> e.getValue.render)).toMap
+	val parameters = config.hasPath("dpu.parameters") match {
+		case false => Map()
+		case true => config.getConfig("dpu.parameters").entrySet
+			.map(e => (e.getKey -> e.getValue.render)).toMap
+	}
 }
 
 object LaunchConfiguration {
@@ -73,7 +76,7 @@ object LaunchConfiguration {
 		"org.eclipse.wst.common.uriresolver@default:default",
 		"org.scala-ide.scala.library@default:default",
 		"slf4j.api@default:default")
-		
+
 	def getRequiredBundles(): JList[String] = REQUIRED_BUNDLES
-		
+
 }
