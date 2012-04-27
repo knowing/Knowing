@@ -28,7 +28,9 @@ import org.eclipse.ui.PlatformUI;
 
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit;
 import de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate;
+import de.lmu.ifi.dbs.knowing.debug.ui.interal.Activator;
 import de.lmu.ifi.dbs.knowing.debug.ui.launching.BundlesResolver;
+import de.lmu.ifi.dbs.knowing.debug.ui.views.DebugPresenterView;
 
 /**
  * 
@@ -48,8 +50,10 @@ public class DPURunHandler extends SapphireActionHandler {
 
 	@Override
 	protected Object run(SapphireRenderingContext context) {
-		IDataProcessingUnit dpu = (IDataProcessingUnit) getModelElement();
 		try {
+			Activator.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(DebugPresenterView.ID);
+			
+			IDataProcessingUnit dpu = (IDataProcessingUnit) getModelElement();
 			ILaunchConfiguration configuration = createLaunchConfiguration(dpu);
 			launch(configuration);
 		} catch (CoreException e) {

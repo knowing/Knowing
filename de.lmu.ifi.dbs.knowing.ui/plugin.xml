@@ -118,4 +118,13 @@
             id="de.lmu.ifi.dbs.knowing.debug.ui.DPUlaunchConfigurationTypeImage">
       </launchConfigurationTypeImage>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="de.lmu.ifi.dbs.knowing.debug.ui.views.DebugPresenterView"
+            icon="icons/knowing-logo-trans-16.png"
+            id="de.lmu.ifi.dbs.knowing.debug.ui.views.DebugPresenterView"
+            name="Debug Presenter">
+      </view>
+   </extension>
 </plugin>

@@ -11,9 +11,12 @@
 package de.lmu.ifi.dbs.knowing.debug.presenter;
 
 import java.io.IOException;
+import java.io.Writer;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 import de.lmu.ifi.dbs.knowing.core.events.Status;
 import de.lmu.ifi.dbs.knowing.core.model.INode;
@@ -30,12 +33,23 @@ import akka.actor.TypedActor;
  */
 public class DebugUIFactory extends TypedActor implements UIFactory<Path> {
 
+	public static final String PROGRESS_FILENAME = ".progress";
+	
 	private ActorRef supervisor;
 	private final Path executionPath;
+	private final Path progressPath;
 	
 
 	public DebugUIFactory(Path executionPath) {
 		this.executionPath = executionPath;
+		this.progressPath = executionPath.resolve(PROGRESS_FILENAME); 
+		try {
+			Files.deleteIfExists(progressPath);
+			Files.createFile(progressPath);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public DebugUIFactory(String executionPath) {
@@ -61,8 +75,13 @@ public class DebugUIFactory extends TypedActor implements UIFactory<Path> {
 
 	@Override
 	public void update(ActorRef actor , Status status) {
-		//TODO write to log
-		System.out.println("Update " + status);
+		//TODO open a new writer on every event? This is insane... NO.. THIS IS JAVA
+		try(Writer log = Files.newBufferedWriter(progressPath, Charset.defaultCharset(), StandardOpenOption.APPEND)) {
+			log.write(status.toString());
+			log.write("\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
