@@ -41,7 +41,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.pde.ui;bundle-version="3.6.100"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Import-Package: com.typesafe.config,
+Import-Package: com.google.common.base;version="11.0.1",
+ com.typesafe.config,
  com.typesafe.config.impl,
  org.eclipse.emf.edit.domain,
  scala;version="[2.9.0.1,2.9.3.0]",
