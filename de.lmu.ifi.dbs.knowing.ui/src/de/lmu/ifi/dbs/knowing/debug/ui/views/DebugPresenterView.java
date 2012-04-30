@@ -18,13 +18,14 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -83,7 +84,9 @@ public class DebugPresenterView extends ViewPart implements ILaunchesListener2, 
 			ILaunch launch = launches[0];
 
 			// Only interested in DPU launch configurations
-			if (!DPULaunchConfigurationDelegate.LAUNCH_TYPE.equals(launch.getLaunchConfiguration().getCategory()))
+			ILaunchConfigurationType type = launch.getLaunchConfiguration().getType();
+			
+			if (!DPULaunchConfigurationDelegate.LAUNCH_TYPE_ID.equals(type.getIdentifier()))
 				return;
 			String executionPath = launch.getLaunchConfiguration().getAttribute(DPULaunchConfigurationDelegate.DPU_EXECUTION_PATH, "");
 			ExecutionWatcherRunnable watcherRunnable = new ExecutionWatcherRunnable(executionPath);
@@ -98,14 +101,14 @@ public class DebugPresenterView extends ViewPart implements ILaunchesListener2, 
 
 	@Override
 	public void launchesTerminated(ILaunch[] launches) {
-		final Shell shell = getSite().getShell();
-		shell.getDisplay().asyncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				MessageDialog.openInformation(shell, "Execution finished", "Finished");
-			}
-		});
+//		final Shell shell = getSite().getShell();
+//		shell.getDisplay().asyncExec(new Runnable() {
+//
+//			@Override
+//			public void run() {
+//				MessageDialog.openInformation(shell, "Execution finished", "Finished");
+//			}
+//		});
 
 	}
 

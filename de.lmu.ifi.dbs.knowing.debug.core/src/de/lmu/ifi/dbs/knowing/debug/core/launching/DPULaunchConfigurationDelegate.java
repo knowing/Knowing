@@ -54,7 +54,8 @@ import de.lmu.ifi.dbs.knowing.launcher.LaunchConfiguration;
 public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDelegate {
 
 	public static final String	PLUGIN_ID				= "de.lmu.ifi.dbs.knowing.debug.core";
-	public static final String	LAUNCH_TYPE				= "de.lmu.ifi.dbs.knowing.debug.core.DPULaunchConfigurationType";
+	public static final String	LAUNCH_TYPE_ID			= "de.lmu.ifi.dbs.knowing.debug.core.DPULaunchConfigurationType";
+	public static final String	LAUNCH_TYPE_CATEGORY	= "Knowing";
 
 	/* ======================================= */
 	/* = Constants are only internally used = */

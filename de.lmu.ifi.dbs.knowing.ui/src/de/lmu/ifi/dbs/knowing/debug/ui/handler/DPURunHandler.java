@@ -74,7 +74,7 @@ public class DPURunHandler extends SapphireActionHandler {
 			
 		// Create valid launch configuration name
 
-		ILaunchConfigurationType dpuLaunchType = launchManager.getLaunchConfigurationType(DPULaunchConfigurationDelegate.LAUNCH_TYPE);
+		ILaunchConfigurationType dpuLaunchType = launchManager.getLaunchConfigurationType(DPULaunchConfigurationDelegate.LAUNCH_TYPE_ID);
 		ILaunchConfigurationWorkingCopy configuration = dpuLaunchType.newInstance(null, dpuName);
 		return setLaunchAttributes(configuration, dpu);
 	}
@@ -82,7 +82,7 @@ public class DPURunHandler extends SapphireActionHandler {
 	private ILaunchConfiguration setLaunchAttributes(ILaunchConfigurationWorkingCopy configuration, IDataProcessingUnit dpu) throws CoreException {
 		// Add OSGi settings
 		configuration.setAttribute(DPULaunchConfigurationDelegate.SOURCE_PATH_PROVIDER, "org.eclipse.pde.ui.workbenchClasspathProvider");
-		configuration.setAttribute(DPULaunchConfigurationDelegate.VM_ARGUMENTS, "-Declipse.ignoreApp=true -Dosgi.noShutdown=false");
+		configuration.setAttribute(DPULaunchConfigurationDelegate.VM_ARGUMENTS, "-Declipse.ignoreApp=true -Dosgi.noShutdown=true");
 		configuration.setAttribute(DPULaunchConfigurationDelegate.PROGRAM_ARGUMENTS, "-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog -console");
 		
 		configuration.setAttribute("automaticAdd", true);
