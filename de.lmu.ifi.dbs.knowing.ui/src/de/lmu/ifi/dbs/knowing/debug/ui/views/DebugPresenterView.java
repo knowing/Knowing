@@ -16,6 +16,9 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -45,12 +48,18 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+
 import scala.Tuple2;
 import de.lmu.ifi.dbs.knowing.core.events.Shutdown;
 import de.lmu.ifi.dbs.knowing.core.events.Status;
+import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit;
+import de.lmu.ifi.dbs.knowing.core.util.DPUUtil;
 import de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate;
 import de.lmu.ifi.dbs.knowing.debug.presenter.DebugUIFactory;
 import de.lmu.ifi.dbs.knowing.debug.presenter.ProgressReader;
+import de.lmu.ifi.dbs.knowing.debug.presenter.PresentationDPUBuilder;
 import de.lmu.ifi.dbs.knowing.debug.ui.interal.Activator;
 
 public class DebugPresenterView extends ViewPart implements ILaunchesListener2, UncaughtExceptionHandler {
@@ -122,7 +131,27 @@ public class DebugPresenterView extends ViewPart implements ILaunchesListener2, 
 		
 		for (int i = 0; i < launches.length; i++) {
 			if(currentLaunch.equals(launches[i]))
-				currentLaunch = null;
+				handleTermination(launches[i]);
+		}
+	}
+	
+	/**
+	 * 1. Read DPU
+	 * 2. Create DPU with ArffLoader -> Presenter for each file
+	 * 3. Execute DPU in the IDE	
+	 */
+	private void handleTermination(ILaunch launch) {
+		currentLaunch = null;
+		try {
+			String executionPath = launch.getLaunchConfiguration().getAttribute(DPULaunchConfigurationDelegate.DPU_EXECUTION_PATH, "");
+			URI appConf = Paths.get(executionPath, "application.conf").toUri();
+			Config config = ConfigFactory.parseURL(appConf.toURL());
+			String dpuUriString = config.getString("dpu.uri");
+			IDataProcessingUnit dpu = DPUUtil.deserialize(new URI(dpuUriString).toURL());
+			IDataProcessingUnit presentation = PresentationDPUBuilder.create(dpu);
+			
+		} catch (CoreException | MalformedURLException | URISyntaxException e) {
+			e.printStackTrace();
 		}
 	}
 	

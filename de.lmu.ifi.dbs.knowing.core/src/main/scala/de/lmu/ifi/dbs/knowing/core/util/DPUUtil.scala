@@ -14,9 +14,7 @@ import java.net.URL
 import java.util.Properties
 import java.io.{ PrintWriter, OutputStream }
 import scala.collection.JavaConversions._
-import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
-import de.lmu.ifi.dbs.knowing.core.model.INode
-import de.lmu.ifi.dbs.knowing.core.model.NodeType
+import de.lmu.ifi.dbs.knowing.core.model.{ INode, IEdge, NodeType, IDataProcessingUnit }
 import de.lmu.ifi.dbs.knowing.core.service.IDPUDirectory
 import org.eclipse.sapphire.modeling.xml.{ RootXmlResource, XmlResourceStore }
 import org.eclipse.sapphire.modeling.UrlResourceStore
@@ -159,7 +157,7 @@ object DPUUtil {
 	 * @return Some(node) or None
 	 */
 	def nodeByIdOption(id: String, dpu: IDataProcessingUnit): Option[INode] = {
-		dpu.getNodes find (node => node.getId.getContent.equals(id))
+		dpu.getNodes find (_.getId.getContent.equals(id))
 	}
 
 	def nodeProperties(node: INode): Properties = node.getProperties.foldLeft(new Properties) {
@@ -182,5 +180,14 @@ object DPUUtil {
 	/* =========================== */
 	/* ==== Edge util methods ==== */
 	/* =========================== */
+
+	def edgeById(id: String, dpu: IDataProcessingUnit): IEdge = edgeByIdOption(id, dpu) match {
+		case Some(edge) => edge
+		case None => null
+	}
+
+	def edgeByIdOption(id: String, dpu: IDataProcessingUnit): Option[IEdge] = {
+		dpu.getEdges find (_.getId.getContent.equals(id))
+	}
 
 }

@@ -35,6 +35,7 @@ class ProgressReader(r: Reader) extends LineNumberReader(r) {
 				case "Running()" => Running()
 				case "Finished()" => Finished()
 				case "Shutdown()" => Shutdown()
+				case "UpdateUI()" => UpdateUI()
 				case p if p.startsWith("Progress(") =>
 					val content = p.substring(9, p.length -1).split(",")
 					Progress(content(0), content(1).toInt, content(2).toInt)

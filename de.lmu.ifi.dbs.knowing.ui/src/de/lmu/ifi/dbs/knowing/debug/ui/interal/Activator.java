@@ -21,11 +21,11 @@ public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "de.lmu.ifi.dbs.knowing.debug.ui"; //$NON-NLS-1$
+	
+	public static String DPU_SDEF = "/de/lmu/ifi/dbs/knowing/debug/ui/editor/DataProcessingUnitEditor.sdef";
 
 	// The shared instance
 	private static Activator plugin;
-	
-	public static String DPU_SDEF = "/de/lmu/ifi/dbs/knowing/debug/ui/editor/DataProcessingUnitEditor.sdef";
 	
 	/**
 	 * The constructor
