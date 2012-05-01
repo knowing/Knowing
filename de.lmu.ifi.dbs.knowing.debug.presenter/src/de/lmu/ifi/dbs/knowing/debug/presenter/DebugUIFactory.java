@@ -76,9 +76,9 @@ public class DebugUIFactory extends TypedActor implements UIFactory<Path> {
 	@Override
 	public void update(ActorRef actor , Status status) {
 		//TODO open a new writer on every event? This is insane... NO.. THIS IS JAVA
-		try(Writer log = Files.newBufferedWriter(progressPath, Charset.defaultCharset(), StandardOpenOption.APPEND)) {
-			log.write(status.toString());
-			log.write("\n");
+		try(Writer w = Files.newBufferedWriter(progressPath, Charset.defaultCharset(), StandardOpenOption.APPEND);
+				ProgressWriter log = new ProgressWriter(w) ) {
+			log.write(actor, status);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

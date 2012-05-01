@@ -1,3 +1,13 @@
+/*                                                               *\
+ ** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|  **
+ ** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---, **
+ ** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|  **
+ **                                                              **
+ ** Knowing Framework                                            **
+ ** Apache License - http://www.apache.org/licenses/             **
+ ** LMU Munich - Database Systems Group                          **
+ ** http://www.dbs.ifi.lmu.de/                                   **
+\*                                                               */
 package de.lmu.ifi.dbs.knowing.debug.ui.views;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
@@ -6,8 +16,7 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousFileChannel;
+import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,13 +32,11 @@ import java.util.concurrent.TimeoutException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchesListener2;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -38,10 +45,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
-import com.google.common.base.Splitter;
-
+import scala.Tuple2;
+import de.lmu.ifi.dbs.knowing.core.events.Shutdown;
+import de.lmu.ifi.dbs.knowing.core.events.Status;
 import de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate;
 import de.lmu.ifi.dbs.knowing.debug.presenter.DebugUIFactory;
+import de.lmu.ifi.dbs.knowing.debug.presenter.ProgressReader;
 import de.lmu.ifi.dbs.knowing.debug.ui.interal.Activator;
 
 public class DebugPresenterView extends ViewPart implements ILaunchesListener2, UncaughtExceptionHandler {
@@ -62,27 +71,16 @@ public class DebugPresenterView extends ViewPart implements ILaunchesListener2, 
 		container.setLayout(new FillLayout(SWT.HORIZONTAL));
 		txtConsole = new Text(container, SWT.BORDER | SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
 
-		createActions();
-		initializeToolBar();
-		initializeMenu();
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 	}
 
 	@Override
 	public void setFocus() {
-		// Set the focus
-	}
-
-	@Override
-	public void launchesRemoved(ILaunch[] launches) {
+		txtConsole.setFocus();
 	}
 
 	@Override
 	public void launchesAdded(ILaunch[] launches) {
-	}
-
-	@Override
-	public void launchesChanged(ILaunch[] launches) {
 		try {
 			if (launches.length == 0)
 				return;
@@ -103,7 +101,7 @@ public class DebugPresenterView extends ViewPart implements ILaunchesListener2, 
 			}
 
 			String executionPath = launch.getLaunchConfiguration().getAttribute(DPULaunchConfigurationDelegate.DPU_EXECUTION_PATH, "");
-			ExecutionWatcherRunnable watcherRunnable = new ExecutionWatcherRunnable(executionPath);
+			ExecutionWatcherRunnable watcherRunnable = new ExecutionWatcherRunnable(executionPath, launch);
 			Thread thread = new Thread(watcherRunnable);
 			thread.setName("ExecutionWatcherThread");
 			thread.start();
@@ -111,44 +109,29 @@ public class DebugPresenterView extends ViewPart implements ILaunchesListener2, 
 
 		} catch (CoreException | IOException e) {
 			e.printStackTrace();
-			ErrorDialog.openError(getSite().getShell(), "Error while launching DPU", e.getMessage(), new Status(IStatus.ERROR,
-					Activator.PLUGIN_ID, null, e));
+			ErrorDialog.openError(getSite().getShell(), "Error while launching DPU", e.getMessage(), new org.eclipse.core.runtime.Status(
+					IStatus.ERROR, Activator.PLUGIN_ID, null, e));
 		}
 	}
 
+
 	@Override
 	public void launchesTerminated(ILaunch[] launches) {
-		// final Shell shell = getSite().getShell();
-		// shell.getDisplay().asyncExec(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// MessageDialog.openInformation(shell, "Execution finished",
-		// "Finished");
-		// }
-		// });
-
+		if (launches.length == 0)
+			return;
+		
+		for (int i = 0; i < launches.length; i++) {
+			if(currentLaunch.equals(launches[i]))
+				currentLaunch = null;
+		}
 	}
-
-	/**
-	 * Create the actions.
-	 */
-	private void createActions() {
-		// Create the actions
+	
+	@Override
+	public void launchesChanged(ILaunch[] launches) {
 	}
-
-	/**
-	 * Initialize the toolbar.
-	 */
-	private void initializeToolBar() {
-		IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
-	}
-
-	/**
-	 * Initialize the menu.
-	 */
-	private void initializeMenu() {
-		IMenuManager menuManager = getViewSite().getActionBars().getMenuManager();
+	
+	@Override
+	public void launchesRemoved(ILaunch[] launches) {
 	}
 
 	@Override
@@ -159,9 +142,14 @@ public class DebugPresenterView extends ViewPart implements ILaunchesListener2, 
 
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
-
+		//TODO implement exception handler
 	}
 
+	/* ============================================================================ */
+	/* ============================ Execution Thread ============================== */
+	/* ============================================================================ */
+	
+	
 	/**
 	 * Watches for .log and .progress files in the execution path.
 	 * 
@@ -170,15 +158,14 @@ public class DebugPresenterView extends ViewPart implements ILaunchesListener2, 
 	 */
 	private class ExecutionWatcherRunnable implements Runnable {
 
-		boolean							terminated	= false;
+		boolean					terminated	= false;
 
-		private final Path				executionPath;
-		private AsynchronousFileChannel	progressChannel;
-		private long					position	= 0;
+		private final Path		executionPath;
+		private final ILaunch	launch;
+		private ProgressReader	progressReader;
 
-		private String					lastLine;
-
-		ExecutionWatcherRunnable(String executionPath) throws IOException {
+		ExecutionWatcherRunnable(String executionPath, ILaunch launch) throws IOException {
+			this.launch = launch;
 			this.executionPath = Paths.get(executionPath);
 		}
 
@@ -197,62 +184,92 @@ public class DebugPresenterView extends ViewPart implements ILaunchesListener2, 
 					}
 					List<WatchEvent<?>> events = watchKey.pollEvents();
 					for (WatchEvent<?> event : events) {
-						processEvent(event);
+						terminated = processEvent(event);
 					}
 
 					if (!watchKey.reset()) {
 						terminated = true;
 					}
 				}
-			} catch (IOException | InterruptedException | ExecutionException | TimeoutException e) {
+				
+				launch.terminate();
+			} catch (IOException | InterruptedException | ExecutionException | TimeoutException | DebugException e) {
 				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
+			
+			//Inform user
+			getSite().getShell().getDisplay().asyncExec(new Runnable() {
+				
+				@Override
+				public void run() {
+					MessageDialog.openInformation(getSite().getShell(), "Finished", "Execution finished");
+				}
+			});
+			
+			
 
 		}
 
-		private void processEvent(WatchEvent<?> event) throws InterruptedException, ExecutionException, TimeoutException, IOException {
+		private boolean processEvent(WatchEvent<?> event) throws InterruptedException, ExecutionException, TimeoutException, IOException {
 			WatchEvent.Kind<?> kind = event.kind();
 			WatchEvent<Path> ev = (WatchEvent<Path>) event;
 			Path filename = ev.context();
-			if (filename.startsWith(".log")) {
-				System.out.println("Log: " + filename.getFileName());
-			} else if (filename.startsWith(DebugUIFactory.PROGRESS_FILENAME)) {
-				if (!openFileChannel(event))
-					return;
-
-				final ByteBuffer buffer = ByteBuffer.allocate(512);
-				Integer bytesRead = progressChannel.read(buffer, position).get(5, TimeUnit.SECONDS);
-				if (bytesRead == -1)
-					return;
-
-				position += bytesRead;
-				getSite().getShell().getDisplay().asyncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						if (buffer.hasArray()) {
-							String progressFile = new String(buffer.array());
-							txtConsole.append(progressFile);
-							showProgress(progressFile);
-						}
-					}
-				});
+			switch (filename.toString()) {
+			case ".log":
+				handleLogChanged(ev);
+				return false;
+			case ".progress":
+				return handleProgressChange(ev);
+			default:
+				return false;
 			}
+
 		}
 
-		private boolean openFileChannel(WatchEvent<?> event) throws IOException {
-			if (progressChannel != null)
+		private void handleLogChanged(WatchEvent<Path> event) {
+			Path filename = event.context();
+		}
+
+		private boolean handleProgressChange(WatchEvent<Path> event) throws IOException {
+			if (!openReader(event))
+				return false;
+
+			//Read from .progress file
+			final List<Tuple2<String, Status>> status = progressReader.readAllStatus();
+
+			//Update UI
+			getSite().getShell().getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					for (Tuple2<String, Status> classStatus : status) {
+						txtConsole.append(classStatus._2() + "\n");
+					}
+				}
+			});
+			
+			//check for termination
+			for (Tuple2<String, Status> classStatus : status) {
+				Status s = classStatus._2();
+				if(s instanceof Shutdown)
+					return true;
+			}
+			return false;
+		}
+
+		private boolean openReader(WatchEvent<Path> event) throws IOException {
+			if (progressReader != null)
 				return true;
-			if (event.kind().equals(StandardWatchEventKinds.ENTRY_DELETE) && progressChannel != null) {
-				progressChannel.close();
-				progressChannel = null;
+			if (event.kind().equals(StandardWatchEventKinds.ENTRY_DELETE) && progressReader != null) {
+				progressReader.close();
+				progressReader = null;
 				return false;
 			}
 			try {
 				Path progressFile = this.executionPath.resolve(DebugUIFactory.PROGRESS_FILENAME);
 				if (!Files.exists(progressFile))
 					return false;
-				progressChannel = AsynchronousFileChannel.open(progressFile);
+				progressReader = new ProgressReader(Files.newBufferedReader(progressFile, Charset.defaultCharset()));
 			} catch (IOException e) {
 				e.printStackTrace();
 				return false;
@@ -260,36 +277,8 @@ public class DebugPresenterView extends ViewPart implements ILaunchesListener2, 
 			return true;
 		}
 
-		private boolean showProgress(String progressFile) {
-			String trimmed = progressFile.trim(); //Remove zeros from buffer
-			Splitter splitter = Splitter.onPattern("\r?\n").trimResults().omitEmptyStrings(); //split on line break
-			Iterable<String> split = splitter.split(trimmed);
-			int i = 0;
-			for (String string : split) {
-				System.out.println("#[" + i + "," + string.isEmpty() + "] " + string );
-				i++;
-			}
-/*			if (status.length == 0)
-				return false;
-			if (status.length == 1) {
-				lastLine = lastLine + status[0];
-				if (lastLine.equals("Shutdown()"))
-					return true;
-				return false;
-			}
-			
-			String firstLine = lastLine + status[0];
-			System.err.println("First: " + firstLine);
-			for (int i = 1; i < status.length; i++) {
-				System.err.println("Status: " + status[i]);
-			}
-			
-			lastLine = status[status.length -1];
-			System.err.println("Last: " + lastLine);
-			if(lastLine.equals("Shutdown()"))
-				return true;*/
-			
-			return false;
+		private void showProgress(String progressFile) {
+
 		}
 
 	}
