@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Knowing UI
 Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.debug.ui;singleton:=true
-Bundle-Version: 0.1.2.qualifier
+Bundle-Version: 0.1.3.qualifier
 Bundle-Activator: de.lmu.ifi.dbs.knowing.debug.ui.interal.Activator
 Bundle-Vendor: LMU Munich - Database Systems Group
 Require-Bundle: org.eclipse.core.runtime,

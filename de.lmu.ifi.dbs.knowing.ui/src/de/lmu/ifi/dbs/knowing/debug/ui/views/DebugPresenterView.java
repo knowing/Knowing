@@ -45,25 +45,25 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
+
+import scala.Tuple2;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
-import scala.Tuple2;
 import de.lmu.ifi.dbs.knowing.core.events.Shutdown;
 import de.lmu.ifi.dbs.knowing.core.events.Status;
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory;
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit;
+import de.lmu.ifi.dbs.knowing.core.swt.factory.UIFactories;
 import de.lmu.ifi.dbs.knowing.core.util.DPUUtil;
 import de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate;
 import de.lmu.ifi.dbs.knowing.debug.presenter.DebugUIFactory;
-import de.lmu.ifi.dbs.knowing.debug.presenter.ProgressReader;
 import de.lmu.ifi.dbs.knowing.debug.presenter.PresentationDPUBuilder;
+import de.lmu.ifi.dbs.knowing.debug.presenter.ProgressReader;
 import de.lmu.ifi.dbs.knowing.debug.ui.interal.Activator;
-import de.lmu.ifi.dbs.knowing.core.swt.factory.UIFactories;
 
 public class DebugPresenterView extends ViewPart implements ILaunchesListener2, UncaughtExceptionHandler {
 
