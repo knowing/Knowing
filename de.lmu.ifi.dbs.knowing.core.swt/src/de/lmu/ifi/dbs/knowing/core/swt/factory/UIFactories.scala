@@ -8,7 +8,6 @@ import de.lmu.ifi.dbs.knowing.core.util.DPUUtil
 import de.lmu.ifi.dbs.knowing.core.swt.dialog.ProgressDialog
 import akka.actor.ActorRef
 import akka.actor.TypedActor
-import akka.actor.TypedActor.newInstance
 import akka.event.EventHandler.{ debug, info, warning, error }
 import org.eclipse.swt.widgets.Composite
 import org.eclipse.swt.custom.{CTabItem,CTabFolder}
@@ -25,7 +24,7 @@ object UIFactories {
    * @param id
    */
   def newCompositeUIFactoryInstance(parent: Composite, id: String): UIFactory[Composite] = {
-    newInstance(classOf[UIFactory[Composite]], new CompositeUIFactory(parent, id))
+    TypedActor.newInstance(classOf[UIFactory[Composite]], new CompositeUIFactory(parent, id))
   }
 
   /**
@@ -34,7 +33,7 @@ object UIFactories {
    * @param id
    */
   def newTabUIFactoryInstance(parent: Composite, id: String): UIFactory[Composite] = {
-    newInstance(classOf[UIFactory[Composite]], new TabUIFactory(parent, id))
+    TypedActor.newInstance(classOf[UIFactory[Composite]], new TabUIFactory(parent, id))
   }
 
   /**
@@ -43,7 +42,7 @@ object UIFactories {
    * @param id
    */
   def newTabUIFactoryInstance(parent: Composite, style: Int, id: String): UIFactory[Composite] = {
-    newInstance(classOf[UIFactory[Composite]], new TabUIFactory(parent, id, style))
+    TypedActor.newInstance(classOf[UIFactory[Composite]], new TabUIFactory(parent, id, style))
   }
 
   def newServiceProperties(): Hashtable[String, String] = {

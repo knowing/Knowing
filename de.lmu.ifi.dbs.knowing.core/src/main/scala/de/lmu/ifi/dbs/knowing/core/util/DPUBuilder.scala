@@ -25,7 +25,6 @@ import java.util.Properties
 class DPUBuilder {
 
 	private val internalDPU = IDataProcessingUnit.TYPE.instantiate[IDataProcessingUnit]
-	
 
 	def setName(name: String): DPUBuilder = {
 		internalDPU.setName(name)
@@ -37,10 +36,10 @@ class DPUBuilder {
 		this
 	}
 
-	def addTags(tag: Array[String]): DPUBuilder = addTags(tag:_*)
+	def addTags(tag: Array[String]): DPUBuilder = addTags(tag: _*)
 
 	def addTags(tag: String*): DPUBuilder = {
-		if(tag.isEmpty)
+		if (tag.isEmpty)
 			return this
 		val tagString = tag.reduceLeft((tags, t) => tags + "," + t)
 		internalDPU.setTags(tagString)
@@ -71,6 +70,9 @@ class DPUBuilder {
 	 */
 	def addNode(id: String, factory: Class[_], typ: NodeType, properties: Properties): DPUBuilder = {
 		val node = internalDPU.getNodes.addNewElement
+		node.setId(id)
+		node.setFactoryId(factory.getName)
+		node.setType(typ)
 		for (p <- properties) {
 			val property = node.getProperties.addNewElement()
 			property.setKey(p._1)
@@ -119,8 +121,8 @@ class DPUBuilder {
 }
 
 object DPUBuilder {
-	
+
 	def apply(): DPUBuilder = new DPUBuilder()
-	
+
 	def apply(name: String) = new DPUBuilder().setName(name)
 }

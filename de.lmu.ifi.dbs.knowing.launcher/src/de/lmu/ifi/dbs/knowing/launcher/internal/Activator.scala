@@ -38,11 +38,12 @@ class Activator extends BundleActivator {
 	 */
 	def start(context: BundleContext) = {
 		val configUriString = System.getProperty(LaunchConfiguration.APPLICATION_CONF)
-
+		
+		//TODO check for debug.launcher if present and don't launch
+		/*
 		if (configUriString != null && configUriString.nonEmpty) {
 			val configUrl = new URI(configUriString).toURL
 			val config = ConfigFactory.parseURL(configUrl)
-			println(config.root.render)
 
 			val launchConfig = new LaunchConfiguration(config)
 			val dpu = launchConfig.dpu
@@ -56,6 +57,7 @@ class Activator extends BundleActivator {
 				}
 			}
 		}
+		*/
 	}
 
 	def stop(context: BundleContext) = {}

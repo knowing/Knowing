@@ -10,9 +10,12 @@
 \*                                                               */
 package de.lmu.ifi.dbs.knowing.debug.ui.interal;
 
+import de.lmu.ifi.dbs.knowing.core.service.IEvaluateService;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -27,11 +30,8 @@ public class Activator extends AbstractUIPlugin {
 	// The shared instance
 	private static Activator plugin;
 	
-	/**
-	 * The constructor
-	 */
-	public Activator() {
-	}
+	private static ServiceTracker<IEvaluateService, IEvaluateService> evaluateServiceTracker;
+	
 
 	/*
 	 * (non-Javadoc)
@@ -40,6 +40,9 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		
+		evaluateServiceTracker = new ServiceTracker<>(context, IEvaluateService.class, null);
+		evaluateServiceTracker.open();
 	}
 
 	/*
@@ -47,6 +50,8 @@ public class Activator extends AbstractUIPlugin {
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
+		evaluateServiceTracker.close();
+		evaluateServiceTracker = null;
 		plugin = null;
 		super.stop(context);
 	}
@@ -62,6 +67,10 @@ public class Activator extends AbstractUIPlugin {
 	
 	public static ImageDescriptor getImageDescriptor(String imageFilePath) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, imageFilePath);
+	}
+	
+	public static IEvaluateService getEvaluateService() {
+		return evaluateServiceTracker.getService();
 	}
 
 }

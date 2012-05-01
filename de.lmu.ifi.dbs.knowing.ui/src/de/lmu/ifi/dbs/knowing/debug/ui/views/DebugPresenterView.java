@@ -46,6 +46,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
 import com.typesafe.config.Config;
@@ -54,6 +55,7 @@ import com.typesafe.config.ConfigFactory;
 import scala.Tuple2;
 import de.lmu.ifi.dbs.knowing.core.events.Shutdown;
 import de.lmu.ifi.dbs.knowing.core.events.Status;
+import de.lmu.ifi.dbs.knowing.core.factory.UIFactory;
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit;
 import de.lmu.ifi.dbs.knowing.core.util.DPUUtil;
 import de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate;
@@ -61,13 +63,15 @@ import de.lmu.ifi.dbs.knowing.debug.presenter.DebugUIFactory;
 import de.lmu.ifi.dbs.knowing.debug.presenter.ProgressReader;
 import de.lmu.ifi.dbs.knowing.debug.presenter.PresentationDPUBuilder;
 import de.lmu.ifi.dbs.knowing.debug.ui.interal.Activator;
+import de.lmu.ifi.dbs.knowing.core.swt.factory.UIFactories;
 
 public class DebugPresenterView extends ViewPart implements ILaunchesListener2, UncaughtExceptionHandler {
 
-	public static final String	ID	= "de.lmu.ifi.dbs.knowing.debug.ui.views.DebugPresenterView";	//$NON-NLS-1$
-	private Text				txtConsole;
+	public static final String		ID	= "de.lmu.ifi.dbs.knowing.debug.ui.views.DebugPresenterView";	//$NON-NLS-1$
 
-	private ILaunch				currentLaunch;
+	private ILaunch					currentLaunch;
+
+	private UIFactory<Composite>	uiFactory;
 
 	/**
 	 * Create contents of the view part.
@@ -78,14 +82,13 @@ public class DebugPresenterView extends ViewPart implements ILaunchesListener2, 
 	public void createPartControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new FillLayout(SWT.HORIZONTAL));
-		txtConsole = new Text(container, SWT.BORDER | SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
 
+		uiFactory = UIFactories.newTabUIFactoryInstance(container, ID);
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 	}
 
 	@Override
 	public void setFocus() {
-		txtConsole.setFocus();
 	}
 
 	@Override
@@ -123,42 +126,47 @@ public class DebugPresenterView extends ViewPart implements ILaunchesListener2, 
 		}
 	}
 
-
 	@Override
 	public void launchesTerminated(ILaunch[] launches) {
 		if (launches.length == 0)
 			return;
-		
+
 		for (int i = 0; i < launches.length; i++) {
-			if(currentLaunch.equals(launches[i]))
+			if (currentLaunch.equals(launches[i]))
 				handleTermination(launches[i]);
 		}
 	}
-	
+
 	/**
-	 * 1. Read DPU
-	 * 2. Create DPU with ArffLoader -> Presenter for each file
-	 * 3. Execute DPU in the IDE	
+	 * 1. Read DPU 2. Create DPU with ArffLoader -> Presenter for each file 3.
+	 * Execute DPU in the IDE
 	 */
 	private void handleTermination(ILaunch launch) {
 		currentLaunch = null;
 		try {
-			String executionPath = launch.getLaunchConfiguration().getAttribute(DPULaunchConfigurationDelegate.DPU_EXECUTION_PATH, "");
-			URI appConf = Paths.get(executionPath, "application.conf").toUri();
-			Config config = ConfigFactory.parseURL(appConf.toURL());
+			String executionPathString = launch.getLaunchConfiguration()
+					.getAttribute(DPULaunchConfigurationDelegate.DPU_EXECUTION_PATH, "");
+			Path executionPath = Paths.get(executionPathString);
+			Path appConf = executionPath.resolve("application.conf");
+
+			Config config = ConfigFactory.parseURL(appConf.toUri().toURL());
 			String dpuUriString = config.getString("dpu.uri");
+
 			IDataProcessingUnit dpu = DPUUtil.deserialize(new URI(dpuUriString).toURL());
 			IDataProcessingUnit presentation = PresentationDPUBuilder.create(dpu);
-			
+
+			Activator.getEvaluateService().evaluate(presentation, executionPath.toUri(), uiFactory);
 		} catch (CoreException | MalformedURLException | URISyntaxException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public void launchesChanged(ILaunch[] launches) {
 	}
-	
+
 	@Override
 	public void launchesRemoved(ILaunch[] launches) {
 	}
@@ -171,14 +179,13 @@ public class DebugPresenterView extends ViewPart implements ILaunchesListener2, 
 
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
-		//TODO implement exception handler
+		// TODO implement exception handler
 	}
 
-	/* ============================================================================ */
-	/* ============================ Execution Thread ============================== */
-	/* ============================================================================ */
-	
-	
+	/* =================================================== */
+	/* ============== Execution Thread Class ============ */
+	/* =================================================== */
+
 	/**
 	 * Watches for .log and .progress files in the execution path.
 	 * 
@@ -220,23 +227,26 @@ public class DebugPresenterView extends ViewPart implements ILaunchesListener2, 
 						terminated = true;
 					}
 				}
-				
+
 				launch.terminate();
 			} catch (IOException | InterruptedException | ExecutionException | TimeoutException | DebugException e) {
 				e.printStackTrace();
 				throw new RuntimeException(e);
 			}
-			
-			//Inform user
+
+			// Inform user -> show DebugPresenterView
 			getSite().getShell().getDisplay().asyncExec(new Runnable() {
-				
+
 				@Override
 				public void run() {
-					MessageDialog.openInformation(getSite().getShell(), "Finished", "Execution finished");
+					try {
+						getSite().getWorkbenchWindow().getActivePage().showView(ID);
+					} catch (PartInitException e) {
+						ErrorDialog.openError(getSite().getShell(), "Error while opening DebugPresenterView", e.getMessage(),
+								new org.eclipse.core.runtime.Status(IStatus.ERROR, Activator.PLUGIN_ID, null, e));
+					}
 				}
 			});
-			
-			
 
 		}
 
@@ -264,23 +274,23 @@ public class DebugPresenterView extends ViewPart implements ILaunchesListener2, 
 			if (!openReader(event))
 				return false;
 
-			//Read from .progress file
+			// Read from .progress file
 			final List<Tuple2<String, Status>> status = progressReader.readAllStatus();
 
-			//Update UI
+			// Update UI
 			getSite().getShell().getDisplay().asyncExec(new Runnable() {
 				@Override
 				public void run() {
 					for (Tuple2<String, Status> classStatus : status) {
-						txtConsole.append(classStatus._2() + "\n");
+						// TODO update dialog here
 					}
 				}
 			});
-			
-			//check for termination
+
+			// check for termination
 			for (Tuple2<String, Status> classStatus : status) {
 				Status s = classStatus._2();
-				if(s instanceof Shutdown)
+				if (s instanceof Shutdown)
 					return true;
 			}
 			return false;
