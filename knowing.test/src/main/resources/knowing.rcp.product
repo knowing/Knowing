@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Knowing Test RCP" application="knowing.test.id1" version="0.1.2" useFeatures="false" includeLaunchers="true">
+<product name="Knowing Test RCP" application="knowing.test.id1" version="0.1.3" useFeatures="false" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>

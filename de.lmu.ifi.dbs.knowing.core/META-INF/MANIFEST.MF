@@ -7,7 +7,10 @@ Bundle-Activator: de.lmu.ifi.dbs.knowing.core.internal.Activator
 Require-Bundle: nz.ac.waikato.cs.weka;bundle-version="3.7.5";visibility:=reexport,
  org.codehaus.aspectwerkz;bundle-version="2.2.3";visibility:=reexport,
  org.scalatest;bundle-version="1.7.0";resolution:=optional,
- org.junit;bundle-version="4.8.2";resolution:=optional
+ org.junit;bundle-version="4.8.2";resolution:=optional,
+ org.eclipse.sapphire.java;bundle-version="0.4.1",
+ org.eclipse.sapphire.modeling;bundle-version="0.4.1",
+ org.eclipse.sapphire.modeling.xml;bundle-version="0.4.1"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: akka,
@@ -45,14 +48,7 @@ Bundle-ClassPath: .,
  src/main/resources/akka-actor-1.2.jar,
  src/main/resources/akka-slf4j-1.2.jar,
  src/main/resources/akka-typed-actor-1.2.jar
-Import-Package: org.eclipse.sapphire.java,
- org.eclipse.sapphire.modeling,
- org.eclipse.sapphire.modeling.annotations,
- org.eclipse.sapphire.modeling.util,
- org.eclipse.sapphire.modeling.xml,
- org.eclipse.sapphire.modeling.xml.annotations,
- org.eclipse.sapphire.services,
- org.osgi.framework;version="1.5.0",
+Import-Package: org.osgi.framework;version="1.5.0",
  org.osgi.service.component;version="1.1.0",
  org.osgi.util.tracker;version="1.4.0",
  org.slf4j;version="1.6.1",

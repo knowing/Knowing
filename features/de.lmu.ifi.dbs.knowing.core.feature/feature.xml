@@ -30,18 +30,20 @@
    </license>
 
    <url>
-      <discovery label="Eclipse Scala IDE" url="http://download.scala-ide.org/releases-29/2.0.0-beta"/>
-      <discovery label="Eclipse Sapphire 0.4.0" url="http://download.eclipse.org/sapphire/0.4.0/repository"/>
+      <discovery label="Eclipse Scala IDE" url="http://download.scala-ide.org/releases-29/milestone/site"/>
+      <discovery label="Eclipse Sapphire 0.4.1" url="http://download.eclipse.org/sapphire/0.4.1/repository"/>
+      <discovery label="Eclipse Indigo Release" url="http://download.eclipse.org/releases/indigo"/>
+      <discovery label="Googe Guava" url="http://guava-osgi.googlecode.com/svn/trunk/repository/"/>
    </url>
 
    <requires>
-      <import plugin="org.scala-ide.scala.library" version="2.9.1"/>
-      <import plugin="org.eclipse.sapphire.java" version="0.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sapphire.modeling" version="0.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sapphire.modeling.xml" version="0.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sapphire.osgi" version="0.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sapphire.platform" version="0.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sapphire.workspace" version="0.4.0" match="greaterOrEqual"/>
+      <import plugin="org.scala-ide.scala.library" version="2.9.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.sapphire.java" version="0.4.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.sapphire.modeling" version="0.4.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.sapphire.modeling.xml" version="0.4.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.sapphire.osgi" version="0.4.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.sapphire.platform" version="0.4.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.sapphire.workspace" version="0.4.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.wst.common.uriresolver"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.osgi.services"/>
