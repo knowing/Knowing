@@ -4,13 +4,13 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            category="Knowing"
             delegate="de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegate"
             delegateName="DPU Launcher"
             id="de.lmu.ifi.dbs.knowing.debug.core.DPULaunchConfigurationType"
             modes="run, debug"
             name="Data Processing Unit Launcher"
             public="true"
+            sourceLocatorId="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
             sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">
          <fileExtension
                default="true"
