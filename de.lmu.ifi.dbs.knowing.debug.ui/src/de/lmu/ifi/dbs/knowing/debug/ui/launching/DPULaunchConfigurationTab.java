@@ -38,6 +38,8 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.sapphire.modeling.ResourceStoreException;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -78,7 +80,7 @@ public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout(1, false));
 
-		/* DPU selection */
+		/* === DPU selection === */
 
 		Group dpuComposite = new Group(container, SWT.BORDER);
 		dpuComposite.setText("Data Processing Unit");
@@ -95,6 +97,16 @@ public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 		lblDPUPath.setText("File: ");
 		txtDPUPath = new Text(dpuComposite, SWT.BORDER);
 		txtDPUPath.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		txtDPUPath.addModifyListener(new ModifyListener() {
+			
+			@Override
+			public void modifyText(ModifyEvent e) {
+				validateDPUPath(txtDPUPath.getText());
+				setDirty(true);
+				updateLaunchConfigurationDialog();
+			}
+
+		});
 
 		Button btnDPU = new Button(dpuComposite, SWT.PUSH);
 		btnDPU.setText("Browse");
@@ -116,11 +128,22 @@ public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
+		
+		/* === Execution Path === */
 
 		Label lblExecutionPath = new Label(dpuComposite, SWT.NONE);
 		lblExecutionPath.setText("Executionpath: ");
 		txtExecutionPath = new Text(dpuComposite, SWT.BORDER);
 		txtExecutionPath.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		txtExecutionPath.addModifyListener(new ModifyListener() {
+			
+			@Override
+			public void modifyText(ModifyEvent e) {
+				validateExecutionPath(txtExecutionPath.getText());
+				setDirty(true);
+				updateLaunchConfigurationDialog();
+			}
+		});
 
 		Button btnExecutionPath = new Button(dpuComposite, SWT.PUSH);
 		btnExecutionPath.setText("Browse");
@@ -133,7 +156,7 @@ public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 
-		/* Sapphire DPU Configuration */
+		/* === Sapphire DPU Configuration === */
 
 		dpuConfigGroup = new Group(container, SWT.BORDER);
 		dpuConfigGroup.setText("Parameters");
@@ -149,7 +172,7 @@ public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-
+		
 		setControl(container);
 	}
 
@@ -178,6 +201,10 @@ public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 			e.printStackTrace();
 		}
 	}
+	
+	/* ============================================= */
+	/* =============== Apply changes =============== */
+	/* ============================================= */
 
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
@@ -187,7 +214,7 @@ public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 		configuration.setAttribute(DPU_PATH, dpuFile.getProjectRelativePath().toOSString());
 		configuration.setAttribute(DPU_EXECUTION_PATH, txtExecutionPath.getText());
 		configuration.setAttribute(DPU_PARAMETERS, parametersToString(parameters));
-
+		setDirty(false);
 	}
 
 	private void update() {
@@ -205,20 +232,13 @@ public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 	}
 
 	private void updateExecutionPath(String path) {
-		if (path == null || path.isEmpty())
+		if(!validateExecutionPath(path))
 			return;
-		Path executionPath = Paths.get(path);
-
-		if (!Files.exists(executionPath)) {
-			//set Error
-		} else if (!Files.isDirectory(executionPath)) {
-			//set Error
-		} else {
-			//set Error null
-			txtExecutionPath.setText(path);
-		}
+		txtExecutionPath.setText(path);
+		setDirty(true);
+		updateLaunchConfigurationDialog();
 	}
-
+	
 	private void syncParameters(List<IParameter> loadedParameters) {
 		if(dpu == null)
 			return;
@@ -231,6 +251,45 @@ public class DPULaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 		}
 		propertyViewer.setInput(parameters);
 	}
+	
+	/* ============================================= */
+	/* ============ Validation Methods ============= */
+	/* ============================================= */
+	
+	private boolean validateExecutionPath(String path) {
+		if (path == null || path.isEmpty())
+			return false;
+		
+		Path executionPath = Paths.get(path);
+		if (!Files.exists(executionPath)) {
+			setErrorMessage("Execution path doesn't exists.");
+			return false;
+		}
+		if (!Files.isDirectory(executionPath)) {
+			setErrorMessage("Execution path must be a directory.");
+			return false;
+		} 
+		setErrorMessage(null);
+		return true;			
+	}
+	
+	private boolean validateDPUPath(String path) {
+		if (path == null || path.isEmpty())
+			return false;
+		
+		Path dpuPath = Paths.get(path);
+		if (!Files.exists(dpuPath)) {
+			setErrorMessage("DPU doesn't exist.");
+			return false;
+		}
+		if (Files.isDirectory(dpuPath)) {
+			setErrorMessage("DPU must be a file.");
+			return false;
+		} 
+		setErrorMessage(null);
+		return true;			
+	}
+	
 
 	@Override
 	public String getName() {

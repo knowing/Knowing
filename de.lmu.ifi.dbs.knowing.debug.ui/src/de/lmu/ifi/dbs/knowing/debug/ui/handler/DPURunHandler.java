@@ -10,10 +10,14 @@
 \*                                                               */
 package de.lmu.ifi.dbs.knowing.debug.ui.handler;
 
+import java.nio.file.Paths;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -21,6 +25,8 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.sapphire.ui.SapphireActionHandler;
 import org.eclipse.sapphire.ui.SapphireRenderingContext;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -51,10 +57,10 @@ public class DPURunHandler extends SapphireActionHandler {
 	@Override
 	protected Object run(SapphireRenderingContext context) {
 		try {
+			// TODO create own perspective
 			Activator.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(DebugPresenterView.ID);
-			
 			IDataProcessingUnit dpu = (IDataProcessingUnit) getModelElement();
-			ILaunchConfiguration configuration = createLaunchConfiguration(dpu);
+			ILaunchConfiguration configuration = createLaunchConfiguration(dpu, context);
 			launch(configuration);
 		} catch (CoreException e) {
 			e.printStackTrace();
@@ -62,41 +68,44 @@ public class DPURunHandler extends SapphireActionHandler {
 		return null;
 	}
 
-	private ILaunchConfiguration createLaunchConfiguration(IDataProcessingUnit dpu) throws CoreException {
+	private ILaunchConfiguration createLaunchConfiguration(IDataProcessingUnit dpu, SapphireRenderingContext context) throws CoreException {
 		String dpuName = dpu.getName().getContent();
 		if (launchManager.isExistingLaunchConfigurationName(dpuName)) {
 			ILaunchConfiguration[] configurations = launchManager.getLaunchConfigurations();
 			for (int i = 0; i < configurations.length; i++) {
-				if(configurations[i].getName().equals(dpuName))
+				if (configurations[i].getName().equals(dpuName))
 					return configurations[i];
 			}
 		}
-			
+
 		// Create valid launch configuration name
 
 		ILaunchConfigurationType dpuLaunchType = launchManager.getLaunchConfigurationType(DPULaunchConfigurationDelegate.LAUNCH_TYPE_ID);
 		ILaunchConfigurationWorkingCopy configuration = dpuLaunchType.newInstance(null, dpuName);
-		return setLaunchAttributes(configuration, dpu);
+		return setLaunchAttributes(configuration, dpu, context);
 	}
 
-	private ILaunchConfiguration setLaunchAttributes(ILaunchConfigurationWorkingCopy configuration, IDataProcessingUnit dpu) throws CoreException {
+	private ILaunchConfiguration setLaunchAttributes(ILaunchConfigurationWorkingCopy configuration, IDataProcessingUnit dpu,
+			SapphireRenderingContext context) throws CoreException {
 		// Add OSGi settings
 		configuration.setAttribute(DPULaunchConfigurationDelegate.SOURCE_PATH_PROVIDER, "org.eclipse.pde.ui.workbenchClasspathProvider");
 		configuration.setAttribute(DPULaunchConfigurationDelegate.VM_ARGUMENTS, "-Declipse.ignoreApp=true -Dosgi.noShutdown=true");
-		configuration.setAttribute(DPULaunchConfigurationDelegate.PROGRAM_ARGUMENTS, "-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog -console");
-		
+		configuration.setAttribute(DPULaunchConfigurationDelegate.PROGRAM_ARGUMENTS,
+				"-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog -console");
+
 		configuration.setAttribute("automaticAdd", true);
 		configuration.setAttribute("automaticValidate", false);
 		configuration.setAttribute("bootstrap", "");
 		configuration.setAttribute("checked", "[NONE]");
 		configuration.setAttribute("clearConfig", true);
-		configuration.setAttribute("configLocation", "${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/" + dpu.getName().getContent());
+		configuration.setAttribute("configLocation", "${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/"
+				+ dpu.getName().getContent());
 		configuration.setAttribute("default", true);
 		configuration.setAttribute("default_auto_start", true);
 		configuration.setAttribute("default_start_level", 4);
-//		configuration.setAttribute("deselected_workspace_plugins", true);
+		// configuration.setAttribute("deselected_workspace_plugins", true);
 		configuration.setAttribute("includeOptional", false);
-		
+
 		configuration.setAttribute("pde.version", "3.3"); // ?!
 
 		// Add Bundles
@@ -114,6 +123,21 @@ public class DPURunHandler extends SapphireActionHandler {
 		IProject project = dpuFile.getProject();
 		configuration.setAttribute(DPULaunchConfigurationDelegate.DPU_PROJECT, project.getName());
 		configuration.setAttribute(DPULaunchConfigurationDelegate.DPU_PATH, dpuFile.getProjectRelativePath().toOSString());
+		
+		// Add Execution path
+		DirectoryDialog execPathDialog = new DirectoryDialog(context.getShell());
+		
+		String projectPath = Paths.get(project.getLocationURI()).toString();
+		
+		execPathDialog.setFilterPath(projectPath);
+		execPathDialog.setText("Select execution path");
+		execPathDialog.setMessage("Select the execution where dpu should be executed.");
+
+        String dir = execPathDialog.open();
+        if(dir == null) 
+        	throw new CoreException(new Status(IStatus.CANCEL, Activator.PLUGIN_ID, "Execution aborted. No execution path."));
+
+        configuration.setAttribute(DPULaunchConfigurationDelegate.DPU_EXECUTION_PATH, dir);
 
 		// TODO check for parameters
 		return configuration.doSave();
