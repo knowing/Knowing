@@ -25,7 +25,7 @@ import de.lmu.ifi.dbs.knowing.core.events.Status
 class ProgressWriter(w: Writer) extends PrintWriter(w) {
 
 	def write(actor: ActorRef, status: Status) {
-		val clazz = actor.getActorClassName()
+		val clazz = actor.path
 		write(clazz + ";" + status + "\n")
 	}
 	

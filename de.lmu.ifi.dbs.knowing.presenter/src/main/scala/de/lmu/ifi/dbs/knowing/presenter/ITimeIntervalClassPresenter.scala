@@ -7,7 +7,6 @@ import de.lmu.ifi.dbs.knowing.core.results.TimeIntervalResults
 import de.lmu.ifi.dbs.knowing.core.results.TimeIntervalResults._
 import weka.core.{ Attribute, Instances }
 import weka.core.Attribute.{ NUMERIC, NOMINAL, DATE, RELATIONAL }
-import akka.event.EventHandler.debug
 
 /**
  * Provides a Presenter for the

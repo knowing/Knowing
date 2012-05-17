@@ -5,16 +5,14 @@ import java.io.LineNumberReader
 import java.io.PrintWriter
 import java.util.Date
 import java.util.Properties
-import de.lmu.ifi.dbs.knowing.core.factory.TFactory
+import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 import de.lmu.ifi.dbs.knowing.core.processing.TSerializable
 import de.lmu.ifi.dbs.knowing.core.events._
 import weka.core.Instance
 import weka.core.Instances
 import akka.actor.{Actor, ActorRef }
-import akka.event.EventHandler.{ debug, info, warning, error }
 import java.io.IOException
-import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
 
 
 class SerializableProcessor extends TProcessor with TSerializable {
@@ -27,9 +25,9 @@ class SerializableProcessor extends TProcessor with TSerializable {
     try {
       val in = inputStream
       in match {
-        case None => warning(this, "No InputStream defined")
+        case None => log.warning("No InputStream defined")
         case Some(i) =>
-          debug(this, "Trying to open InputStream")
+          log.debug("Trying to open InputStream")
           val reader = new LineNumberReader(new InputStreamReader(i))
           val line = reader.readLine
           if (line != null) {
@@ -39,9 +37,9 @@ class SerializableProcessor extends TProcessor with TSerializable {
           reader.close
       }
     } catch {
-      case e: IOException => warning(this, e.getMessage)
+      case e: IOException => log.warning( e.getMessage)
     }
-    debug(this, "Start Serializable Processor with: " + randomNumber + " / " + randomString)
+    log.debug("Start Serializable Processor with: " + randomNumber + " / " + randomString)
     //Normally you'll send here no statusChanged, this is just for test purpose so the process terminates
     statusChanged(Finished())
   }
@@ -51,16 +49,16 @@ class SerializableProcessor extends TProcessor with TSerializable {
     randomString = new Date toString
     val out = outputStream
     out match {
-      case None => warning(this, "No OutputStream defined")
+      case None => log.warning("No OutputStream defined")
       case Some(o) =>
-        debug(this, "Trying to open OutputStream")
+        log.debug("Trying to open OutputStream")
         val writer = new PrintWriter(o)
         writer.println(randomNumber toString)
         writer.println(randomString)
         writer.flush
         writer.close
     }
-    debug(this, "Stop Serializable Processor and save model: " + randomNumber + " / " + randomString)
+    log.debug("Stop Serializable Processor and save model: " + randomNumber + " / " + randomString)
   }
 
   def process(instances: Instances) = { case _ => }

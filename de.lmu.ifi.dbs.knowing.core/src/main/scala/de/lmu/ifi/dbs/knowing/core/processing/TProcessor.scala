@@ -13,10 +13,7 @@ package de.lmu.ifi.dbs.knowing.core.processing
 import java.util.Properties
 import scala.collection.JavaConversions._
 import scala.collection.mutable.{ ListBuffer, Queue }
-import akka.actor.Actor
-import akka.actor.ActorRef
-import akka.event.EventHandler.{ debug, info, warning, error }
-import akka.config.Supervision.Temporary
+import akka.actor.{ Actor, ActorRef, ActorLogging }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.exceptions._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
@@ -37,7 +34,7 @@ import scala.collection.mutable.HashMap
  * @version 0.3
  * @since 2011-04-15
  */
-trait TProcessor extends Actor with TSender with TConfigurable {
+trait TProcessor extends Actor with TSender with TConfigurable with ActorLogging {
 
 	type ResultsContext = TProcessor.ResultsContext
 
@@ -51,8 +48,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 	//Stored Queries
 	protected val queryQueue = Queue[(Option[ActorRef], Query)]()
 
-	//Default lifeCylce 
-	self.lifeCycle = Temporary
+	//supervisorStrategy
 
 	def receive: Receive = customReceive orElse defaultReceive
 
@@ -85,10 +81,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 				process(inst).apply(port, queries)
 				isBuild = true //TODO isBuild = true on processing results. Dangerous!
 				processStoredQueries
-				self.sender match {
-					case Some(s) => s ! Finished()
-					case None => //Nothing
-				}
+				sender ! Finished()
 				statusChanged(Ready())
 			} catch {
 				case e: Exception => throwException(e, "Error while processing Results event")
@@ -99,16 +92,16 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 			case true =>
 				statusChanged(Running())
 				processStoredQueries
-				self reply Results(query(q), None, Some(q))
+				sender ! Results(query(q), None, Some(q))
 				statusChanged(Ready())
-			case false => queryQueue += ((self.sender, Query(q)))
+			case false => queryQueue += ((Option(sender), Query(q)))
 		}
 
 		case Alive | Alive() => statusChanged(status)
 		case msg => messageException(msg)
 	}
 
-	override def preRestart(reason: Throwable) {
+	override def preStart() {
 		// clean up before restart
 		isBuild = false
 		status = Created()
@@ -120,7 +113,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 		configure(properties)
 	}
 
-	def start() = debug(this, "Running " + self.getActorClassName)
+	def start() = log.debug("Running " + getClass.getSimpleName)
 
 	@throws(classOf[KnowingException])
 	def process(instances: Instances): ResultsContext
@@ -182,7 +175,7 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 	def highestProbabilityIndex(distribution: Array[Double]): Int = TProcessor.highestProbabilityIndex(distribution)
 
 	//TODO look over this method!!!!!
-	protected def cacheQuery(q: Instances) = queryQueue += ((self.sender, Query(q)))
+	protected def cacheQuery(q: Instances) = queryQueue += ((Option(sender), Query(q)))
 
 	protected def processStoredQueries {
 		//Does not respect arrival time
@@ -204,18 +197,12 @@ trait TProcessor extends Actor with TSender with TConfigurable {
 		if (this.status.equals(status))
 			return
 		this.status = status
-		self.supervisor match {
-			case Some(s) => s ! status
-			case None => warning(this, "No supervisor defined!")
-		}
+		context.parent ! status
 	}
 
-	def throwException(err: Throwable, details: String = "") = self.supervisor match {
-		case Some(s) => s ! ExceptionEvent(err, details)
-		case None =>
-			warning(this, "No supervisor defined! Exception thrown [" + err.getMessage + "] with details " + details)
-			err.printStackTrace()
-	}
+	def throwException(err: Throwable, details: String = "") = context.parent ! ExceptionEvent(err, details)
+	//log.warning("No supervisor defined! Exception thrown [" + err.getMessage + "] with details " + details)
+	//err.printStackTrace()
 }
 
 object TProcessor {

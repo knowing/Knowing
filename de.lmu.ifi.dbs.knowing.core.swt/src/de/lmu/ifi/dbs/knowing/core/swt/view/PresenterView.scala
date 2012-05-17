@@ -1,8 +1,6 @@
 package de.lmu.ifi.dbs.knowing.core.swt.view
 
 import akka.actor.{ ActorRef, Actor, TypedActor }
-import akka.actor.Actor.actorOf
-import akka.event.EventHandler.{ debug, info, warning, error }
 import org.eclipse.swt.SWT
 import org.eclipse.swt.widgets.Composite
 import org.eclipse.swt.graphics.Image

@@ -12,7 +12,6 @@ package de.lmu.ifi.dbs.knowing.core.processing
 
 import scala.collection.JavaConversions._
 import TClassPropertyResolver._
-import akka.event.EventHandler.debug
 
 /**
  * Resolve class from processor properties.
@@ -53,7 +52,7 @@ trait TClassPropertyResolver { this: TProcessor =>
 		constructors.find(_.getParameterTypes sameElements parameterTypes).flatMap {
 			constructor =>
 				val args = arguments.map(_._1).toSeq
-				debug(this, "Generating instance of " + className )
+				log.debug("Generating instance of " + className )
 				Some(constructor.newInstance(args: _*).asInstanceOf[T])
 		}
 	}

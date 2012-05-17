@@ -13,8 +13,7 @@ package de.lmu.ifi.dbs.knowing.core.factory
 import java.util.Properties
 import scala.collection.immutable.HashMap
 import scala.collection.JavaConversions._
-import akka.actor.ActorRef
-import akka.actor.Actor.actorOf
+import akka.actor.{ActorRef,ActorSystem, Props, ActorContext}
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 
 /**
@@ -41,6 +40,12 @@ trait TFactory {
 
 	/** factory method - creates actor instance */
 	def getInstance(): ActorRef
+	
+	//TODO realize this with duck-typing: type actorOf..
+	
+	def getInstance(system: ActorSystem): ActorRef
+	
+	def getInstance(context: ActorContext): ActorRef
 
 	/* ===================== */
 	/* === Configuration === */
@@ -77,10 +82,16 @@ object TFactory {
  * @version 1.0
  */
 class ProcessorFactory(processor: Class[_ <: TProcessor]) extends TFactory {
+	//TODO try implicit ClassManifest here
 	val name = processor.getSimpleName
 	val id = processor.getName
-
-	def getInstance(): ActorRef = actorOf(processor.newInstance)
+	
+	//This uses the default ActorSystem
+	def getInstance(): ActorRef = getInstance(ActorSystem())
+	
+	def getInstance(system: ActorSystem): ActorRef = system.actorOf(Props(processor.newInstance))
+	
+	def getInstance(context: ActorContext): ActorRef = context.actorOf(Props(processor.newInstance))
 
 	def createDefaultProperties: Properties = new Properties
 

@@ -7,8 +7,7 @@ import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
 import de.lmu.ifi.dbs.knowing.core.util.DPUUtil.deserialize
 import org.eclipse.sapphire.modeling.xml.{ RootXmlResource, XmlResourceStore }
 import org.eclipse.sapphire.modeling.UrlResourceStore
-import akka.actor.ActorRef
-import akka.actor.Actor.actorOf
+import akka.actor.{ActorRef, ActorSystem, Props}
 import java.net.{ URI, URL }
 import weka.core.{ Attribute, Instances }
 import org.scalatest.matchers._
@@ -53,7 +52,7 @@ trait KnowingTestKit extends EventMatchers {
     factoryDirectory: IFactoryDirectory,
     modelStore: IModelStore,
     resourceStore: IResourceStore): ActorRef = {
-    actorOf(new DPUExecutor(dpu, uiFactory, exePath, factoryDirectory, modelStore, resourceStore))
+    ActorSystem().actorOf(Props(new DPUExecutor(dpu, uiFactory, exePath, factoryDirectory, modelStore, resourceStore)))
   }
 
   /* ===================================== */

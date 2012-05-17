@@ -4,7 +4,6 @@ import org.eclipse.swt.layout.FillLayout
 import org.eclipse.swt.SWT
 import org.eclipse.swt.widgets.{ Display, Control, Composite, Label, Listener }
 import weka.core.Instances
-import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.processing.TPresenter
 import de.lmu.ifi.dbs.knowing.core.swt.handler.SWTListener
 import scala.collection.mutable.ArrayBuffer
@@ -25,7 +24,7 @@ abstract class SWTPresenter extends TPresenter[Composite] {
 
   override def presenterReceive = {
     case SWTListener(typ, listener) =>
-      debug(this, "Received SWTListener: " + listener)
+      log.debug("Received SWTListener: " + listener)
       sync(parent) { addListener(typ, listener) }
   }
 
@@ -44,7 +43,7 @@ abstract class SWTPresenter extends TPresenter[Composite] {
   def sync(c: Composite)(syncFun: => Unit) {
     c match {
       case null =>
-        warning(this, "Composite to sync on is null => [" + c + "]. Trying Display.getDefault()")
+        log.warning("Composite to sync on is null => [" + c + "]. Trying Display.getDefault()")
         Display.getDefault.syncExec(new Runnable {
           def run = syncFun
         })

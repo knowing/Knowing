@@ -21,6 +21,7 @@ import java.nio.file.StandardOpenOption;
 import de.lmu.ifi.dbs.knowing.core.events.Status;
 import de.lmu.ifi.dbs.knowing.core.model.INode;
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory;
+import akka.actor.ActorContext;
 import akka.actor.ActorRef;
 import akka.actor.TypedActor;
 
@@ -31,11 +32,11 @@ import akka.actor.TypedActor;
  * @since 2011-04-22
  *
  */
-public class DebugUIFactory extends TypedActor implements UIFactory<Path> {
+public class DebugUIFactory implements UIFactory<Path> {
 
 	public static final String PROGRESS_FILENAME = ".progress";
 	
-	private ActorRef supervisor;
+	private ActorContext supervisorContext;
 	private final Path executionPath;
 	private final Path progressPath;
 	
@@ -84,9 +85,10 @@ public class DebugUIFactory extends TypedActor implements UIFactory<Path> {
 		}
 	}
 
+
 	@Override
-	public void setSupervisor(ActorRef supervisor) {
-		this.supervisor = supervisor;
+	public void setSupervisorContext(ActorContext supervisorContext) {
+		this.supervisorContext = supervisorContext;
 	}
 
 	@Override

@@ -10,28 +10,11 @@ Require-Bundle: nz.ac.waikato.cs.weka;bundle-version="3.7.5";visibility:=reexpor
  org.junit;bundle-version="4.8.2";resolution:=optional,
  org.eclipse.sapphire.java;bundle-version="0.4.1",
  org.eclipse.sapphire.modeling;bundle-version="0.4.1",
- org.eclipse.sapphire.modeling.xml;bundle-version="0.4.1"
+ org.eclipse.sapphire.modeling.xml;bundle-version="0.4.1",
+ io.akka.actor;bundle-version="2.0.1";visibility:=reexport
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: akka,
- akka.actor,
- akka.actor.japi,
- akka.config,
- akka.dataflow,
- akka.dispatch,
- akka.dispatch.japi,
- akka.event,
- akka.event.slf4j,
- akka.japi,
- akka.remoteinterface,
- akka.routing,
- akka.transactor,
- akka.transactor.annotation,
- akka.util,
- akka.util.duration,
- com.eaio.util.lang,
- com.eaio.uuid,
- de.lmu.ifi.dbs.knowing.core.annotations,
+Export-Package: de.lmu.ifi.dbs.knowing.core.annotations,
  de.lmu.ifi.dbs.knowing.core.events,
  de.lmu.ifi.dbs.knowing.core.exceptions,
  de.lmu.ifi.dbs.knowing.core.factory,
@@ -44,10 +27,7 @@ Export-Package: akka,
  de.lmu.ifi.dbs.knowing.core.util,
  de.lmu.ifi.dbs.knowing.core.validation,
  de.lmu.ifi.dbs.knowing.core.weka
-Bundle-ClassPath: .,
- src/main/resources/akka-actor-1.2.jar,
- src/main/resources/akka-slf4j-1.2.jar,
- src/main/resources/akka-typed-actor-1.2.jar
+Bundle-ClassPath: .
 Import-Package: org.osgi.framework;version="1.5.0",
  org.osgi.service.component;version="1.1.0",
  org.osgi.util.tracker;version="1.4.0",

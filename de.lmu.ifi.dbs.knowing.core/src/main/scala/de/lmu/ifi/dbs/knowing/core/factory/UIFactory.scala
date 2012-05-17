@@ -10,8 +10,7 @@
 \*																*/
 package de.lmu.ifi.dbs.knowing.core.factory
 
-import akka.actor.Actor
-import akka.actor.ActorRef
+import akka.actor.{ ActorContext, ActorRef }
 import de.lmu.ifi.dbs.knowing.core.events.Status
 import de.lmu.ifi.dbs.knowing.core.model.INode
 
@@ -60,7 +59,7 @@ trait UIFactory[T] {
 	 *
 	 * @param supervisor - ActorRef to DPUExecutor
 	 */
-	def setSupervisor(supervisor: ActorRef)
+	def setSupervisorContext(supervisorContext: ActorContext)
 
 	/**
 	 * ID is to distinguish between multiple UIFactories

@@ -9,8 +9,7 @@ import weka.core.{ Attribute, Instances, DenseInstance }
 import weka.core.Attribute.{ NUMERIC, NOMINAL, DATE, RELATIONAL }
 import java.util.Date
 import akka.testkit.TestKit
-import akka.actor.Actor.actorOf
-import akka.actor.ActorRef
+import akka.actor.{ActorSystem,ActorRef, Props}
 import akka.util.duration._
 import de.lmu.ifi.dbs.knowing.core.events._
 import scala.collection.mutable.ArrayBuffer
@@ -31,12 +30,12 @@ class ITimeIntervalClassPresenterTest extends FunSuite with ShouldMatchers with 
   var testInstances: Instances = _
 
   before {
-    presenter = actorOf[TestTimeIntervalClassPresenter].start
+    presenter = ActorSystem().actorOf(Props(new TestTimeIntervalClassPresenter))
     testInstances = ITimeIntervalClassPresenter.newInstances(classes)
   }
 
   after {
-    presenter.stop
+  	 ActorSystem().stop(presenter)
   }
 
   test("Check Presenter") {

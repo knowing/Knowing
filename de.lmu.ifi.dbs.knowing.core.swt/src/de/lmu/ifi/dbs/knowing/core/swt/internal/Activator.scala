@@ -42,7 +42,6 @@ class Activator extends AbstractUIPlugin {
 
     osgi = new OSGIUtil(context)
     osgi.registerPresenter(new TablePresenterFactory)
-    osgi.registerPresenter(new MultiTablePresenterFactory)
     loadDPUWizardProperties
   }
 

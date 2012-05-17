@@ -18,8 +18,6 @@ import de.lmu.ifi.dbs.knowing.core.processing.TLoader._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.core.results.EmptyResults
 import akka.actor.ActorRef
-import akka.actor.Actor.actorOf
-import akka.event.EventHandler.{ debug, info, warning, error }
 import java.io.{ FileInputStream, File }
 import java.util.Properties
 import java.net.{ URI, URL }
@@ -118,8 +116,8 @@ object WekaArffLoader {
 
 class WekaArffLoaderFactory extends ProcessorFactory(classOf[WekaArffLoader]) {
 
-	override val name: String = WekaArffLoaderFactory.name
-	override val id: String = WekaArffLoaderFactory.id
+	override val name: String =classOf[ArffLoader].getSimpleName
+	override val id: String = classOf[ArffLoader].getName
 
 	override def createDefaultProperties: Properties = {
 		val returns = new Properties
@@ -142,7 +140,3 @@ class WekaArffLoaderFactory extends ProcessorFactory(classOf[WekaArffLoader]) {
 	}
 }
 
-object WekaArffLoaderFactory {
-	val name: String = "ARFF Loader"
-	val id: String = classOf[ArffLoader].getName
-}

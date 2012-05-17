@@ -10,7 +10,6 @@
 \*																*/
 package de.lmu.ifi.dbs.knowing.core.japi
 
-import akka.event.EventHandler
 import weka.core.{ Instances, Instance }
 import de.lmu.ifi.dbs.knowing.core.processing.{ TSerializable, TProcessor }
 import de.lmu.ifi.dbs.knowing.core.model.IEdge.DEFAULT_PORT
@@ -65,9 +64,9 @@ abstract class JProcessor extends TProcessor with TSerializable {
 	/* === Logging with akka (slf4j if configured) == */
 	/* ============================================== */
 
-	def debug(msg: String) = EventHandler.debug(this, msg)
-	def info(msg: String) = EventHandler.info(this, msg)
-	def warning(msg: String) = EventHandler.warning(this, msg)
-	def error(msg: String) = EventHandler.error(this, msg)
+	def debug(msg: String) = log.debug(msg)
+	def info(msg: String) = log.info(msg)
+	def warning(msg: String) = log.warning(msg)
+	def error(msg: String) = log.error(msg)
 }
 

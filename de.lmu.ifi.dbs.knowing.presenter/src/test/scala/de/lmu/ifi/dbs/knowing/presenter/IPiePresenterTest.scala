@@ -9,8 +9,7 @@ import weka.core.{ Attribute, Instances, DenseInstance }
 import weka.core.Attribute.{ NUMERIC, NOMINAL, DATE, RELATIONAL }
 import java.util.Date
 import akka.testkit.TestKit
-import akka.actor.Actor.actorOf
-import akka.actor.ActorRef
+import akka.actor.{ActorSystem,ActorRef, Props}
 import akka.util.duration._
 import scala.collection.mutable.ArrayBuffer
 
@@ -26,12 +25,12 @@ class IPiePresenterTest extends FunSuite with ShouldMatchers with BeforeAndAfter
   var testInstances: Instances = _
 
   before {
-    presenter = actorOf[TestPieChartPresenter].start
+    presenter = ActorSystem().actorOf(Props(new TestPieChartPresenter))
     testInstances = IPieChartPresenter.newInstances(classes)
   }
 
   after {
-    presenter.stop
+    ActorSystem().stop(presenter)
   }
 
   test("Check Presenter") {
