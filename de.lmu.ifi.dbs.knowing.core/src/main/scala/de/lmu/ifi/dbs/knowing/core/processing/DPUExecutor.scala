@@ -317,6 +317,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
 				log.info("Evaluation finished. Stopping schedules and supervisor")
 				//schedules foreach (future => future.cancel(true))
 				shutdownSupervisor
+				uifactory update (self, UpdateUI())
 				uifactory update (self, Shutdown())
 				context.stop(self)
 			}

@@ -223,8 +223,11 @@ class TabUIFactory(parent: Composite, id: String, style: Int = SWT.BOTTOM) exten
 	 * @return tab content composite
 	 */
 	def createControl(node: INode): Composite = {
-		if(tabFolder == null)
+		if(tabFolder == null) {
 			tabFolder = new CTabFolder(parent, style)
+			parent layout
+		}
+			
 		val tabItem = new CTabItem(tabFolder, SWT.NONE)
 		tabItem.setText(node.getId.getContent)
 		val composite = new Composite(tabFolder, SWT.NONE)
