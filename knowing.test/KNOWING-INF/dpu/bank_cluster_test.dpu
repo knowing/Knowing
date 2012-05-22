@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DataProcessingUnit name="Bank KMeans Clustering">
+    <description>PeakPrediction -> Segmentation -> FV -> CrossValidation(LDA -> NaiveBayes) -> TablePresenter</description>
+    <tags></tags>
+    <nodes>                        
+        <node id="ARFF" type="loader" factoryId="weka.core.converters.ArffLoader">
+			<properties>
+				<property key="file" value="bank.arff" />
+			</properties>
+		</node>
+		<node id="KMeans" type="processor" factoryId="weka.clusterers.SimpleKMeans">
+			<properties>
+			</properties>
+		</node>
+    </nodes>
+    <edges>
+        <edge source="ARFF" target="KMeans" id="source2Cluster"></edge>
+    </edges>
+    <configuration>
+        <history>false</history>
+        <output></output>
+    </configuration>
+</DataProcessingUnit>
+

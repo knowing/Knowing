@@ -47,8 +47,7 @@ trait TClassifier extends TProcessor with TSerializable {
 					sendResults(appendClassDistribution(instances, results), None, Some(instances))
 			}
 
-		case (Some(TRAIN), None) => build(instances)
-		case (None, None) => build(instances)
+		case (None, None) | (Some(TRAIN), None) => build(instances)
 		case (Some(port), _) => log.error("Incompatible target port: " + port)
 	}
 

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="weka.clusterers.SimpleKMeans">
+   <implementation class="de.lmu.ifi.dbs.knowing.weka.clusterer.WekaSimpleKMeansFactory"/>
+   <property name="knowing.factory.name" type="String" value="Simple KMeans"/>
+   <property name="knowing.factory.id" type="String" value="weka.clusterers.SimpleKMeans"/>
+   <property name="knowing.processor.class" type="String" value="de.lmu.ifi.dbs.knowing.weka.clusterer.WekaSimpleKMeans"/>
+   <service>
+      <provide interface="de.lmu.ifi.dbs.knowing.core.factory.TFactory"/>
+   </service>
+</scr:component>

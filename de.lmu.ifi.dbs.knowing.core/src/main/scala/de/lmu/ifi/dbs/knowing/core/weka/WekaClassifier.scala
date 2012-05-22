@@ -92,8 +92,6 @@ class WekaClassifierFactory[T <: WekaClassifier, S <: Classifier](wrapper: Class
 				})
 		}
 	}
-
-
 }
 
 object WekaClassifierFactory {
