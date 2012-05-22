@@ -167,9 +167,7 @@ class XCrossValidatorFactory(val factoryDirectory: Option[IFactoryDirectory] = N
 
 	override def getInstance(): ActorRef = ActorSystem().actorOf(Props(new XCrossValidator(factoryDirectory)))
 
-	override def getInstance(system: ActorSystem): ActorRef = system.actorOf(Props(new XCrossValidator(factoryDirectory)))
-
-	override def getInstance(context: ActorContext): ActorRef = context.actorOf(Props(new XCrossValidator(factoryDirectory)))
+	override def getInstance(factory: TFactory.ActorFactory): ActorRef = factory.actorOf(Props(new XCrossValidator(factoryDirectory)))
 
 	override def createDefaultProperties: Properties = {
 		val props = new Properties();

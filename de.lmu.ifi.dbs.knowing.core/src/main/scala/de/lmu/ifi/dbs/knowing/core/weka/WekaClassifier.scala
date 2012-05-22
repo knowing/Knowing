@@ -13,7 +13,7 @@ package de.lmu.ifi.dbs.knowing.core.weka
 import java.util.Properties
 import java.io.{ InputStream, OutputStream }
 import scala.collection.JavaConversions._
-import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
+import de.lmu.ifi.dbs.knowing.core.factory.{TFactory,ProcessorFactory}
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.core.processing.{ TClassifier, TClassPropertyResolver, INodeProperties }
@@ -81,11 +81,11 @@ class WekaClassifierFactory[T <: WekaClassifier, S <: Classifier](wrapper: Class
 	override val name: String = clazz.getSimpleName
 	override val id: String = clazz.getName
 
-	override def getInstance(system: ActorSystem): ActorRef = {
+	override def getInstance(factory: TFactory.ActorFactory): ActorRef = {
 		classOf[ILoggableProcessor].isAssignableFrom(clazz) match {
-			case false => system.actorOf(Props(wrapper.newInstance))
+			case false => factory.actorOf(Props(wrapper.newInstance))
 			case true =>
-				system.actorOf(Props {
+				factory.actorOf(Props {
 					val w = wrapper.newInstance
 					w.classifier.asInstanceOf[ILoggableProcessor].setProcessor(w)
 					w
@@ -93,17 +93,6 @@ class WekaClassifierFactory[T <: WekaClassifier, S <: Classifier](wrapper: Class
 		}
 	}
 
-	override def getInstance(context: ActorContext): ActorRef = {
-		classOf[ILoggableProcessor].isAssignableFrom(clazz) match {
-			case false => context.actorOf(Props(wrapper.newInstance))
-			case true =>
-				context.actorOf(Props {
-					val w = wrapper.newInstance
-					w.classifier.asInstanceOf[ILoggableProcessor].setProcessor(w)
-					w
-				})
-		}
-	}
 
 }
 

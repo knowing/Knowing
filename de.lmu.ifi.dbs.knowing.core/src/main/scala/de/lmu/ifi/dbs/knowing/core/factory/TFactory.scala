@@ -13,8 +13,9 @@ package de.lmu.ifi.dbs.knowing.core.factory
 import java.util.Properties
 import scala.collection.immutable.HashMap
 import scala.collection.JavaConversions._
-import akka.actor.{ActorRef,ActorSystem, Props, ActorContext}
+import akka.actor.{ ActorRef, ActorSystem, Props, ActorContext, ActorPath }
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
+import TFactory.ActorFactory
 
 /**
  * <p>This factory should be registered as an OSGi service
@@ -40,12 +41,10 @@ trait TFactory {
 
 	/** factory method - creates actor instance */
 	def getInstance(): ActorRef
-	
+
 	//TODO realize this with duck-typing: type actorOf..
-	
-	def getInstance(system: ActorSystem): ActorRef
-	
-	def getInstance(context: ActorContext): ActorRef
+
+	def getInstance(factory: ActorFactory): ActorRef
 
 	/* ===================== */
 	/* === Configuration === */
@@ -59,6 +58,17 @@ trait TFactory {
 }
 
 object TFactory {
+
+	type ActorFactory = {
+		def actorOf(props: Props): ActorRef;
+		def actorOf(props: Props, name: String): ActorRef;
+		
+		def actorFor(path: ActorPath): ActorRef
+		def actorFor(path: Iterable[String]): ActorRef
+		def actorFor(path: java.lang.Iterable[String]): ActorRef
+		def actorFor(name: String): ActorRef
+	}
+
 	//Default values for factory properties
 	val BOOLEAN_PROPERTY = Array("true", "false")
 
@@ -82,16 +92,15 @@ object TFactory {
  * @version 1.0
  */
 class ProcessorFactory(processor: Class[_ <: TProcessor]) extends TFactory {
+
 	//TODO try implicit ClassManifest here
 	val name = processor.getSimpleName
 	val id = processor.getName
 	
 	//This uses the default ActorSystem
 	def getInstance(): ActorRef = getInstance(ActorSystem())
-	
-	def getInstance(system: ActorSystem): ActorRef = system.actorOf(Props(processor.newInstance))
-	
-	def getInstance(context: ActorContext): ActorRef = context.actorOf(Props(processor.newInstance))
+
+	def getInstance(factory: ActorFactory): ActorRef = factory.actorOf(Props(processor.newInstance))
 
 	def createDefaultProperties: Properties = new Properties
 
