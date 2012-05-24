@@ -76,7 +76,7 @@ trait TLoader extends TProcessor with TStreamResolver {
 	}
 
 	/* == Doesn't needed by TLoader == */
-	def process(instances: Instances) = {case _ =>}
+	def process(instances: Instances) = {case _ =>  throw new UnsupportedOperationException("Loader don't accept Results() events. Received " + instances.relationName)}
 
 	def query(instances: Instances): Instances = throw new UnsupportedOperationException("Loader don't accept Query() events. Received " + instances.relationName)
 

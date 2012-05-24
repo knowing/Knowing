@@ -47,6 +47,7 @@ trait TProcessor extends Actor with TSender with TConfigurable with ActorLogging
 
 	//Stored Queries
 	protected val queryQueue = Queue[(Option[ActorRef], Query)]()
+	protected val resultsQueue = Queue[Results]()
 
 	//supervisorStrategy
 
@@ -79,8 +80,11 @@ trait TProcessor extends Actor with TSender with TConfigurable with ActorLogging
 			statusChanged(Running())
 			try {
 				process(inst).apply(port, queries)
-				if (isBuild == true)
+				if (isBuild == true) {
+					processStoredResults
 					processStoredQueries
+				}
+					
 				statusChanged(Ready())
 			} catch {
 				case e: Exception => throwException(e, "Error while processing Results event")
@@ -173,20 +177,29 @@ trait TProcessor extends Actor with TSender with TConfigurable with ActorLogging
 	 */
 	def highestProbabilityIndex(distribution: Array[Double]): Int = TProcessor.highestProbabilityIndex(distribution)
 
-	//TODO look over this method!!!!!
+	//TODO Caching could be solved via resending msg and prior them
 	protected def cacheQuery(q: Instances) = queryQueue += ((Option(sender), Query(q)))
 
-	protected def processStoredQueries {
-		//Does not respect arrival time
-		try {
-			while (queryQueue.nonEmpty) {
-				val elem = queryQueue.dequeue
-				elem._1.foreach(_ ! Results(query(elem._2.query), None, Some(elem._2.query)))
-			}
-		} catch {
-			case e: Exception => throwException(e, "Error while processing stored Query element")
-		}
+	protected def cacheResults(inst: Instances, port: Option[String], query: Option[Instances]) = {
+		resultsQueue += (Results(inst, port, query))
+	}
 
+	protected def processStoredQueries = try {
+		while (queryQueue.nonEmpty) {
+			val elem = queryQueue.dequeue
+			elem._1.foreach(_ ! Results(query(elem._2.query), None, Some(elem._2.query)))
+		}
+	} catch {
+		case e: Exception => throwException(e, "Error while processing stored Query element")
+	}
+
+	protected def processStoredResults = try {
+		log.debug("Process Results")
+		while (resultsQueue.nonEmpty) {
+			self ! resultsQueue.dequeue
+		}
+	} catch {
+		case e: Exception => throwException(e, "Error while processing stored Query element")
 	}
 
 	/**

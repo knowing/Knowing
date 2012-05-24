@@ -41,7 +41,6 @@ class WekaClusterer(var clusterer: Clusterer) extends TClusterer with TClassProp
 	}
 
 	def query(query: Instances): Instances = {
-		log.debug("Query " + query)
 		val builder = new ClassDistributionResultsBuilder(clusterLabels.toList)
 		for (i <- 0 until query.numInstances) {
 			val inst = query.get(i)

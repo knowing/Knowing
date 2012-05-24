@@ -39,9 +39,10 @@ trait TClassifier extends TProcessor with TSerializable {
 		case (Some(TEST), None) =>
 			guessAndSetClassLabel(instances)
 			isBuild match {
-				case false => cacheQuery(instances)
+				case false => 
+					log.debug("Cache Query in " + getClass)
+					cacheResults(instances, Some(TEST), None)
 				case true =>
-					processStoredQueries
 					//TODO TClassifier. Append distribution to query should be configurable
 					val results = query(instances)
 					sendResults(appendClassDistribution(instances, results), None, Some(instances))

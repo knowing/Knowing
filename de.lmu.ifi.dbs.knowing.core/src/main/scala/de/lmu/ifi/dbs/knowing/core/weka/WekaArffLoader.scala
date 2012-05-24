@@ -25,6 +25,7 @@ import weka.core.converters.ArffLoader
 import weka.core.{ Instances, Instance, Attribute }
 import WekaArffLoader._
 
+//TODO remove JavaConversions.asList
 import scala.collection.JavaConversions.asList
 
 /**
@@ -91,13 +92,6 @@ class WekaArffLoader extends TLoader {
 	//loaders foreach (_._2.reset) 
 	def reset = configure(properties)
 
-	/**
-	 * Forward if there were multiple loaders
-	 */
-	override def process(inst: Instances) = {
-		case _ => sendEvent(new Results(inst))
-	}
-
 	private def extractFilename(uri: URI): String = {
 		val sep = System.getProperty("file.separator")
 		val path = uri.getPath
@@ -116,7 +110,7 @@ object WekaArffLoader {
 
 class WekaArffLoaderFactory extends ProcessorFactory(classOf[WekaArffLoader]) {
 
-	override val name: String =classOf[ArffLoader].getSimpleName
+	override val name: String = classOf[ArffLoader].getSimpleName
 	override val id: String = classOf[ArffLoader].getName
 
 	override def createDefaultProperties: Properties = {

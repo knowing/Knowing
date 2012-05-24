@@ -13,6 +13,7 @@ package de.lmu.ifi.dbs.knowing.core.processing
 import java.util.Properties
 import weka.core.Instances
 import de.lmu.ifi.dbs.knowing.core.processing.IProcessorPorts.{ TRAIN, TEST }
+import de.lmu.ifi.dbs.knowing.core.events._
 
 /**
  * @author Nepomuk Seiler
@@ -21,14 +22,12 @@ import de.lmu.ifi.dbs.knowing.core.processing.IProcessorPorts.{ TRAIN, TEST }
  */
 trait TClusterer extends TProcessor {
 	
-
 	override def process(instances: Instances) = {
 		case (Some(TEST), None) => isBuild match {
-				case false => cacheQuery(instances)
+				case false => 
+					log.debug("Cache Results in " + getClass)
+					cacheResults(instances, Some(TEST), None)
 				case true =>
-					log.debug("IsBuild: " + isBuild)
-					processStoredQueries
-					log.debug("Processed stored queries"	)
 					val results = query(instances)
 					sendResults(results, None, Some(instances))
 			}

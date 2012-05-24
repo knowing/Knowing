@@ -145,7 +145,6 @@ trait TSender extends ActorLogging { this: Actor =>
 	}
 
 	protected def sendToActor(actor: ActorRef, event: Event) {
-//		debug(this, "SEND " + event + " to " + actor.getActorClassName)
 		if (!actor.isTerminated)
 			actor ! event
 	}
