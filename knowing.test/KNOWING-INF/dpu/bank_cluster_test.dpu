@@ -3,18 +3,28 @@
     <description>PeakPrediction -> Segmentation -> FV -> CrossValidation(LDA -> NaiveBayes) -> TablePresenter</description>
     <tags></tags>
     <nodes>                        
-        <node id="ARFF" type="loader" factoryId="weka.core.converters.ArffLoader">
+        <node id="ARFFTrain" type="loader" factoryId="weka.core.converters.ArffLoader">
 			<properties>
 				<property key="file" value="bank.arff" />
 			</properties>
 		</node>
-		<node id="KMeans" type="processor" factoryId="weka.clusterers.SimpleKMeans">
+        <node id="ARFFTest" factoryId="weka.core.converters.ArffLoader" type="loader">
+            <properties>
+                <property key="file" value="bank.arff"></property>
+            </properties>
+        </node>
+        <node id="KMeans" type="processor" factoryId="weka.clusterers.SimpleKMeans">
 			<properties>
 			</properties>
 		</node>
+        <node id="Table" type="presenter" factoryId="de.lmu.ifi.dbs.knowing.presenter.ITablePresenter"></node>
+        <node id="TableTest" type="presenter" factoryId="de.lmu.ifi.dbs.knowing.presenter.ITablePresenter"></node>
     </nodes>
     <edges>
-        <edge source="ARFF" target="KMeans" id="source2Cluster"></edge>
+        <edge source="ARFFTrain" target="KMeans" id="source2Cluster"></edge>
+        <edge source="ARFFTest" target="KMeans" id="test2Cluster" targetPort="test"></edge>
+        <edge source="KMeans" target="Table" id="clustered2Table"></edge>
+        <edge source="ARFFTest" target="TableTest" id="test2table"></edge>
     </edges>
     <configuration>
         <history>false</history>

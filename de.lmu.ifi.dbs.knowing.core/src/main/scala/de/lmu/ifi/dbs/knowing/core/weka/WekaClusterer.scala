@@ -32,8 +32,8 @@ class WekaClusterer(var clusterer: Clusterer) extends TClusterer with TClassProp
 		log.debug("Build internal model for " + name + " ...")
 		clusterer.buildClusterer(data)
 		createClusterLabels(clusterer.numberOfClusters)
+		isBuild = true
 		log.debug("... build successfull for " + name)
-		processStoredQueries
 	}
 
 	def createClusterLabels(numClusters: Int) {
@@ -41,13 +41,13 @@ class WekaClusterer(var clusterer: Clusterer) extends TClusterer with TClassProp
 	}
 
 	def query(query: Instances): Instances = {
+		log.debug("Query " + query)
 		val builder = new ClassDistributionResultsBuilder(clusterLabels.toList)
 		for (i <- 0 until query.numInstances) {
 			val inst = query.get(i)
 			builder + clusterer.distributionForInstance(inst)
 		}
 		builder.instances
-		null
 	}
 
 	def configure(properties: Properties) {}

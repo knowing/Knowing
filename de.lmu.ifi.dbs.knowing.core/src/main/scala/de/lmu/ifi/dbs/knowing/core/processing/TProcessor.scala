@@ -79,9 +79,8 @@ trait TProcessor extends Actor with TSender with TConfigurable with ActorLogging
 			statusChanged(Running())
 			try {
 				process(inst).apply(port, queries)
-				isBuild = true //TODO isBuild = true on processing results. Dangerous!
-				processStoredQueries
-				sender ! Finished()
+				if (isBuild == true)
+					processStoredQueries
 				statusChanged(Ready())
 			} catch {
 				case e: Exception => throwException(e, "Error while processing Results event")

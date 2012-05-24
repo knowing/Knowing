@@ -15,7 +15,9 @@ import com.eaio.uuid.UUID
 import scala.collection.mutable.{Set,Map}
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.model.IEdge.DEFAULT_PORT
+import de.lmu.ifi.dbs.knowing.core.exceptions.KnowingException
 import weka.core.Instances
+
 
 
 /**
@@ -117,6 +119,8 @@ trait TSender extends ActorLogging { this: Actor =>
 	}
 
 	protected def sendResults(results: Instances, output: Option[String] = None, query: Option[Instances] = None) {
+		if(results == null)
+			throw new KnowingException("Results null cannot be send")
 		//Make instances immutable
 		val Immutable = classOf[ImmutableInstances] //to pattern match on
 		val immutableInstances = results.getClass match {

@@ -23,6 +23,7 @@ import de.lmu.ifi.dbs.knowing.core.util.{ DPUValidation, DPUUtil }
 import scala.collection.mutable.{ Map => MutableMap, HashMap }
 import scala.collection.mutable.ArrayBuffer
 import org.slf4j.LoggerFactory
+import com.typesafe.config.ConfigFactory
 
 /**
  * Default implementation for the EvaluationService
@@ -117,6 +118,7 @@ class EvaluateService extends IEvaluateService {
 		input: MutableMap[String, InputStream],
 		output: MutableMap[String, OutputStream]): ActorRef = {
 
+//		val system = ActorSystem("default", ConfigFactory.load(getClass.getClassLoader))
 		val executor = ActorSystem().actorOf(Props(new DPUExecutor(dpu, ui, execPath, factoryDirectory, modelStore, resourceStore, input, output)))
 		executor ! Start()
 		executor

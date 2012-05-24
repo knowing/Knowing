@@ -28,7 +28,8 @@ Export-Package: de.lmu.ifi.dbs.knowing.core.annotations,
  de.lmu.ifi.dbs.knowing.core.validation,
  de.lmu.ifi.dbs.knowing.core.weka
 Bundle-ClassPath: .
-Import-Package: org.osgi.framework;version="1.5.0",
+Import-Package: com.typesafe.config;version="[0.4.0,0.5.0)",
+ org.osgi.framework;version="1.5.0",
  org.osgi.service.component;version="1.1.0",
  org.osgi.util.tracker;version="1.4.0",
  org.slf4j;version="1.6.1",

@@ -42,8 +42,8 @@ class WekaClassifier(var classifier: Classifier) extends TClassifier with TClass
 		log.debug("Build internal model for " + name + " ...")
 		guessAndCreateClassLabels(instances)
 		classifier.buildClassifier(instances)
+		isBuild = true
 		log.debug("... build successfull for " + name)
-		processStoredQueries
 	}
 
 	def guessAndCreateClassLabels(instances: Instances) = guessAndSetClassLabel(instances) match {

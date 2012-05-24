@@ -14,12 +14,19 @@ class WekaSimpleKMeans extends WekaClusterer(new SimpleKMeans) {
 		val kmeans = clusterer.asInstanceOf[SimpleKMeans]
 		
 		val iterations = properties.getProperty(ITERATIONS, "-1").toInt
+		if(iterations != -1)
+			kmeans.setMaxIterations(iterations)
 		
 		val clusters = properties.getProperty(CLUSTERS, "-1").toInt
+		if(clusters != -1)
+			kmeans.setNumClusters(clusters)
 		
 		val seed = properties.getProperty(SEED, "none")
+		if(!seed.eq("none"))
+			kmeans.setSeed(seed.toInt)
 		
 		val distance = resolveClass[DistanceFunction](DISTANCE)
+		distance.foreach(kmeans.setDistanceFunction(_))
 	}
 
 }

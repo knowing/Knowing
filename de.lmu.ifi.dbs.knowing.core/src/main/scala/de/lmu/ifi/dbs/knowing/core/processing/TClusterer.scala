@@ -20,16 +20,21 @@ import de.lmu.ifi.dbs.knowing.core.processing.IProcessorPorts.{ TRAIN, TEST }
  * @since 2012-05-22
  */
 trait TClusterer extends TProcessor {
+	
 
-	def process(instances: Instances) = {
+	override def process(instances: Instances) = {
 		case (Some(TEST), None) => isBuild match {
 				case false => cacheQuery(instances)
 				case true =>
+					log.debug("IsBuild: " + isBuild)
 					processStoredQueries
+					log.debug("Processed stored queries"	)
 					val results = query(instances)
 					sendResults(results, None, Some(instances))
 			}
-		case (None, None) | (Some(TRAIN), None) =>
+		case (None, None) | (Some(TRAIN), None) => 
+			log.info("Clustering");
+			buildClusterer(instances)
 		case (Some(port), _) => log.warning("Incompatible port")
 	}
 
