@@ -83,7 +83,7 @@ object UIFactories {
 abstract class SwtUIFactory(parent: Composite, id: String) extends UIFactory[Composite] {
 
 	private val rendevouz = new SynchronousQueue[Composite]
-	
+
 	implicit val logSourceType: LogSource[UIFactory[Composite]] = new LogSource[UIFactory[Composite]] {
 		def genString(a: UIFactory[Composite]) = a.getId
 	}
@@ -212,7 +212,7 @@ class CompositeUIFactory(parent: Composite, id: String) extends SwtUIFactory(par
  *
  */
 class TabUIFactory(parent: Composite, id: String, style: Int = SWT.BOTTOM) extends SwtUIFactory(parent, id) {
-	
+
 	private var tabFolder: CTabFolder = _
 
 	/**
@@ -223,11 +223,11 @@ class TabUIFactory(parent: Composite, id: String, style: Int = SWT.BOTTOM) exten
 	 * @return tab content composite
 	 */
 	def createControl(node: INode): Composite = {
-		if(tabFolder == null) {
+		if (tabFolder == null) {
 			tabFolder = new CTabFolder(parent, style)
 			parent layout
 		}
-			
+
 		val tabItem = new CTabItem(tabFolder, SWT.NONE)
 		tabItem.setText(node.getId.getContent)
 		val composite = new Composite(tabFolder, SWT.NONE)
@@ -241,16 +241,20 @@ class TabUIFactory(parent: Composite, id: String, style: Int = SWT.BOTTOM) exten
 	 * Disposes all items inside the CTabFolder.
 	 * Does not dispose the CTabFolder.
 	 */
-	def disposeControls() = if(tabFolder != null && !tabFolder.isDisposed) {
+	def disposeControls() = if (tabFolder != null && !tabFolder.isDisposed) {
 		tabFolder.getItems foreach (item => item.dispose)
 	}
 
 	/**
 	 * Sets selection to the first tab if exists.
 	 */
-	override def updateUI() = tabFolder.getItemCount match {
-		case 0 =>
-		case _ => tabFolder.setSelection(0)
+	override def updateUI() = {
+		parent.layout
+		if (tabFolder != null)
+			tabFolder.getItemCount match {
+				case 0 =>
+				case _ => tabFolder.setSelection(0)
+			}
 	}
 
 }

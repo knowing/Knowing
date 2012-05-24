@@ -28,6 +28,8 @@ trait TClassPropertyResolver { this: TProcessor =>
 	@throws(classOf[ClassNotFoundException])
 	def resolveClass[T](key: String, classloader: ClassLoader)(implicit m: Manifest[T]): Option[T] = {
 		val className = properties.getProperty(key)
+		if(className == null)
+			return None
 		//TODO check Manifest
 		val clazz = Class.forName(className, true, classloader)
 

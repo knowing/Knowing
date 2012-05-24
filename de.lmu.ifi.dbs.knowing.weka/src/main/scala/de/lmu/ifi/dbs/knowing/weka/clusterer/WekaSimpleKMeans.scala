@@ -19,8 +19,7 @@ class WekaSimpleKMeans extends WekaClusterer(new SimpleKMeans) {
 		
 		val seed = properties.getProperty(SEED, "none")
 		
-		//TODO null check
-//		val distance = resolveClass[DistanceFunction](DISTANCE)
+		val distance = resolveClass[DistanceFunction](DISTANCE)
 	}
 
 }
