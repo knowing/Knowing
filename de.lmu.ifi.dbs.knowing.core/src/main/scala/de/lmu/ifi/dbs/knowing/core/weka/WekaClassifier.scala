@@ -13,19 +13,16 @@ package de.lmu.ifi.dbs.knowing.core.weka
 import java.util.Properties
 import java.io.{ InputStream, OutputStream }
 import scala.collection.JavaConversions._
-import de.lmu.ifi.dbs.knowing.core.factory._
+import de.lmu.ifi.dbs.knowing.core.factory.{TFactory,ProcessorFactory}
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
-import de.lmu.ifi.dbs.knowing.core.processing.{TClassifier,TClassPropertyResolver,INodeProperties}
+import de.lmu.ifi.dbs.knowing.core.processing.{ TClassifier, TClassPropertyResolver, INodeProperties }
 import de.lmu.ifi.dbs.knowing.core.japi.ILoggableProcessor
 import de.lmu.ifi.dbs.knowing.core.results.ClassDistributionResultsBuilder
-import akka.actor.ActorRef
-import akka.actor.Actor.actorOf
-import akka.event.EventHandler.{ debug, info, warning, error }
+import akka.actor.{ Props, ActorRef, ActorSystem, ActorContext }
 import weka.classifiers.Classifier
 import weka.core.{ Instance, Instances }
 import weka.core.SerializationHelper
-
 
 /**
  *
@@ -42,23 +39,23 @@ class WekaClassifier(var classifier: Classifier) extends TClassifier with TClass
 	private val name = getClass.getSimpleName
 
 	def build(instances: Instances) {
-		debug(this, "Build internal model for " + name + " ...")
+		log.debug("Build internal model for " + name + " ...")
 		guessAndCreateClassLabels(instances)
 		classifier.buildClassifier(instances)
-		debug(this, "... build successfull for " + name)
-		processStoredQueries
+		isBuild = true
+		log.debug("... build successfull for " + name)
 	}
 
 	def guessAndCreateClassLabels(instances: Instances) = guessAndSetClassLabel(instances) match {
 		case -1 =>
 			classLabels = Array()
-			warning(this, "No classLabel found in " + name)
+			log.warning("No classLabel found in " + name)
 		case x => classLabels = classLables(instances.attribute(x))
 	}
 
 	def query(query: Instances): Instances = {
 		val builder = new ClassDistributionResultsBuilder(classLabels.toList)
-		for(i <- 0 until query.numInstances) {
+		for (i <- 0 until query.numInstances) {
 			val inst = query.get(i)
 			builder + classifier.distributionForInstance(inst)
 		}
@@ -79,33 +76,22 @@ class WekaClassifier(var classifier: Classifier) extends TClassifier with TClass
  * @version 0.1
  * @since 21.04.2011
  */
-class WekaClassifierFactory[T <: WekaClassifier, S <: Classifier](wrapper: Class[T], clazz: Class[S]) extends TFactory {
+class WekaClassifierFactory[T <: WekaClassifier, S <: Classifier](wrapper: Class[T], clazz: Class[S]) extends ProcessorFactory(wrapper) {
 
-	val name: String = clazz.getSimpleName
-	val id: String = clazz.getName
+	override val name: String = clazz.getSimpleName
+	override val id: String = clazz.getName
 
-	def getInstance(): ActorRef = {
+	override def getInstance(factory: TFactory.ActorFactory): ActorRef = {
 		classOf[ILoggableProcessor].isAssignableFrom(clazz) match {
-			case false => actorOf(wrapper)
+			case false => factory.actorOf(Props(wrapper.newInstance))
 			case true =>
-				actorOf {
+				factory.actorOf(Props {
 					val w = wrapper.newInstance
 					w.classifier.asInstanceOf[ILoggableProcessor].setProcessor(w)
 					w
-				}
+				})
 		}
 	}
-
-	/* ======================= */
-	/* ==== Configuration ==== */
-	/* ======================= */
-
-	def createDefaultProperties: Properties = new Properties
-
-	def createPropertyValues: Map[String, Array[_ <: Any]] = Map()
-
-	def createPropertyDescription: Map[String, String] = Map()
-
 }
 
 object WekaClassifierFactory {

@@ -3,7 +3,6 @@ package de.lmu.ifi.dbs.knowing.core.swt.charts
 import java.util.{ Properties, Date }
 import java.awt.Color
 import scala.collection.mutable.{ Map => MutableMap }
-import akka.event.EventHandler.{ debug, info, warning, error }
 import org.eclipse.swt.widgets.Composite
 import org.jfree.chart.{ JFreeChart, ChartFactory }
 import org.jfree.chart.plot.{ Plot, XYPlot, PlotOrientation }
@@ -84,7 +83,7 @@ class TimeIntervalClassPresenter extends AbstractChartPresenter("Time Interval C
     //TODO TimeIntervalClassPresenter -> Compute interval size!
     value match {
       case (s, index) => addItem(s, index, from, to)
-      case _ => warning(this, "Unkown value")
+      case _ => log.warning("Unkown value")
     }
   }
 

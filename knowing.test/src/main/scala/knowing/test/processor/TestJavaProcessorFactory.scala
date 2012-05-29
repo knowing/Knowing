@@ -2,7 +2,6 @@ package knowing.test.processor
 
 import java.util.Properties
 import akka.actor.ActorRef
-import akka.actor.Actor.actorOf
 import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
 import de.lmu.ifi.dbs.knowing.core.japi.JProcessor
 import scala.collection.immutable.Map

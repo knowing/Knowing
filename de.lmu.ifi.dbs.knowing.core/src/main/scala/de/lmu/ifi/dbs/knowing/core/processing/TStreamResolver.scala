@@ -10,7 +10,6 @@
 \*                                                              */
 package de.lmu.ifi.dbs.knowing.core.processing
 
-import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import java.util.Properties
@@ -54,12 +53,12 @@ trait TStreamResolver { this: TProcessor =>
 	protected def ioReceive: Receive = {
 
 		case ConfigureOutput(target, output) =>
-			if (resolved) warning(this, "Output has already been resolved and will be overriden!")
+			if (resolved) log.warning("Output has already been resolved and will be overriden!")
 			resolved = true
 			outputs = Map(target -> output)
 
 		case ConfigureInput(source, input) =>
-			if (resolved) warning(this, "Input has already been resolved and will be overriden!")
+			if (resolved) log.warning("Input has already been resolved and will be overriden!")
 			resolved = true
 			inputs = Map(source -> input)
 	}
@@ -87,7 +86,7 @@ trait TStreamResolver { this: TProcessor =>
 
 			//Input successfully created
 			case Some(p) =>
-				debug(this, "Resolved resource: [" + p.getFileName + "] in [" + p.getParent + "]")
+				log.debug("Resolved resource: [" + p.getFileName + "] in [" + p.getParent + "]")
 				return Map(p.getFileName.toString -> newInputStream(p))
 		}
 		resolveDirPath(properties) match {
@@ -100,12 +99,12 @@ trait TStreamResolver { this: TProcessor =>
 					val fileExt = properties.getProperty(FILE_EXTENSIONS)
 					stream = newDirectoryStream(dir)
 					for (file <- stream if file.getFileName.toString.endsWith(fileExt)) {
-						debug(this, "Resolved input resource: [" + file.getFileName + "] in [" + dir.normalize + "]")
+						log.debug("Resolved input resource: [" + file.getFileName + "] in [" + dir.normalize + "]")
 						inputMap += (file.getFileName.toString -> newInputStream(file))
 					}
 				} catch {
 					case e: IOException => 
-						warning(this, e.getMessage + "\n" + e.getStackTraceString)
+						log.warning(e.getMessage + "\n" + e.getStackTraceString)
 				} finally {
 					if (stream != null)
 						stream.close
@@ -115,7 +114,7 @@ trait TStreamResolver { this: TProcessor =>
 
 		}
 
-		debug(this, "Trying resolve url...")
+		log.debug("Trying resolve url...")
 		resolveInputFromURL(properties) match {
 			case None => Map()
 
@@ -139,7 +138,7 @@ trait TStreamResolver { this: TProcessor =>
 		resolveFilePath(properties) match {
 			case None => Map()
 			case Some(f) =>
-				debug(this, "Resolved output resource: " + f.getFileName)
+				log.debug("Resolved output resource: " + f.getFileName)
 				createDirectories(f.getParent)
 
 				//TODO INodeProperties.WRITE_OVERRIDE_EXISTING code here
@@ -191,7 +190,7 @@ trait TStreamResolver { this: TProcessor =>
 
 			//Resolve URL from FILE property
 			case (false, true) =>
-				debug(this, "Trying resolve input via executionPath[" + properties.getProperty(EXE_PATH) + "] and FILE[" + properties.getProperty(FILE) + "]...")
+				log.debug("Trying resolve input via executionPath[" + properties.getProperty(EXE_PATH) + "] and FILE[" + properties.getProperty(FILE) + "]...")
 				val execURI = new URI(properties.getProperty(EXE_PATH))
 				val fileName = properties.getProperty(FILE)
 				val file = Paths.get(execURI).resolve(fileName)
@@ -199,7 +198,7 @@ trait TStreamResolver { this: TProcessor =>
 
 			//Resolve URL from URL property
 			case (true, _) =>
-				debug(this, "Trying resolve input from URL[" + properties.getProperty(URL_PROP) + "]...")
+				log.debug("Trying resolve input from URL[" + properties.getProperty(URL_PROP) + "]...")
 				val url = new URL(properties.getProperty(URL_PROP))
 				url.getProtocol match {
 					case "file" =>
@@ -256,13 +255,13 @@ object TStreamResolver {
 		if (!properties.containsKey(key))
 			return None
 
-		debug(this, "Trying resolve [" + key + "]...")
+//		log.debug("Trying resolve [" + key + "]...")
 		var path: Path = null
 		try {
 			path = Paths.get(properties.getProperty(key))
 		} catch {
 			case e: InvalidPathException =>
-				warning(this, "Error resolving from filesystem. " + e.getMessage)
+//				log.warning("Error resolving from filesystem. " + e.getMessage)
 				return None
 		}
 		val absolute = properties.getProperty(ABSOLUTE_PATH, "false").toBoolean

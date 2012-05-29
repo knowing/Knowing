@@ -2,8 +2,6 @@ package de.lmu.ifi.dbs.knowing.core.swt
 
 import java.util.{ LinkedList, Properties }
 import akka.actor.ActorRef
-import akka.actor.Actor.actorOf
-import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.swt.provider.{ InstanceContentProvider, InstanceLabelProvider }
 import de.lmu.ifi.dbs.knowing.presenter.{PresenterFactory,ITablePresenter}
 import org.eclipse.jface.viewers.{ TableViewerColumn, TableViewer, LabelProvider, ColumnWeightData }
@@ -58,7 +56,7 @@ class TablePresenter extends SWTPresenter with ITablePresenter[Composite] {
     viewer.setLabelProvider(new TablePresenterLabelProvider)
     viewer.setContentProvider(new ArrayContentProvider)
     viewer.setInput(model)
-    debug(this, "... columns created")
+    log.debug("... columns created")
   }
 
   /**
@@ -129,7 +127,7 @@ class TablePresenter extends SWTPresenter with ITablePresenter[Composite] {
     if (columnsInit)
       return
 
-    debug(this, "createColumns...")
+    log.debug("createColumns...")
     //TODO necessary
     instances.setClassIndex(-1); //WekaEnumeration skips the class attribute, so the class index has to be unset...
     val weight = instances.numInstances match {
@@ -151,7 +149,7 @@ class TablePresenter extends SWTPresenter with ITablePresenter[Composite] {
     viewer.setLabelProvider(new InstanceLabelProvider)
     viewer.setContentProvider(new InstanceContentProvider)
     columnsInit = true
-    debug(this, "... columns created")
+    log.debug("... columns created")
   }
 
   def addListener(typ: Int, listener: Listener) = viewer.getTable.addListener(typ, listener)

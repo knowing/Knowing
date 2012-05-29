@@ -11,7 +11,6 @@
 package de.lmu.ifi.dbs.knowing.core.processing
 
 import akka.actor.Actor
-import akka.event.EventHandler.{ debug, info, warning, error }
 import java.util.Properties
 import java.io.{ OutputStream, InputStream, IOException }
 import java.net.{ URI, URL }

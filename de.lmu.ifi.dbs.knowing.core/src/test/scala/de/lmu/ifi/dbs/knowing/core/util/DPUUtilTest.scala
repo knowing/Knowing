@@ -7,8 +7,7 @@ import org.junit.runner.RunWith
 import org.eclipse.sapphire.modeling.xml.{ XmlResourceStore, RootXmlResource }
 import org.eclipse.sapphire.modeling.UrlResourceStore
 import de.lmu.ifi.dbs.knowing.core.model._
-import akka.actor.ActorRef
-import akka.actor.Actor.actorOf
+import akka.actor.{ActorSystem,ActorRef}
 import java.net.{ URL, URI }
 import java.nio.file.Paths
 import DPUUtil._

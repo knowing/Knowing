@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>de.lmu.ifi.dbs.knowing</groupId>
+  <artifactId>Knowing</artifactId>
+  <version>0.1.4-SNAPSHOT</version>
+  <packaging>pom</packaging>
+	<properties>
+		<tycho.version>0.14.1</tycho.version>
+		<scala.version>2.9.2</scala.version>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+		<encoding>UTF-8</encoding>
+	</properties>
+  <modules>
+    <module>de.lmu.ifi.dbs.knowing.core</module>
+    <module>de.lmu.ifi.dbs.knowing.presenter</module>
+    <module>de.lmu.ifi.dbs.knowing.core.common</module>
+	
+    <module>de.lmu.ifi.dbs.knowing.core.logging</module>
+    <module>de.lmu.ifi.dbs.knowing.core.swt</module>
+    <module>de.lmu.ifi.dbs.knowing.core.swt.charts</module>
+    <module>de.lmu.ifi.dbs.knowing.weka</module>
+
+	<!-- 
+    <module>de.lmu.ifi.dbs.knowing.debug.core</module>
+    <module>de.lmu.ifi.dbs.knowing.debug.launcher</module>
+    <module>de.lmu.ifi.dbs.knowing.debug.presenter</module>
+    <module>de.lmu.ifi.dbs.knowing.debug.ui</module>
+    <module>de.lmu.ifi.dbs.knowing.launcher</module>
+    <module>de.lmu.ifi.dbs.knowing.target</module>
+    <module>de.lmu.ifi.dbs.knowing.test</module>
+    
+    <module>knowing.test</module>
+-->
+  </modules>
+	<dependencies>
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-library</artifactId>
+			<version>${scala.version}</version>
+		</dependency>
+	</dependencies>
+<build>
+		<plugins>
+			<plugin>
+				<groupId>org.scala-tools</groupId>
+				<artifactId>maven-scala-plugin</artifactId>
+				<version>2.15.0</version>
+				<executions>
+                    	<execution>
+                        		<id>compile</id>
+                        		<goals>
+                        		<goal>compile</goal>
+                        		</goals>
+                        		<phase>compile</phase>
+                    	</execution>
+ 
+                    	<execution>
+                        	<id>test-compile</id>
+                        	<goals>
+                        	<goal>testCompile</goal>
+                        	</goals>
+                        	<phase>test-compile</phase>
+                    </execution>
+ 
+                    <execution>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-compiler-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+					<excludeResources>
+						<excludeResource>**/*.scala</excludeResource>
+					</excludeResources>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+					<resolver>p2</resolver>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+<repositories>
+		<repository>
+			<id>eclipse-indigo</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/releases/indigo</url>
+		</repository>
+		<repository>
+			<id>eclipse-sapphire</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/sapphire/0.4.1/repository</url>
+		</repository>
+		<repository>
+			<id>eclipse-scala-ide</id>
+			<layout>p2</layout>
+			<url>http://download.scala-ide.org/releases-29/milestone/site</url>
+		</repository>
+		<repository>
+			<id>eclipse-gemini-dbaccess</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/gemini/dbaccess/updates/1.0</url>
+		</repository>
+		<repository>
+			<id>knowing-remote</id>
+			<layout>p2</layout>
+			<url>http://medmon.mukis.de/repository/build</url>
+		</repository>
+          <repository>
+			<id>scala-tools.org</id>
+			<name>Scala-tools Maven2 Repository</name>
+			 <url>http://scala-tools.org/repo-releases</url>
+		</repository>
+		<repository>
+  			<id>typesafe</id>
+  			<name>Typesafe Repository</name>
+  			<url>http://repo.typesafe.com/typesafe/releases/</url>
+		</repository>
+      </repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>scala-tools.org</id>
+			<name>Scala-tools Maven2 Repository</name>
+			<url>http://scala-tools.org/repo-releases</url>
+		</pluginRepository>
+	</pluginRepositories>
+</project>

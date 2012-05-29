@@ -2,6 +2,7 @@ package de.lmu.ifi.dbs.knowing.core.swt.charts.internal
 
 import de.lmu.ifi.dbs.knowing.core.swt.charts._
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
+import de.lmu.ifi.dbs.knowing.core.util.OSGIUtil
 import org.osgi.framework.{ BundleContext, BundleActivator, ServiceRegistration }
 
 /**
@@ -12,16 +13,18 @@ import org.osgi.framework.{ BundleContext, BundleActivator, ServiceRegistration 
  */
 class Activator extends BundleActivator {
 
-  var services: List[ServiceRegistration[_]] = Nil
+	private var osgi: OSGIUtil = _
 
-  def start(context: BundleContext) = {
-    services = context.registerService(classOf[TFactory].getName, new PieChartPresenterFactory, null) :: services
-    services = context.registerService(classOf[TFactory].getName, new TimeIntervalClassPresenterFactory, null) :: services
-    services = context.registerService(classOf[TFactory].getName, new TimeSeriesPresenterFactory, null) :: services
-  }
+	def start(context: BundleContext) = {
+		osgi = new OSGIUtil(context)
+		osgi.registerPresenter(new PieChartPresenterFactory)
+		osgi.registerPresenter(new TimeIntervalClassPresenterFactory)
+		osgi.registerPresenter(new TimeSeriesPresenterFactory)
+	}
 
-  def stop(context: BundleContext) = {
-    services foreach (registration => registration.unregister)
-  }
+	def stop(context: BundleContext) = {
+		osgi.deregisterAll
+		osgi = null
+	}
 
 }

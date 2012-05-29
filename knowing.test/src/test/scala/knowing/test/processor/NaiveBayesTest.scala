@@ -1,6 +1,5 @@
 package knowing.test.processor
 
-import akka.actor.Actor.actorOf
 import akka.actor.ActorRef
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
@@ -71,8 +70,8 @@ class NaiveBayesTest extends FunSuite with KnowingTestKit with BeforeAndAfter {
     val uiFactory2 = new EmbeddedUIFactory
 
     //Create the dpuExectuor running the test
-    dpuExecutor1 = createDPUExecutor(dpu, uiFactory1, exePath, factoryDirectory, modelStore, resourceStore1).start
-    dpuExecutor2 = createDPUExecutor(dpu, uiFactory2, exePath, factoryDirectory, modelStore, resourceStore2).start
+    dpuExecutor1 = createDPUExecutor(dpu, uiFactory1, exePath, factoryDirectory, modelStore, resourceStore1)
+    dpuExecutor2 = createDPUExecutor(dpu, uiFactory2, exePath, factoryDirectory, modelStore, resourceStore2)
 
     dpuExecutor1 ! Start()
     dpuExecutor2 ! Start()

@@ -16,9 +16,7 @@ import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory._
 import de.lmu.ifi.dbs.knowing.core.events._
 import weka.core.{ Instances, Instance, Attribute }
-import akka.actor.ActorRef
-import akka.actor.Actor.actorOf
-import akka.event.EventHandler.{ debug, info, warning, error }
+import akka.actor.{ActorRef, Props}
 import java.io.{ PrintWriter, OutputStream, FileOutputStream, File }
 import java.util.Properties
 import scala.collection.JavaConversions._
@@ -47,7 +45,7 @@ class WekaArffSaver extends TSaver {
 				val writer = new PrintWriter(output)
 				writer.print(header.toString)
 				//Write instances incremental
-				debug(this, "Write Instances[" + instances.numInstances + "] for " + file)
+				log.debug("Write Instances[" + instances.numInstances + "] for " + file)
 
 				val attributes = for (i <- 0 until header.numAttributes) yield header.attribute(i)
 
@@ -78,7 +76,7 @@ class WekaArffSaver extends TSaver {
 				writer.flush
 				writer.close
 
-				debug(this, "Write Instances finished [" + count + "/" + outputs.size + "]")
+				log.debug("Write Instances finished [" + count + "/" + outputs.size + "]")
 				count += 1
 		}
 
@@ -92,14 +90,12 @@ class WekaArffSaver extends TSaver {
 	}
 }
 
-class WekaArffSaverFactory extends TFactory {
+class WekaArffSaverFactory extends ProcessorFactory(classOf[WekaArffSaver]) {
 
-	val name: String = WekaArffSaverFactory.name
-	val id: String = WekaArffSaverFactory.id
+	override val name: String = classOf[weka.core.converters.ArffSaver].getSimpleName
+	override val id: String = classOf[weka.core.converters.ArffSaver].getName
 
-	def getInstance: ActorRef = actorOf[WekaArffSaver]
-
-	def createDefaultProperties: Properties = {
+	override def createDefaultProperties: Properties = {
 		val returns = new Properties
 		returns setProperty (FILE, System.getProperty("user.home"))
 		returns setProperty (URL, "file://" + System.getProperty("user.home"))
@@ -107,20 +103,16 @@ class WekaArffSaverFactory extends TFactory {
 		returns
 	}
 
-	def createPropertyValues: Map[String, Array[_ <: Any]] = {
+	override def createPropertyValues: Map[String, Array[_ <: Any]] = {
 		Map(FILE -> Array(new File(System.getProperty("user.home"))),
 			URL -> Array(new java.net.URL("file", "", System.getProperty("user.home"))),
 			ABSOLUTE_PATH -> BOOLEAN_PROPERTY)
 	}
 
-	def createPropertyDescription: Map[String, String] = {
+	override def createPropertyDescription: Map[String, String] = {
 		Map(FILE -> "ARFF file destination",
 			URL -> "ARFF file URL",
 			ABSOLUTE_PATH -> "Search file in absolute or relative path")
 	}
 }
 
-object WekaArffSaverFactory {
-	val name: String = "ARFF Loader"
-	val id: String = classOf[weka.core.converters.ArffSaver].getName
-}

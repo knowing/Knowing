@@ -10,9 +10,7 @@
 \*																*/
 package de.lmu.ifi.dbs.knowing.core.validation
 
-import akka.actor.ActorRef
-import akka.actor.Actor.actorOf
-import akka.event.EventHandler.{ debug, info, warning, error }
+import akka.actor.{ ActorSystem, ActorRef, ActorContext, Props }
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 import de.lmu.ifi.dbs.knowing.core.processing.IProcessorPorts.{ TRAIN, TEST }
 import de.lmu.ifi.dbs.knowing.core.factory.{ TFactory, ProcessorFactory }
@@ -21,8 +19,7 @@ import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.exceptions._
 import java.util.Properties
-import weka.core.{ Instance, Instances,Attribute }
-import com.eaio.uuid.UUID
+import weka.core.{ Instance, Instances, Attribute }
 
 /**
  * Performs a crossvalidation on the given input.
@@ -52,7 +49,7 @@ class XCrossValidator(val factoryDirectory: Option[IFactoryDirectory] = None) ex
 	}
 
 	def process(instances: Instances) = {
-		
+
 		/** Input dataset. Create folds and train CrossValidators */
 		case (None, None) | (Some(DEFAULT_PORT), None) =>
 			//Init classlabels
@@ -60,15 +57,15 @@ class XCrossValidator(val factoryDirectory: Option[IFactoryDirectory] = None) ex
 			index match {
 				case -1 =>
 					classLabels = Array()
-					warning(this, "No classLabel found in " + instances.relationName)
+					log.warning("No classLabel found in " + instances.relationName)
 				case x => classLabels = classLables(instances.attribute(x))
 			}
 			//Create crossValidator actors for each fold
 			val crossValidators = initCrossValidators(folds)
-			debug(this, "Fold-Actors created!")
+			log.debug("Fold-Actors created!")
 			statusChanged(Progress("validation", 0, folds))
 			startCrossValidation(crossValidators, instances)
-			debug(this, "Fold-Actors configured and training started")
+			log.debug("Fold-Actors configured and training started")
 
 		/** CrossValidator results. Expect ClassDistribution. */
 		case (None, Some(query)) => result(instances, query)
@@ -95,22 +92,21 @@ class XCrossValidator(val factoryDirectory: Option[IFactoryDirectory] = None) ex
 		results = result :: results
 		currentFold += 1
 		if (currentFold == folds) {
-			debug(this, "Last Fold " + currentFold + " results arrived")
+			log.debug("Last Fold " + currentFold + " results arrived")
 			sendEvent(Results(mergeResults))
 			currentFold = 0
 		} else {
 			statusChanged(Progress("validation", 1, folds))
-			debug(this, "Fold " + currentFold + " results arrived")
+			log.debug("Fold " + currentFold + " results arrived")
 		}
 
 	}
 
-	protected def initCrossValidators(folds: Int) = for (i <- 0 until folds; val actor = factory.getInstance) yield actor
+	protected def initCrossValidators(folds: Int) = for (i <- 0 until folds; val actor = factory.getInstance(context)) yield actor
 
 	protected def startCrossValidation(crossValidators: IndexedSeq[ActorRef], instances: Instances) {
 		for (j <- 0 until folds) {
-			crossValidators(j).dispatcher = self.dispatcher
-			self startLink crossValidators(j) //Start actors and link yourself as supervisor
+			context.watch(crossValidators(j)) //Start actors and link yourself as supervisor
 			crossValidators(j) ! Register(self, None) //Register so results/status events are send to us
 			crossValidators(j) ! Configure(configureProperties(validator_properties, j)) //Configure actor
 			crossValidators(j) ! Results(instances.trainCV(folds, j), Some(TRAIN)) //Send the train set
@@ -128,7 +124,7 @@ class XCrossValidator(val factoryDirectory: Option[IFactoryDirectory] = None) ex
 			case null | "" => returns
 			case name: String =>
 				returns.attribute(name) match {
-					case null => warning(this, "Attribute " + name + " not available to sort by")
+					case null => log.warning("Attribute " + name + " not available to sort by")
 					case a => returns.sort(a)
 				}
 				returns
@@ -168,7 +164,9 @@ class XCrossValidator(val factoryDirectory: Option[IFactoryDirectory] = None) ex
  */
 class XCrossValidatorFactory(val factoryDirectory: Option[IFactoryDirectory] = None) extends ProcessorFactory(classOf[XCrossValidator]) {
 
-	override def getInstance(): ActorRef = actorOf(new XCrossValidator(factoryDirectory))
+	override def getInstance(): ActorRef = ActorSystem().actorOf(Props(new XCrossValidator(factoryDirectory)))
+
+	override def getInstance(factory: TFactory.ActorFactory): ActorRef = factory.actorOf(Props(new XCrossValidator(factoryDirectory)))
 
 	override def createDefaultProperties: Properties = {
 		val props = new Properties();

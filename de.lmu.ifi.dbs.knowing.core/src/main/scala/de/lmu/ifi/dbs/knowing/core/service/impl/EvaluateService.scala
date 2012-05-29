@@ -12,8 +12,7 @@ package de.lmu.ifi.dbs.knowing.core.service.impl
 
 import java.net.URI
 import java.io.{ InputStream, OutputStream }
-import akka.actor.Actor.actorOf
-import akka.actor.ActorRef
+import akka.actor.{ActorSystem, ActorRef, Props}
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.exceptions._
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
@@ -24,6 +23,7 @@ import de.lmu.ifi.dbs.knowing.core.util.{ DPUValidation, DPUUtil }
 import scala.collection.mutable.{ Map => MutableMap, HashMap }
 import scala.collection.mutable.ArrayBuffer
 import org.slf4j.LoggerFactory
+import com.typesafe.config.ConfigFactory
 
 /**
  * Default implementation for the EvaluationService
@@ -118,7 +118,8 @@ class EvaluateService extends IEvaluateService {
 		input: MutableMap[String, InputStream],
 		output: MutableMap[String, OutputStream]): ActorRef = {
 
-		val executor = actorOf(new DPUExecutor(dpu, ui, execPath, factoryDirectory, modelStore, resourceStore, input, output)).start
+//		val system = ActorSystem("default", ConfigFactory.load(getClass.getClassLoader))
+		val executor = ActorSystem().actorOf(Props(new DPUExecutor(dpu, ui, execPath, factoryDirectory, modelStore, resourceStore, input, output)))
 		executor ! Start()
 		executor
 	}

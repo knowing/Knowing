@@ -15,9 +15,7 @@ import java.util.Properties
 import java.util.concurrent.{ TimeUnit, ScheduledFuture, ConcurrentLinkedQueue }
 import java.io.{ InputStream, OutputStream, IOException, PrintWriter }
 import java.nio.file.{ Paths, Files }
-import akka.actor.{ Actor, ActorRef, PoisonPill }
-import akka.config.Supervision.OneForOneStrategy
-import akka.event.EventHandler.{ debug, info, warning, error }
+import akka.actor.{ Actor, ActorRef, ActorLogging, PoisonPill, ActorSystem, ActorPath }
 import akka.dispatch._
 import de.lmu.ifi.dbs.knowing.core.factory._
 import de.lmu.ifi.dbs.knowing.core.util._
@@ -27,7 +25,6 @@ import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.service._
 import de.lmu.ifi.dbs.knowing.core.model._
 import INodeProperties._
-import com.eaio.uuid.UUID
 import scala.collection.mutable.{ Map => MutableMap, ListBuffer, SynchronizedQueue }
 import scala.collection.JavaConversions._
 import System.{ currentTimeMillis => systemTime }
@@ -50,18 +47,21 @@ class DPUExecutor(dpu: IDataProcessingUnit,
 	modelStore: IModelStore,
 	resourceStore: IResourceStore,
 	loaderInput: MutableMap[String, InputStream] = MutableMap(),
-	saverOutput: MutableMap[String, OutputStream] = MutableMap()) extends Actor with TSender {
+	saverOutput: MutableMap[String, OutputStream] = MutableMap()) extends Actor with TSender with ActorLogging {
 
-	self.faultHandler = OneForOneStrategy(List(classOf[Throwable]), 5, 5000)
+//	self.faultHandler = OneForOneStrategy(List(classOf[Throwable]), 5, 5000)
+	
+	//TODO implement supervisor strategy
+	//http://doc.akka.io/docs/akka/2.0.1/scala/fault-tolerance.html
 
 	/** NodeID -> (actor, type) */
 	var actors = MutableMap[String, (ActorRef, NodeType)]()
 
-	/** UUID -> NodeID */
-	var actorsByUuid = MutableMap[UUID, String]()
+	/** ActorPath -> NodeID */
+	var actorsByPath = MutableMap[ActorPath, String]()
 
-	/** Status map holding: UUID -> Reference, Status, Timestamp */
-	val statusMap: MutableMap[UUID, (ActorRef, Status, Long)] = MutableMap()
+	/** Status map holding: ActorPath -> Reference, Status, Timestamp */
+	val statusMap: MutableMap[ActorPath, (ActorRef, Status, Long)] = MutableMap()
 	val events = ListBuffer[String]()
 
 	/** data mining process log */
@@ -82,7 +82,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
 				val store = new RootXmlResource(new XmlResourceStore(new FileResourceStore(file)))
 				processHistory = IProcessHistory.TYPE.instantiate(store)
 				processHistory.setName(dpu.getName.getContent)
-				self.dispatcher = new LoggableDispatcher("LoggableDispatcher", this)
+//				self.dispatcher = new LoggableDispatcher("LoggableDispatcher", this)
 			} catch {
 				case e: IOException => e.printStackTrace()
 			}
@@ -97,10 +97,10 @@ class DPUExecutor(dpu: IDataProcessingUnit,
 
 		case Start | Start() => evaluate
 
-		case UpdateUI | UpdateUI() => uifactory update (self.sender.getOrElse(null), UpdateUI())
+		case UpdateUI | UpdateUI() => uifactory update (self, UpdateUI())
 
 		case e: ExceptionEvent =>
-			warning(self.sender.getOrElse(self), e.details + "\n" + e.throwable + "\n" + e.throwable.getStackTraceString)
+			log.warning(e.details + "\n" + e.throwable + "\n" + e.throwable.getStackTraceString)
 			handleStatus(e)
 
 		case status: Status => handleStatus(status)
@@ -109,7 +109,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
 
 		case event: Event => //Do nothing
 
-		case msg => warning(this, "Unkown Message: " + msg)
+		case msg => log.warning("Unkown Message: " + msg)
 	}
 
 	override def postStop = shutdownSupervisor
@@ -120,7 +120,9 @@ class DPUExecutor(dpu: IDataProcessingUnit,
 	def evaluate {
 		initialize()
 		connectActors()
-		actorsByUuid = actors map { case (id, (actor, _)) => (actor.getUuid -> id) }
+		
+		//TODO save actor node ids
+		actorsByPath = actors map { case (id, (actor, _)) => (actor.path -> id) }
 		actors foreach { case (_, (actor, _)) => actor ! Start() }
 	}
 
@@ -140,7 +142,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
 	}
 
 	def initializeUIFactory() {
-		uifactory setSupervisor (self)
+		uifactory setSupervisorContext (context)
 		uifactory update (self, Created())
 		uifactory update (self, Progress("initialize", 0, dpu.getNodes.size))
 	}
@@ -152,11 +154,9 @@ class DPUExecutor(dpu: IDataProcessingUnit,
 			factory match {
 				case Some(f) =>
 					//Create actor
-					val actor = f.getInstance
-					actor.setDispatcher(self.dispatcher)
-					self startLink actor
-					//Register and link the supervisor
-					//          actor ! Register(self, None)
+					val actor = f.getInstance(context)
+					context.watch(actor)
+//					actor.setDispatcher(self.dispatcher)
 					//Check for special nodes(presenter,loader,saver) and init
 					(node.getId.getContent, node.getType.getContent) match {
 						case (_, NodeType.PRESENTER) => actor ! UIFactoryEvent(uifactory, node)
@@ -174,7 +174,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
 					actor ! Configure(configureProperties(node, f))
 					//Add to internal map
 					actors += (node.getId.getContent -> (actor, node.getType.getContent))
-					statusMap += (actor.getUuid -> (actor, Created(), systemTime))
+					statusMap += (actor.path -> (actor, Created(), systemTime))
 					uifactory update (actor, Created())
 					uifactory update (self, Progress("initialize", 1, dpu.getNodes.size))
 				case None =>
@@ -198,7 +198,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
 				self ! ExceptionEvent(new Exception, "OutputMap refer to nonexisting nodes. \n saverOutput: " + saverOutput.keySet
 					+ "\n Saver nodes " + DPUUtil.saverNodes(dpu).foreach(n => print(n + ", ")))
 				self ! PoisonPill
-			case (false, false) => debug(this, "All input/output maps have been processed successfully")
+			case (false, false) => log.debug("All input/output maps have been processed successfully")
 		}
 	}
 
@@ -223,23 +223,23 @@ class DPUExecutor(dpu: IDataProcessingUnit,
 		(urlKey, fileKey, dirKey) match {
 			case (true, _, _) =>
 			case (_, true, _) => TStreamResolver.resolveFromFileSystem(properties, FILE, TStreamResolver.acceptAbsoluteFile) match {
-				case Some(p) if Files.exists(p) => debug(this, "File found " + p) //perfect!
+				case Some(p) if Files.exists(p) => log.debug("File found " + p) //perfect!
 				case Some(p) if !Files.exists(p) =>
-					warning(this, "File input for Node " + node.getId.getContent + " could be resolved, but doesn't exists " + p)
+					log.warning("File input for Node " + node.getId.getContent + " could be resolved, but doesn't exists " + p)
 					resourceStore.getResource(node) match {
-						case None => warning(this, "Default resource [" + properties.getProperty(FILE) + "] for Node " + node.getId.getContent + " couldn't be found")
+						case None => log.warning("Default resource [" + properties.getProperty(FILE) + "] for Node " + node.getId.getContent + " couldn't be found")
 						case Some(url) =>
-							debug(this, "Set input URL to " + url.toString)
+							log.debug("Set input URL to " + url.toString)
 							properties.removeKey(FILE)
 							properties.setProperty(INodeProperties.URL, url.toString)
 					}
 				case None =>
-					warning(this, "File input for Node " + node.getId.getContent + " could not be resolved. Wrong filename or path.")
+					log.warning("File input for Node " + node.getId.getContent + " could not be resolved. Wrong filename or path.")
 					val file = properties.getProperty(FILE)
 					resourceStore.getResource(file) match {
-						case None => warning(this, "Default resource [" + file + "] for Node [" + node.getId.getContent + "] couldn't be found")
+						case None => log.warning("Default resource [" + file + "] for Node [" + node.getId.getContent + "] couldn't be found")
 						case Some(url) =>
-							debug(this, "Set input URL to " + url.toString)
+							log.debug("Set input URL to " + url.toString)
 							properties.removeKey(FILE)
 							properties.setProperty(INodeProperties.URL, url.toString)
 					}
@@ -252,29 +252,29 @@ class DPUExecutor(dpu: IDataProcessingUnit,
 		//Check DESERIALIZE property
 		properties.containsKey(DESERIALIZE) match {
 			case true =>
-				debug(this, "Node " + node.getId.getContent + " has deserialize property")
+				log.debug("Node " + node.getId.getContent + " has deserialize property")
 				TStreamResolver.resolveFromFileSystem(properties, DESERIALIZE, TStreamResolver.acceptAbsoluteFile) match {
-					case Some(p) if Files.exists(p) => debug(this, " File exists " + p) //perfect!
+					case Some(p) if Files.exists(p) => log.debug(" File exists " + p) //perfect!
 					case Some(p) if !Files.exists(p) =>
-						warning(this, "Deserialize input for Node " + node.getId.getContent + " could be resolved, but doesn't exists " + p)
+						log.warning("Deserialize input for Node " + node.getId.getContent + " could be resolved, but doesn't exists " + p)
 						modelStore.getModel(node) match {
-							case None => warning(this, "Default model [" + properties.getProperty(DESERIALIZE) + "] for Node [" + node.getId.getContent + "] couldn't be found")
+							case None => log.warning("Default model [" + properties.getProperty(DESERIALIZE) + "] for Node [" + node.getId.getContent + "] couldn't be found")
 							case Some(url) =>
-								debug(this, "Set input DESERIALIZE to " + url.toString)
+								log.debug("Set input DESERIALIZE to " + url.toString)
 								properties.setProperty(DESERIALIZE, url.toString)
 						}
 
 					case None =>
-						warning(this, "Deserialize input for Node " + node.getId.getContent + " could not be resolved. Wrong filename or path.")
+						log.warning("Deserialize input for Node " + node.getId.getContent + " could not be resolved. Wrong filename or path.")
 						val file = properties.getProperty(DESERIALIZE)
 						modelStore.getModel(file) match {
-							case None => warning(this, "Default model [" + file + "] for Node [" + node.getId.getContent + "] couldn't be found")
+							case None => log.warning("Default model [" + file + "] for Node [" + node.getId.getContent + "] couldn't be found")
 							case Some(url) =>
-								debug(this, "Set input DESERIALIZE to " + url.toString)
+								log.debug("Set input DESERIALIZE to " + url.toString)
 								properties.setProperty(DESERIALIZE, url.toString)
 						}
 				}
-			case false => debug(this, "Node " + node.getId.getContent + " has NO deserialize property")
+			case false => log.debug("Node " + node.getId.getContent + " has NO deserialize property")
 		}
 
 		properties foreach { case (v, k) => defProperties setProperty (v, k) }
@@ -307,20 +307,18 @@ class DPUExecutor(dpu: IDataProcessingUnit,
 	 * process has finished.
 	 */
 	def handleStatus(status: Status) {
-		uifactory update (self.sender.getOrElse(null), status)
-		self.sender match {
-			case Some(a) => statusMap update (a.getUuid, (a, status, systemTime))
-			case None => warning(this, "Unkown status message: " + status)
-		}
+		uifactory update (sender, status)
+		statusMap update (sender.path, (sender, status, systemTime))
 		status match {
 
 			//Only check if finished if a "finishing" event arrives
 			case Ready() | Finished() => if (finished) {
-				info(this, "Evaluation finished. Stopping schedules and supervisor")
+				log.info("Evaluation finished. Stopping schedules and supervisor")
 				//schedules foreach (future => future.cancel(true))
 				shutdownSupervisor
+				uifactory update (self, UpdateUI())
 				uifactory update (self, Shutdown())
-				self stop
+				context.stop(self)
 			}
 
 			//Process seems to be going on
@@ -334,11 +332,11 @@ class DPUExecutor(dpu: IDataProcessingUnit,
 			case null =>
 			case history => history.resource.save
 		}
-		actors foreach { case (_, (actor, _)) => actor stop }
+		actors foreach { case (_, (actor, _)) => context.stop(actor) }
 
 		//Set ActorRefs free
 		actors = MutableMap[String, (ActorRef, NodeType)]()
-		actorsByUuid = MutableMap[UUID, String]()
+		actorsByPath = MutableMap[ActorPath, String]()
 	}
 
 	/**
@@ -373,6 +371,11 @@ object DPUExecutor {
 	val logEvents = EventType.values map (e => (e, false)) toMap
 }
 
+/* =============================================================== */
+/* ========= Search for new ways to log msg in akka 2 ============ */
+/* =============================================================== */
+
+/*
 /**
  * <p> Dispatcher which uses the mailboxes of each actor to log
  * messages send between actors. This Dispatcher is only used if
@@ -430,8 +433,8 @@ class LoggableDispatcher(name: String, supervisor: DPUExecutor) extends Executor
 			case (s: ActorRef, r, e: Event) => (s.getActorClass, r.getActorClass) match {
 				case (G, _) | (_, G) => //Ignore messages to GraphSupervisor
 				case _ =>
-					val src = supervisor.actorsByUuid.getOrElse(s.getUuid, "[Internal]" + "[" + s.getActorClass.getSimpleName + "]")
-					val trg = supervisor.actorsByUuid.getOrElse(r.getUuid, "[Internal]" + "[" + r.getActorClass.getSimpleName + "]")
+					val src = supervisor.actorsByPath.getOrElse(s.actorPath, "[Internal]" + "[" + s.getActorClass.getSimpleName + "]")
+					val trg = supervisor.actorsByPath.getOrElse(r.actorPath, "[Internal]" + "[" + r.getActorClass.getSimpleName + "]")
 
 					//logNodes empty == log all nodes
 					if (logNodes.isEmpty) logEvent(src, trg, e)
@@ -446,7 +449,7 @@ class LoggableDispatcher(name: String, supervisor: DPUExecutor) extends Executor
 				case G => //Ignore messages to GraphSupervisor
 				case _ =>
 					val src = "None"
-					val trg = supervisor.actorsByUuid.getOrElse(r.getUuid, "[Internal]") + "[" + r.getActorClass.getSimpleName + "]"
+					val trg = supervisor.actorsByPath.getOrElse(r.actorPath, "[Internal]") + "[" + r.getActorClass.getSimpleName + "]"
 
 					//logNodes empty == log all nodes
 					if (logNodes.isEmpty) logEvent(src, trg, e)
@@ -487,9 +490,9 @@ class LoggableDispatcher(name: String, supervisor: DPUExecutor) extends Executor
 			msg.setTarget(trg)
 			msg.setContent(content)
 		} catch {
-			case e: Exception => warning(this, "Logging failed: " + e.getMessage)
+			case e: Exception => log.warning("Logging failed: " + e.getMessage)
 		}
 		case false => //Do not log 
 	}
 }
-
+*/

@@ -50,8 +50,8 @@ class Activator extends BundleActivator {
 
 	private def registerServices {
 		osgiUtil.registerLoader(new ExtendedWekaArffLoaderFactory, ExtendedWekaArffLoaderFactory.id)
-		osgiUtil.registerLoader(new WekaArffLoaderFactory, WekaArffLoaderFactory.id)
-		osgiUtil.registerSaver(new WekaArffSaverFactory, WekaArffSaverFactory.id)
+		osgiUtil.registerLoader(new WekaArffLoaderFactory)
+		osgiUtil.registerSaver(new WekaArffSaverFactory)
 		
 		//deprecated
 		osgiUtil.registerProcessor(new OneRFactory, classOf[weka.classifiers.rules.OneR].getName)
