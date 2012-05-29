@@ -16,7 +16,7 @@ import scala.collection.mutable.ArrayBuffer
 import de.lmu.ifi.dbs.knowing.core.events._
 
 @RunWith(classOf[JUnitRunner])
-class IPiePresenterTest extends FunSuite with ShouldMatchers with BeforeAndAfter with TestKit {
+class IPiePresenterTest extends TestKit(ActorSystem()) with FunSuite with ShouldMatchers with BeforeAndAfter  {
 
   val classes = List("A", "B", "C")
   val content = ArrayBuffer[(String, Double)]()
@@ -25,12 +25,12 @@ class IPiePresenterTest extends FunSuite with ShouldMatchers with BeforeAndAfter
   var testInstances: Instances = _
 
   before {
-    presenter = ActorSystem().actorOf(Props(new TestPieChartPresenter))
+    presenter = system.actorOf(Props(new TestPieChartPresenter))
     testInstances = IPieChartPresenter.newInstances(classes)
   }
 
   after {
-    ActorSystem().stop(presenter)
+    system.stop(presenter)
   }
 
   test("Check Presenter") {

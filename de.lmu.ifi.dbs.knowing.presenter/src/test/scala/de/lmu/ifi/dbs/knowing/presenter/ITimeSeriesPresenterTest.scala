@@ -14,7 +14,7 @@ import scala.collection.mutable.ArrayBuffer
 import java.util.Date
 
 @RunWith(classOf[JUnitRunner])
-class ITimeSeriesPresenterTest extends FunSuite with ShouldMatchers with BeforeAndAfter with TestKit {
+class ITimeSeriesPresenterTest extends TestKit(ActorSystem()) with FunSuite with ShouldMatchers with BeforeAndAfter {
 
 	val content = ArrayBuffer[(Double, List[Double])]()
 
@@ -23,13 +23,13 @@ class ITimeSeriesPresenterTest extends FunSuite with ShouldMatchers with BeforeA
 	var series: Map[String, Attribute] = _
 
 	before {
-		presenter = ActorSystem().actorOf(Props(new TestTimeSeriesPresenter))
+		presenter = system.actorOf(Props(new TestTimeSeriesPresenter))
 		testInstances = ITimeSeriesPresenter.newInstances(List("x", "y", "z"))
 		series = TimeSeriesResults.findValueAttributesAsMap(testInstances)
 	}
 
 	after {
-		ActorSystem().stop(presenter)
+		system.stop(presenter)
 	}
 
 	test("Check Presenter") {

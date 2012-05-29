@@ -25,7 +25,6 @@ import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.service._
 import de.lmu.ifi.dbs.knowing.core.model._
 import INodeProperties._
-import com.eaio.uuid.UUID
 import scala.collection.mutable.{ Map => MutableMap, ListBuffer, SynchronizedQueue }
 import scala.collection.JavaConversions._
 import System.{ currentTimeMillis => systemTime }
@@ -58,10 +57,10 @@ class DPUExecutor(dpu: IDataProcessingUnit,
 	/** NodeID -> (actor, type) */
 	var actors = MutableMap[String, (ActorRef, NodeType)]()
 
-	/** UUID -> NodeID */
+	/** ActorPath -> NodeID */
 	var actorsByPath = MutableMap[ActorPath, String]()
 
-	/** Status map holding: UUID -> Reference, Status, Timestamp */
+	/** Status map holding: ActorPath -> Reference, Status, Timestamp */
 	val statusMap: MutableMap[ActorPath, (ActorRef, Status, Long)] = MutableMap()
 	val events = ListBuffer[String]()
 
@@ -434,8 +433,8 @@ class LoggableDispatcher(name: String, supervisor: DPUExecutor) extends Executor
 			case (s: ActorRef, r, e: Event) => (s.getActorClass, r.getActorClass) match {
 				case (G, _) | (_, G) => //Ignore messages to GraphSupervisor
 				case _ =>
-					val src = supervisor.actorsByPath.getOrElse(s.getUuid, "[Internal]" + "[" + s.getActorClass.getSimpleName + "]")
-					val trg = supervisor.actorsByPath.getOrElse(r.getUuid, "[Internal]" + "[" + r.getActorClass.getSimpleName + "]")
+					val src = supervisor.actorsByPath.getOrElse(s.actorPath, "[Internal]" + "[" + s.getActorClass.getSimpleName + "]")
+					val trg = supervisor.actorsByPath.getOrElse(r.actorPath, "[Internal]" + "[" + r.getActorClass.getSimpleName + "]")
 
 					//logNodes empty == log all nodes
 					if (logNodes.isEmpty) logEvent(src, trg, e)
@@ -450,7 +449,7 @@ class LoggableDispatcher(name: String, supervisor: DPUExecutor) extends Executor
 				case G => //Ignore messages to GraphSupervisor
 				case _ =>
 					val src = "None"
-					val trg = supervisor.actorsByUuid.getOrElse(r.getUuid, "[Internal]") + "[" + r.getActorClass.getSimpleName + "]"
+					val trg = supervisor.actorsByPath.getOrElse(r.actorPath, "[Internal]") + "[" + r.getActorClass.getSimpleName + "]"
 
 					//logNodes empty == log all nodes
 					if (logNodes.isEmpty) logEvent(src, trg, e)

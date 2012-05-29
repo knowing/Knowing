@@ -11,7 +11,6 @@
 package de.lmu.ifi.dbs.knowing.core.processing
 
 import akka.actor.{ Actor, ActorRef, ActorPath, ActorLogging }
-import com.eaio.uuid.UUID
 import scala.collection.mutable.{Set,Map}
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.model.IEdge.DEFAULT_PORT

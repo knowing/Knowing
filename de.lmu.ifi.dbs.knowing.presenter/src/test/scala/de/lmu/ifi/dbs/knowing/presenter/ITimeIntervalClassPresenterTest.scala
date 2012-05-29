@@ -21,7 +21,7 @@ import scala.collection.mutable.ArrayBuffer
  * @see http://akka.io/api/akka/1.2/akka/testkit/TestKit.html
  */
 @RunWith(classOf[JUnitRunner])
-class ITimeIntervalClassPresenterTest extends FunSuite with ShouldMatchers with BeforeAndAfter with TestKit {
+class ITimeIntervalClassPresenterTest extends TestKit(ActorSystem()) with FunSuite with ShouldMatchers with BeforeAndAfter {
 
   val classes = List("A", "B", "C")
   val content = ArrayBuffer[(String, Int,Int)]()
@@ -30,12 +30,12 @@ class ITimeIntervalClassPresenterTest extends FunSuite with ShouldMatchers with 
   var testInstances: Instances = _
 
   before {
-    presenter = ActorSystem().actorOf(Props(new TestTimeIntervalClassPresenter))
+    presenter = system.actorOf(Props(new TestTimeIntervalClassPresenter))
     testInstances = ITimeIntervalClassPresenter.newInstances(classes)
   }
 
   after {
-  	 ActorSystem().stop(presenter)
+  	 system.stop(presenter)
   }
 
   test("Check Presenter") {
