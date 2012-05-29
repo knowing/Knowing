@@ -1,6 +1,5 @@
 package knowing.test.processor
 
-import akka.event.EventHandler.{ debug, info, warning, error }
 import java.util.Properties
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
@@ -13,13 +12,13 @@ import org.osgi.service.component.ComponentContext
 class DeclarativeProcessor extends TProcessor {
 
 	def process(instances: Instances) = {
-		case _ => debug(this, "Build for declarative processor")
+		case _ => log.debug("Build for declarative processor")
 	}
 
 	def query(query: Instances): Instances = throw new UnsupportedOperationException
 
 	def configure(properties: Properties) = {
-		debug(this, "Configure declarative processor")
+		log.debug("Configure declarative processor")
 	}
 
 }

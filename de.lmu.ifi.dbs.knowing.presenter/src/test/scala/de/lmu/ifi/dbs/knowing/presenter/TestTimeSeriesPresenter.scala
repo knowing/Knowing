@@ -9,18 +9,18 @@ import weka.core.{ Instances, Attribute }
 class TestTimeSeriesPresenter extends ITimeSeriesPresenter[Any] with TestPresenter {
 
   def buildSeries(series: Array[Attribute]) = {
-    self.sender.get ! (series.toList)
+    sender ! (series.toList)
   }
 
   def addPoint(date: Date, values: Array[Double]) = {
-    self.sender.get ! date
+    sender ! date
     for(v <- values) {
-      self.sender.get ! v
+      sender ! v
     }
   }
 
   def update() = {
-    self.sender.get ! "update"
+    sender ! "update"
   }
 
 }

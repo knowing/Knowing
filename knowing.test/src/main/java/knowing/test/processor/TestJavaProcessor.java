@@ -94,10 +94,10 @@ public class TestJavaProcessor extends AbstractProcessor {
 	@Override
 	public Instances query(Instances query, ActorRef ref) {
 		debug("[Query] " + query);
-		if (ref.getSender().isDefined()) {
-			ActorRef sender = ref.getSender().get();
-			sender.tell("Answer");
-		}
+//		if (ref.getSender().isDefined()) {
+//			ActorRef sender = ref.getSender().get();
+//			sender.tell("Answer");
+//		}
 		return null;
 	}
 

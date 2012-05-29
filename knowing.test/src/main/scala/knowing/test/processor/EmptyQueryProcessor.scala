@@ -1,7 +1,6 @@
 package knowing.test.processor
 
 import java.util.Properties
-import akka.event.EventHandler.{ debug, info, warning, error }
 import weka.core.{ Instances, Instance, DenseInstance }
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
@@ -13,7 +12,7 @@ class EmptyQueryProcessor extends TProcessor {
 
 	def process(instances: Instances) = {
 		case _ =>
-			debug(this, "Build EmptyQueryProcessor")
+			log.debug("Build EmptyQueryProcessor")
 			sendEvent(Query(EmptyResults()))
 	}
 

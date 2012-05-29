@@ -10,7 +10,6 @@
 \*                                                              */
 package de.lmu.ifi.dbs.knowing.core.processing
 
-import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.processing.TSaver._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil

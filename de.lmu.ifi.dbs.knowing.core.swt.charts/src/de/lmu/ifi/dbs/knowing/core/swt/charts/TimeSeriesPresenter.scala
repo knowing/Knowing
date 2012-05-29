@@ -3,9 +3,7 @@ package de.lmu.ifi.dbs.knowing.core.swt.charts
 import java.util.{ Properties, Date }
 import java.awt.BasicStroke
 import scala.collection.mutable.Map
-import akka.event.EventHandler.{ debug, info, warning, error }
 import akka.actor.ActorRef
-import akka.actor.Actor.actorOf
 import org.eclipse.swt.widgets.{ Composite, Listener }
 import org.jfree.chart.{ JFreeChart, ChartFactory }
 import org.jfree.data.xy.XYDataset
@@ -39,7 +37,7 @@ class TimeSeriesPresenter extends AbstractChartPresenter("Time Series Presenter"
       val s = new TimeSeries(name) //Create TimeSeries with META_ATTRIBUTE_NAME value
       this.series += (attribute.name -> s) //Store internally with real name
       dataset.asInstanceOf[TimeSeriesCollection].addSeries(s)
-      debug(this, "Added attribute in TimeSeries: " + attribute.name)
+      log.debug("Added attribute in TimeSeries: " + attribute.name)
     }
   }
 
@@ -94,7 +92,7 @@ class TimeSeriesPresenter extends AbstractChartPresenter("Time Series Presenter"
       sb append ("][")
       sb append (percent)
       sb append ("%]")
-      debug(this, sb toString)
+      log.debug(sb toString)
     }
     dots
   }

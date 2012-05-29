@@ -12,7 +12,6 @@ package de.lmu.ifi.dbs.knowing.core.validation
 
 import java.util.Properties
 import akka.actor.ActorRef
-import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.core.events._
@@ -37,7 +36,7 @@ class AttributeCrossValidator extends XCrossValidator {
 			index match {
 				case -1 =>
 					classLabels = Array()
-					warning(this, "No classLabel found in " + instances.relationName)
+					log.warning("No classLabel found in " + instances.relationName)
 				case x => classLabels = classLables(instances.attribute(x))
 			}
 			val instMaps = ResultsUtil.splitInstanceByAttribute(instances, splitAttr, false)
@@ -45,7 +44,7 @@ class AttributeCrossValidator extends XCrossValidator {
 			//Map test-data -> train-data 
 			val instMap = for (e <- instMaps) yield instMaps.partition(e2 => e._1.equals(e2._1))
 			folds = instMap.size
-			debug(this, "Fold-Actors created!")
+			log.debug("Fold-Actors created!")
 			statusChanged(Progress("validation", 0, folds))
 			val crossValidators = initCrossValidators(folds)
 			var i = 0
@@ -57,14 +56,14 @@ class AttributeCrossValidator extends XCrossValidator {
 					sb.append(test.head._1)
 					sb.append("] -> train ")
 					train foreach (elem => sb.append(elem._1 + ","))
-					debug(this, sb.toString)
+					log.debug(sb.toString)
 
 					val testData = test.head._2
 					val trainData = ResultsUtil.appendInstances(new Instances(testData, 0), train map (_._2) toList)
 					guessAndSetClassLabel(testData)
 					guessAndSetClassLabel(trainData)
 					//Logic
-					self startLink crossValidators(i)
+					context.watch(crossValidators(i))
 					crossValidators(i) ! Register(self, None)
 					crossValidators(i) ! Configure(configureProperties(validator_properties, i))
 					crossValidators(i) ! Results(trainData)
@@ -72,7 +71,7 @@ class AttributeCrossValidator extends XCrossValidator {
 					i += 1
 			}
 
-			debug(this, "Fold-Actors configured and training started")
+			log.debug("Fold-Actors configured and training started")
 		case (None, Some(query)) => result(instances, query)
 		case (Some(DEFAULT_PORT), Some(query)) => result(instances, query)
 	}

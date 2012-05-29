@@ -1,17 +1,13 @@
 package de.lmu.ifi.dbs.knowing.core.weka
 
-import akka.actor.ScalaActorRef
-import weka.core.Instances
-import weka.core.Attribute
-import java.util.ArrayList
-import de.lmu.ifi.dbs.knowing.core.weka._
-import de.lmu.ifi.dbs.knowing.core.weka.WekaArffLoaderFactory._
-import de.lmu.ifi.dbs.knowing.core.weka.WekaArffLoader._
-import ExtendedWekaArffLoader._
-import akka.actor.ActorRef
-import akka.actor.Actor.actorOf
+import weka.core.{ Attribute, Instances }
+import java.util.{ Properties, ArrayList }
 import java.io.File
-import java.util.Properties
+import de.lmu.ifi.dbs.knowing.core.weka._
+import de.lmu.ifi.dbs.knowing.core.weka.WekaArffLoader._
+import de.lmu.ifi.dbs.knowing.core.factory.{ TFactory, ProcessorFactory }
+import akka.actor.{ ActorContext, ActorSystem, ActorRef, Props }
+import ExtendedWekaArffLoader._
 
 class ExtendedWekaArffLoader extends WekaArffLoader {
 
@@ -117,7 +113,7 @@ class ExtendedWekaArffLoaderFactory extends WekaArffLoaderFactory {
 	override val name: String = ExtendedWekaArffLoaderFactory.name
 	override val id: String = ExtendedWekaArffLoaderFactory.id
 
-	override def getInstance: ActorRef = actorOf[ExtendedWekaArffLoader]
+	override def getInstance(factory: TFactory.ActorFactory): ActorRef = factory.actorOf(Props(new ExtendedWekaArffLoader))
 
 	override def createDefaultProperties: Properties = {
 		val returns = super.createDefaultProperties

@@ -20,13 +20,11 @@ import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
 import de.lmu.ifi.dbs.knowing.core.exceptions.ValidationException
 
 import com.typesafe.config.ConfigFactory
-import akka.actor.TypedActor
+import akka.actor.{ ActorSystem, TypedProps, TypedActor }
 
 import java.net.URI
 import java.nio.file.Paths
 import org.slf4j.LoggerFactory
-
-
 
 /**
  *
@@ -35,7 +33,7 @@ import org.slf4j.LoggerFactory
  * @since 2012-04-19
  */
 class Activator extends BundleActivator {
-	
+
 	val log = LoggerFactory.getLogger(Activator.PLUGIN_ID)
 
 	def start(context: BundleContext) = {
@@ -52,7 +50,9 @@ class Activator extends BundleActivator {
 			if (reference.isDefined) {
 				try {
 					val evaluateService = context.getService(reference.get)
-					val uiFactory = TypedActor.newInstance(classOf[UIFactory[_]], new DebugUIFactory(launchConfig.executionPath))
+					
+					//Only use default ActorSystem()
+					val uiFactory = TypedActor(ActorSystem()).typedActorOf(TypedProps(classOf[UIFactory[_]], new DebugUIFactory(launchConfig.executionPath)))
 					evaluateService.evaluate(dpu, Paths.get(launchConfig.executionPath).toUri, uiFactory)
 				} catch {
 					case e: ValidationException => System.err.println(e.getErrors());

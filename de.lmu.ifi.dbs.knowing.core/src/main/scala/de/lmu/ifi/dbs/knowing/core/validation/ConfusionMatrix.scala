@@ -11,7 +11,6 @@
 package de.lmu.ifi.dbs.knowing.core.validation
 
 import java.util.Properties
-import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 import de.lmu.ifi.dbs.knowing.core.exceptions.KnowingException
 import de.lmu.ifi.dbs.knowing.core.results.{ConfusionMatrixResults,ClassDistributionResults}
@@ -47,14 +46,14 @@ class ConfusionMatrix extends TProcessor {
 
 			percentage match {
 				case PERCENTAGE_DISTRIBUTION =>
-					warning(this, "Using absolute confusion matrix. Relative not implemented yet")
+					log.warning("Using absolute confusion matrix. Relative not implemented yet")
 					absoluteMatrix(instances)
 					//distributedMatrix(instances)
 				case PERCENTAGE_ABSOLUTE => absoluteMatrix(instances)
 			}
 
 			if (unclassified.size > 0)
-				warning(this, "Unclassified: " + unclassified.size)
+				log.warning("Unclassified: " + unclassified.size)
 
 			sendResults(confusionMatrix)
 			sendResults(unclassified, Some(UNCLASSIFIED_PORT))

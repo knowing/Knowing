@@ -1,7 +1,6 @@
 package de.lmu.ifi.dbs.knowing.core.swt.charts
 
 import java.util.{Date,Properties}
-import akka.event.EventHandler.{ debug, info, warning, error }
 import de.lmu.ifi.dbs.knowing.core.swt.SWTPresenter
 import de.lmu.ifi.dbs.knowing.core.swt.handler.SWTListener
 import de.lmu.ifi.dbs.knowing.core.swt.charts.handler.{ TChartHandler, ZoomChartHandler, ChartHandlerAdapter }

@@ -10,9 +10,7 @@
 \*																*/
 package de.lmu.ifi.dbs.knowing.core.validation
 
-import akka.actor.ActorRef
-import akka.actor.Actor.actorOf
-import akka.event.EventHandler.{ debug, info, warning, error }
+import akka.actor.{ Props, ActorSystem, ActorRef, ActorContext }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
 import de.lmu.ifi.dbs.knowing.core.processing.IProcessorPorts.{ TRAIN, TEST }
@@ -69,7 +67,7 @@ class CrossValidator(val factoryDirectory: Option[IFactoryDirectory]) extends TP
 			index match {
 				case -1 =>
 					classLabels = Array()
-					warning(this, "No classLabel found in " + instances.relationName)
+					log.warning("No classLabel found in " + instances.relationName)
 				case x =>
 					classLabels = classLables(instances.attribute(x))
 					nonZeroValues = new Array(classLabels.length)
@@ -77,24 +75,20 @@ class CrossValidator(val factoryDirectory: Option[IFactoryDirectory]) extends TP
 			}
 			//Clean up
 			(classifier, filter) match {
-				case (Some(c), Some(f)) => c stop; f stop
-				case (Some(c), None) => c stop
+				case (Some(c), Some(f)) => context.stop(c); context.stop(f)
+				case (Some(c), None) => context.stop(c)
 				case (None, None) =>
 			}
 			//Init filter if available
 			filterFactory match {
 				case null => filterTrained = true
 				case f =>
-					filter = Some(filterFactory.getInstance)
-					filter.get.dispatcher = self.dispatcher
-					self startLink filter.get
+					filter = Some(filterFactory.getInstance(context)) //TODO test if link is correct
 					filter.get ! Configure(classifierProperties)
 			}
 
 			//Init classifier
-			classifier = Some(classifierFactory.getInstance)
-			classifier.get.dispatcher = self.dispatcher
-			self startLink classifier.get
+			classifier = Some(classifierFactory.getInstance(context)) //TODO test if link is correct
 			classifier.get ! Configure(classifierProperties)
 
 			//Start with filter or directly the classifier
@@ -193,7 +187,7 @@ class CrossValidator(val factoryDirectory: Option[IFactoryDirectory]) extends TP
 	 */
 	def query(query: Instances): Instances = {
 		(filter, filterTrained, classifier, classifierTrained, queriesFiltered) match {
-			case (_, _, None, _, _) => warning(this, "No classifier found")
+			case (_, _, None, _, _) => log.warning("No classifier found")
 			//cache if filtered isn't trained yet
 			case (Some(f), false, Some(_), _, _) => cacheQuery(query)
 			//forward to filter if exists
@@ -234,7 +228,7 @@ class CrossValidator(val factoryDirectory: Option[IFactoryDirectory]) extends TP
 		val fFactory = factoryDir.getFactory(fFactoryId)
 		fFactory match {
 			case Some(f) => filterFactory = f
-			case None => debug(this, "Unfiltered CrossValidation")
+			case None => log.debug("Unfiltered CrossValidation")
 		}
 
 		folds = properties.getProperty(CrossValidatorFactory.FOLDS, "10").toInt
@@ -272,7 +266,9 @@ class CrossValidatorFactory(factoryDirectory: Option[IFactoryDirectory] = None) 
 	val name: String = CrossValidatorFactory.name
 	val id: String = CrossValidatorFactory.id
 
-	def getInstance(): ActorRef = actorOf(new CrossValidator(factoryDirectory))
+	def getInstance(): ActorRef = ActorSystem().actorOf(Props(new CrossValidator(factoryDirectory)))
+
+	def getInstance(factory: TFactory.ActorFactory): ActorRef = factory.actorOf(Props(new CrossValidator(factoryDirectory)))
 
 	def createDefaultProperties: Properties = {
 		val props = new Properties();

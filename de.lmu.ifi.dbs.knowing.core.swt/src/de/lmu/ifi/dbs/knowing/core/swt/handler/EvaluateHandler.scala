@@ -8,8 +8,6 @@ import org.eclipse.ui.handlers.HandlerUtil
 import org.eclipse.ui.IViewPart
 import org.eclipse.ui.PartInitException
 import org.eclipse.ui.PlatformUI
-import akka.actor.Actor.actorOf
-import akka.actor.ActorRef
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
 import de.lmu.ifi.dbs.knowing.core.processing.DPUExecutor
 import de.lmu.ifi.dbs.knowing.core.events._

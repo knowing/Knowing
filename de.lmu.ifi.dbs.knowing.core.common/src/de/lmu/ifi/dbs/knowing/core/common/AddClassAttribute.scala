@@ -3,7 +3,6 @@ package de.lmu.ifi.dbs.knowing.core.common
 import de.lmu.ifi.dbs.knowing.core.processing.{ TFilter, TSerializable }
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil.ATTRIBUTE_CLASS
 import de.lmu.ifi.dbs.knowing.core.factory.ProcessorFactory
-import akka.event.EventHandler.{ debug, info, warning, error }
 import weka.core.{ Attribute, Instance, Instances }
 import java.util.Properties
 import java.io.{ InputStreamReader, LineNumberReader, PrintWriter }
@@ -24,17 +23,17 @@ class AddClassAttribute extends TFilter with TSerializable {
 
 	override def start() = try {
 		inputStream() match {
-			case None => warning(this, "No classAttributes to deserialize")
+			case None => log.warning("No classAttributes to deserialize")
 			case Some(in) =>
 				val reader = new LineNumberReader(new InputStreamReader(in))
 				classes = reader.readLine.split(",")
 				val classStr = classes.reduce((str, c) => str + "," + c)
-				debug(this, "Loaded classes " + classStr)
+				log.debug("Loaded classes " + classStr)
 				reader.close()
 		}
 	} catch {
 		case e: IOException => 
-			warning(this, "classAttribute.mdl could not be found")
+			log.warning("classAttribute.mdl could not be found")
 			if(classes.isEmpty)
 				throwException(e, "classAttribute.mdl could not be found")
 	}

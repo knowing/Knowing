@@ -2,9 +2,17 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Knowing Weka Bundle
 Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.weka
-Bundle-Version: 0.1.3.qualifier
+Bundle-Version: 0.1.4.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package:  scala;version="[2.9.0.1,2.9.3.0]",
+Import-Package:  akka;version="[2.0.0,3.0.0)",
+ akka.actor;version="[2.0.0,3.0.0)",
+ akka.dispatch;version="[2.0.0,3.0.0)",
+ akka.event;version="[2.0.0,3.0.0)",
+ akka.routing;version="[2.0.0,3.0.0)",
+ akka.util;version="[2.0.0,3.0.0)",
+ akka.util.cps;version="[2.0.0,3.0.0)",
+ akka.util.duration;version="[2.0.0,3.0.0)",
+ scala;version="[2.9.0.1,2.9.3.0]",
  scala.collection;version="[2.9.0.1,2.9.3.0]",
  scala.collection.generic;version="[2.9.0.1,2.9.3.0]",
  scala.collection.immutable;version="[2.9.0.1,2.9.3.0]",
@@ -37,4 +45,4 @@ Import-Package:  scala;version="[2.9.0.1,2.9.3.0]",
  scala.util.parsing.syntax;version="[2.9.0.1,2.9.3.0]",
  scala.util.regexp;version="[2.9.0.1,2.9.3.0]"
 Require-Bundle: de.lmu.ifi.dbs.knowing.core;bundle-version="[0.1.3,1.0.0)"
-Service-Component: OSGI-INF/naiveBayes.xml, OSGI-INF/bayesNet.xml
+Service-Component: OSGI-INF/naiveBayes.xml, OSGI-INF/bayesNet.xml, OSGI-INF/simpleKMeans.xml

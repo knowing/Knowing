@@ -10,7 +10,6 @@
 \*                                                              */
 package de.lmu.ifi.dbs.knowing.core.processing
 
-import akka.event.EventHandler.{ debug, info, warning, error }
 import java.util.Properties
 import weka.core.{ Instance, Instances }
 import de.lmu.ifi.dbs.knowing.core.events._
@@ -40,17 +39,17 @@ trait TClassifier extends TProcessor with TSerializable {
 		case (Some(TEST), None) =>
 			guessAndSetClassLabel(instances)
 			isBuild match {
-				case false => cacheQuery(instances)
+				case false => 
+					log.debug("Cache Query in " + getClass)
+					cacheResults(instances, Some(TEST), None)
 				case true =>
-					processStoredQueries
 					//TODO TClassifier. Append distribution to query should be configurable
 					val results = query(instances)
 					sendResults(appendClassDistribution(instances, results), None, Some(instances))
 			}
 
-		case (Some(TRAIN), None) => build(instances)
-		case (None, None) => build(instances)
-		case (Some(port), _) => error(this, "Incompatible target port: " + port)
+		case (None, None) | (Some(TRAIN), None) => build(instances)
+		case (Some(port), _) => log.error("Incompatible target port: " + port)
 	}
 
 	/**
@@ -59,7 +58,7 @@ trait TClassifier extends TProcessor with TSerializable {
 	 * is found, just a fresh classifier will be started.
 	 */
 	override def start = inputStream() match {
-		case None => debug(this, "Nothing to deserialize in " + getClass.getSimpleName)
+		case None => log.debug("Nothing to deserialize in " + getClass.getSimpleName)
 		case Some(in) => isBuild = deserialize(in)
 	}
 
@@ -69,7 +68,7 @@ trait TClassifier extends TProcessor with TSerializable {
 	 * output is given, nothing will be stored.
 	 */
 	override def postStop = outputStream match {
-		case None => debug(this, "Nothing to serialize in " + getClass.getSimpleName)
+		case None => log.debug("Nothing to serialize in " + getClass.getSimpleName)
 		case Some(out) => serialize(out)
 	}
 

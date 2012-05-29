@@ -1,6 +1,5 @@
 package knowing.test.processor
 
-import akka.actor.Actor.actorOf
 import akka.actor.ActorRef
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
@@ -43,7 +42,7 @@ class ArffLoaderTest extends FunSuite with KnowingTestKit with BeforeAndAfter {
     val dpu = loadDPU("test-dpu-arffLoader.dpu")
 
     //Create the dpuExectuor running the test
-    dpuExecutor = createDPUExecutor(dpu, uiFactory, exePath, factoryDirectory, modelStore, resourceStore).start
+    dpuExecutor = createDPUExecutor(dpu, uiFactory, exePath, factoryDirectory, modelStore, resourceStore)
   }
 
   test("Run ARFFLoader") {

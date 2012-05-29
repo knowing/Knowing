@@ -10,14 +10,14 @@ class TestTimeIntervalClassPresenter extends ITimeIntervalClassPresenter[Any] wi
    * Add classes to the TimeIntervalChart
    */
   def buildCategories(classes: Array[String]) {
-	  self.sender.get ! (classes.toList)
+	  sender ! (classes.toList)
   }
 
   /**
    *
    */
   def addInterval(clazz: String, from: Date, to: Date) {
-	  self.sender.get ! (clazz, from.getTime, to.getTime)
+	  sender ! (clazz, from.getTime, to.getTime)
   }
   
   def update() = {}

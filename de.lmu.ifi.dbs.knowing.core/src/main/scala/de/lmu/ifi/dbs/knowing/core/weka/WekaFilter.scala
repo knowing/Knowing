@@ -13,14 +13,11 @@ package de.lmu.ifi.dbs.knowing.core.weka
 import java.util.Properties
 import weka.core.{ Instance, Instances }
 import weka.filters.Filter
-import de.lmu.ifi.dbs.knowing.core.factory.TFactory
+import de.lmu.ifi.dbs.knowing.core.factory.{TFactory,ProcessorFactory}
 import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties
 import de.lmu.ifi.dbs.knowing.core.processing.TFilter
 import de.lmu.ifi.dbs.knowing.core.japi.ILoggableProcessor
-import akka.actor.ActorRef
-import akka.actor.Actor.actorOf
-import akka.event.EventHandler.{ debug, info, warning, error }
-import akka.actor.UntypedActorFactory
+import akka.actor.{ ActorSystem, ActorContext, ActorRef, UntypedActorFactory, Props }
 
 /**
  * Wraps the WEKA Filter class.
@@ -47,7 +44,6 @@ class WekaFilter(val filter: Filter) extends TFilter {
 		results
 	}
 
-
 	def configure(properties: Properties) = {}
 
 }
@@ -62,32 +58,22 @@ class WekaFilter(val filter: Filter) extends TFilter {
  * @version 0.1
  * @since 21.04.2011
  */
-class WekaFilterFactory[T <: WekaFilter, S <: Filter](wrapper: Class[T], clazz: Class[S]) extends TFactory {
+class WekaFilterFactory[T <: WekaFilter, S <: Filter](wrapper: Class[T], clazz: Class[S]) extends ProcessorFactory(wrapper) {
 
-	val name: String = clazz.getSimpleName
-	val id: String = clazz.getName
+	override val name: String = clazz.getSimpleName
+	override val id: String = clazz.getName
 
-	def getInstance(): ActorRef = {
+	override def getInstance(factory: TFactory.ActorFactory): ActorRef = {
 		classOf[ILoggableProcessor].isAssignableFrom(clazz) match {
-			case false => actorOf(wrapper)
+			case false => factory.actorOf(Props(wrapper.newInstance))
 			case true =>
-				actorOf {
+				factory.actorOf(Props {
 					val w = wrapper.newInstance
 					w.filter.asInstanceOf[ILoggableProcessor].setProcessor(w)
 					w
-				}
+				})
 		}
 	}
-
-	/* ======================= */
-	/* ==== Configuration ==== */
-	/* ======================= */
-
-	def createDefaultProperties: Properties = new Properties
-
-	def createPropertyValues: Map[String, Array[_ <: Any]] = Map()
-
-	def createPropertyDescription: Map[String, String] = Map()
 
 }
 

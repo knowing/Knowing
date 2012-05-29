@@ -11,7 +11,6 @@
 package knowing.test.processor
 
 import java.util.Properties
-import akka.event.EventHandler.debug
 import weka.core.Instances
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.processing.{ TClassPropertyResolver, TProcessor }
@@ -32,10 +31,10 @@ class ClassPropertyProcessor extends TProcessor with TClassPropertyResolver {
 
 	def configure(properties: Properties) = {
 		val param1 = resolveClass[ParameterClass1](PARAM_CLASS_ONE)
-		debug(this, param1)
+		log.debug(param1.toString)
 		val param2 = resolveClass[ParameterClass2](PARAM_CLASS_TWO)
-		debug(this, param2)
-		debug(this, param2.get.precision + " / " + param2.get.descr)
+		log.debug(param2.toString)
+		log.debug(param2.get.precision + " / " + param2.get.descr)
 	}
 
 }

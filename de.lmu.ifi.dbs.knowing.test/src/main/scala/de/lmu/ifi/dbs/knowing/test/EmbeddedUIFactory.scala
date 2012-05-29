@@ -1,6 +1,6 @@
 package de.lmu.ifi.dbs.knowing.test
 
-import akka.actor.ActorRef
+import akka.actor.{ActorRef, ActorContext}
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.model.INode
 import de.lmu.ifi.dbs.knowing.core.factory.{ ProcessorFactory, UIFactory }
@@ -19,7 +19,7 @@ class EmbeddedUIFactory extends UIFactory[IEmbeddedUIComponent] {
   val containers = HashMap[String, IEmbeddedUIComponent]()
   val rendevouz = new SynchronousQueue[HashMap[String, IEmbeddedUIComponent]]
 
-  private var supervisor: ActorRef = _
+  private var supervisorContext: ActorContext = _
 
   /**
    * Waits until the process finishes and return the
@@ -43,7 +43,7 @@ class EmbeddedUIFactory extends UIFactory[IEmbeddedUIComponent] {
     }
   }
 
-  def setSupervisor(supervisor: ActorRef) = this.supervisor = supervisor
+  def setSupervisorContext(supervisorContext: ActorContext) = this.supervisorContext = supervisorContext
 
   def getId(): String = classOf[EmbeddedUIFactory].getName
 
