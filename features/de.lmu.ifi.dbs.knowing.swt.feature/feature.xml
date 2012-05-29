@@ -2,10 +2,10 @@
 <feature
       id="de.lmu.ifi.dbs.knowing.swt.feature"
       label="Knowing SWT Feature"
-      version="0.1.3.qualifier"
+      version="0.1.4.qualifier"
       provider-name="LMU Munich - Database Systems Group"
       license-feature="de.lmu.ifi.dbs.knowing.core.feature"
-      license-feature-version="0.1.3.qualifier">
+      license-feature-version="0.1.4.qualifier">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -32,7 +32,7 @@
    </license>
 
    <requires>
-      <import feature="de.lmu.ifi.dbs.knowing.core.feature" version="0.1.3.qualifier"/>
+      <import feature="de.lmu.ifi.dbs.knowing.core.feature" version="0.1.4.qualifier"/>
    </requires>
 
    <plugin
