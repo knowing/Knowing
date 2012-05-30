@@ -15,6 +15,7 @@
         </node>
         <node id="KMeans" type="processor" factoryId="weka.clusterers.SimpleKMeans">
 			<properties>
+                <property key="distance" value="weka.core.ManhattanDistance"></property>
 			</properties>
 		</node>
         <node id="Table" type="presenter" factoryId="de.lmu.ifi.dbs.knowing.presenter.ITablePresenter"></node>

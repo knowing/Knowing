@@ -15,6 +15,7 @@ import org.eclipse.swt.layout.FillLayout
 import java.util.concurrent.SynchronousQueue
 import java.util.Hashtable
 import scala.collection.JavaConversions._
+import com.typesafe.config.ConfigFactory
 
 object UIFactories {
 
@@ -48,27 +49,32 @@ object UIFactories {
 	 * @param parent
 	 * @param id
 	 */
-	def newCompositeUIFactoryInstance(parent: Composite, id: String): UIFactory[Composite] = newCompositeUIFactoryInstance(ActorSystem(), parent, id)
+	def newCompositeUIFactoryInstance(parent: Composite, id: String): UIFactory[Composite] = newCompositeUIFactoryInstance(system, parent, id)
 
 	/**
 	 * Creates TabUIFactory with style SWT.BOTTOM for CTabFolder.
 	 * @param parent
 	 * @param id
 	 */
-	def newTabUIFactoryInstance(parent: Composite, id: String): UIFactory[Composite] = newTabUIFactoryInstance(ActorSystem(), parent, id)
+	def newTabUIFactoryInstance(parent: Composite, id: String): UIFactory[Composite] = newTabUIFactoryInstance(system, parent, id)
 
 	/**
 	 * @param parent
 	 * @param style - SWT.TOP | SWT.BOTTOM , see CTabFolder
 	 * @param id
 	 */
-	def newTabUIFactoryInstance(parent: Composite, style: Int, id: String): UIFactory[Composite] = newTabUIFactoryInstance(ActorSystem(), parent, style, id)
+	def newTabUIFactoryInstance(parent: Composite, style: Int, id: String): UIFactory[Composite] = newTabUIFactoryInstance(system, parent, style, id)
 
 	def newServiceProperties(): Hashtable[String, String] = {
 		val props = new Hashtable[String, String]
 		props.put(UI_PROPERTY, UIFactory.SWT)
 		props.put(CONTAINER_PROPERTY, classOf[Composite].getName)
 		props
+	}
+	
+	private def system: ActorSystem = {
+		val config = ConfigFactory.defaultReference(classOf[ActorSystem].getClassLoader)
+		ActorSystem("default", config)
 	}
 
 }

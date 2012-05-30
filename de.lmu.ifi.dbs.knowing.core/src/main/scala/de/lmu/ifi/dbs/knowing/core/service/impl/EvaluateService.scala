@@ -12,7 +12,7 @@ package de.lmu.ifi.dbs.knowing.core.service.impl
 
 import java.net.URI
 import java.io.{ InputStream, OutputStream }
-import akka.actor.{ActorSystem, ActorRef, Props}
+import akka.actor.{ ActorSystem, ActorRef, Props }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.exceptions._
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
@@ -118,8 +118,9 @@ class EvaluateService extends IEvaluateService {
 		input: MutableMap[String, InputStream],
 		output: MutableMap[String, OutputStream]): ActorRef = {
 
-//		val system = ActorSystem("default", ConfigFactory.load(getClass.getClassLoader))
-		val executor = ActorSystem().actorOf(Props(new DPUExecutor(dpu, ui, execPath, factoryDirectory, modelStore, resourceStore, input, output)))
+		val config = ConfigFactory.defaultReference(classOf[ActorSystem].getClassLoader)
+		val system = ActorSystem("default", config)
+		val executor = system.actorOf(Props(new DPUExecutor(dpu, ui, execPath, factoryDirectory, modelStore, resourceStore, input, output)))
 		executor ! Start()
 		executor
 	}
