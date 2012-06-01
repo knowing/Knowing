@@ -12,10 +12,13 @@ import org.eclipse.sapphire.modeling.ResourceStoreException;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
+import com.typesafe.config.Config;
+
 import akka.actor.ActorSystem;
 import de.lmu.ifi.dbs.knowing.core.exceptions.KnowingException;
 import de.lmu.ifi.dbs.knowing.core.exceptions.ValidationException;
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit;
+import de.lmu.ifi.dbs.knowing.core.service.EvaluationProperties;
 import de.lmu.ifi.dbs.knowing.core.swt.internal.Activator;
 import de.lmu.ifi.dbs.knowing.core.swt.view.PresenterView;
 
@@ -53,7 +56,9 @@ public class SelectDPUWizard extends Wizard {
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(PresenterView.ID());
 
 		try {
-			Activator.evaluateService().evaluate(dpu, execPath);
+			//Config config = EvaluationProperties.buildConfig(dpu.getName().getContent(), execPath, PresenterView.ID(), PresenterView.ACTOR_SYSTEM_NAME());
+			//Activator.evaluateService().evaluate(config);
+			Activator.evaluateService().evaluate(dpu, execPath, PresenterView.getUIFactory(), system, null, null);
 		} catch (ValidationException e) {
 			MultiStatus info = new MultiStatus("knowing.core", 1, "Error on execution", e);
 			for (String error : e.getErrors()) {

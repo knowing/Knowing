@@ -155,7 +155,7 @@ public class DebugPresenterView extends ViewPart implements ILaunchesListener2, 
 			IDataProcessingUnit dpu = DPUUtil.deserialize(new URI(dpuUriString).toURL());
 			IDataProcessingUnit presentation = PresentationDPUBuilder.create(dpu);
 
-			Activator.getEvaluateService().evaluate(presentation, executionPath.toUri(), uiFactory);
+			Activator.getEvaluateService().evaluate(presentation, executionPath.toUri(), uiFactory, null, null, null);
 		} catch (CoreException | MalformedURLException | URISyntaxException e) {
 			e.printStackTrace();
 		} catch (Exception e) {

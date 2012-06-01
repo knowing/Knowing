@@ -13,6 +13,8 @@ package de.lmu.ifi.dbs.knowing.core.factory
 import akka.actor.{ ActorContext, ActorRef }
 import de.lmu.ifi.dbs.knowing.core.events.Status
 import de.lmu.ifi.dbs.knowing.core.model.INode
+import akka.actor.TypedActor
+import akka.actor.ActorSystem
 
 /**
  * <p>Provides the hook between the datamining process and the UI.</p>
@@ -69,6 +71,11 @@ trait UIFactory[T] {
 	 * @return id - references id for this UIFactory
 	 */
 	def getId(): String
+	
+	/**
+	 * @return the ActorSystem containing this UIFactory
+	 */
+	def getSystem: ActorSystem = TypedActor.context.system
 
 }
 

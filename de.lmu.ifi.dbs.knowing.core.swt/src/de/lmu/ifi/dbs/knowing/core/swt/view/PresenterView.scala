@@ -24,8 +24,8 @@ import akka.actor.ActorSystem
  */
 class PresenterView extends ViewPart {
 
-	var uifactory: UIFactory[Composite] = _
-
+	import PresenterView._
+	
 	private var uiFactoryReg: ServiceRegistration[UIFactory[Composite]] = _
 
 	/**
@@ -33,10 +33,10 @@ class PresenterView extends ViewPart {
 	 */
 	def createPartControl(parent: Composite) = {
 		val asm = Activator.actorSystemManager
-		val system = asm.getSystem("swt-local").
-			getOrElse(asm.create("swt-local", ConfigFactory.defaultReference(classOf[ActorSystem].getClassLoader)))
+		val system = asm.getSystem(ACTOR_SYSTEM_NAME).
+			getOrElse(asm.create(ACTOR_SYSTEM_NAME, ConfigFactory.defaultReference(classOf[ActorSystem].getClassLoader)))
 
-		uifactory = newTabUIFactoryInstance(system, parent, PresenterView.ID)
+		uifactory = newTabUIFactoryInstance(system, parent, ID)
 
 		//Register UIFactory as a service
 		val ctx = Activator.getDefault.getBundle.getBundleContext
@@ -47,10 +47,19 @@ class PresenterView extends ViewPart {
 
 	override def dispose() {
 		uiFactoryReg.unregister
+		uiFactoryReg = null
+		PresenterView.uifactory = null
 		super.dispose()
 	}
 
 }
 
-object PresenterView { val ID = "de.lmu.ifi.dbs.knowing.core.swt.presenterView" }
+object PresenterView {
+	val ID = "de.lmu.ifi.dbs.knowing.core.swt.presenterView"
+	val ACTOR_SYSTEM_NAME = "swt-local"
+		
+	private var uifactory: UIFactory[Composite] = _
+
+	def getUIFactory(): UIFactory[Composite] = uifactory
+}
 

@@ -18,12 +18,17 @@ import de.lmu.ifi.dbs.knowing.core.exceptions._
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
 import de.lmu.ifi.dbs.knowing.core.processing.DPUExecutor
 import de.lmu.ifi.dbs.knowing.core.service._
+import de.lmu.ifi.dbs.knowing.core.service.EvaluationProperties._
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
 import de.lmu.ifi.dbs.knowing.core.util.{ DPUValidation, DPUUtil }
 import scala.collection.mutable.{ Map => MutableMap, HashMap }
 import scala.collection.mutable.ArrayBuffer
 import org.slf4j.LoggerFactory
 import com.typesafe.config.ConfigFactory
+import com.typesafe.config.Config
+import com.typesafe.config.ConfigException
+import java.net.MalformedURLException
+import java.net.URL
 
 /**
  * Default implementation for the EvaluationService
@@ -39,6 +44,9 @@ class EvaluateService extends IEvaluateService {
 	private var factoryDirectory: IFactoryDirectory = _
 
 	/** 1..1 relation */
+	private var dpuDirectory: IDPUDirectory = _
+
+	/** 1..1 relation */
 	private var modelStore: IModelStore = _
 
 	/** 1..1 relation */
@@ -50,64 +58,53 @@ class EvaluateService extends IEvaluateService {
 	/** 1..1 relation */
 	private var actorSystemManager: IActorSystemManager = _
 
-	/**
-	 * Instantiates DPUExecutor and runs the DPU
-	 * @see IEvaluationService
-	 */
 	@throws(classOf[ValidationException])
 	@throws(classOf[KnowingException])
-	def evaluate(dpu: IDataProcessingUnit, execPath: URI): ActorRef = {
-		DPUValidation.runtime(dpu) match {
-			case validation if validation.hasErrors() => throw new ValidationException("Error on validation.", validation)
-			case validation if validation.hasWarnings() => log.warn("DPU has warnings: " + validation.getWarnings)
-			case validation => log.info("DPU validation successfull!")
+	def evaluate(config: Config): ActorRef = {
+
+		//Resolve DPU
+		val dpu = (config.hasPath(DPU), config.hasPath(DPU_PATH)) match {
+			case (true, _) => dpuDirectory.getDPU(config.getString(DPU)) getOrElse {
+				throw new ConfigException.BadValue("dpu", "DPU with id " + config.getString(DPU) + " could not be found")
+			}
+			case (false, true) => try {
+				val url = new URL(config.getString(DPU_PATH))
+				DPUUtil.deserialize(url)
+			} catch {
+				case e: MalformedURLException => throw new ConfigException.BadValue(DPU, "DPU path incorrect", e)
+			}
+			case _ => throw new ConfigException.Missing(DPU + " or " + DPU_PATH)
 		}
-
-		uiFactories.size match {
-			case 0 => throw new Exception("No UIFactory registered")
-			case 1 => evaluate(dpu, execPath, uiFactories(0), HashMap[String, InputStream](), HashMap[String, OutputStream]())
-			case x =>
-				//TODO search for best fitting UI factory. Use service properties and presenter properties
-				evaluate(dpu, execPath, uiFactories(0), HashMap[String, InputStream](), HashMap[String, OutputStream]())
+		
+		//Resolve execution path
+		val execPath = try {
+			if(!config.hasPath(EXECUTION_PATH))
+				throw new ConfigException.Missing(EXECUTION_PATH)
+			val url = new URL(config.getString(EXECUTION_PATH))
+			url.toURI
+		} catch {
+			case e: MalformedURLException => throw new ConfigException.BadValue(DPU, "Execution path incorrect", e)
 		}
-	}
-
-	/**
-	 * @param dpu - the DataProcessingUnit
-	 * @param uiFactoryId - Id of the registered UIFactory
-	 * @param execPath - executionPath to resolve relative properties
-	 */
-	@throws(classOf[ValidationException])
-	@throws(classOf[KnowingException])
-	def evaluate(dpu: IDataProcessingUnit, execPath: URI, uiFactoryId: String): ActorRef = {
-		evaluate(dpu, execPath, uiFactoryId, HashMap[String, InputStream](), HashMap[String, OutputStream]())
-	}
-
-	/**
-	 * @param dpu - the DataProcessingUnit
-	 * @param uiFactory - choose uiSystem and where to present
-	 * @param execPath - executionPath to resolve relative properties
-	 */
-	@throws(classOf[ValidationException])
-	@throws(classOf[KnowingException])
-	def evaluate(dpu: IDataProcessingUnit, execPath: URI, uiFactory: UIFactory[_]): ActorRef = {
-		evaluate(dpu, execPath, uiFactory, HashMap[String, InputStream](), HashMap[String, OutputStream]())
-	}
-
-	/**
-	 * Instantiates DPUExecturo and runs the DPU
-	 * @see IEvaluationService
-	 */
-	@throws(classOf[ValidationException])
-	@throws(classOf[KnowingException])
-	def evaluate(dpu: IDataProcessingUnit, execPath: URI,
-		uiFactoryId: String,
-		input: MutableMap[String, InputStream],
-		output: MutableMap[String, OutputStream]): ActorRef = {
-		uiFactories.find(e => e.getId.equals(uiFactoryId)) match {
-			case None => throw new Exception("No UIFactory with id " + uiFactoryId + " found")
-			case Some(uiFac) => evaluate(dpu, execPath, uiFac, input, output)
+		
+		//Resolve UIFactory
+		if(!config.hasPath(UIFACTORY))
+			throw new ConfigException.Missing(UIFACTORY)
+		
+		val uiFactoryId = config.getString(UIFACTORY)
+		val uiFactory =	uiFactories.find(e => e.getId.equals(uiFactoryId)) getOrElse {
+			throw new ConfigException.BadValue(UIFACTORY, "No UIFactory with id " + uiFactoryId + " found")
 		}
+		
+		//Resolve ActorSystem
+		val system = config.hasPath(SYSTEM) match {
+			case false => uiFactory.getSystem
+			case true => actorSystemManager.getSystem(config.getString(SYSTEM)) getOrElse {
+				throw new ConfigException.BadValue(UIFACTORY, "No ActorSystem with name " + config.getString(SYSTEM) + " found")
+			}
+		}
+		
+		//Evaluate
+		evaluate(dpu, execPath, uiFactory, system, null, null)
 	}
 
 	/**
@@ -118,12 +115,28 @@ class EvaluateService extends IEvaluateService {
 	@throws(classOf[KnowingException])
 	def evaluate(dpu: IDataProcessingUnit, execPath: URI,
 		ui: UIFactory[_],
+		system: ActorSystem,
 		input: MutableMap[String, InputStream],
 		output: MutableMap[String, OutputStream]): ActorRef = {
 
-		val config = ConfigFactory.defaultReference(classOf[ActorSystem].getClassLoader)
-		val system = ActorSystem("default", config)
-		val executor = system.actorOf(Props(new DPUExecutor(dpu, ui, execPath, factoryDirectory, modelStore, resourceStore, input, output)))
+		DPUValidation.runtime(dpu) match {
+			case validation if validation.hasErrors() => throw new ValidationException("Error on validation.", validation)
+			case validation if validation.hasWarnings() => log.warn("DPU has warnings: " + validation.getWarnings)
+			case validation => log.info("DPU validation successfull!")
+		}
+
+		val io = (input, output) match {
+			case (null, null) => (new HashMap[String, InputStream], new HashMap[String, OutputStream])
+			case (input, null) => (input, new HashMap[String, OutputStream])
+			case (null, output) => (new HashMap[String, InputStream], output)
+			case (input, output) => (input, output)
+		}
+
+		val executor = system match {
+			case null => ui.getSystem.actorOf(Props(new DPUExecutor(dpu, ui, execPath, factoryDirectory, modelStore, resourceStore, io._1, io._2)))
+			case _ => system.actorOf(Props(new DPUExecutor(dpu, ui, execPath, factoryDirectory, modelStore, resourceStore, io._1, io._2)))
+		}
+
 		executor ! Start()
 		executor
 	}
@@ -137,6 +150,12 @@ class EvaluateService extends IEvaluateService {
 
 	/** unbind factory service */
 	def unbindDirectoryService(service: IFactoryDirectory) = factoryDirectory = null
+
+	/** bind dpu service */
+	def bindDPUDirectoryService(service: IDPUDirectory) = dpuDirectory = service
+
+	/** unbind dpu service */
+	def unbindDPUDirectoryService(service: IDPUDirectory) = dpuDirectory = null
 
 	/** bind factory service */
 	def bindModelStoreService(service: IModelStore) = modelStore = service
@@ -157,12 +176,8 @@ class EvaluateService extends IEvaluateService {
 	def unbindUIFactory(service: UIFactory[_]) = uiFactories -= service
 
 	/** bind ActorSystemManager */
-	def bindActorSystemManager(actorSystemManager: IActorSystemManager) {
-		this.actorSystemManager = actorSystemManager
-	}
+	def bindActorSystemManager(service: IActorSystemManager) = actorSystemManager = service
 
 	/** unbind ActorSystemManager */
-	def unbindActorSystemManager(actorSystemManager: IActorSystemManager) {
-		this.actorSystemManager = null
-	}
+	def unbindActorSystemManager(service: IActorSystemManager) = actorSystemManager = null
 }

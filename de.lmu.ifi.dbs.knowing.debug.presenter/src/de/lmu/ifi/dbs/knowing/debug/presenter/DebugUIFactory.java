@@ -23,6 +23,7 @@ import de.lmu.ifi.dbs.knowing.core.model.INode;
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory;
 import akka.actor.ActorContext;
 import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
 import akka.actor.TypedActor;
 
 /**
@@ -94,6 +95,11 @@ public class DebugUIFactory implements UIFactory<Path> {
 	@Override
 	public String getId() {
 		return getClass().getName();
+	}
+
+	@Override
+	public ActorSystem getSystem() {
+		return TypedActor.context().system();
 	}
 
 }
