@@ -12,8 +12,10 @@ import org.eclipse.sapphire.modeling.ResourceStoreException;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
+import akka.actor.ActorSystem;
+import de.lmu.ifi.dbs.knowing.core.exceptions.KnowingException;
+import de.lmu.ifi.dbs.knowing.core.exceptions.ValidationException;
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit;
-import de.lmu.ifi.dbs.knowing.core.exceptions.*;
 import de.lmu.ifi.dbs.knowing.core.swt.internal.Activator;
 import de.lmu.ifi.dbs.knowing.core.swt.view.PresenterView;
 
@@ -35,7 +37,8 @@ public class SelectDPUWizard extends Wizard {
 		try {
 			IDataProcessingUnit dpu = dpuPage.getDPU();
 			URI uri = dpuPage.getExecutionPath();
-			evaluate(dpu, uri);
+			ActorSystem system = dpuPage.getActorSystem();
+			evaluate(dpu, uri, system);
 		} catch (ResourceStoreException e) {
 			e.printStackTrace();
 		} catch (URISyntaxException e) {
@@ -46,7 +49,7 @@ public class SelectDPUWizard extends Wizard {
 		return true;
 	}
 
-	private void evaluate(IDataProcessingUnit dpu, URI execPath) throws PartInitException {
+	private void evaluate(IDataProcessingUnit dpu, URI execPath, ActorSystem system) throws PartInitException {
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(PresenterView.ID());
 
 		try {

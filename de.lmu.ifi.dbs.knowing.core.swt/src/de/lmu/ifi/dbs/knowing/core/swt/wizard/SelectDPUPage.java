@@ -3,8 +3,12 @@ package de.lmu.ifi.dbs.knowing.core.swt.wizard;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.sapphire.modeling.ResourceStoreException;
@@ -18,6 +22,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
@@ -26,24 +31,21 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
+import akka.actor.ActorSystem;
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit;
+import de.lmu.ifi.dbs.knowing.core.swt.internal.Activator;
 import de.lmu.ifi.dbs.knowing.core.util.OSGIUtil;
 
 public class SelectDPUPage extends WizardPage {
 	
-	
-	private Text tFile;
-	private Text tRegistry;
-	private Button bFile;
-	private Button bRegistry;
-	private Group gConfiguration;
-	private Label lExePath;
-	private Text tExePath;
-	private Button bBrowseExePath;
-	
 	public static String lastExecutionPath = "";
 	public static String lastDPU = "";
 	public static boolean fileSelected = true;
+	
+	private Text tFile, tRegistry,tExePath;
+	private Button bFile, bRegistry, bBrowseExePath;
+	private Group gConfiguration;
+	private ComboViewer actorSystemViewer;
 
 	/**
 	 * Create the wizard.
@@ -133,7 +135,7 @@ public class SelectDPUPage extends WizardPage {
 		gConfiguration.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 		gConfiguration.setText("Configuration");
 
-		lExePath = new Label(gConfiguration, SWT.NONE);
+		Label lExePath = new Label(gConfiguration, SWT.NONE);
 		lExePath.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lExePath.setText("Execution path");
 
@@ -150,6 +152,22 @@ public class SelectDPUPage extends WizardPage {
 
 		bBrowseExePath = new Button(gConfiguration, SWT.NONE);
 		bBrowseExePath.setText("Browse");
+		
+		Label lblSystem = new Label(gConfiguration, SWT.NONE);
+		lblSystem.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblSystem.setText("System");
+		
+		actorSystemViewer = new ComboViewer(gConfiguration, SWT.READ_ONLY);
+		actorSystemViewer.getCombo().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		List<ActorSystem> systems = Activator.actorSystemManager().getSystems();
+		for (ActorSystem actorSystem : systems) 
+			actorSystemViewer.add(actorSystem);
+		if(!systems.isEmpty())
+			actorSystemViewer.setSelection(new StructuredSelection(systems.get(0)));
+		
+		new Label(gConfiguration, SWT.NONE);
+		
+		
 		bBrowseExePath.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -219,6 +237,14 @@ public class SelectDPUPage extends WizardPage {
 			return OSGIUtil.registeredURLtoDPU(tRegistry.getText()).toURI();
 		}
 		return null;
+	}
+	
+	public ActorSystem getActorSystem() {
+		if(actorSystemViewer.getSelection().isEmpty())
+			return null;
+		
+		IStructuredSelection selection = (IStructuredSelection) actorSystemViewer.getSelection();
+		return (ActorSystem) selection.getFirstElement();
 	}
 	
 	private String formURI(String path) {

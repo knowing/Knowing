@@ -27,91 +27,99 @@ import de.lmu.ifi.dbs.knowing.core.service._
  */
 class Activator extends AbstractUIPlugin {
 
-  private var osgi: OSGIUtil = _
+	private var osgi: OSGIUtil = _
 
-  /**
-   * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-   */
-  override def start(context: BundleContext) = {
-    super.start(context)
-    Activator.plugin = this
-    Activator.directoryTracker = new ServiceTracker(context, classOf[IFactoryDirectory], null)
-    Activator.directoryTracker.open
-    Activator.evaluateTracker = new ServiceTracker(context, classOf[IEvaluateService], null)
-    Activator.evaluateTracker.open
+	/**
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+	 */
+	override def start(context: BundleContext) = {
+		super.start(context)
+		Activator.plugin = this
+		Activator.directoryTracker = new ServiceTracker(context, classOf[IFactoryDirectory], null)
+		Activator.directoryTracker.open
+		Activator.evaluateTracker = new ServiceTracker(context, classOf[IEvaluateService], null)
+		Activator.evaluateTracker.open
+		Activator.actorSystemTracker = new ServiceTracker(context, classOf[IActorSystemManager], null)
+		Activator.actorSystemTracker.open
 
-    osgi = new OSGIUtil(context)
-    osgi.registerPresenter(new TablePresenterFactory)
-    loadDPUWizardProperties
-  }
+		osgi = new OSGIUtil(context)
+		osgi.registerPresenter(new TablePresenterFactory)
+		loadDPUWizardProperties
+	}
 
-  /**
-   * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-   */
-  override def stop(context: BundleContext) = {
-    Activator.directoryTracker.close
-    Activator.directoryTracker = null
-    Activator.evaluateTracker.close
-    osgi.deregisterAll
-    osgi = null
-    saveDPUWizardProperties
-    Activator.plugin = null
-    super.stop(context)
-  }
+	/**
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 */
+	override def stop(context: BundleContext) = {
+		Activator.directoryTracker.close
+		Activator.directoryTracker = null
+		Activator.evaluateTracker.close
+		Activator.evaluateTracker = null
+		Activator.actorSystemTracker.close
+		Activator.actorSystemTracker = null
 
-  private def saveDPUWizardProperties {
-    val file = wizardPropertiesFile
-    val writer = new PrintWriter(file)
-    writer.println(SelectDPUPage.lastDPU)
-    writer.println(SelectDPUPage.lastExecutionPath)
-    writer.println(SelectDPUPage.fileSelected)
-    writer.close
-  }
+		osgi.deregisterAll
+		osgi = null
+		saveDPUWizardProperties
+		Activator.plugin = null
+		super.stop(context)
+	}
 
-  private def loadDPUWizardProperties {
-    val file = wizardPropertiesFile
-    try {
-      val reader = new LineNumberReader(new InputStreamReader(new FileInputStream(file)))
-      val dpuFile = reader.readLine
-      if (dpuFile != null)
-        SelectDPUPage.lastDPU = dpuFile
-      val exePath = reader.readLine
-      if (exePath != null)
-        SelectDPUPage.lastExecutionPath = exePath
-      val fileSelected = reader.readLine
-      if (fileSelected != null)
-        SelectDPUPage.fileSelected = fileSelected.toBoolean
-      reader.close
-    } catch {
-      case e: IOException => println("No properties found")
-    }
-  }
+	private def saveDPUWizardProperties {
+		val file = wizardPropertiesFile
+		val writer = new PrintWriter(file)
+		writer.println(SelectDPUPage.lastDPU)
+		writer.println(SelectDPUPage.lastExecutionPath)
+		writer.println(SelectDPUPage.fileSelected)
+		writer.close
+	}
 
-  private def wizardPropertiesFile: File = {
-    val stateLocation = getStateLocation
-    val wizardProps = stateLocation.append("wizard")
-    wizardProps.addFileExtension("properties")
-    wizardProps.toFile
-  }
+	private def loadDPUWizardProperties {
+		val file = wizardPropertiesFile
+		try {
+			val reader = new LineNumberReader(new InputStreamReader(new FileInputStream(file)))
+			val dpuFile = reader.readLine
+			if (dpuFile != null)
+				SelectDPUPage.lastDPU = dpuFile
+			val exePath = reader.readLine
+			if (exePath != null)
+				SelectDPUPage.lastExecutionPath = exePath
+			val fileSelected = reader.readLine
+			if (fileSelected != null)
+				SelectDPUPage.fileSelected = fileSelected.toBoolean
+			reader.close
+		} catch {
+			case e: IOException => println("No properties found")
+		}
+	}
+
+	private def wizardPropertiesFile: File = {
+		val stateLocation = getStateLocation
+		val wizardProps = stateLocation.append("wizard")
+		wizardProps.addFileExtension("properties")
+		wizardProps.toFile
+	}
 }
 
 object Activator {
-  // The plug-in ID
-  val PLUGIN_ID = "de.lmu.ifi.dbs.knowing.core.swt"; //$NON-NLS-1$
+	// The plug-in ID
+	val PLUGIN_ID = "de.lmu.ifi.dbs.knowing.core.swt"; //$NON-NLS-1$
 
-  // The shared instance
-  var plugin: Activator = _
+	// The shared instance
+	private var plugin: Activator = _
 
-  var directoryTracker: ServiceTracker[IFactoryDirectory, IFactoryDirectory] = _
-  var evaluateTracker: ServiceTracker[IEvaluateService, IEvaluateService] = _
+	private var directoryTracker: ServiceTracker[IFactoryDirectory, IFactoryDirectory] = _
+	private var evaluateTracker: ServiceTracker[IEvaluateService, IEvaluateService] = _
+	private var actorSystemTracker: ServiceTracker[IActorSystemManager, IActorSystemManager] = _
 
-  /**
-   * Returns the shared instance
-   *
-   * @return the shared instance
-   */
-  def getDefault: Activator = plugin
+	/**
+	 * Returns the shared instance
+	 *
+	 * @return the shared instance
+	 */
+	def getDefault: Activator = plugin
 
-  def directoryService: IFactoryDirectory = directoryTracker.getService
-  def evaluateService: IEvaluateService = evaluateTracker.getService
+	def directoryService: IFactoryDirectory = directoryTracker.getService
+	def evaluateService: IEvaluateService = evaluateTracker.getService
+	def actorSystemManager: IActorSystemManager = actorSystemTracker.getService
 }

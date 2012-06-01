@@ -8,4 +8,5 @@
    <reference bind="bindUIFactory" cardinality="0..n" interface="de.lmu.ifi.dbs.knowing.core.factory.UIFactory" name="UIFactory" policy="dynamic" unbind="unbindUIFactory"/>
    <reference bind="bindModelStoreService" cardinality="1..1" interface="de.lmu.ifi.dbs.knowing.core.service.IModelStore" name="IModelStore" policy="dynamic" unbind="unbindModelStoreService"/>
    <reference bind="bindResourceStoreService"  cardinality="1..1" interface="de.lmu.ifi.dbs.knowing.core.service.IResourceStore" name="IResourceProvider" policy="dynamic" unbind="unbindResourceStoreService"/>
+   <reference bind="bindActorSystemManager" cardinality="1..1" interface="de.lmu.ifi.dbs.knowing.core.service.IActorSystemManager" name="IActorSystemManager" policy="dynamic" unbind="unbindActorSystemManager"/>
 </scr:component>

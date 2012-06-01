@@ -75,4 +75,4 @@ Import-Package: akka;version="[2.0.0,3.0.0)",
  scala.util.parsing.syntax;version="[2.9.0.1,2.9.3.0]",
  scala.util.regexp;version="[2.9.0.1,2.9.3.0]"
 Bundle-Vendor: LMU Munich - Database Systems Group
-Service-Component: OSGI-INF/factoryDirectory.xml, OSGI-INF/evaluate.xml, OSGI-INF/dpuDirectory.xml, OSGI-INF/modelStore.xml, OSGI-INF/resourceStore.xml
+Service-Component: OSGI-INF/factoryDirectory.xml, OSGI-INF/evaluate.xml, OSGI-INF/dpuDirectory.xml, OSGI-INF/modelStore.xml, OSGI-INF/resourceStore.xml, OSGI-INF/actorSystemManager.xml

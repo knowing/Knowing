@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.lmu.ifi.dbs.knowing.core.ActorSystemManager">
+   <implementation class="de.lmu.ifi.dbs.knowing.core.service.impl.ActorSystemManager"/>
+   <service>
+      <provide interface="de.lmu.ifi.dbs.knowing.core.service.IActorSystemManager"/>
+   </service>
+</scr:component>

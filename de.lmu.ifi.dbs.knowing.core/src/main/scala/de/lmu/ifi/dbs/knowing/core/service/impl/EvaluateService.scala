@@ -47,6 +47,9 @@ class EvaluateService extends IEvaluateService {
 	/** 0..n relation */
 	private var uiFactories = new ArrayBuffer[UIFactory[_]]()
 
+	/** 1..1 relation */
+	private var actorSystemManager: IActorSystemManager = _
+
 	/**
 	 * Instantiates DPUExecutor and runs the DPU
 	 * @see IEvaluationService
@@ -153,4 +156,13 @@ class EvaluateService extends IEvaluateService {
 	/** unbind UIFactory service */
 	def unbindUIFactory(service: UIFactory[_]) = uiFactories -= service
 
+	/** bind ActorSystemManager */
+	def bindActorSystemManager(actorSystemManager: IActorSystemManager) {
+		this.actorSystemManager = actorSystemManager
+	}
+
+	/** unbind ActorSystemManager */
+	def unbindActorSystemManager(actorSystemManager: IActorSystemManager) {
+		this.actorSystemManager = null
+	}
 }
