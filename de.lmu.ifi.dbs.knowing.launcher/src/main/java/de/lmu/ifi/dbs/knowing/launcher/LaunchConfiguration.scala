@@ -50,7 +50,6 @@ object LaunchConfiguration {
 		"de.lmu.ifi.dbs.knowing.launcher@default:false",
 		"de.lmu.ifi.dbs.knowing.presenter@default:default",
 		"nz.ac.waikato.cs.weka@default:default",
-		"org.codehaus.aspectwerkz@default:default",
 		"org.eclipse.core.contenttype@default:default",
 		"org.eclipse.core.expressions@default:default",
 		"org.eclipse.core.filesystem@default:default",

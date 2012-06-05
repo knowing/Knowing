@@ -7,7 +7,7 @@
   <version>0.1.4-SNAPSHOT</version>
   <packaging>pom</packaging>
 	<properties>
-		<tycho.version>0.14.1</tycho.version>
+		<tycho.version>0.15.0</tycho.version>
 		<scala.version>2.9.2</scala.version>
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
@@ -17,6 +17,7 @@
     <module>de.lmu.ifi.dbs.knowing.core</module>
     <module>de.lmu.ifi.dbs.knowing.presenter</module>
     <module>de.lmu.ifi.dbs.knowing.core.common</module>
+    <module>de.lmu.ifi.dbs.knowing.launcher</module>
 	
     <module>de.lmu.ifi.dbs.knowing.core.logging</module>
     <module>de.lmu.ifi.dbs.knowing.core.swt</module>
@@ -28,12 +29,17 @@
     <module>de.lmu.ifi.dbs.knowing.debug.launcher</module>
     <module>de.lmu.ifi.dbs.knowing.debug.presenter</module>
     <module>de.lmu.ifi.dbs.knowing.debug.ui</module>
-    <module>de.lmu.ifi.dbs.knowing.launcher</module>
     <module>de.lmu.ifi.dbs.knowing.target</module>
     <module>de.lmu.ifi.dbs.knowing.test</module>
-    
     <module>knowing.test</module>
--->
+	-->
+
+     <module>de.lmu.ifi.dbs.knowing.core.feature</module>
+     <!--<module>de.lmu.ifi.dbs.knowing.swt.feature</module>
+	<module>de.lmu.ifi.dbs.knowing.weka.feature</module>
+      <module>de.lmu.ifi.dbs.knowing.ui.feature</module> -->
+
+     <module>de.lmu.ifi.dbs.knowing.updatesite</module>
   </modules>
 	<dependencies>
 		<dependency>
@@ -42,6 +48,14 @@
 			<version>${scala.version}</version>
 		</dependency>
 	</dependencies>
+
+<distributionManagement>
+  <snapshotRepository>
+    <id>snapshots</id>
+	<name>Local Nexus Snapshots</name>
+    <url>http://localhost:8081/nexus/content/repositories/snapshots</url>
+  </snapshotRepository>
+</distributionManagement>
 <build>
 		<plugins>
 			<plugin>

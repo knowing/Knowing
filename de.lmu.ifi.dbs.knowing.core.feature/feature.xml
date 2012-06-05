@@ -53,49 +53,56 @@
          id="de.lmu.ifi.dbs.knowing.core"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.1.4.qualifier"
          unpack="false"/>
 
    <plugin
          id="nz.ac.waikato.cs.weka"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.codehaus.aspectwerkz"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
+         version="3.7.5"
          unpack="false"/>
 
    <plugin
          id="de.lmu.ifi.dbs.knowing.core.common"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.1.4.qualifier"
          unpack="false"/>
 
    <plugin
          id="de.lmu.ifi.dbs.knowing.presenter"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.1.4.qualifier"
          unpack="false"/>
 
    <plugin
          id="de.lmu.ifi.dbs.knowing.launcher"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.1.4.qualifier"
          unpack="false"/>
 
    <plugin
          id="com.typesafe.config"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.4.1"
+         unpack="false"/>
+
+   <plugin
+         id="com.typesafe.akka.actor"
+         download-size="0"
+         install-size="0"
+         version="2.1.0.SNAPSHOT"
+         unpack="false"/>
+
+   <plugin
+         id="com.typesafe.akka.slf4j"
+         download-size="0"
+         install-size="0"
+         version="2.1.0.SNAPSHOT"
          unpack="false"/>
 
 </feature>
