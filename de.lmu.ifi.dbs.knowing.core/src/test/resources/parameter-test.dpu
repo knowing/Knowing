@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DataProcessingUnit name="Üarameter Test">
+	<description />
+	<tags />
+	<parameters>
+ 		<parameter key="input-file" />
+ 		<parameter key="debug"  value="true" />
+		<parameter key="distance"  value="36" />
+	</parameters>
+	<nodes>
+		<node id="n1" type="processor" factoryId="com.example.SomeProcessor">
+ 			<properties>
+  				<property key="debug" value="${debug}" />
+ 			</properties>
+		</node> 
+		<node id="n2" type="processor" factoryId="com.example.SomeProcessor">
+ 			<properties>
+  				<property key="input-file" />
+ 			</properties>
+		</node> 
+
+		<node id="n3" type="processor" factoryId="com.example.SomeProcessor">
+ 			<properties>
+  				<property key="distance" value="24" />
+			</properties>
+		</node> 
+	</nodes>
+
+	<edges>
+		<edge id="e1" source="n1" target="n2" />
+	</edges>
+</DataProcessingUnit>

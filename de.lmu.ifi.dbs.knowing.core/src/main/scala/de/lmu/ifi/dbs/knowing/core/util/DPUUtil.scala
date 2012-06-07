@@ -14,10 +14,12 @@ import java.net.URL
 import java.util.Properties
 import java.io.{ PrintWriter, OutputStream }
 import scala.collection.JavaConversions._
-import de.lmu.ifi.dbs.knowing.core.model.{ INode, IEdge, NodeType, IDataProcessingUnit }
+import de.lmu.ifi.dbs.knowing.core.model.{ INode, IEdge, IParameter, IProperty, NodeType, IDataProcessingUnit }
 import de.lmu.ifi.dbs.knowing.core.service.IDPUDirectory
+import de.lmu.ifi.dbs.knowing.core.exceptions.KnowingException
 import org.eclipse.sapphire.modeling.xml.{ RootXmlResource, XmlResourceStore }
 import org.eclipse.sapphire.modeling.UrlResourceStore
+import com.typesafe.config.Config
 
 /**
  * @author Nepomuk Seiler
@@ -102,6 +104,60 @@ object DPUUtil {
 		}
 
 		writer.flush
+	}
+
+	@throws(classOf[KnowingException])
+	def applyProperties(dpu: IDataProcessingUnit, properties: Properties): IDataProcessingUnit = {
+		if (dpu.getParameters.isEmpty && properties.isEmpty)
+			return dpu
+		if (dpu.getNodes.isEmpty && properties.isEmpty)
+			return dpu
+		if (dpu.getParameters.isEmpty && properties.isEmpty)
+			throw new KnowingException("No parameters defined in dpu.")
+		if (dpu.getNodes.isEmpty && !properties.isEmpty)
+			throw new KnowingException("No nodes defined in dpu to be configured with " + properties)
+
+		val returns = copy(dpu)
+		val parameters = returns.getParameters
+
+		val dpuKeyProperties = returns.getNodes
+			.flatMap(_.getProperties.toList)
+			.map(p => (p.getKey.getContent -> p))
+			.toMap
+
+		val dpuValueProperties = returns.getNodes
+			.flatMap(_.getProperties.toList)
+			.filter { p =>
+				val v = p.getValue.getContent
+				v.startsWith("${") && v.endsWith("}")
+			}
+			.map { p =>
+				val v = p.getValue.getContent
+				(v.substring(2, v.length - 1) -> p)
+			}
+			.toMap
+
+		// 1. find value which could be replaced
+		// 2. find key which identical name
+		// 3. Use parameter value if defined
+		parameters foreach { parameter =>
+			val key = parameter.getKey.getContent
+			val property = dpuValueProperties.contains(key) match {
+				case true => dpuValueProperties(key)
+				case false => dpuValueProperties.get(key).getOrElse {
+					throw new KnowingException("Parameter [" + key + "] unused.")
+				}
+			}
+			applyProperty(property, parameter, properties)
+		}
+		returns
+	}
+
+	private def applyProperty(property: IProperty, parameter: IParameter, properties: Properties) {
+		properties.containsKey(property.getKey.getContent) match {
+			case true => property.setValue(properties.getProperty(property.getKey.getContent))
+			case false => property.setValue(parameter.getValue.getContent)
+		}
 	}
 
 	/* =========================== */
