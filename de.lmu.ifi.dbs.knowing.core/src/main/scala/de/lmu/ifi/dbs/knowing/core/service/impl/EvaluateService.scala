@@ -10,8 +10,9 @@
 \*                                                              */
 package de.lmu.ifi.dbs.knowing.core.service.impl
 
-import java.net.URI
+import java.net.{ URL, URI, MalformedURLException }
 import java.io.{ InputStream, OutputStream }
+import java.util.Properties
 import akka.actor.{ ActorSystem, ActorRef, Props }
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.exceptions._
@@ -21,14 +22,9 @@ import de.lmu.ifi.dbs.knowing.core.service._
 import de.lmu.ifi.dbs.knowing.core.service.EvaluationProperties._
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
 import de.lmu.ifi.dbs.knowing.core.util.{ DPUValidation, DPUUtil }
-import scala.collection.mutable.{ Map => MutableMap, HashMap }
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.{ Map => MutableMap, HashMap, ArrayBuffer }
 import org.slf4j.LoggerFactory
-import com.typesafe.config.ConfigFactory
-import com.typesafe.config.Config
-import com.typesafe.config.ConfigException
-import java.net.MalformedURLException
-import java.net.URL
+import com.typesafe.config.{ ConfigException, ConfigFactory, Config }
 
 /**
  * Default implementation for the EvaluationService
@@ -75,26 +71,26 @@ class EvaluateService extends IEvaluateService {
 			}
 			case _ => throw new ConfigException.Missing(DPU + " or " + DPU_PATH)
 		}
-		
+
 		//Resolve execution path
 		val execPath = try {
-			if(!config.hasPath(EXECUTION_PATH))
+			if (!config.hasPath(EXECUTION_PATH))
 				throw new ConfigException.Missing(EXECUTION_PATH)
 			val url = new URL(config.getString(EXECUTION_PATH))
 			url.toURI
 		} catch {
 			case e: MalformedURLException => throw new ConfigException.BadValue(DPU, "Execution path incorrect", e)
 		}
-		
+
 		//Resolve UIFactory
-		if(!config.hasPath(UIFACTORY))
+		if (!config.hasPath(UIFACTORY))
 			throw new ConfigException.Missing(UIFACTORY)
-		
+
 		val uiFactoryId = config.getString(UIFACTORY)
-		val uiFactory =	uiFactories.find(e => e.getId.equals(uiFactoryId)) getOrElse {
+		val uiFactory = uiFactories.find(e => e.getId.equals(uiFactoryId)) getOrElse {
 			throw new ConfigException.BadValue(UIFACTORY, "No UIFactory with id " + uiFactoryId + " found")
 		}
-		
+
 		//Resolve ActorSystem
 		val system = config.hasPath(SYSTEM) match {
 			case false => uiFactory.getSystem
@@ -103,8 +99,19 @@ class EvaluateService extends IEvaluateService {
 			}
 		}
 		
+		//Resolve Parameters
+		val parameters = new Properties
+		if(config.hasPath("parameters")){
+			val parameterConf = config.getConfig("parameters")
+			val it = parameterConf.entrySet.iterator
+			while(it.hasNext) {
+				val e = it.next
+				parameters.setProperty(e.getKey, e.getValue.unwrapped.toString)
+			}
+		}
+
 		//Evaluate
-		evaluate(dpu, execPath, uiFactory, system, null, null)
+		evaluate(dpu, execPath, uiFactory, system, parameters, null, null)
 	}
 
 	/**
@@ -116,10 +123,14 @@ class EvaluateService extends IEvaluateService {
 	def evaluate(dpu: IDataProcessingUnit, execPath: URI,
 		ui: UIFactory[_],
 		system: ActorSystem,
+		parameters: Properties,
 		input: MutableMap[String, InputStream],
 		output: MutableMap[String, OutputStream]): ActorRef = {
+		
+		//Apply parameters and validate DPU before running
+		val exeDPU = DPUUtil.applyProperties(dpu, parameters);
 
-		DPUValidation.runtime(dpu) match {
+		DPUValidation.runtime(exeDPU) match {
 			case validation if validation.hasErrors() => throw new ValidationException("Error on validation.", validation)
 			case validation if validation.hasWarnings() => log.warn("DPU has warnings: " + validation.getWarnings)
 			case validation => log.info("DPU validation successfull!")
@@ -133,8 +144,8 @@ class EvaluateService extends IEvaluateService {
 		}
 
 		val executor = system match {
-			case null => ui.getSystem.actorOf(Props(new DPUExecutor(dpu, ui, execPath, factoryDirectory, modelStore, resourceStore, io._1, io._2)))
-			case _ => system.actorOf(Props(new DPUExecutor(dpu, ui, execPath, factoryDirectory, modelStore, resourceStore, io._1, io._2)))
+			case null => ui.getSystem.actorOf(Props(new DPUExecutor(exeDPU, ui, execPath, factoryDirectory, modelStore, resourceStore, io._1, io._2)))
+			case _ => system.actorOf(Props(new DPUExecutor(exeDPU, ui, execPath, factoryDirectory, modelStore, resourceStore, io._1, io._2)))
 		}
 
 		executor ! Start()

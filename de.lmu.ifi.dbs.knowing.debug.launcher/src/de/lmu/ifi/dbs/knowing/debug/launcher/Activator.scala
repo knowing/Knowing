@@ -53,7 +53,7 @@ class Activator extends BundleActivator {
 					
 					//Only use default ActorSystem()
 					val uiFactory = TypedActor(ActorSystem()).typedActorOf(TypedProps(classOf[UIFactory[_]], new DebugUIFactory(launchConfig.executionPath)))
-					evaluateService.evaluate(dpu, Paths.get(launchConfig.executionPath).toUri, uiFactory, null, null, null)
+					evaluateService.evaluate(dpu, Paths.get(launchConfig.executionPath).toUri, uiFactory, null, null, null, null)
 				} catch {
 					case e: ValidationException => System.err.println(e.getErrors());
 				}

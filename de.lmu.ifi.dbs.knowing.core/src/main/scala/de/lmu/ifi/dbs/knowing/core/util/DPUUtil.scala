@@ -57,10 +57,12 @@ object DPUUtil {
 
 	@throws(classOf[KnowingException])
 	def applyProperties(dpu: IDataProcessingUnit, properties: Properties): IDataProcessingUnit = {
-		if (dpu.getParameters.isEmpty && properties.isEmpty)
+		if (dpu.getParameters.isEmpty && (properties == null || properties.isEmpty))
 			return dpu
 		if (dpu.getNodes.isEmpty && properties.isEmpty)
 			return dpu
+			
+		//Parameters must be defined to use them
 		if (dpu.getParameters.isEmpty && !properties.isEmpty)
 			throw new KnowingException("No parameters defined in dpu.")
 		if (dpu.getNodes.isEmpty && !properties.isEmpty)

@@ -58,7 +58,7 @@ public class SelectDPUWizard extends Wizard {
 		try {
 			//Config config = EvaluationProperties.buildConfig(dpu.getName().getContent(), execPath, PresenterView.ID(), PresenterView.ACTOR_SYSTEM_NAME());
 			//Activator.evaluateService().evaluate(config);
-			Activator.evaluateService().evaluate(dpu, execPath, PresenterView.getUIFactory(), system, null, null);
+			Activator.evaluateService().evaluate(dpu, execPath, PresenterView.getUIFactory(), system,null, null, null);
 		} catch (ValidationException e) {
 			MultiStatus info = new MultiStatus("knowing.core", 1, "Error on execution", e);
 			for (String error : e.getErrors()) {

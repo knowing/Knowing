@@ -39,6 +39,7 @@ trait IEvaluateService {
 	 * @param execPath - execution path - not null
 	 * @param uiFactory - choose uiSystem and where to present - not null
 	 * @param system - system to run in - can be null (system of UIFactory is chosen)
+	 * @param parameters - customize the dpu - can be null (no parameters)
 	 * @param input - input streams - can be null
 	 * @param output - output streams - can be null
 	 *
@@ -49,6 +50,7 @@ trait IEvaluateService {
 	def evaluate(dpu: IDataProcessingUnit, execPath: URI,
 		uiFactory: UIFactory[_],
 		system: ActorSystem,
+		parameters: Properties,
 		input: MutableMap[String, InputStream],
 		output: MutableMap[String, OutputStream]): ActorRef
 
@@ -71,6 +73,11 @@ trait IEvaluateService {
  * dpu = my-dpu-id
  * execution-path = "file:///home/user/executionpath"
  * uifactory = "de.lmu.ifi.dbs.knowing.core.swt.presenterView"
+ * parameters.p1 = true
+ * parameters.p2 = "/home/user/"
+ * parameters.p3 = "de.mukis.typesafe.config.ConfigApp"
+ * parameters.p4 = 2.3
+ * parameters.p5 = 75
  * </code>
  *
  */
