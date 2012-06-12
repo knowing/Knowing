@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DataProcessingUnit name="Üarameter Test">
+<DataProcessingUnit name="Parameter Test">
 	<description />
 	<tags />
 	<parameters>
  		<parameter key="input-file" />
  		<parameter key="debug"  value="true" />
-		<parameter key="distance"  value="36" />
+		<parameter key="distance-custom"  value="36" />
 	</parameters>
 	<nodes>
 		<node id="n1" type="processor" factoryId="com.example.SomeProcessor">
@@ -18,8 +18,12 @@
   				<property key="input-file" />
  			</properties>
 		</node> 
-
 		<node id="n3" type="processor" factoryId="com.example.SomeProcessor">
+ 			<properties>
+  				<property key="distance" value="${distance-custom}" />
+			</properties>
+		</node> 
+		<node id="n4" type="processor" factoryId="com.example.SomeProcessor">
  			<properties>
   				<property key="distance" value="24" />
 			</properties>

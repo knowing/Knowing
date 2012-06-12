@@ -55,64 +55,13 @@ object DPUUtil {
 	def getDPU(directory: IDPUDirectory, id: String): IDataProcessingUnit = directory.getDPU(id).getOrElse(null)
 	def getDPUPath(directory: IDPUDirectory, id: String): URL = directory.getDPUPath(id).getOrElse(null)
 
-	/**
-	 * Simple debugging method. Prints DPU to given outputStream
-	 */
-	def print(dpu: IDataProcessingUnit, out: OutputStream = System.out) {
-		val writer = new PrintWriter(out)
-		if (dpu == null) {
-			writer.println("DataProcessingUnit: null")
-			writer.flush
-			return
-		}
-
-		writer.println("### [Data Processing Unit] " + dpu.getName.getContent + " ###")
-		writer.println("Description: " + dpu.getDescription.getContent)
-		writer.println("Tags: " + dpu.getTags.getContent)
-		writer.println("== Configuration: ")
-		val conf = dpu.getConfiguration
-		writer.println(" History: " + conf.getHistory.getContent)
-		writer.println(" Path/Absolute: " + conf.getOutput.getText + " / " + conf.getAbsolute.getContent)
-		writer.println(" === Node constraints( " + conf.getNodeConstraints.size + " )")
-		conf.getNodeConstraints.foreach { node =>
-			writer.println("  Node/Log " + node.getNode.getContent + " / " + node.getLog.getContent)
-		}
-
-		writer.println(" === Event constraints( " + conf.getEventConstraints.size + " )")
-		conf.getEventConstraints.foreach { e =>
-			writer.println("  Node/Log " + e.getType.getContent + " / " + e.getLog.getContent)
-		}
-
-		writer.println("== Nodes(" + dpu.getNodes.size + ") ==")
-		dpu.getNodes.foreach {
-			node =>
-				writer.println(" ==== " + node.getId.getText + " ==== ")
-				writer.println(" [FactoryId] " + node.getFactoryId.getText)
-				writer.println(" [Type] " + node.getType.getText)
-				writer.println(" [Properties(" + node.getProperties.size + ")]")
-				node.getProperties.foreach {
-					p => writer.println("  [x] " + p.getKey.getContent + " -> " + p.getValue.getContent)
-				}
-		}
-
-		writer.println("== Edges(" + dpu.getEdges.size + ") ==")
-		dpu.getEdges.foreach {
-			edge =>
-				writer.println(" ==== " + edge.getId.getText + " ==== ")
-				writer.println(" [Source] " + edge.getSource.getText + ":" + edge.getSourcePort.getText)
-				writer.println(" [Target] " + edge.getTarget.getText + ":" + edge.getTargetPort.getText)
-		}
-
-		writer.flush
-	}
-
 	@throws(classOf[KnowingException])
 	def applyProperties(dpu: IDataProcessingUnit, properties: Properties): IDataProcessingUnit = {
 		if (dpu.getParameters.isEmpty && properties.isEmpty)
 			return dpu
 		if (dpu.getNodes.isEmpty && properties.isEmpty)
 			return dpu
-		if (dpu.getParameters.isEmpty && properties.isEmpty)
+		if (dpu.getParameters.isEmpty && !properties.isEmpty)
 			throw new KnowingException("No parameters defined in dpu.")
 		if (dpu.getNodes.isEmpty && !properties.isEmpty)
 			throw new KnowingException("No nodes defined in dpu to be configured with " + properties)
@@ -120,16 +69,18 @@ object DPUUtil {
 		val returns = copy(dpu)
 		val parameters = returns.getParameters
 
+		//Merged node properties: Map[String, IProperty] == Key => (Key, Value)
 		val dpuKeyProperties = returns.getNodes
 			.flatMap(_.getProperties.toList)
 			.map(p => (p.getKey.getContent -> p))
 			.toMap
 
+		//Merged node properties: Map[String, IProperty] == Value => (Key, Value)
 		val dpuValueProperties = returns.getNodes
 			.flatMap(_.getProperties.toList)
 			.filter { p =>
 				val v = p.getValue.getContent
-				v.startsWith("${") && v.endsWith("}")
+				(v != null) && v.startsWith("${") && v.endsWith("}")
 			}
 			.map { p =>
 				val v = p.getValue.getContent
@@ -138,13 +89,13 @@ object DPUUtil {
 			.toMap
 
 		// 1. find value which could be replaced
-		// 2. find key which identical name
-		// 3. Use parameter value if defined
+		// 2. find key which identical name (inferring parameter)
+		// 3. Use parameter value as fallback
 		parameters foreach { parameter =>
 			val key = parameter.getKey.getContent
 			val property = dpuValueProperties.contains(key) match {
 				case true => dpuValueProperties(key)
-				case false => dpuValueProperties.get(key).getOrElse {
+				case false => dpuKeyProperties.get(key).getOrElse {
 					throw new KnowingException("Parameter [" + key + "] unused.")
 				}
 			}
@@ -154,9 +105,13 @@ object DPUUtil {
 	}
 
 	private def applyProperty(property: IProperty, parameter: IParameter, properties: Properties) {
-		properties.containsKey(property.getKey.getContent) match {
-			case true => property.setValue(properties.getProperty(property.getKey.getContent))
-			case false => property.setValue(parameter.getValue.getContent)
+		properties.containsKey(parameter.getKey.getContent) match {
+			case true => property.setValue(properties.getProperty(parameter.getKey.getContent))
+			case false =>
+				val value = Option(parameter.getValue.getContent).getOrElse {
+					throw new KnowingException("Parameter [" + parameter.getKey.getContent + "] has no default value.")
+				}
+				property.setValue(value)
 		}
 	}
 
@@ -218,7 +173,10 @@ object DPUUtil {
 
 	def nodeProperties(node: INode): Properties = node.getProperties.foldLeft(new Properties) {
 		(properties, p) =>
-			properties.setProperty(p.getKey.getContent, p.getValue.getContent)
+			if (p.getValue.getContent != null)
+				properties.setProperty(p.getKey.getContent, p.getValue.getContent)
+			else //Inferring property key as paramter value
+				properties.setProperty(p.getKey.getContent, "${" + p.getKey.getContent + "}")
 			properties
 	}
 
@@ -246,4 +204,64 @@ object DPUUtil {
 		dpu.getEdges find (_.getId.getContent.equals(id))
 	}
 
+	/* ============================== */
+	/* ==== Logging util methods ==== */
+	/* ============================== */
+
+	/**
+	 * Simple debugging method. Prints DPU to given outputStream
+	 */
+	def print(dpu: IDataProcessingUnit, out: OutputStream = System.out) {
+		val writer = new PrintWriter(out)
+		if (dpu == null) {
+			writer.println("DataProcessingUnit: null")
+			writer.flush
+			return
+		}
+
+		writer.println("### [Data Processing Unit] " + dpu.getName.getContent + " ###")
+		writer.println("Description: " + dpu.getDescription.getContent)
+		writer.println("Tags: " + dpu.getTags.getContent)
+		writer.println("== Configuration: ")
+		val conf = dpu.getConfiguration
+		writer.println(" History: " + conf.getHistory.getContent)
+		writer.println(" Path/Absolute: " + conf.getOutput.getText + " / " + conf.getAbsolute.getContent)
+
+		writer.println(" === Parameters(" + dpu.getParameters.size + ") == ")
+		dpu.getParameters.foreach { p =>
+			writer.println("  " + p.getKey.getContent + " => " + p.getValue.getContent)
+		}
+
+		writer.println(" === Node constraints( " + conf.getNodeConstraints.size + " )")
+		conf.getNodeConstraints.foreach { node =>
+			writer.println("  Node/Log " + node.getNode.getContent + " / " + node.getLog.getContent)
+		}
+
+		writer.println(" === Event constraints( " + conf.getEventConstraints.size + " )")
+		conf.getEventConstraints.foreach { e =>
+			writer.println("  Node/Log " + e.getType.getContent + " / " + e.getLog.getContent)
+		}
+
+		writer.println("== Nodes(" + dpu.getNodes.size + ") ==")
+		dpu.getNodes.foreach {
+			node =>
+				writer.println(" ==== " + node.getId.getText + " ==== ")
+				writer.println(" [FactoryId] " + node.getFactoryId.getText)
+				writer.println(" [Type] " + node.getType.getText)
+				writer.println(" [Properties(" + node.getProperties.size + ")]")
+				node.getProperties.foreach {
+					p => writer.println("  [x] " + p.getKey.getContent + " -> " + p.getValue.getContent)
+				}
+		}
+
+		writer.println("== Edges(" + dpu.getEdges.size + ") ==")
+		dpu.getEdges.foreach {
+			edge =>
+				writer.println(" ==== " + edge.getId.getText + " ==== ")
+				writer.println(" [Source] " + edge.getSource.getText + ":" + edge.getSourcePort.getText)
+				writer.println(" [Target] " + edge.getTarget.getText + ":" + edge.getTargetPort.getText)
+		}
+
+		writer.flush
+	}
 }
