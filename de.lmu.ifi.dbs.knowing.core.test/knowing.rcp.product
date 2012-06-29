@@ -88,6 +88,7 @@
       <plugin id="de.lmu.ifi.dbs.knowing.core.common" autoStart="true" startLevel="0" />
       <plugin id="de.lmu.ifi.dbs.knowing.core.swt" autoStart="true" startLevel="0" />
       <plugin id="de.lmu.ifi.dbs.knowing.core.swt.charts" autoStart="true" startLevel="0" />
+      <plugin id="de.lmu.ifi.dbs.knowing.weka" autoStart="true" startLevel="0" />
       <plugin id="de.sendsor.accelerationSensor" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />

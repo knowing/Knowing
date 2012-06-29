@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Knowing RCP Test Application
 Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.core.test;singleton:=true
 Bundle-Version: 0.1.4.qualifier
-Bundle-Activator: knowing.test.Activator
+Bundle-Activator: de.lmu.ifi.dbs.knowing.core.test.Activator
 Import-Package: akka;version="[2.0.0,3.0.0)",
  akka.actor;version="[2.0.0,3.0.0)",
  akka.dispatch;version="[2.0.0,3.0.0)",

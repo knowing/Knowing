@@ -9,7 +9,7 @@
             thread="main"
             visible="true">
          <run
-               class="knowing.test.Application">
+               class="de.lmu.ifi.dbs.knowing.core.test.Application">
          </run>
       </application>
    </extension>
@@ -27,7 +27,7 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            class="knowing.test.PerspectiveFactory"
+            class="de.lmu.ifi.dbs.knowing.core.test.PerspectiveFactory"
             id="knowing.test.perspective"
             name="Perspective">
       </perspective>

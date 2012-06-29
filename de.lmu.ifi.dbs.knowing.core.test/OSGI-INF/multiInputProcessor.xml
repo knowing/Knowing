@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="knowing.test">
-   <implementation class="knowing.test.processor.MultipleInputsProcessorFactory"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="de.lmu.ifi.dbs.knowing.core.test.processor.MulitpleInputsProcessor">
+   <implementation class="de.lmu.ifi.dbs.knowing.core.test.processor.MultipleInputsProcessorFactory"/>
    <service>
       <provide interface="de.lmu.ifi.dbs.knowing.core.factory.TFactory"/>
-      <provide interface="knowing.test.processor.MultipleInputsProcessorFactory"/>
+      <provide interface="de.lmu.ifi.dbs.knowing.core.test.processor.MultipleInputsProcessorFactory"/>
    </service>
+   <property name="knowing.factory.id" type="String" value="de.lmu.ifi.dbs.knowing.core.test.processor.MultipleInputsProcessorFactory"/>
+   <property name="knowing.factory.name" type="String" value="Multiple Inputs"/>
+   <property name="knowing.factory.class" type="String" value="de.lmu.ifi.dbs.knowing.core.test.processor.MultipleInputsProcessorFactory"/>
 </scr:component>

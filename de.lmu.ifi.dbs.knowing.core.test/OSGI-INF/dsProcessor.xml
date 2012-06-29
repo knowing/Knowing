@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" enabled="true" name="knowing.test.dsTestProcessor">
-   <implementation class="knowing.test.processor.DeclarativeProcessorFactory"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" enabled="true" name="de.lmu.ifi.dbs.knowing.core.test.dsTestProcessor">
+   <implementation class="de.lmu.ifi.dbs.knowing.core.test.processor.DeclarativeProcessorFactory"/>
    <service>
       <provide interface="de.lmu.ifi.dbs.knowing.core.factory.TFactory"/>
-      <provide interface="knowing.test.processor.DeclarativeProcessorFactory"/>
+      <provide interface="de.lmu.ifi.dbs.knowing.core.test.processor.DeclarativeProcessorFactory"/>
    </service>
+  <property name="knowing.factory.id" type="String" value="de.lmu.ifi.dbs.knowing.core.test.processor.DeclarativeProcessorFactory"/>
+   <property name="knowing.factory.name" type="String" value="Declarative  Processor"/>
+   <property name="knowing.factory.class" type="String" value="de.lmu.ifi.dbs.knowing.core.test.processor.DeclarativeProcessorFactory"/>
 </scr:component>
