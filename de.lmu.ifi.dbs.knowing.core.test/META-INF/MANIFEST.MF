@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Knowing RCP Test Application
-Bundle-SymbolicName: knowing.test;singleton:=true
-Bundle-Version: 0.1.2.qualifier
+Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.core.test;singleton:=true
+Bundle-Version: 0.1.4.qualifier
 Bundle-Activator: knowing.test.Activator
 Import-Package: akka;version="[2.0.0,3.0.0)",
  akka.actor;version="[2.0.0,3.0.0)",
@@ -69,7 +69,7 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.0",
  de.lmu.ifi.dbs.knowing.test;bundle-version="[0.1.3,1.0.0)",
  de.lmu.ifi.dbs.knowing.presenter;bundle-version="[0.1.3,1.0.0)",
  de.lmu.ifi.dbs.knowing.weka;bundle-version="[0.1.3,1.0.0)",
- nz.ac.waikato.cs.weka;bundle-version="3.7.5",
+ nz.ac.waikato.cs.weka;bundle-version="[3.7.5,4.0.0)",
  org.junit;bundle-version="4.8.2";resolution:=optional
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

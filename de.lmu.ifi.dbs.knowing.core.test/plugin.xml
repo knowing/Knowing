@@ -61,5 +61,17 @@
          </command>
       </menuContribution>
    </extension>
+   <extension
+         id="KnowingTestRCP"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="de.lmu.ifi.dbs.knowing.core.test.id1"
+            name="Knowing Test RCP">
+         <property
+               name="appName"
+               value="Knowing Test RCP">
+         </property>
+      </product>
+   </extension>
 
 </plugin>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Knowing Test RCP" application="knowing.test.id1" version="0.1.3" useFeatures="false" includeLaunchers="true">
+<product name="Knowing Test RCP" id="de.lmu.ifi.dbs.knowing.core.test.KnowingTestRCP" application="de.lmu.ifi.dbs.knowing.core.test.id1" version="0.1.4" useFeatures="false" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -16,18 +16,24 @@
       <plugin id="ch.qos.logback.classic"/>
       <plugin id="ch.qos.logback.core"/>
       <plugin id="com.ibm.icu"/>
+      <plugin id="com.typesafe.akka.actor"/>
+      <plugin id="com.typesafe.akka.slf4j"/>
+      <plugin id="com.typesafe.akka.testkit"/>
+      <plugin id="com.typesafe.config"/>
       <plugin id="de.lmu.ifi.dbs.knowing.core"/>
       <plugin id="de.lmu.ifi.dbs.knowing.core.common"/>
       <plugin id="de.lmu.ifi.dbs.knowing.core.logging" fragment="true"/>
       <plugin id="de.lmu.ifi.dbs.knowing.core.swt"/>
       <plugin id="de.lmu.ifi.dbs.knowing.core.swt.charts"/>
+      <plugin id="de.lmu.ifi.dbs.knowing.core.test"/>
       <plugin id="de.lmu.ifi.dbs.knowing.presenter"/>
       <plugin id="de.lmu.ifi.dbs.knowing.test"/>
+      <plugin id="de.lmu.ifi.dbs.knowing.weka"/>
       <plugin id="de.lmu.ifi.dbs.medmon.jfreechart.libs"/>
       <plugin id="de.lmu.ifi.dbs.medmon.sensor.core"/>
       <plugin id="de.sendsor.accelerationSensor"/>
       <plugin id="gov.nist.math.jama"/>
-      <plugin id="knowing.test"/>
+      <plugin id="joda-time"/>
       <plugin id="nz.ac.waikato.cs.weka"/>
       <plugin id="org.codehaus.aspectwerkz"/>
       <plugin id="org.eclipse.core.commands"/>
@@ -71,7 +77,6 @@
       <plugin id="org.eclipse.ui"/>
       <plugin id="org.eclipse.ui.workbench"/>
       <plugin id="org.eclipse.wst.common.uriresolver"/>
-      <plugin id="org.joda.time"/>
       <plugin id="org.objectweb.asm"/>
       <plugin id="org.scala-ide.scala.library"/>
       <plugin id="org.scalatest"/>
