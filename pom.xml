@@ -47,6 +47,12 @@
 			<artifactId>scala-library</artifactId>
 			<version>${scala.version}</version>
 		</dependency>
+		<dependency>
+            	<groupId>org.scalatest</groupId>
+           	<artifactId>scalatest_2.9.0</artifactId>
+          	<version>1.8</version>
+          	<scope>test</scope>
+     	</dependency>
 	</dependencies>
 
 <distributionManagement>
@@ -103,6 +109,20 @@
 					</excludeResources>
 				</configuration>
 			</plugin>
+
+			<!-- -->
+			<plugin>
+        			<groupId>org.eclipse.tycho</groupId>
+       			<artifactId>tycho-surefire-plugin</artifactId>
+        			<version>${tycho.version}</version>
+        			<configuration>
+          			<useUIHarness>false</useUIHarness>
+                    	<includes>
+                        		<include>**/*Test.class</include>
+                   		</includes>
+        			</configuration>
+      		</plugin>
+			<!-- -->
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>target-platform-configuration</artifactId>
@@ -156,5 +176,9 @@
 			<name>Scala-tools Maven2 Repository</name>
 			<url>http://scala-tools.org/repo-releases</url>
 		</pluginRepository>
+  		<pluginRepository>
+   			<id>tycho-snapshots</id>
+   			<url>https://oss.sonatype.org/content/groups/public/</url>
+  		</pluginRepository>
 	</pluginRepositories>
 </project>

@@ -8,5 +8,5 @@
     <version>0.1.4-SNAPSHOT</version>
   </parent>
   <artifactId>de.lmu.ifi.dbs.knowing.core.test</artifactId>
-  <packaging>eclipse-plugin</packaging>
+  <packaging>eclipse-test-plugin</packaging>
 </project>
