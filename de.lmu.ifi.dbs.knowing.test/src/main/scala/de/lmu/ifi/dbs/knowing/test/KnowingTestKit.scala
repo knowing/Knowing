@@ -11,6 +11,7 @@ import akka.actor.{ActorRef, ActorSystem, Props}
 import java.net.{ URI, URL }
 import weka.core.{ Attribute, Instances }
 import org.scalatest.matchers._
+import com.typesafe.config.ConfigFactory
 
 /**
  * Mixin with scalatest.org test to reduce boilerplate code.
@@ -41,6 +42,19 @@ trait KnowingTestKit extends EventMatchers {
     val url = getClass.getResource(name)
     loadDPU(url)
   }
+  
+   /**
+   * DPU is resolved relative to the test class location
+   *
+   * @param name - name of the DPU
+   * @param class
+   * @return dpu - copy of the original dpu
+   */
+  def loadDPU(name: String, clazz: Class[_]): IDataProcessingUnit = {
+    //TODO implement different search paths
+    val url = clazz.getResource(name)
+    loadDPU(url)
+  }
 
   /* ===================================== */
   /* ============ DPUExecutor  =========== */
@@ -52,7 +66,8 @@ trait KnowingTestKit extends EventMatchers {
     factoryDirectory: IFactoryDirectory,
     modelStore: IModelStore,
     resourceStore: IResourceStore): ActorRef = {
-    ActorSystem().actorOf(Props(new DPUExecutor(dpu, uiFactory, exePath, factoryDirectory, modelStore, resourceStore)))
+  	val system = ActorSystem("test", ConfigFactory.defaultReference(classOf[ActorSystem].getClassLoader))
+    system.actorOf(Props(new DPUExecutor(dpu, uiFactory, exePath, factoryDirectory, modelStore, resourceStore)))
   }
 
   /* ===================================== */

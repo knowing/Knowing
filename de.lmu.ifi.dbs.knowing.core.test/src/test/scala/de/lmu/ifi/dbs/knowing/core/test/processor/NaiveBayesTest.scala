@@ -1,4 +1,4 @@
-package knowing.test.processor
+package de.lmu.ifi.dbs.knowing.core.test.processor
 
 import akka.actor.ActorRef
 import org.scalatest.matchers.ShouldMatchers

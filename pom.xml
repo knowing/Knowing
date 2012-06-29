@@ -15,6 +15,7 @@
 	</properties>
   <modules>
     <module>de.lmu.ifi.dbs.knowing.core</module>
+    <module>de.lmu.ifi.dbs.knowing.core.test</module>
     <module>de.lmu.ifi.dbs.knowing.presenter</module>
     <module>de.lmu.ifi.dbs.knowing.core.common</module>
     <module>de.lmu.ifi.dbs.knowing.launcher</module>
@@ -31,7 +32,6 @@
     <module>de.lmu.ifi.dbs.knowing.debug.ui</module>
     <module>de.lmu.ifi.dbs.knowing.target</module>
     <module>de.lmu.ifi.dbs.knowing.test</module>
-    <module>knowing.test</module>
 	-->
 
      <module>de.lmu.ifi.dbs.knowing.core.feature</module>
@@ -49,7 +49,7 @@
 		</dependency>
 		<dependency>
             	<groupId>org.scalatest</groupId>
-           	<artifactId>scalatest_2.9.0</artifactId>
+           	<artifactId>scalatest_2.9.2</artifactId>
           	<version>1.8</version>
           	<scope>test</scope>
      	</dependency>
