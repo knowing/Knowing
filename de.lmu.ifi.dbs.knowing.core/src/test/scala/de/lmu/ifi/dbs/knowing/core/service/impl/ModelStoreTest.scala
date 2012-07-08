@@ -28,7 +28,7 @@ class ModelStoreTest extends FunSuite with ShouldMatchers with BeforeAndAfter {
     modelStore = new ModelStore
 
     testNode = INode.TYPE.instantiate()
-    property = testNode.getProperties.addNewElement
+    property = testNode.getProperties.insert
     property.setKey(INodeProperties.DESERIALIZE)
     property.setValue(testKey)
 

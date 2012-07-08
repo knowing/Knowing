@@ -22,9 +22,6 @@ import org.eclipse.sapphire.modeling.IExecutableModelElement;
 import org.eclipse.sapphire.modeling.ResourceStoreException;
 import org.eclipse.sapphire.modeling.xml.RootXmlResource;
 import org.eclipse.sapphire.modeling.xml.XmlResourceStore;
-import org.eclipse.sapphire.ui.SapphirePart.ImageChangedEvent;
-import org.eclipse.sapphire.ui.SapphirePartEvent;
-import org.eclipse.sapphire.ui.SapphirePartListener;
 import org.eclipse.sapphire.ui.SapphireWizardPagePart;
 import org.eclipse.sapphire.ui.SapphireWizardPart;
 import org.eclipse.sapphire.ui.def.ISapphireWizardDef;
@@ -55,7 +52,7 @@ public abstract class SapphireCreateWizard<M extends IExecutableModelElement> ex
 	private final M element;
 	private final ISapphireWizardDef definition;
 	private final SapphireWizardPart part;
-	private final SapphirePartListener listener;
+//	private final SapphirePartListener listener;
 
 	// Wizard specific
 	private IStructuredSelection selection;
@@ -74,7 +71,7 @@ public abstract class SapphireCreateWizard<M extends IExecutableModelElement> ex
 
 		setWindowTitle(this.part.getLabel());
 
-		listener = new SapphirePartListener() {
+/*		listener = new SapphirePartListener() {
 			@Override
 			public void handleEvent(final SapphirePartEvent event) {
 				if (event instanceof ImageChangedEvent) {
@@ -83,7 +80,7 @@ public abstract class SapphireCreateWizard<M extends IExecutableModelElement> ex
 			}
 		};
 
-		part.addListener(listener);
+		part.addListener(listener);*/
 		refreshImage();
 		setNeedsProgressMonitor(true);
 	}
@@ -112,7 +109,7 @@ public abstract class SapphireCreateWizard<M extends IExecutableModelElement> ex
 			final IFile file = createFilePage.createNewFile();
 			XmlResourceStore store = new XmlResourceStore(new WorkspaceFileResourceStore(file));
 			RootXmlResource resource = new RootXmlResource(store);
-			M newElement = element.getModelElementType().instantiate(resource);
+			M newElement = element.type().instantiate(resource);
 			copyContents(element, newElement);
 			store.save();
 			

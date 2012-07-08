@@ -135,14 +135,14 @@
 	</build>
 <repositories>
 		<repository>
-			<id>eclipse-indigo</id>
+			<id>eclipse-juno</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/indigo</url>
+			<url>http://download.eclipse.org/releases/juno</url>
 		</repository>
 		<repository>
 			<id>eclipse-sapphire</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/sapphire/0.4.1/repository</url>
+			<url>http://download.eclipse.org/sapphire/0.5.1/repository</url>
 		</repository>
 		<repository>
 			<id>eclipse-scala-ide</id>

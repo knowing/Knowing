@@ -187,7 +187,7 @@ object DPUUtil {
 		props.clear
 		properties.foreach {
 			case (key, value) =>
-				val property = props.addNewElement
+				val property = props.insert
 				property.setKey(key)
 				property.setValue(value)
 		}

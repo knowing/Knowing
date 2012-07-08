@@ -62,7 +62,6 @@ public class ProcessHistoryEditor extends SapphireEditor {
 		overviewPage = new MasterDetailsEditorPage(this, historyModel, path);
 		addPage(0, overviewPage);
 		setPageText(0, "overview");
-		setPageId(pages.get(1), "Overview", overviewPage.getPart());
 	}
 
 }

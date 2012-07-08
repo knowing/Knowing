@@ -50,7 +50,7 @@ class DPUBuilder {
 	 * Overrides nodes with equal id
 	 */
 	def addNode(node: INode): DPUBuilder = {
-		internalDPU.getNodes.addNewElement.copy(node)
+		internalDPU.getNodes.insert.copy(node)
 		this
 	}
 
@@ -58,7 +58,7 @@ class DPUBuilder {
 	 * Overrides nodes with equal id
 	 */
 	def addNode(id: String, factory: Class[_], typ: NodeType): DPUBuilder = {
-		val node = internalDPU.getNodes.addNewElement
+		val node = internalDPU.getNodes.insert
 		node.setId(id)
 		node.setFactoryId(factory.getName)
 		node.setType(typ)
@@ -69,12 +69,12 @@ class DPUBuilder {
 	 * Overrides nodes with equal id
 	 */
 	def addNode(id: String, factory: Class[_], typ: NodeType, properties: Properties): DPUBuilder = {
-		val node = internalDPU.getNodes.addNewElement
+		val node = internalDPU.getNodes.insert
 		node.setId(id)
 		node.setFactoryId(factory.getName)
 		node.setType(typ)
 		for (p <- properties) {
-			val property = node.getProperties.addNewElement()
+			val property = node.getProperties.insert()
 			property.setKey(p._1)
 			property.setValue(p._2)
 		}
@@ -85,7 +85,7 @@ class DPUBuilder {
 	 * overrides edges with equal id
 	 */
 	def addEdge(id: String, source: String, target: String): DPUBuilder = {
-		val edge = internalDPU.getEdges.addNewElement
+		val edge = internalDPU.getEdges.insert
 		edge.setId(id)
 		edge.setSource(source)
 		edge.setTarget(target)
@@ -96,7 +96,7 @@ class DPUBuilder {
 	 * overrides edges with equal id
 	 */
 	def addEdge(id: String, source: String, target: String, sourcePort: String, targetPort: String): DPUBuilder = {
-		val edge = internalDPU.getEdges.addNewElement
+		val edge = internalDPU.getEdges.insert
 		edge.setId(id)
 		edge.setSource(source)
 		edge.setSourcePort(sourcePort)
@@ -106,7 +106,7 @@ class DPUBuilder {
 	}
 
 	def addParameter(key: String, defaultValue: String): DPUBuilder = {
-		val p = internalDPU.getParameters.addNewElement
+		val p = internalDPU.getParameters.insert
 		p.setKey(key)
 		p.setValue(defaultValue)
 		this

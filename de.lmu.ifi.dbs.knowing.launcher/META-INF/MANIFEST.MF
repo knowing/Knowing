@@ -41,6 +41,4 @@ Import-Package: com.typesafe.config;version="[0.4.1,0.5.0)",
  scala.util.parsing.syntax;version="[2.9.0.1,2.9.4.0)",
  scala.util.regexp;version="[2.9.0.1,2.9.4.0)"
 Export-Package: de.lmu.ifi.dbs.knowing.launcher
-Require-Bundle: de.lmu.ifi.dbs.knowing.core;bundle-version="0.1.4",
- org.eclipse.sapphire.modeling;bundle-version="[0.4.1,0.5.0)",
- org.eclipse.sapphire.modeling.xml;bundle-version="[0.4.1,0.5.0)"
+Require-Bundle: de.lmu.ifi.dbs.knowing.core;bundle-version="0.1.4"
