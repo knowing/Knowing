@@ -2,37 +2,23 @@
 <feature
       id="de.lmu.ifi.dbs.knowing.swt.feature"
       label="Knowing SWT Feature"
-      version="0.1.5"
-      provider-name="LMU Munich - Database Systems Group"
-      license-feature="de.lmu.ifi.dbs.knowing.core.feature"
-      license-feature-version="0.1.4.qualifier">
+      version="0.1.5.qualifier"
+      provider-name="LMU Munich - Database Systems Group">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description url="">
+      %description
    </description>
 
    <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+      %copyright
    </copyright>
 
-   <license url="http://www.apache.org/licenses/">
-      Copyright [2011] [LMU Munich - Database Systems Group]
-
-   Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+   <license url="%licenseURL">
+      %license
    </license>
 
    <requires>
-      <import feature="de.lmu.ifi.dbs.knowing.core.feature" version="0.1.4.qualifier"/>
+      <import feature="de.lmu.ifi.dbs.knowing.core.feature" version="0.1.5.qualifier"/>
    </requires>
 
    <plugin

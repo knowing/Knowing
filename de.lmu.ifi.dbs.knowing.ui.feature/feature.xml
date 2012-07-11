@@ -2,63 +2,44 @@
 <feature
       id="de.lmu.ifi.dbs.knowing.ui.feature"
       label="Knowing IDE Feature"
-      version="0.1.5"
-      provider-name="LMU Munich - Database Systems Group"
-      license-feature="de.lmu.ifi.dbs.knowing.core.feature"
-      license-feature-version="0.1.4.qualifier">
+      version="0.1.5.qualifier"
+      provider-name="LMU Munich - Database Systems Group">
 
-   <description url="https://github.com/knowing/Knowing">
-      Provides an IDE for creating DataProcessingUnits (DPUs)
+   <description url="">
+      %description
    </description>
 
-   <copyright>
-      No Copyright notice.
+   <copyright url="http://www.example.com/copyright">
+      %copyright
    </copyright>
 
-   <license url="http://www.apache.org/licenses/">
-      Copyright [2011] [LMU Munich - Database Systems Group]
-
-   Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+   <license url="%licenseURL">
+      %license
    </license>
 
    <requires>
       <import plugin="org.eclipse.osgi" version="3.4.0" match="compatible"/>
       <import plugin="org.eclipse.ui" version="3.6.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.runtime" version="3.7.0" match="compatible"/>
-      <import plugin="org.eclipse.help" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.forms" version="3.5.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.ide" version="3.6.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jface.text" version="3.6.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.resources" version="3.7.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jdt.ui" version="3.6.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jdt.core" version="3.6.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.views.properties.tabbed" version="3.5.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.wst.sse.ui" version="1.2.3" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sapphire.ui" version="0.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sapphire.ui.swt.xml.editor" version="0.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sapphire.workspace" version="0.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sapphire.workspace.ui" version="0.5.0" match="greaterOrEqual"/>
-      <import feature="de.lmu.ifi.dbs.knowing.core.feature" version="0.1.4.qualifier"/>
-      <import feature="de.lmu.ifi.dbs.knowing.swt.feature" version="0.1.4.qualifier"/>
-      <import feature="org.eclipse.jdt" version="3.7.2.v20120120-1414-7z8gFcuFMP7BW5XTz0jLTnz0l9B1"/>
-      <import feature="org.eclipse.pde" version="3.7.2.v20120120-1420-7b7rFUOFEx2Xnqafnpz0E--0"/>
-      <import feature="de.lmu.ifi.dbs.knowing.weka.feature" version="0.1.4.qualifier"/>
-      <import plugin="org.eclipse.sapphire.java" version="0.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sapphire.java.jdt" version="0.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sapphire.java.jdt.ui" version="0.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sapphire.modeling" version="0.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sapphire.modeling.xml" version="0.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sapphire.ui.swt.gef"/>
+      <import feature="de.lmu.ifi.dbs.knowing.core.feature" version="0.1.5.qualifier"/>
+      <import feature="de.lmu.ifi.dbs.knowing.swt.feature" version="0.1.5.qualifier"/>
+      <import feature="org.eclipse.jdt" version="3.6.2" match="greaterOrEqual"/>
+      <import feature="org.eclipse.pde" version="3.6.2" match="greaterOrEqual"/>
+      <import feature="de.lmu.ifi.dbs.knowing.weka.feature" version="0.1.5.qualifier"/>
+      <import feature="org.eclipse.sapphire" version="0.5.0.201206122150"/>
+      <import feature="org.eclipse.sapphire.java" version="0.5.0.201206122150"/>
+      <import feature="org.eclipse.sapphire.java.jdt" version="0.5.0.201206122150"/>
+      <import feature="org.eclipse.sapphire.modeling.xml" version="0.5.0.201206122150"/>
+      <import feature="org.eclipse.sapphire.osgi" version="0.5.0.201206122150"/>
+      <import feature="org.eclipse.sapphire.platform" version="0.5.0.201206122150"/>
+      <import feature="org.eclipse.sapphire.ui" version="0.5.0.201206122150"/>
+      <import feature="org.eclipse.sapphire.ui.swt.gef" version="0.5.0.201206122150"/>
+      <import feature="org.eclipse.sapphire.ui.swt.xml.editor" version="0.5.0.201206122150"/>
    </requires>
 
    <plugin

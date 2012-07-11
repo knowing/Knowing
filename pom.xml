@@ -32,17 +32,19 @@
 		<module>de.lmu.ifi.dbs.knowing.core.swt.charts</module>
 		<module>de.lmu.ifi.dbs.knowing.weka</module>
 
-		<!-- <module>de.lmu.ifi.dbs.knowing.debug.core</module> 
-			<module>de.lmu.ifi.dbs.knowing.debug.launcher</module> 
-			<module>de.lmu.ifi.dbs.knowing.debug.presenter</module>
-			<module>de.lmu.ifi.dbs.knowing.debug.ui</module> 
-			<module>de.lmu.ifi.dbs.knowing.target</module>
-			<module>de.lmu.ifi.dbs.knowing.test</module> -->
+		<module>de.lmu.ifi.dbs.knowing.debug.core</module> 
+		<module>de.lmu.ifi.dbs.knowing.debug.launcher</module> 
+		<module>de.lmu.ifi.dbs.knowing.debug.presenter</module>
+		<module>de.lmu.ifi.dbs.knowing.debug.ui</module> 
+			<!-- <module>de.lmu.ifi.dbs.knowing.target</module> -->
+		
+		<module>de.lmu.ifi.dbs.knowing.test</module> 
 
 		<module>de.lmu.ifi.dbs.knowing.core.feature</module>
-		<!--	<module>de.lmu.ifi.dbs.knowing.swt.feature</module> 
-			<module>de.lmu.ifi.dbs.knowing.weka.feature</module> 
-			<module>de.lmu.ifi.dbs.knowing.ui.feature</module> -->
+		<module>de.lmu.ifi.dbs.knowing.swt.feature</module> 
+		<module>de.lmu.ifi.dbs.knowing.weka.feature</module>
+		<module>de.lmu.ifi.dbs.knowing.test.feature</module> 
+		<module>de.lmu.ifi.dbs.knowing.ui.feature</module>
 
 		<module>de.lmu.ifi.dbs.knowing.updatesite</module>
 	</modules>
@@ -191,6 +193,7 @@
           </extensions>
 	</build>
 	<repositories>
+		<!-- Eclipse repositories -->
 		<repository>
 			<id>eclipse-juno</id>
 			<layout>p2</layout>
@@ -211,11 +214,17 @@
 			<layout>p2</layout>
 			<url>http://download.eclipse.org/gemini/dbaccess/updates/1.0</url>
 		</repository>
+
+		<!-- Custom repositories -->
+		<!-- Provides Akka, Scalatest, Joda-Time, Joda-Convert, Weka -->
 		<repository>
-			<id>knowing-remote</id>
+			<id>knowing dependecies</id>
 			<layout>p2</layout>
-			<url>http://medmon.mukis.de/repository/build</url>
+			<url>http://repository.mukis.de/p2/dependencies</url>
 		</repository>
+		
+
+		<!-- Scala repositories -->
 		<repository>
 			<id>scala-tools.org</id>
 			<name>Scala-tools Maven2 Repository</name>
@@ -224,7 +233,13 @@
 		<repository>
 			<id>typesafe</id>
 			<name>Typesafe Repository</name>
-			<url>http://repo.typesafe.com/typesafe/releases/</url>
+			<url>http://repo.typesafe.com/typesafe/releases</url>
+		</repository>
+		<!-- Google repositories -->
+		<repository>
+			<id>google-guava</id>
+			<name>Typesafe Repository</name>
+			<url>http://guava-osgi.googlecode.com/svn/trunk/repository</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>

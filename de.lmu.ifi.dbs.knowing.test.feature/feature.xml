@@ -2,24 +2,19 @@
 <feature
       id="de.lmu.ifi.dbs.knowing.test.feature"
       label="Knowing Test Feature"
-      version="0.1.5"
-      provider-name="LMU Munich - Database Systems Group"
-      license-feature="de.lmu.ifi.dbs.knowing.core.feature"
-      license-feature-version="0.1.4.qualifier">
+      version="0.1.5.qualifier"
+      provider-name="LMU Munich - Database Systems Group">
 
-   <description url="http://www.example.com/description">
-      Adds testing features for Knowing including
-
-* scalatest.org
-* JUnit
+   <description url="">
+      %description
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+   <copyright url="">
+      %copyright
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license url="%licenseURL">
+      %license
    </license>
 
    <requires>
