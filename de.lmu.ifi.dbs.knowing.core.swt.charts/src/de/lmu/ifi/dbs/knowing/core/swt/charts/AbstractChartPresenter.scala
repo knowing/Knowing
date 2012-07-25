@@ -2,7 +2,7 @@ package de.lmu.ifi.dbs.knowing.core.swt.charts
 
 import java.util.{Date,Properties}
 import de.lmu.ifi.dbs.knowing.core.swt.SWTPresenter
-import de.lmu.ifi.dbs.knowing.core.swt.handler.SWTListener
+import de.lmu.ifi.dbs.knowing.core.swt.listener.SWTListener
 import de.lmu.ifi.dbs.knowing.core.swt.charts.handler.{ TChartHandler, ZoomChartHandler, ChartHandlerAdapter }
 import de.lmu.ifi.dbs.knowing.core.swt.charts.events._
 import org.jfree.data.general.Dataset

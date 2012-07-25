@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><feature id="de.lmu.ifi.dbs.knowing.core.swt.feature" label="Knowing Core SWT Feature" provider-name="LMU Munich - Database Systems Group" version="0.1.6.qualifier">
+
+   <description url="">
+      %description
+   </description>
+
+   <copyright url="">
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <plugin download-size="0" id="de.lmu.ifi.dbs.knowing.core.swt" install-size="0" unpack="false" version="0.0.0"/>
+
+   <plugin download-size="0" id="de.lmu.ifi.dbs.knowing.core.swt.charts" install-size="0" unpack="false" version="0.0.0"/>
+
+   <plugin download-size="0" id="de.lmu.ifi.dbs.medmon.jfreechart.libs" install-size="0" unpack="false" version="0.0.0"/>
+
+</feature>

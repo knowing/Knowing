@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.knowing.core.swt.handler
+package de.lmu.ifi.dbs.knowing.swt.handler
 
 import java.net.URI
 import org.eclipse.core.commands.AbstractHandler
@@ -11,9 +11,9 @@ import org.eclipse.ui.PlatformUI
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
 import de.lmu.ifi.dbs.knowing.core.processing.DPUExecutor
 import de.lmu.ifi.dbs.knowing.core.events._
-import de.lmu.ifi.dbs.knowing.core.swt.internal.Activator
-import de.lmu.ifi.dbs.knowing.core.swt.view.PresenterView
-import de.lmu.ifi.dbs.knowing.core.swt.wizard.SelectDPUWizard
+import de.lmu.ifi.dbs.knowing.swt.internal.Activator
+import de.lmu.ifi.dbs.knowing.swt.view.PresenterView
+import de.lmu.ifi.dbs.knowing.swt.wizard.SelectDPUWizard
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
 
 /**

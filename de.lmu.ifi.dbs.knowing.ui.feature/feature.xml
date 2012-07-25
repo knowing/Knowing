@@ -1,9 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<feature
-      id="de.lmu.ifi.dbs.knowing.ui.feature"
-      label="Knowing IDE Feature"
-      version="0.1.5.qualifier"
-      provider-name="LMU Munich - Database Systems Group">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><feature id="de.lmu.ifi.dbs.knowing.ui.feature" label="Knowing IDE Feature" provider-name="LMU Munich - Database Systems Group" version="0.1.6.qualifier">
 
    <description url="">
       %description
@@ -18,18 +13,18 @@
    </license>
 
    <requires>
-      <import plugin="org.eclipse.osgi" version="3.4.0" match="compatible"/>
-      <import plugin="org.eclipse.ui" version="3.6.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.forms" version="3.5.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.ide" version="3.6.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jdt.ui" version="3.6.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jdt.core" version="3.6.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.views.properties.tabbed" version="3.5.100" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.wst.sse.ui" version="1.2.3" match="greaterOrEqual"/>
+      <import match="compatible" plugin="org.eclipse.osgi" version="3.4.0"/>
+      <import match="greaterOrEqual" plugin="org.eclipse.ui" version="3.6.0"/>
+      <import match="greaterOrEqual" plugin="org.eclipse.ui.forms" version="3.5.2"/>
+      <import match="greaterOrEqual" plugin="org.eclipse.ui.ide" version="3.6.2"/>
+      <import match="greaterOrEqual" plugin="org.eclipse.jdt.ui" version="3.6.2"/>
+      <import match="greaterOrEqual" plugin="org.eclipse.jdt.core" version="3.6.2"/>
+      <import match="greaterOrEqual" plugin="org.eclipse.ui.views.properties.tabbed" version="3.5.100"/>
+      <import match="greaterOrEqual" plugin="org.eclipse.wst.sse.ui" version="1.2.3"/>
       <import feature="de.lmu.ifi.dbs.knowing.core.feature" version="0.1.5.qualifier"/>
       <import feature="de.lmu.ifi.dbs.knowing.swt.feature" version="0.1.5.qualifier"/>
-      <import feature="org.eclipse.jdt" version="3.6.2" match="greaterOrEqual"/>
-      <import feature="org.eclipse.pde" version="3.6.2" match="greaterOrEqual"/>
+      <import feature="org.eclipse.jdt" match="greaterOrEqual" version="3.6.2"/>
+      <import feature="org.eclipse.pde" match="greaterOrEqual" version="3.6.2"/>
       <import feature="de.lmu.ifi.dbs.knowing.weka.feature" version="0.1.5.qualifier"/>
       <import feature="org.eclipse.sapphire" version="0.5.0.201206122150"/>
       <import feature="org.eclipse.sapphire.java" version="0.5.0.201206122150"/>
@@ -42,39 +37,14 @@
       <import feature="org.eclipse.sapphire.ui.swt.xml.editor" version="0.5.0.201206122150"/>
    </requires>
 
-   <plugin
-         id="de.lmu.ifi.dbs.knowing.debug.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="de.lmu.ifi.dbs.knowing.debug.core" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="de.lmu.ifi.dbs.knowing.debug.launcher"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="de.lmu.ifi.dbs.knowing.debug.launcher" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="de.lmu.ifi.dbs.knowing.debug.presenter"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="de.lmu.ifi.dbs.knowing.debug.presenter" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="de.lmu.ifi.dbs.knowing.debug.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="de.lmu.ifi.dbs.knowing.debug.ui" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="de.lmu.ifi.dbs.knowing.launcher"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="de.lmu.ifi.dbs.knowing.launcher" install-size="0" unpack="false" version="0.0.0"/>
 
 </feature>

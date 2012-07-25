@@ -71,11 +71,13 @@ public class InstanceContentProvider implements IStructuredContentProvider {
 	 * @param additional - the set which should be addded to original
 	 * @return original if additional is null or headers are not equal
 	 */
+	@SuppressWarnings("unchecked")
 	private Instances merge(Instances original, Instances additional) {
 		if (original == null || additional == null)
 			return (original == null) ? additional : original;
 		if(!original.equalHeaders(additional))
 			return original;
+		
 		ArrayList<Instance> instances = Collections.list(additional.enumerateInstances());
 		for (Instance instance : instances) 
 			original.add(instance);

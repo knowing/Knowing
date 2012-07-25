@@ -3,15 +3,13 @@ package de.lmu.ifi.dbs.knowing.core.swt.dialog
 import org.eclipse.jface.dialogs.{ MessageDialog, Dialog }
 import org.eclipse.swt.graphics.Point
 import org.eclipse.swt.layout.FillLayout
-import org.eclipse.swt.widgets.{ Table, Shell, Control, Composite }
+import org.eclipse.swt.widgets.{ Table, TableColumn, ProgressBar, TableItem, Shell, Control, Composite }
 import org.eclipse.swt.SWT
-import org.eclipse.swt.widgets.TableColumn
-import org.eclipse.swt.widgets.ProgressBar
-import de.lmu.ifi.dbs.knowing.core.events._
+import org.eclipse.swt.custom.TableEditor
 import scala.collection.mutable.Map
 import akka.actor.{ ActorContext, ActorRef, ActorPath }
-import org.eclipse.swt.widgets.TableItem
-import org.eclipse.swt.custom.TableEditor
+import de.lmu.ifi.dbs.knowing.core.events._
+
 
 class ProgressDialog(shell: Shell, var disposed: Boolean = false) extends Dialog(shell) {
 

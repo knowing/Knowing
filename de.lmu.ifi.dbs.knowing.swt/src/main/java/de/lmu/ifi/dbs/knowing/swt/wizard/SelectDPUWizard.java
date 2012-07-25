@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.knowing.core.swt.wizard;
+package de.lmu.ifi.dbs.knowing.swt.wizard;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -12,15 +12,12 @@ import org.eclipse.sapphire.modeling.ResourceStoreException;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
-import com.typesafe.config.Config;
-
 import akka.actor.ActorSystem;
 import de.lmu.ifi.dbs.knowing.core.exceptions.KnowingException;
 import de.lmu.ifi.dbs.knowing.core.exceptions.ValidationException;
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit;
-import de.lmu.ifi.dbs.knowing.core.service.EvaluationProperties;
-import de.lmu.ifi.dbs.knowing.core.swt.internal.Activator;
-import de.lmu.ifi.dbs.knowing.core.swt.view.PresenterView;
+import de.lmu.ifi.dbs.knowing.swt.view.PresenterView;
+import de.lmu.ifi.dbs.knowing.swt.internal.Activator;
 
 public class SelectDPUWizard extends Wizard {
 

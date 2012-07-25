@@ -5,7 +5,7 @@ import org.eclipse.swt.SWT
 import org.eclipse.swt.widgets.{ Display, Control, Composite, Label, Listener }
 import weka.core.Instances
 import de.lmu.ifi.dbs.knowing.core.processing.TPresenter
-import de.lmu.ifi.dbs.knowing.core.swt.handler.SWTListener
+import de.lmu.ifi.dbs.knowing.core.swt.listener.SWTListener
 import scala.collection.mutable.ArrayBuffer
 
 /**

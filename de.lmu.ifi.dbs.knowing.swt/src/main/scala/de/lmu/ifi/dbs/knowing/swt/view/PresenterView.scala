@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.knowing.core.swt.view
+package de.lmu.ifi.dbs.knowing.swt.view
 
 import akka.actor.{ ActorRef, Actor, TypedActor }
 import org.eclipse.swt.SWT
@@ -11,7 +11,7 @@ import de.lmu.ifi.dbs.knowing.core.swt.factory.UIFactories.{ newTabUIFactoryInst
 import de.lmu.ifi.dbs.knowing.core.factory.UIFactory
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.model._
-import de.lmu.ifi.dbs.knowing.core.swt.internal.Activator
+import de.lmu.ifi.dbs.knowing.swt.internal.Activator
 import org.osgi.framework.ServiceRegistration
 import com.typesafe.config.ConfigFactory
 import akka.actor.ActorSystem

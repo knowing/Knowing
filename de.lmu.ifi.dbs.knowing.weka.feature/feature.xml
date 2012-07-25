@@ -1,9 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<feature
-      id="de.lmu.ifi.dbs.knowing.weka.feature"
-      label="Knowing WEKA Feature"
-      version="0.1.5.qualifier"
-      provider-name="LMU Munich - Database Systems Group">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><feature id="de.lmu.ifi.dbs.knowing.weka.feature" label="Knowing WEKA Feature" provider-name="LMU Munich - Database Systems Group" version="0.1.6.qualifier">
 
    <description url="">
       %description
@@ -21,11 +16,6 @@
       <import feature="de.lmu.ifi.dbs.knowing.core.feature" version="0.1.5.qualifier"/>
    </requires>
 
-   <plugin
-         id="de.lmu.ifi.dbs.knowing.weka"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="de.lmu.ifi.dbs.knowing.weka" install-size="0" unpack="false" version="0.0.0"/>
 
 </feature>

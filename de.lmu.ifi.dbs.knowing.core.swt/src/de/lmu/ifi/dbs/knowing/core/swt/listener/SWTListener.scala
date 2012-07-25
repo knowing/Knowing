@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.knowing.core.swt.handler
+package de.lmu.ifi.dbs.knowing.core.swt.listener
 
 import de.lmu.ifi.dbs.knowing.core.events.UIEvent
 import org.eclipse.swt.widgets.Listener

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="de.lmu.ifi.dbs.medmon.medic.ui.medmon"
+            class="de.lmu.ifi.dbs.knowing.swt.view.PresenterView"
+            icon="icons/monitor_16.png"
+            id="de.lmu.ifi.dbs.knowing.swt.presenterView"
+            name="Presenter"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.lmu.ifi.dbs.knowing.swt.handler.EvaluateHandler"
+            id="de.lmu.ifi.dbs.knowing.swt.EvaluateDPU"
+            name="Evaluate DPU">
+      </command>
+      <command
+            defaultHandler="de.lmu.ifi.dbs.knowing.swt.handler.FactoryDirectoryHandler"
+            id="de.lmu.ifi.dbs.knowing.swt.SelectFactory"
+            name="Show factories">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.lmu.ifi.dbs.knowing.core.swt.presenterView">
+         <command
+               commandId="de.lmu.ifi.dbs.knowing.swt.EvaluateDPU"
+               icon="icons/dpu_16.png"
+               label="Evaluate"
+               mode="FORCE_TEXT"
+               style="push">
+         </command>
+         <command
+               commandId="de.lmu.ifi.dbs.knowing.swt.SelectFactory"
+               label="Show factories"
+               mode="FORCE_TEXT"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+</plugin>

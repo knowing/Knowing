@@ -1,8 +1,8 @@
-package de.lmu.ifi.dbs.knowing.core.swt.handler
+package de.lmu.ifi.dbs.knowing.swt.handler
 
 import org.eclipse.core.commands.AbstractHandler
 import org.eclipse.core.commands.ExecutionEvent
-import de.lmu.ifi.dbs.knowing.core.swt.internal.Activator.directoryService
+import de.lmu.ifi.dbs.knowing.swt.internal.Activator.directoryService
 import org.eclipse.ui.dialogs.ElementListSelectionDialog
 import org.eclipse.ui.handlers.HandlerUtil
 import org.eclipse.jface.viewers.LabelProvider

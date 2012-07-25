@@ -1,4 +1,4 @@
-package de.lmu.ifi.dbs.knowing.core.swt.wizard;
+package de.lmu.ifi.dbs.knowing.swt.wizard;
 
 import java.io.File;
 import java.net.URI;
@@ -22,7 +22,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
@@ -33,8 +32,8 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 import akka.actor.ActorSystem;
 import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit;
-import de.lmu.ifi.dbs.knowing.core.swt.internal.Activator;
 import de.lmu.ifi.dbs.knowing.core.util.OSGIUtil;
+import de.lmu.ifi.dbs.knowing.swt.internal.Activator;
 
 public class SelectDPUPage extends WizardPage {
 	

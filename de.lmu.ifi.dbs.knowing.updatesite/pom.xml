@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>de.lmu.ifi.dbs.knowing</groupId>
 		<artifactId>Knowing</artifactId>
-		<version>0.1.5-SNAPSHOT</version>
+    		<version>0.1.6-SNAPSHOT</version>
 	</parent>
 	<artifactId>de.lmu.ifi.dbs.knowing.updatesite</artifactId>
 	<packaging>eclipse-repository</packaging>

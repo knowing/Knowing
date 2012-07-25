@@ -5,11 +5,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.lmu.ifi.dbs.knowing</groupId>
 	<artifactId>Knowing</artifactId>
-	<version>0.1.5-SNAPSHOT</version>
+	<version>0.1.6-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<properties>
-		<tycho.version>0.15.0</tycho.version>
-		<tycho-extras.version>0.15.0</tycho-extras.version>
+		<tycho.version>0.16.0-SNAPSHOT</tycho.version>
+		<tycho-extras.version>0.16.0-SNAPSHOT</tycho-extras.version>
 		<scala.version>2.9.2</scala.version>
 		<wagon.version>1.0-beta-6</wagon.version>
 		<maven.compiler.source>1.7</maven.compiler.source>
@@ -32,6 +32,8 @@
 		<module>de.lmu.ifi.dbs.knowing.core.swt.charts</module>
 		<module>de.lmu.ifi.dbs.knowing.weka</module>
 
+		<module>de.lmu.ifi.dbs.knowing.swt</module>
+
 		<module>de.lmu.ifi.dbs.knowing.debug.core</module> 
 		<module>de.lmu.ifi.dbs.knowing.debug.launcher</module> 
 		<module>de.lmu.ifi.dbs.knowing.debug.presenter</module>
@@ -41,6 +43,7 @@
 		<module>de.lmu.ifi.dbs.knowing.test</module> 
 
 		<module>de.lmu.ifi.dbs.knowing.core.feature</module>
+		<module>de.lmu.ifi.dbs.knowing.core.swt.feature</module>
 		<module>de.lmu.ifi.dbs.knowing.swt.feature</module> 
 		<module>de.lmu.ifi.dbs.knowing.weka.feature</module>
 		<module>de.lmu.ifi.dbs.knowing.test.feature</module> 
@@ -125,6 +128,7 @@
 			</plugin>
 
 			<!-- Reproducible Build Version -->
+			<!-- 
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-packaging-plugin</artifactId>
@@ -157,7 +161,7 @@
 					</baselineRepositories>
 				</configuration>
 			</plugin>
-
+			-->
 			<!-- -->
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
