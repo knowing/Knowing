@@ -14,17 +14,16 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Bundle-Name: Knowing Core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: org.eclipse.sapphire.sdk;bundle-version="0.5.0";resolu
- tion:="optional",org.eclipse.core.runtime;bundle-version="3.7.0";reso
- lution:="optional",nz.ac.waikato.cs.weka;bundle-version="3.7.5";visib
- ility:="reexport",org.eclipse.sapphire.ui;bundle-version="0.5.0";reso
- lution:="optional",org.eclipse.sapphire.modeling;bundle-version="0.5.
- 0";visibility:="reexport",org.eclipse.sapphire.sdk.build.processor;bu
- ndle-version="0.5.0";resolution:="optional",org.eclipse.sapphire.java
- ;bundle-version="0.5.0";visibility:="reexport",org.eclipse.sapphire.m
- odeling.xml;bundle-version="0.5.0";visibility:="reexport",org.junit;b
- undle-version="4.8.2";resolution:="optional",org.scalatest;bundle-ver
- sion="[1.7.0,2.0.0)";resolution:="optional"
+Require-Bundle: nz.ac.waikato.cs.weka;bundle-version="3.7.5";visibility:=reexport,
+ org.eclipse.sapphire.modeling;bundle-version="0.5.0";visibility:=reexport,
+ org.eclipse.sapphire.java;bundle-version="0.5.0";visibility:=reexport,
+ org.eclipse.sapphire.modeling.xml;bundle-version="0.5.0";visibility:=reexport,
+ org.eclipse.core.runtime;bundle-version="3.7.0";resolution:=optional,
+ org.eclipse.sapphire.sdk;bundle-version="0.5.0";resolution:=optional,
+ org.eclipse.sapphire.sdk.build.processor;bundle-version="0.5.0";resolution:=optional,
+ org.eclipse.sapphire.ui;bundle-version="0.5.0";resolution:=optional,
+ org.junit;bundle-version="4.8.2";resolution:=optional,
+ org.scalatest;bundle-version="[1.7.0,2.0.0)";resolution:=optional
 Bundle-Vendor: LMU Munich - Database Systems Group
 Bundle-Version: 0.1.6.qualifier
 Bundle-ManifestVersion: 2
