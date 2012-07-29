@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Knowing IDE" id="org.eclipse.platform.ide" application="org.eclipse.ui.ide.workbench" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="Knowing IDE" uid="Knowing IDE" id="org.eclipse.platform.ide" application="org.eclipse.ui.ide.workbench" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="eclipse_lg.gif"/>
@@ -418,6 +418,15 @@
       <plugin id="osgi.enterprise"/>
       <plugin id="slf4j.api"/>
    </plugins>
+
+   <features>
+      <feature id="de.lmu.ifi.dbs.knowing.core.feature" version="0.1.6.qualifier"/>
+      <feature id="de.lmu.ifi.dbs.knowing.core.swt.feature" version="0.1.6.qualifier"/>
+      <feature id="de.lmu.ifi.dbs.knowing.swt.feature" version="0.1.6.qualifier"/>
+      <feature id="de.lmu.ifi.dbs.knowing.test.feature" version="0.1.6.qualifier"/>
+      <feature id="de.lmu.ifi.dbs.knowing.ui.feature" version="0.1.6.qualifier"/>
+      <feature id="de.lmu.ifi.dbs.knowing.weka.feature" version="0.1.6.qualifier"/>
+   </features>
 
    <configurations>
       <plugin id="de.lmu.ifi.dbs.knowing.core.swt" autoStart="false" startLevel="4" />

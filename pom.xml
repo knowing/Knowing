@@ -15,14 +15,11 @@
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<encoding>UTF-8</encoding>
-		
-		<!-- <build.qualifier>RELEASE</build.qualifier> -->
-		<!-- <forceContextQualifier>RELEASE</forceContextQualifier>  -->
 	</properties>
 
 	<modules>
 		<module>de.lmu.ifi.dbs.knowing.core</module>
-		<!-- <module>de.lmu.ifi.dbs.knowing.core.test</module> -->
+		<module>de.lmu.ifi.dbs.knowing.core.test</module>
 		<module>de.lmu.ifi.dbs.knowing.presenter</module>
 		<module>de.lmu.ifi.dbs.knowing.core.common</module>
 		<module>de.lmu.ifi.dbs.knowing.launcher</module>
@@ -52,18 +49,38 @@
 		<module>de.lmu.ifi.dbs.knowing.updatesite</module>
 	</modules>
 
+	<!-- Currently not considered -->
 	<dependencies>
 		<dependency>
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala-library</artifactId>
 			<version>${scala.version}</version>
 		</dependency>
+
+		<!-- OSGi ready-->
 		<dependency>
 			<groupId>org.scalatest</groupId>
 			<artifactId>scalatest_2.9.2</artifactId>
 			<version>1.8</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- OSGi ready-->
+		<!-- 
+		<dependency>
+ 			<groupId>com.typesafe.akka</groupId>
+			<artifactId>akka-actor</artifactId>
+			<version>2.1-SNAPSHOT</version>
+		</dependency>
+		-->
+		<!-- OSGi ready-->
+		<!-- 
+		<dependency>
+			<groupId>com.typesafe</groupId>
+			<artifactId>config</artifactId>
+			<version>0.4.1</version> 
+		</dependency>
+		--><!-- 0.5.0 available!-->
 	</dependencies>
 
 	<distributionManagement>
@@ -128,7 +145,6 @@
 			</plugin>
 
 			<!-- Reproducible Build Version -->
-			<!-- 
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-packaging-plugin</artifactId>
@@ -145,23 +161,13 @@
 				<configuration>
 					<archiveSite>true</archiveSite>
 					<timestampProvider>jgit</timestampProvider>
-					<jgit.ignore>pom.xml</jgit.ignore>
+					<jgit.ignore>
+						pom.xml
+						.gitignore
+					</jgit.ignore>
+					<format>'v'yyyyMMdd-HHmm</format>
 				</configuration>
 			</plugin>
-			
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-p2-plugin</artifactId>
-				<version>${tycho.version}</version>
-				<configuration>
-					<baselineRepositories>
-						<repository>
-							<url>https://github.com/Knowing/Knowing</url>
-						</repository>
-					</baselineRepositories>
-				</configuration>
-			</plugin>
-			-->
 			<!-- -->
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
@@ -181,6 +187,7 @@
 				<version>${tycho.version}</version>
 				<configuration>
 					<resolver>p2</resolver>
+					<!-- <pomDependencies>consider</pomDependencies> -->
 				</configuration>
 			</plugin>
 		</plugins>
@@ -207,11 +214,6 @@
 			<url>http://download.eclipse.org/sapphire/0.5.1/repository</url>
 		</repository>
 		<repository>
-			<id>eclipse-scala-ide</id>
-			<layout>p2</layout>
-			<url>http://download.scala-ide.org/releases-29/milestone/site</url>
-		</repository>
-		<repository>
 			<id>eclipse-gemini-dbaccess</id>
 			<layout>p2</layout>
 			<url>http://download.eclipse.org/gemini/dbaccess/updates/1.0</url>
@@ -222,21 +224,38 @@
 		<repository>
 			<id>knowing dependecies</id>
 			<layout>p2</layout>
-			<url>http://repository.mukis.de/p2/dependencies</url>
+			<url>http://repository.mukis.de/p2/knowing-dependencies</url>
+		</repository>
+		<repository>
+			<id>joda</id>
+			<layout>p2</layout>
+			<url>http://repository.mukis.de/p2/joda</url>
+		</repository>
+		<repository>
+			<id>weka</id>
+			<layout>p2</layout>
+			<url>http://repository.mukis.de/p2/weka/3.7.6</url>
 		</repository>
 		
 
-		<!-- Scala repositories -->
+		<!-- Typesafe repositories -->
 		<repository>
 			<id>scala-tools.org</id>
 			<name>Scala-tools Maven2 Repository</name>
-			<url>http://scala-tools.org/repo-releases</url>
+			<url>https://oss.sonatype.org/content/groups/scala-tools</url>
 		</repository>
 		<repository>
 			<id>typesafe</id>
 			<name>Typesafe Repository</name>
 			<url>http://repo.typesafe.com/typesafe/releases</url>
 		</repository>
+		<repository>
+			<id>eclipse-scala-ide</id>
+			<layout>p2</layout>
+			<!--<url>http://download.scala-ide.org/nightly-update-juno-master-29x</url> -->
+			<url>http://download.scala-ide.org/releases-29/milestone/site</url>
+		</repository>
+
 		<!-- Google repositories -->
 		<repository>
 			<id>google-guava</id>
@@ -248,7 +267,7 @@
 		<pluginRepository>
 			<id>scala-tools.org</id>
 			<name>Scala-tools Maven2 Repository</name>
-			<url>http://scala-tools.org/repo-releases</url>
+			<url>https://oss.sonatype.org/content/groups/scala-tools</url>
 		</pluginRepository>
 		<pluginRepository>
 			<id>tycho-snapshots</id>
