@@ -8,8 +8,8 @@
 	<version>0.1.6-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<properties>
-		<tycho.version>0.16.0-SNAPSHOT</tycho.version>
-		<tycho-extras.version>0.16.0-SNAPSHOT</tycho-extras.version>
+		<tycho.version>0.15.0</tycho.version>
+		<tycho-extras.version>0.15.0</tycho-extras.version>
 		<scala.version>2.9.2</scala.version>
 		<wagon.version>1.0-beta-6</wagon.version>
 		<maven.compiler.source>1.7</maven.compiler.source>
@@ -145,6 +145,7 @@
 			</plugin>
 
 			<!-- Reproducible Build Version -->
+			<!-- 
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-packaging-plugin</artifactId>
@@ -168,6 +169,7 @@
 					<format>'v'yyyyMMdd-HHmm</format>
 				</configuration>
 			</plugin>
+			-->
 			<!-- -->
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
@@ -187,9 +189,55 @@
 				<version>${tycho.version}</version>
 				<configuration>
 					<resolver>p2</resolver>
-					<!-- <pomDependencies>consider</pomDependencies> -->
+					<pomDependencies>consider</pomDependencies>
+					<environments>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>x86</arch>
+						</environment>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>x86_64</arch>
+						</environment>
+						<environment>
+							<os>win32</os>
+							<ws>win32</ws>
+							<arch>x86</arch>
+						</environment>
+						<environment>
+							<os>win32</os>
+							<ws>win32</ws>
+							<arch>x86_64</arch>
+						</environment>
+						<environment>
+							<os>macosx</os>
+							<ws>cocoa</ws>
+							<arch>x86_64</arch>
+						</environment>
+					</environments>
 				</configuration>
 			</plugin>
+   			<plugin>
+      			<groupId>org.eclipse.tycho</groupId>
+      			<artifactId>tycho-p2-director-plugin</artifactId>
+      			<version>${tycho.version}</version>
+      			<executions>
+        				<execution>
+          				<id>materialize-products</id>
+          				<goals>
+            					<goal>materialize-products</goal>
+          				</goals>
+       					</execution>
+        				<execution>
+          				<id>archive-products</id>
+          				<goals>
+            					<goal>archive-products</goal>
+          				</goals>
+        				</execution>
+      			</executions>
+    			</plugin>
 		</plugins>
 
     <!-- Enabling the use of FTP -->

@@ -9,11 +9,11 @@
  ** http://www.dbs.ifi.lmu.de/                                   **
 \*                                                               */
 package de.lmu.ifi.dbs.knowing.debug.ui.launching
-
-import java.util.{List => JList, ArrayList}
+import java.util.{List => JList}
 import scala.collection.JavaConversions._
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy
 import de.lmu.ifi.dbs.knowing.launcher.LaunchConfiguration
+import java.util.{List => JList}
 
 /**
  * 
