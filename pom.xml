@@ -47,6 +47,9 @@
 		<module>de.lmu.ifi.dbs.knowing.ui.feature</module>
 
 		<module>de.lmu.ifi.dbs.knowing.updatesite</module>
+
+		<module>de.lmu.ifi.dbs.knowing.ide.feature</module>
+		<module>de.lmu.ifi.dbs.knowing.ide.updatesite</module>
 	</modules>
 
 	<!-- Currently not considered -->

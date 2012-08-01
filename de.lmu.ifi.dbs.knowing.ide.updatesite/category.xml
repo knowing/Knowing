@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
    <feature url="features/de.lmu.ifi.dbs.knowing.core.feature_0.1.6.qualifier.jar" id="de.lmu.ifi.dbs.knowing.core.feature" version="0.1.6.qualifier">
-      <category name="de.lmu.ifi.dbs.knowing"/>
+      <category name="de.lmu.ifi.dbs.knowing.ide"/>
+   </feature>
+   <feature url="features/de.lmu.ifi.dbs.knowing.ide.feature_0.1.6.qualifier.jar" id="de.lmu.ifi.dbs.knowing.ide.feature" version="0.1.6.qualifier">
+      <category name="de.lmu.ifi.dbs.knowing.ide"/>
    </feature>
    <feature url="features/de.lmu.ifi.dbs.knowing.swt.feature_0.1.6.qualifier.jar" id="de.lmu.ifi.dbs.knowing.swt.feature" version="0.1.6.qualifier">
-      <category name="de.lmu.ifi.dbs.knowing"/>
+      <category name="de.lmu.ifi.dbs.knowing.ide"/>
    </feature>
    <feature url="features/de.lmu.ifi.dbs.knowing.test.feature_0.1.6.qualifier.jar" id="de.lmu.ifi.dbs.knowing.test.feature" version="0.1.6.qualifier">
-      <category name="de.lmu.ifi.dbs.knowing"/>
+      <category name="de.lmu.ifi.dbs.knowing.ide"/>
    </feature>
    <feature url="features/de.lmu.ifi.dbs.knowing.ui.feature_0.1.6.qualifier.jar" id="de.lmu.ifi.dbs.knowing.ui.feature" version="0.1.6.qualifier">
-      <category name="de.lmu.ifi.dbs.knowing"/>
+      <category name="de.lmu.ifi.dbs.knowing.ide"/>
    </feature>
    <feature url="features/de.lmu.ifi.dbs.knowing.weka.feature_0.1.6.qualifier.jar" id="de.lmu.ifi.dbs.knowing.weka.feature" version="0.1.6.qualifier">
-      <category name="de.lmu.ifi.dbs.knowing"/>
+      <category name="de.lmu.ifi.dbs.knowing.ide"/>
    </feature>
-   <category-def name="de.lmu.ifi.dbs.knowing" label="Knowing"/>
+   <category-def name="de.lmu.ifi.dbs.knowing.ide" label="Knowing IDE"/>
 </site>
