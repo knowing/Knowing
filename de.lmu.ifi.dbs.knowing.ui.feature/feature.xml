@@ -18,7 +18,8 @@
    </license>
 
    <requires>
-      <import feature="de.lmu.ifi.dbs.knowing.ide.feature" version="0.1.6.qualifier"/>
+      <import feature="de.lmu.ifi.dbs.knowing.core.feature" version="0.1.6.qualifier"/>
+      <import feature="de.lmu.ifi.dbs.knowing.core.swt.feature" version="0.1.6.qualifier"/>
    </requires>
 
    <plugin
