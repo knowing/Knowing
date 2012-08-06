@@ -287,7 +287,11 @@
 			<layout>p2</layout>
 			<url>http://repository.mukis.de/p2/weka/3.7.6</url>
 		</repository>
-		
+		<repository>
+			<id>jfreechart</id>
+			<layout>p2</layout>
+			<url>http://repository.mukis.de/p2/jfreechart</url>
+		</repository>
 
 		<!-- Typesafe repositories -->
 		<repository>
