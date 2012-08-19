@@ -21,9 +21,9 @@ import de.lmu.ifi.dbs.knowing.core.processing.TProcessor.guessAndSetClassLabel
  *
  * <p>Format for given input classes = (A,B,C)
  *
- * classA | classB | classC
- * 0.3    | 0.3    | 0.4
- * 0.1    | 0.8    | 0.1
+ * classA | classB | classC | class
+ * 0.3    | 0.3    | 0.4    | C
+ * 0.1    | 0.8    | 0.1    | B
  *
  * </p>
  * <p>Example:
