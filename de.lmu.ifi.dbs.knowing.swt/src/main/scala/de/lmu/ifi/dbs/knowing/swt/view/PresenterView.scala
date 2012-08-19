@@ -55,7 +55,7 @@ class PresenterView extends ViewPart {
 }
 
 object PresenterView {
-	val ID = "de.lmu.ifi.dbs.knowing.core.swt.presenterView"
+	val ID = "de.lmu.ifi.dbs.knowing.swt.presenterView"
 	val ACTOR_SYSTEM_NAME = "swt-local"
 		
 	private var uifactory: UIFactory[Composite] = _

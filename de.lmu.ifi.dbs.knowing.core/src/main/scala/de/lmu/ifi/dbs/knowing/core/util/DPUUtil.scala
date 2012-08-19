@@ -57,6 +57,22 @@ object DPUUtil {
 
 	@throws(classOf[KnowingException])
 	def applyProperties(dpu: IDataProcessingUnit, properties: Properties): IDataProcessingUnit = {
+	  
+		val props = (dpu.getParameters, properties) match {
+		  case (null, _) => return dpu
+		  case (params, null) if params.isEmpty => return dpu
+		  case (params, null) if params.nonEmpty => new Properties
+		  case (params, props) if params.isEmpty && props.isEmpty => return dpu
+		  
+		  //Parameters must be defined to use them
+		  case (params, props) if params.isEmpty && props.nonEmpty => throw new KnowingException("No parameters defined in dpu.")
+		  case (params, props) if props.nonEmpty =>  
+		    if(dpu.getNodes.isEmpty) throw new KnowingException("No nodes defined in dpu to be configured with " + properties)
+		    else properties
+		
+		  case (_,_) => properties
+		}
+		/*
 		if (dpu.getParameters.isEmpty && (properties == null || properties.isEmpty))
 			return dpu
 		if (dpu.getNodes.isEmpty && properties.isEmpty)
@@ -67,6 +83,7 @@ object DPUUtil {
 			throw new KnowingException("No parameters defined in dpu.")
 		if (dpu.getNodes.isEmpty && !properties.isEmpty)
 			throw new KnowingException("No nodes defined in dpu to be configured with " + properties)
+			*/
 
 		val returns = copy(dpu)
 		val parameters = returns.getParameters
@@ -101,7 +118,7 @@ object DPUUtil {
 					throw new KnowingException("Parameter [" + key + "] unused.")
 				}
 			}
-			applyProperty(property, parameter, properties)
+			applyProperty(property, parameter, props)
 		}
 		returns
 	}

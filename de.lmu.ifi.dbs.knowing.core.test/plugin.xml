@@ -37,7 +37,7 @@
       <perspectiveExtension
             targetID="*">
          <view
-               id="de.lmu.ifi.dbs.knowing.core.swt.presenterView"
+               id="de.lmu.ifi.dbs.knowing.swt.presenterView"
                minimized="false"
                relationship="top"
                relative="org.eclipse.ui.editorss">
