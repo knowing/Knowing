@@ -7,14 +7,25 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-consoleLog -console -clean</programArgs>
+      <programArgs>-consoleLog -console</programArgs>
       <vmArgs>-Dosgi.requiredJavaVersion=1.5 -XX:MaxPermSize=256m -Xms40m -Xmx512m</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
+   <launcher>
+      <solaris/>
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
+   <vm>
+   </vm>
+
    <plugins>
       <plugin id="ch.qos.logback.classic"/>
       <plugin id="ch.qos.logback.core"/>
+      <plugin id="ch.qos.logback.slf4j" fragment="true"/>
       <plugin id="com.ibm.icu"/>
       <plugin id="com.typesafe.akka.actor"/>
       <plugin id="com.typesafe.akka.slf4j"/>
@@ -27,15 +38,15 @@
       <plugin id="de.lmu.ifi.dbs.knowing.core.swt.charts"/>
       <plugin id="de.lmu.ifi.dbs.knowing.core.test"/>
       <plugin id="de.lmu.ifi.dbs.knowing.presenter"/>
+      <plugin id="de.lmu.ifi.dbs.knowing.swt"/>
       <plugin id="de.lmu.ifi.dbs.knowing.test"/>
       <plugin id="de.lmu.ifi.dbs.knowing.weka"/>
-      <plugin id="de.lmu.ifi.dbs.medmon.jfreechart.libs"/>
       <plugin id="de.lmu.ifi.dbs.medmon.sensor.core"/>
       <plugin id="de.sendsor.accelerationSensor"/>
       <plugin id="gov.nist.math.jama"/>
+      <plugin id="joda-convert"/>
       <plugin id="joda-time"/>
       <plugin id="nz.ac.waikato.cs.weka"/>
-      <plugin id="org.codehaus.aspectwerkz"/>
       <plugin id="org.eclipse.core.commands"/>
       <plugin id="org.eclipse.core.contenttype"/>
       <plugin id="org.eclipse.core.databinding"/>
@@ -63,24 +74,25 @@
       <plugin id="org.eclipse.jface.text"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.services"/>
+      <plugin id="org.eclipse.platform"/>
       <plugin id="org.eclipse.sapphire.java"/>
-      <plugin id="org.eclipse.sapphire.java.jdt"/>
       <plugin id="org.eclipse.sapphire.modeling"/>
       <plugin id="org.eclipse.sapphire.modeling.xml"/>
       <plugin id="org.eclipse.sapphire.osgi"/>
       <plugin id="org.eclipse.sapphire.osgi.fragment" fragment="true"/>
-      <plugin id="org.eclipse.sapphire.platform"/>
       <plugin id="org.eclipse.sapphire.workspace"/>
       <plugin id="org.eclipse.swt"/>
       <plugin id="org.eclipse.swt.gtk.linux.x86_64" fragment="true"/>
       <plugin id="org.eclipse.text"/>
       <plugin id="org.eclipse.ui"/>
+      <plugin id="org.eclipse.ui.forms"/>
+      <plugin id="org.eclipse.ui.intro"/>
       <plugin id="org.eclipse.ui.workbench"/>
       <plugin id="org.eclipse.wst.common.uriresolver"/>
       <plugin id="org.objectweb.asm"/>
       <plugin id="org.scala-ide.scala.library"/>
       <plugin id="org.scalatest"/>
-      <plugin id="slf4j.api"/>
+      <plugin id="org.slf4j.api"/>
    </plugins>
 
    <configurations>
