@@ -20,6 +20,7 @@ class Activator extends BundleActivator {
 		osgi.registerPresenter(new PieChartPresenterFactory)
 		osgi.registerPresenter(new TimeIntervalClassPresenterFactory)
 		osgi.registerPresenter(new TimeSeriesPresenterFactory)
+		osgi.registerPresenter(new AreaChartPresenterFactory)
 	}
 
 	def stop(context: BundleContext) = {

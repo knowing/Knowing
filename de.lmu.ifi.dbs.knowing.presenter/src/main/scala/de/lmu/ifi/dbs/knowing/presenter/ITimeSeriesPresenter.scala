@@ -46,6 +46,7 @@ trait ITimeSeriesPresenter[T] extends TPresenter[T] {
         appendInstances(content, instances)
     }
 
+    //Add data points to the chart
     val dateAttr = instances.attribute(ATTRIBUTE_TIMESTAMP)
 
     for (i <- 0 until instances.numInstances) {

@@ -3,7 +3,6 @@ package de.lmu.ifi.dbs.knowing.core.swt.charts
 import java.util.{ Properties, Date }
 import java.awt.BasicStroke
 import scala.collection.mutable.Map
-import akka.actor.ActorRef
 import org.eclipse.swt.widgets.{ Composite, Listener }
 import org.jfree.chart.{ JFreeChart, ChartFactory }
 import org.jfree.data.xy.XYDataset
@@ -24,6 +23,7 @@ import weka.core.{ Instances, Instance, Attribute }
 class TimeSeriesPresenter extends AbstractChartPresenter("Time Series Presenter") with ITimeSeriesPresenter[Composite] {
 
   private val series = Map[String, TimeSeries]()
+  
 
   /* ========================== */
   /* == Dataset manipulation == */
@@ -34,8 +34,12 @@ class TimeSeriesPresenter extends AbstractChartPresenter("Time Series Presenter"
    */
   def buildSeries(series: Array[Attribute]) {
     series foreach { attribute =>
-      val s = new TimeSeries(name) //Create TimeSeries with META_ATTRIBUTE_NAME value
-      this.series += (attribute.name -> s) //Store internally with real name
+      //Create TimeSeries with META_ATTRIBUTE_NAME value
+      val name = attribute.getMetadata.getProperty(attribute.name, attribute.name)
+      val s = new TimeSeries(name) 
+      
+      //Store internally with real name
+      this.series += (attribute.name -> s) 
       dataset.asInstanceOf[TimeSeriesCollection].addSeries(s)
       log.debug("Added attribute in TimeSeries: " + attribute.name)
     }
@@ -45,12 +49,13 @@ class TimeSeriesPresenter extends AbstractChartPresenter("Time Series Presenter"
    *
    */
   def addPoint(date: Date, values: Array[Double]) {
-    //Add value to every corresponing TimeSeries
+    //Add value to every corresponding TimeSeries
     var index = 0
     series foreach {
       case (name, s) =>
         val value = values(index)
-        s.add(new Millisecond(date), value)
+        //TODO Make time step configurable
+        s.add(new Second(date), value)
         index += 1
     }
   }
