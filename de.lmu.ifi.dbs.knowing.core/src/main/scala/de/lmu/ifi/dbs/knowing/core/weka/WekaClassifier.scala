@@ -16,7 +16,7 @@ import scala.collection.JavaConversions._
 import de.lmu.ifi.dbs.knowing.core.factory.{TFactory,ProcessorFactory}
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
-import de.lmu.ifi.dbs.knowing.core.processing.{ TClassifier, TClassPropertyResolver, INodeProperties }
+import de.lmu.ifi.dbs.knowing.core.processing.{ TClassifier, TClassPropertyResolver, INodeProperties, ExecutionContext }
 import de.lmu.ifi.dbs.knowing.core.japi.ILoggableProcessor
 import de.lmu.ifi.dbs.knowing.core.results.ClassDistributionResultsBuilder
 import akka.actor.{ Props, ActorRef, ActorSystem, ActorContext }
@@ -81,9 +81,9 @@ class WekaClassifierFactory[T <: WekaClassifier, S <: Classifier](wrapper: Class
 	override val name: String = clazz.getSimpleName
 	override val id: String = clazz.getName
 
-	override def getInstance(factory: TFactory.ActorFactory): ActorRef = {
+	override def getInstance(context: ExecutionContext, factory: TFactory.ActorFactory): ActorRef = {
 		classOf[ILoggableProcessor].isAssignableFrom(clazz) match {
-			case false => factory.actorOf(Props(wrapper.newInstance))
+			case false => factory.actorOf(Props(wrapper.newInstance), context.name)
 			case true =>
 				factory.actorOf(Props {
 					val w = wrapper.newInstance

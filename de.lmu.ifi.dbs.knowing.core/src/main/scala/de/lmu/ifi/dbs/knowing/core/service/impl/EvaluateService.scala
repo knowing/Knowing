@@ -144,8 +144,13 @@ class EvaluateService extends IEvaluateService {
 		}
 
 		val executor = system match {
-			case null => ui.getSystem.actorOf(Props(new DPUExecutor(exeDPU, ui, execPath, factoryDirectory, modelStore, resourceStore, io._1, io._2)))
-			case _ => system.actorOf(Props(new DPUExecutor(exeDPU, ui, execPath, factoryDirectory, modelStore, resourceStore, io._1, io._2)))
+			case null => 
+			  ui.getSystem.actorOf(Props(
+			      new DPUExecutor(exeDPU, ui, execPath, factoryDirectory, modelStore, resourceStore, io._1, io._2)),
+			      dpu.getName.getContent.replaceAll(" ", "_") + "-" + System.nanoTime)
+			case _ => system.actorOf(Props(
+			      new DPUExecutor(exeDPU, ui, execPath, factoryDirectory, modelStore, resourceStore, io._1, io._2)),
+			      dpu.getName.getContent.replaceAll(" ", "_") + "-" + System.nanoTime)
 		}
 
 		executor ! Start()

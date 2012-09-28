@@ -1,3 +1,13 @@
+/*                                                              *\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|  **
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---, **
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|  **
+**                                                              **
+** Knowing Framework                                            **
+** Apache License - http://www.apache.org/licenses/             **
+** LMU Munich - Database Systems Group                          **
+** http://www.dbs.ifi.lmu.de/                                   **
+\*                                                              */
 package de.lmu.ifi.dbs.knowing.core.weka
 
 import weka.core.{ Attribute, Instances }
@@ -8,6 +18,7 @@ import de.lmu.ifi.dbs.knowing.core.weka.WekaArffLoader._
 import de.lmu.ifi.dbs.knowing.core.factory.{ TFactory, ProcessorFactory }
 import akka.actor.{ ActorContext, ActorSystem, ActorRef, Props }
 import ExtendedWekaArffLoader._
+import de.lmu.ifi.dbs.knowing.core.processing.ExecutionContext
 
 class ExtendedWekaArffLoader extends WekaArffLoader {
 
@@ -113,7 +124,9 @@ class ExtendedWekaArffLoaderFactory extends WekaArffLoaderFactory {
 	override val name: String = ExtendedWekaArffLoaderFactory.name
 	override val id: String = ExtendedWekaArffLoaderFactory.id
 
-	override def getInstance(factory: TFactory.ActorFactory): ActorRef = factory.actorOf(Props(new ExtendedWekaArffLoader))
+	override def getInstance(context: ExecutionContext, factory: TFactory.ActorFactory): ActorRef = {
+	  factory.actorOf(Props(new ExtendedWekaArffLoader), context.name)
+	}
 
 	override def createDefaultProperties: Properties = {
 		val returns = super.createDefaultProperties

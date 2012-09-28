@@ -154,7 +154,7 @@ class DPUExecutor(dpu: IDataProcessingUnit,
 			factory match {
 				case Some(f) =>
 					//Create actor
-					val actor = f.getInstance(context)
+					val actor = f.getInstance(RootExecutionContext(dpu, node),context)
 					context.watch(actor)
 //					actor.setDispatcher(self.dispatcher)
 					//Check for special nodes(presenter,loader,saver) and init

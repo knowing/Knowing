@@ -1,27 +1,28 @@
-/*																*\
-** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
-** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
-** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
-** 																**
-** Knowing Framework											**
-** Apache License - http://www.apache.org/licenses/				**
-** LMU Munich - Database Systems Group							**
-** http://www.dbs.ifi.lmu.de/									**
-\*																*/
+/*                                                              *\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|  **
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---, **
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|  **
+**                                                              **
+** Knowing Framework                                            **
+** Apache License - http://www.apache.org/licenses/             **
+** LMU Munich - Database Systems Group                          **
+** http://www.dbs.ifi.lmu.de/                                   **
+\*                                                              */
 package de.lmu.ifi.dbs.knowing.core.validation
 
 import akka.actor.{ Props, ActorSystem, ActorRef, ActorContext }
 import de.lmu.ifi.dbs.knowing.core.events._
-import de.lmu.ifi.dbs.knowing.core.processing.TProcessor
+import de.lmu.ifi.dbs.knowing.core.processing._
 import de.lmu.ifi.dbs.knowing.core.processing.IProcessorPorts.{ TRAIN, TEST }
 import de.lmu.ifi.dbs.knowing.core.factory.TFactory
+import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
 import de.lmu.ifi.dbs.knowing.core.util.OSGIUtil.getFactoryDirectory
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import java.util.Properties
 import weka.core.{ Attribute, Instance, Instances }
 import scala.collection.mutable.{ Map => MutableMap }
 import java.util.ArrayList
-import de.lmu.ifi.dbs.knowing.core.service.IFactoryDirectory
+
 
 /**
  * Single CrossValidation step
@@ -83,12 +84,12 @@ class CrossValidator(val factoryDirectory: Option[IFactoryDirectory]) extends TP
 			filterFactory match {
 				case null => filterTrained = true
 				case f =>
-					filter = Some(filterFactory.getInstance(context)) //TODO test if link is correct
+					filter = Some(filterFactory.getInstance(SubExecutionContext(filterFactory.name),context)) //TODO test if link is correct
 					filter.get ! Configure(classifierProperties)
 			}
 
 			//Init classifier
-			classifier = Some(classifierFactory.getInstance(context)) //TODO test if link is correct
+			classifier = Some(classifierFactory.getInstance(SubExecutionContext(classifierFactory.name),context)) //TODO test if link is correct
 			classifier.get ! Configure(classifierProperties)
 
 			//Start with filter or directly the classifier
@@ -266,9 +267,11 @@ class CrossValidatorFactory(factoryDirectory: Option[IFactoryDirectory] = None) 
 	val name: String = CrossValidatorFactory.name
 	val id: String = CrossValidatorFactory.id
 
-	def getInstance(): ActorRef = ActorSystem().actorOf(Props(new CrossValidator(factoryDirectory)))
+	def getInstance(context: ExecutionContext): ActorRef = getInstance(context, ActorSystem())
 
-	def getInstance(factory: TFactory.ActorFactory): ActorRef = factory.actorOf(Props(new CrossValidator(factoryDirectory)))
+	def getInstance(context: ExecutionContext, factory: TFactory.ActorFactory): ActorRef = {
+	  factory.actorOf(Props(new CrossValidator(factoryDirectory)), context.name)
+	}
 
 	def createDefaultProperties: Properties = {
 		val props = new Properties();

@@ -1,13 +1,13 @@
-/*																*\
-** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
-** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
-** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
-** 																**
-** Knowing Framework											**
-** Apache License - http://www.apache.org/licenses/				**
-** LMU Munich - Database Systems Group							**
-** http://www.dbs.ifi.lmu.de/									**
-\*																*/
+/*                                                              *\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|  **
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---, **
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|  **
+**                                                              **
+** Knowing Framework                                            **
+** Apache License - http://www.apache.org/licenses/             **
+** LMU Munich - Database Systems Group                          **
+** http://www.dbs.ifi.lmu.de/                                   **
+\*                                                              */
 package de.lmu.ifi.dbs.knowing.core.weka
 
 import java.util.Properties
@@ -18,6 +18,7 @@ import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties
 import de.lmu.ifi.dbs.knowing.core.processing.TFilter
 import de.lmu.ifi.dbs.knowing.core.japi.ILoggableProcessor
 import akka.actor.{ ActorSystem, ActorContext, ActorRef, UntypedActorFactory, Props }
+import de.lmu.ifi.dbs.knowing.core.processing.ExecutionContext
 
 /**
  * Wraps the WEKA Filter class.
@@ -63,9 +64,9 @@ class WekaFilterFactory[T <: WekaFilter, S <: Filter](wrapper: Class[T], clazz: 
 	override val name: String = clazz.getSimpleName
 	override val id: String = clazz.getName
 
-	override def getInstance(factory: TFactory.ActorFactory): ActorRef = {
+	override def getInstance(context: ExecutionContext, factory: TFactory.ActorFactory): ActorRef = {
 		classOf[ILoggableProcessor].isAssignableFrom(clazz) match {
-			case false => factory.actorOf(Props(wrapper.newInstance))
+			case false => factory.actorOf(Props(wrapper.newInstance), context.name)
 			case true =>
 				factory.actorOf(Props {
 					val w = wrapper.newInstance

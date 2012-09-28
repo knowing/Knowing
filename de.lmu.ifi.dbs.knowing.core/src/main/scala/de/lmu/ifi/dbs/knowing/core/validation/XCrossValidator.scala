@@ -1,13 +1,13 @@
-/*																*\
-** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|	**
-** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---,	**
-** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|	**
-** 																**
-** Knowing Framework											**
-** Apache License - http://www.apache.org/licenses/				**
-** LMU Munich - Database Systems Group							**
-** http://www.dbs.ifi.lmu.de/									**
-\*																*/
+/*                                                              *\
+** |¯¯|/¯¯/|¯¯ \|¯¯| /¯¯/\¯¯\'|¯¯|  |¯¯||¯¯||¯¯ \|¯¯| /¯¯/|__|  **
+** | '| '( | '|\  '||  |  | '|| '|/\| '|| '|| '|\  '||  | ,---, **
+** |__|\__\|__|'|__| \__\/__/'|__,/\'__||__||__|'|__| \__\/__|  **
+**                                                              **
+** Knowing Framework                                            **
+** Apache License - http://www.apache.org/licenses/             **
+** LMU Munich - Database Systems Group                          **
+** http://www.dbs.ifi.lmu.de/                                   **
+\*                                                              */
 package de.lmu.ifi.dbs.knowing.core.validation
 
 import akka.actor.{ ActorSystem, ActorRef, ActorContext, Props }
@@ -20,6 +20,8 @@ import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.exceptions._
 import java.util.Properties
 import weka.core.{ Instance, Instances, Attribute }
+import de.lmu.ifi.dbs.knowing.core.processing.SubExecutionContext
+import de.lmu.ifi.dbs.knowing.core.processing.ExecutionContext
 
 /**
  * Performs a crossvalidation on the given input.
@@ -102,7 +104,9 @@ class XCrossValidator(val factoryDirectory: Option[IFactoryDirectory] = None) ex
 
 	}
 
-	protected def initCrossValidators(folds: Int) = for (i <- 0 until folds; val actor = factory.getInstance(context)) yield actor
+	protected def initCrossValidators(folds: Int) = {
+	  for (i <- 0 until folds; val actor = factory.getInstance(SubExecutionContext(factory.name + i), context)) yield actor
+	}
 
 	protected def startCrossValidation(crossValidators: IndexedSeq[ActorRef], instances: Instances) {
 		for (j <- 0 until folds) {
@@ -164,9 +168,11 @@ class XCrossValidator(val factoryDirectory: Option[IFactoryDirectory] = None) ex
  */
 class XCrossValidatorFactory(val factoryDirectory: Option[IFactoryDirectory] = None) extends ProcessorFactory(classOf[XCrossValidator]) {
 
-	override def getInstance(): ActorRef = ActorSystem().actorOf(Props(new XCrossValidator(factoryDirectory)))
+	override def getInstance(context: ExecutionContext): ActorRef = getInstance(context, ActorSystem())
 
-	override def getInstance(factory: TFactory.ActorFactory): ActorRef = factory.actorOf(Props(new XCrossValidator(factoryDirectory)))
+	override def getInstance(context: ExecutionContext, factory: TFactory.ActorFactory): ActorRef = {
+	  factory.actorOf(Props(new XCrossValidator(factoryDirectory)), context.name)
+	}
 
 	override def createDefaultProperties: Properties = {
 		val props = new Properties();
