@@ -21,18 +21,18 @@ import java.util.ArrayList
  */
 trait ResultsType {
 
-	/** Relation name. */
-	val name: String
+  /** Relation name. */
+  val name: String
 
-	/**
-	 *
-	 */
-	def newInstances(): Instances
+  /**
+   *
+   */
+  def newInstances(): Instances
 
-	/**
-	 * delegating to newInstances()
-	 */
-	def apply(): Instances = newInstances
+  /**
+   * delegating to newInstances()
+   */
+  def apply(): Instances = newInstances
 
 }
 
@@ -41,23 +41,25 @@ trait ResultsType {
  */
 object ResultsType {
 
-	/* ========================= */
-	/* === Default Attributes == */
-	/* ========================= */
+  /* ========================= */
+  /* === Default Attributes == */
+  /* ========================= */
 
-	val ATTRIBUTE_CLASS = "class"
-	val ATTRIBUTE_CLASS_PREFIX = "class"
-	val ATTRIBUTE_CLASS_DISTRIBUTION = "class_distribution"
-	val ATTRIBUTE_PROBABILITY = "probability"
-	val ATTRIBUTE_TIMESTAMP = "timestamp"
-	val ATTRIBUTE_VALUE = "y"
-	val ATTRIBUTE_VALUE_PREFIX = "y"
-	val ATTRIBUTE_FROM = "from"
-	val ATTRIBUTE_TO = "to"
-	val ATTRIBUTE_SOURCE = "source"
+  val ATTRIBUTE_CLASS = "class"
+  val ATTRIBUTE_CLASS_PREFIX = "class"
+  val ATTRIBUTE_CLASS_DISTRIBUTION = "class_distribution"
+  val ATTRIBUTE_PROBABILITY = "probability"
+  val ATTRIBUTE_TIMESTAMP = "timestamp"
+  val ATTRIBUTE_VALUE = "y"
+  val ATTRIBUTE_VALUE_PREFIX = "y"
+  val ATTRIBUTE_FROM = "from"
+  val ATTRIBUTE_TO = "to"
+  val ATTRIBUTE_SOURCE = "source"
 
-	val META_ATTRIBUTE_NAME = "name"
+  val META_ATTRIBUTE_NAME = "name"
 
-	val DATETIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss:SSS"
+  val DATETIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss:SSS"
+
+  val UNCLASSIFIED_LABEL = "unclassified"
 
 }

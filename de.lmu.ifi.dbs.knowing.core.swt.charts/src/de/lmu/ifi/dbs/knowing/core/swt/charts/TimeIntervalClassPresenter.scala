@@ -13,6 +13,8 @@ import org.jfree.data.xy.{ IntervalXYDataset, XYIntervalSeriesCollection, XYInte
 import de.lmu.ifi.dbs.knowing.core.util.ResultsUtil
 import de.lmu.ifi.dbs.knowing.presenter.{PresenterFactory,ITimeIntervalClassPresenter}
 import weka.core.{ Instance, Instances }
+import weka.core.Utils
+import de.lmu.ifi.dbs.knowing.core.results.ResultsType
 
 /**
  * @author Nepomuk Seiler
@@ -65,7 +67,13 @@ class TimeIntervalClassPresenter extends AbstractChartPresenter("Time Interval C
       labels = clazz :: labels
       dataset.asInstanceOf[XYIntervalSeriesCollection].addSeries(s)
     }
-
+    
+    //Add unclassified interval
+    labels = ResultsType.UNCLASSIFIED_LABEL :: labels
+    val s = new XYIntervalSeries(ResultsType.UNCLASSIFIED_LABEL)
+    series += (ResultsType.UNCLASSIFIED_LABEL -> (s, index))
+    dataset.asInstanceOf[XYIntervalSeriesCollection].addSeries(s)
+    
     //Update DomainAxis with labels
     val xyplot = plot.asInstanceOf[XYPlot]
     val xAxisLabel = xyplot.getDomainAxis().getLabel

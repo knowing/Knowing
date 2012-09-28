@@ -7,6 +7,7 @@ import de.lmu.ifi.dbs.knowing.core.results.TimeIntervalResults
 import de.lmu.ifi.dbs.knowing.core.results.TimeIntervalResults._
 import weka.core.{ Attribute, Instances }
 import weka.core.Attribute.{ NUMERIC, NOMINAL, DATE, RELATIONAL }
+import de.lmu.ifi.dbs.knowing.core.results.ResultsType
 
 /**
  * Provides a Presenter for the
@@ -59,7 +60,10 @@ trait ITimeIntervalClassPresenter[T] extends TPresenter[T] {
 
     for (i <- 0 until instances.numInstances) {
       val inst = instances.get(i)
-      val clazz = classAttr.value(inst.classValue.toInt)
+      val clazz = inst.isMissing(classAttr) match {
+        case true => ResultsType.UNCLASSIFIED_LABEL
+        case false => classAttr.value(inst.classValue.toInt)
+      }
       val from = new Date(inst.value(fromAttr).toLong)
       val to = new Date(inst.value(toAttr).toLong)
       addInterval(clazz, from, to)
@@ -103,4 +107,11 @@ object ITimeIntervalClassPresenter {
    * @see newInstances(classes, datePattern)
    */
   def newInstances(classes: JList[String], datePattern: String): Instances = TimeIntervalResults.newInstances(classes, datePattern)
+  
+  /* ========== apply methoids =========== */
+  
+  def apply(classes: List[String], datePattern: String) = newInstances(classes, datePattern)
+  def apply(classes: List[String]) = newInstances(classes)
+  def apply(classes: JList[String], datePattern: String) = newInstances(classes, datePattern)
+  def apply(classes: JList[String]) = newInstances(classes)
 }
