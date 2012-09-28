@@ -2,7 +2,7 @@
 <feature
       id="de.lmu.ifi.dbs.knowing.test.feature"
       label="Knowing Test Feature"
-      version="0.1.6.qualifier"
+      version="0.1.7.qualifier"
       provider-name="LMU Munich - Database Systems Group">
 
    <description url="">

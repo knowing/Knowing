@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Export-Package: de.lmu.ifi.dbs.knowing.launcher
 Require-Bundle: de.lmu.ifi.dbs.knowing.core;bundle-version="0.1.4"
 Bundle-ActivationPolicy: lazy
-Bundle-Version: 0.1.6.qualifier
+Bundle-Version: 0.1.7.qualifier
 Bundle-Name: Knowing Launcher
 Bundle-ManifestVersion: 2
 Bundle-Activator: de.lmu.ifi.dbs.knowing.launcher.internal.Activator

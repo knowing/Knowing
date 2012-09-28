@@ -25,7 +25,7 @@ Require-Bundle: nz.ac.waikato.cs.weka;bundle-version="3.7.5";visibility:=reexpor
  org.junit;bundle-version="4.8.2";resolution:=optional,
  org.scalatest;bundle-version="[1.7.0,2.0.0)";resolution:=optional
 Bundle-Vendor: LMU Munich - Database Systems Group
-Bundle-Version: 0.1.6.qualifier
+Bundle-Version: 0.1.7.qualifier
 Bundle-ManifestVersion: 2
 Bundle-Activator: de.lmu.ifi.dbs.knowing.core.internal.Activator
 Import-Package: akka;version="[2.0.0,3.0.0)",

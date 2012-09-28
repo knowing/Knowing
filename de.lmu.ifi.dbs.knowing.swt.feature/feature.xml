@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><feature id="de.lmu.ifi.dbs.knowing.swt.feature" label="Knowing SWT Feature" provider-name="LMU Munich - Database Systems Group" version="0.1.6.qualifier">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><feature id="de.lmu.ifi.dbs.knowing.swt.feature" label="Knowing SWT Feature" provider-name="LMU Munich - Database Systems Group" version="0.1.7.qualifier">
 
    <description url="">
       %description

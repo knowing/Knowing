@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.debug.core;bundle-version="3.7.0",org.ecli
  0.0)"
 Export-Package: de.lmu.ifi.dbs.knowing.debug.core.launching
 Bundle-ActivationPolicy: lazy
-Bundle-Version: 0.1.6.qualifier
+Bundle-Version: 0.1.7.qualifier
 Bundle-Name: Knowing Debug Core
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.debug.core;singleton:=true

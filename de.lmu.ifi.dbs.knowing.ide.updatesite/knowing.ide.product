@@ -420,12 +420,12 @@
    </plugins>
 
    <features>
-      <feature id="de.lmu.ifi.dbs.knowing.core.feature" version="0.1.6.qualifier"/>
-      <feature id="de.lmu.ifi.dbs.knowing.core.swt.feature" version="0.1.6.qualifier"/>
-      <feature id="de.lmu.ifi.dbs.knowing.swt.feature" version="0.1.6.qualifier"/>
-      <feature id="de.lmu.ifi.dbs.knowing.test.feature" version="0.1.6.qualifier"/>
-      <feature id="de.lmu.ifi.dbs.knowing.ui.feature" version="0.1.6.qualifier"/>
-      <feature id="de.lmu.ifi.dbs.knowing.weka.feature" version="0.1.6.qualifier"/>
+      <feature id="de.lmu.ifi.dbs.knowing.core.feature" version="0.1.7.qualifier"/>
+      <feature id="de.lmu.ifi.dbs.knowing.core.swt.feature" version="0.1.7.qualifier"/>
+      <feature id="de.lmu.ifi.dbs.knowing.swt.feature" version="0.1.7.qualifier"/>
+      <feature id="de.lmu.ifi.dbs.knowing.test.feature" version="0.1.7.qualifier"/>
+      <feature id="de.lmu.ifi.dbs.knowing.ui.feature" version="0.1.7.qualifier"/>
+      <feature id="de.lmu.ifi.dbs.knowing.weka.feature" version="0.1.7.qualifier"/>
    </features>
 
    <configurations>

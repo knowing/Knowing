@@ -4,7 +4,7 @@ Require-Bundle: de.lmu.ifi.dbs.knowing.presenter;bundle-version="[0.1.
  .3,1.0.0)",de.lmu.ifi.dbs.knowing.core;bundle-version="[0.1.3,1.0.0)"
  ,de.lmu.ifi.dbs.knowing.launcher;bundle-version="[0.1.3,1.0.0)"
 Bundle-ActivationPolicy: lazy
-Bundle-Version: 0.1.6.qualifier
+Bundle-Version: 0.1.7.qualifier
 Bundle-Name: Knowing Debug Launcher
 Bundle-ManifestVersion: 2
 Bundle-Activator: de.lmu.ifi.dbs.knowing.debug.launcher.Activator

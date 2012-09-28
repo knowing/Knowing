@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.lmu.ifi.dbs.knowing</groupId>
 	<artifactId>Knowing</artifactId>
-	<version>0.1.6-SNAPSHOT</version>
+	<version>0.1.7-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<properties>
 		<tycho.version>0.15.0</tycho.version>

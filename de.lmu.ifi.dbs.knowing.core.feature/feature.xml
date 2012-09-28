@@ -2,7 +2,7 @@
 <feature
       id="de.lmu.ifi.dbs.knowing.core.feature"
       label="Knowing Core Feature"
-      version="0.1.6.qualifier">
+      version="0.1.7.qualifier">
 
    <description url="">
       %description

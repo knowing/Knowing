@@ -2,7 +2,7 @@
 <feature
       id="de.lmu.ifi.dbs.knowing.ide.feature"
       label="Knowing IDE Feature "
-      version="0.1.6.qualifier"
+      version="0.1.7.qualifier"
       provider-name="LMU Munich - Database Systems Group">
 
    <description url="">
