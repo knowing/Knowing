@@ -18,6 +18,7 @@ class Activator extends BundleActivator {
      osgiUtil.registerProcessor(new AddClassAttributeFactory)
      osgiUtil.registerSaver(new InstancesSaverFactory)
      osgiUtil.registerLoader(new InstancesLoaderFactory)
+     osgiUtil.registerProcessor(new UncertainClassDumperFactory)
   }
 
   def stop(context: BundleContext) = {
