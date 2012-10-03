@@ -22,7 +22,7 @@ import java.nio.file.Paths
 /**
  * To launch an DPU with the launcher:
  * 
- * LaunchConfiguration.APPLICATION_CONF (knowing.launcher.configuration) => path to application.conf 
+ * LaunchConfiguration.APPLICATION_CONF_FILE (config.file) => path to application.conf 
  * 
  * Command could look like: 
  * <code>launch /home/user/knowing/naiveBayes/application.conf</code>
@@ -37,7 +37,7 @@ class Activator extends BundleActivator {
 	 * The evaluation starts, when the bundle is activated.
 	 */
 	def start(context: BundleContext) = {
-		val configUriString = System.getProperty(LaunchConfiguration.APPLICATION_CONF)
+		val configUriString = System.getProperty(LaunchConfiguration.APPLICATION_CONF_FILE)
 		
 		//TODO check for debug.launcher if present and don't launch
 		/*

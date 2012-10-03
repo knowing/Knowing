@@ -9,7 +9,7 @@
  ** http://www.dbs.ifi.lmu.de/                                   **
 \*                                                               */
 package de.lmu.ifi.dbs.knowing.debug.launcher
- 
+
 import org.osgi.framework.{ BundleContext, BundleActivator }
 
 import de.lmu.ifi.dbs.knowing.debug.presenter.DebugUIFactory
@@ -33,42 +33,40 @@ import org.slf4j.LoggerFactory
  * @since 2012-04-19
  */
 class Activator extends BundleActivator {
-  
-	val log = LoggerFactory.getLogger(Activator.PLUGIN_ID)
 
-	def start(context: BundleContext) = {
+  val log = LoggerFactory.getLogger(Activator.PLUGIN_ID)
 
-		val configUriString = System.getProperty(LaunchConfiguration.APPLICATION_CONF)
+  def start(context: BundleContext) = {
 
-		if (configUriString != null && configUriString.nonEmpty) {
-			val configUrl = new URI(configUriString).toURL
-			val config = ConfigFactory.parseURL(configUrl)
 
-			val launchConfig = new LaunchConfiguration(config)
-			val dpu = launchConfig.dpu
-			val reference = Option(context.getServiceReference(classOf[IEvaluateService]))
-			if (reference.isDefined) {
-				try {
-					val evaluateService = context.getService(reference.get)
-					
-					//Only use default ActorSystem()
-					val uiFactory = TypedActor(ActorSystem()).typedActorOf(TypedProps(classOf[UIFactory[_]], new DebugUIFactory(launchConfig.executionPath)))
-					evaluateService.evaluate(dpu, Paths.get(launchConfig.executionPath).toUri, uiFactory, null, null, null, null)
-				} catch {
-					case e: ValidationException => System.err.println(e.getErrors());
-				}
+    val configFile = System.getProperty(LaunchConfiguration.APPLICATION_CONF_FILE)
+    log.debug("Found config.file property " + configFile)
 
-			}
+    val config = ConfigFactory.load()
+    val launchConfig = new LaunchConfiguration(config)
+      val dpu = launchConfig.dpu
+      val reference = Option(context.getServiceReference(classOf[IEvaluateService]))
+      if (reference.isDefined) {
+        try {
+          val evaluateService = context.getService(reference.get)
 
-		}
-	}
+          //Only use default ActorSystem()
+          val name = "debug-system" + System.currentTimeMillis
+          val uiFactory = TypedActor(ActorSystem(name, config, classOf[ActorSystem].getClassLoader))
+              .typedActorOf(TypedProps(classOf[UIFactory[_]], new DebugUIFactory(launchConfig.executionPath)))
+          evaluateService.evaluate(dpu, Paths.get(launchConfig.executionPath).toUri, uiFactory, null, null, null, null)
+        } catch {
+          case e: ValidationException => System.err.println(e.getErrors());
+        }
+      }
+  }
 
-	def stop(context: BundleContext) = {
+  def stop(context: BundleContext) = {
 
-	}
+  }
 
 }
 
 object Activator {
-	val PLUGIN_ID = "de.lmu.ifi.dbs.knowing.debug.launcher"
+  val PLUGIN_ID = "de.lmu.ifi.dbs.knowing.debug.launcher"
 }

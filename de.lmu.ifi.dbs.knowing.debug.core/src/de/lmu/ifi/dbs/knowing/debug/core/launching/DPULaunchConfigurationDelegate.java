@@ -110,6 +110,7 @@ public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDeleg
 		}
 		Config config = ConfigFactory.parseMap(confMap);
 
+		// Write application.conf to execution path root
 		Path applicationConf = executionPath.resolve("application.conf");
 		try (Writer w = Files.newBufferedWriter(applicationConf, Charset.defaultCharset())) {
 			w.write(config.root().render());
@@ -117,7 +118,8 @@ public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDeleg
 			e.printStackTrace();
 		}
 
-		String arguments = vmArguments + " -D" + LaunchConfiguration.APPLICATION_CONF() + "=" + applicationConf.toAbsolutePath();
+		// Set application.conf path
+		String arguments = vmArguments + " -D" + LaunchConfiguration.APPLICATION_CONF_FILE() + "=" + applicationConf.toAbsolutePath();
 		ILaunchConfigurationWorkingCopy copy = configuration.getWorkingCopy();
 		copy.setAttribute(VM_ARGUMENTS, arguments);
 		super.launch(copy, mode, launch, monitor);
