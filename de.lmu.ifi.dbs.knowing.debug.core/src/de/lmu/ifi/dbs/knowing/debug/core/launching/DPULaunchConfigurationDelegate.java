@@ -117,7 +117,7 @@ public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDeleg
 			e.printStackTrace();
 		}
 
-		String arguments = vmArguments + " -D" + LaunchConfiguration.APPLICATION_CONF() + "=" + applicationConf.toUri();
+		String arguments = vmArguments + " -D" + LaunchConfiguration.APPLICATION_CONF() + "=" + applicationConf.toAbsolutePath();
 		ILaunchConfigurationWorkingCopy copy = configuration.getWorkingCopy();
 		copy.setAttribute(VM_ARGUMENTS, arguments);
 		super.launch(copy, mode, launch, monitor);

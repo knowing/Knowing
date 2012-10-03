@@ -9,7 +9,7 @@
  ** http://www.dbs.ifi.lmu.de/                                   **
 \*                                                               */
 package de.lmu.ifi.dbs.knowing.debug.launcher
-
+ 
 import org.osgi.framework.{ BundleContext, BundleActivator }
 
 import de.lmu.ifi.dbs.knowing.debug.presenter.DebugUIFactory
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory
  * @since 2012-04-19
  */
 class Activator extends BundleActivator {
-
+  
 	val log = LoggerFactory.getLogger(Activator.PLUGIN_ID)
 
 	def start(context: BundleContext) = {
