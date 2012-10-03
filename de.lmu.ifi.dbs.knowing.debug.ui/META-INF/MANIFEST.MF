@@ -1,10 +1,12 @@
 Manifest-Version: 1.0
-Require-Bundle: org.eclipse.sapphire.workspace;bundle-version="0.5.0",
- org.eclipse.jface.text,org.eclipse.ui.views.properties.tabbed,org.ecl
+Export-Package: de.lmu.ifi.dbs.knowing.debug.ui.launching,de.lmu.ifi.d
+ bs.knowing.debug.ui.adapter
+Require-Bundle: org.eclipse.jface.text,org.eclipse.sapphire.workspace;
+ bundle-version="0.5.0",org.eclipse.ui.views.properties.tabbed,org.ecl
  ipse.core.runtime,org.eclipse.jdt.ui,org.eclipse.sapphire.ui;bundle-v
  ersion="0.5.0",org.eclipse.wst.sse.ui;bundle-version="[1.2.3,2.0.0)",
- org.eclipse.sapphire.workspace.ui;bundle-version="0.5.0",org.eclipse.
- ui.forms,org.eclipse.ui.ide,org.eclipse.help,org.eclipse.pde.launchin
+ org.eclipse.ui.forms,org.eclipse.sapphire.workspace.ui;bundle-version
+ ="0.5.0",org.eclipse.ui.ide,org.eclipse.help,org.eclipse.pde.launchin
  g,org.eclipse.core.resources,de.lmu.ifi.dbs.knowing.debug.presenter;b
  undle-version="[0.1.5,1.0.0)",de.lmu.ifi.dbs.knowing.core.swt;bundle-
  version="[0.1.5,1.0.0)",de.lmu.ifi.dbs.knowing.launcher;bundle-versio
@@ -12,27 +14,24 @@ Require-Bundle: org.eclipse.sapphire.workspace;bundle-version="0.5.0",
  on="0.5.0",org.eclipse.debug.core,org.eclipse.pde.ui,org.eclipse.debu
  g.ui,org.eclipse.ui,org.eclipse.sapphire.ui.swt.gef;bundle-version="0
  .5.0",de.lmu.ifi.dbs.knowing.debug.launcher;bundle-version="[0.1.5,1.
- 0.0)",org.eclipse.pde.core,org.eclipse.pde.runtime,org.eclipse.pde.bu
- ild,org.eclipse.jdt.core,org.eclipse.pde,de.lmu.ifi.dbs.knowing.core;
- bundle-version="[0.1.5,1.0.0)",de.lmu.ifi.dbs.knowing.debug.core;bund
- le-version="[0.1.5,1.0.0)",org.eclipse.jdt.debug
-Export-Package: de.lmu.ifi.dbs.knowing.debug.ui.launching,de.lmu.ifi.d
- bs.knowing.debug.ui.adapter
+ 0.0)",org.eclipse.pde.runtime,org.eclipse.pde.core,org.eclipse.pde.bu
+ ild,org.eclipse.jdt.core,de.lmu.ifi.dbs.knowing.debug.core;bundle-ver
+ sion="[0.1.5,1.0.0)",de.lmu.ifi.dbs.knowing.core;bundle-version="[0.1
+ .5,1.0.0)",org.eclipse.pde,org.eclipse.jdt.debug
 Bundle-Vendor: LMU Munich - Database Systems Group
 Bundle-ActivationPolicy: lazy
 Bundle-Version: 0.1.7.qualifier
 Bundle-Name: Knowing UI
-Bundle-ManifestVersion: 2
 Bundle-Activator: de.lmu.ifi.dbs.knowing.debug.ui.interal.Activator
-Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.debug.ui;singleton:=true
-Import-Package: scala.collection.immutable;version="[2.9.0.1,2.9.4.0)"
- ,scala.collection;version="[2.9.0.1,2.9.4.0)",scala.annotation.unchec
+Bundle-ManifestVersion: 2
+Import-Package: scala.collection;version="[2.9.0.1,2.9.4.0)",scala.col
+ lection.immutable;version="[2.9.0.1,2.9.4.0)",scala.annotation.unchec
  ked;version="[2.9.0.1,2.9.4.0)",com.typesafe.config;version="[0.4.0,0
  .5.0)",scala.reflect.generic;version="[2.9.0.1,2.9.4.0)",scala.collec
  tion.interfaces;version="[2.9.0.1,2.9.4.0)",scala;version="[2.9.0.1,2
  .9.4.0)",scala.concurrent;version="[2.9.0.1,2.9.4.0)",akka.routing;ve
- rsion="[2.0.0,3.0.0)",scala.collection.parallel;version="[2.9.0.1,2.9
- .4.0)",scala.annotation;version="[2.9.0.1,2.9.4.0)",scala.math;versio
+ rsion="[2.0.0,3.0.0)",scala.annotation;version="[2.9.0.1,2.9.4.0)",sc
+ ala.collection.parallel;version="[2.9.0.1,2.9.4.0)",scala.math;versio
  n="[2.9.0.1,2.9.4.0)",scala.util;version="[2.9.0.1,2.9.4.0)",scala.co
  ncurrent.forkjoin;version="[2.9.0.1,2.9.4.0)",scala.reflect;version="
  [2.9.0.1,2.9.4.0)",scala.io;version="[2.9.0.1,2.9.4.0)",scala.annotat
@@ -41,12 +40,13 @@ Import-Package: scala.collection.immutable;version="[2.9.0.1,2.9.4.0)"
  )",scala.parallel;version="[2.9.0.1,2.9.4.0)",akka.util.duration;vers
  ion="[2.0.0,3.0.0)",scala.util.matching;version="[2.9.0.1,2.9.4.0)",s
  cala.collection.mutable;version="[2.9.0.1,2.9.4.0)",scala.runtime;ver
- sion="[2.9.0.1,2.9.4.0)",scala.collection.parallel.mutable;version="[
- 2.9.0.1,2.9.4.0)",akka.util.cps;version="[2.0.0,3.0.0)",akka;version=
- "[2.0.0,3.0.0)",akka.dispatch;version="[2.0.0,3.0.0)",akka.actor;vers
- ion="[2.0.0,3.0.0)",scala.util.logging;version="[2.9.0.1,2.9.4.0)",ak
- ka.event;version="[2.0.0,3.0.0)",org.eclipse.emf.edit.domain,scala.co
- llection.generic;version="[2.9.0.1,2.9.4.0)",akka.util;version="[2.0.
- 0,3.0.0)"
+ sion="[2.9.0.1,2.9.4.0)",akka.util.cps;version="[2.0.0,3.0.0)",scala.
+ collection.parallel.mutable;version="[2.9.0.1,2.9.4.0)",akka;version=
+ "[2.0.0,3.0.0)",akka.dispatch;version="[2.0.0,3.0.0)",scala.util.logg
+ ing;version="[2.9.0.1,2.9.4.0)",akka.actor;version="[2.0.0,3.0.0)",ak
+ ka.event;version="[2.0.0,3.0.0)",org.eclipse.emf.edit.domain,akka.uti
+ l;version="[2.0.0,3.0.0)",scala.collection.generic;version="[2.9.0.1,
+ 2.9.4.0)"
+Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.debug.ui;singleton:=true
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 

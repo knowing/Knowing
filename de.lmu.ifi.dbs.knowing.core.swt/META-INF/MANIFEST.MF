@@ -1,40 +1,31 @@
 Manifest-Version: 1.0
-Require-Bundle: org.eclipse.core.runtime,
- de.lmu.ifi.dbs.knowing.presenter;bundle-version="[0.1.3,1.0.0)",
- de.lmu.ifi.dbs.knowing.core;bundle-version="[0.1.3,1.0.0)",
- org.eclipse.swt;bundle-version="3.6.0",
- org.eclipse.jface;bundle-version="3.7.0"
 Export-Package: de.lmu.ifi.dbs.knowing.core.swt.dialog,de.lmu.ifi.dbs.
  knowing.core.swt.provider,de.lmu.ifi.dbs.knowing.core.swt.listener,de
  .lmu.ifi.dbs.knowing.core.swt.factory,de.lmu.ifi.dbs.knowing.core.swt
+Require-Bundle: org.eclipse.jface;bundle-version="3.7.0",org.eclipse.c
+ ore.runtime,org.eclipse.swt;bundle-version="3.6.0",de.lmu.ifi.dbs.kno
+ wing.presenter;bundle-version="[0.1.3,1.0.0)",de.lmu.ifi.dbs.knowing.
+ core;bundle-version="[0.1.3,1.0.0)"
 Bundle-Vendor: LMU Munich - Database Systems Group
 Bundle-ActivationPolicy: lazy
 Bundle-Version: 0.1.7.qualifier
 Bundle-Name: Knowing SWT
-Bundle-ManifestVersion: 2
 Bundle-Activator: de.lmu.ifi.dbs.knowing.core.swt.internal.Activator
+Bundle-ManifestVersion: 2
+Import-Package: scala.collection.immutable;version="[2.9.0.1,2.9.4.0)"
+ ,scala.collection;version="[2.9.0.1,2.9.4.0)",akka.util.duration;vers
+ ion="[2.0.0,3.0.0)",scala.collection.mutable;version="[2.9.0.1,2.9.4.
+ 0)",com.typesafe.config;version="[0.4.1,0.5.0)",scala.reflect.generic
+ ;version="[2.9.0.1,2.9.4.0)",scala.collection.interfaces;version="[2.
+ 9.0.1,2.9.4.0)",scala.runtime;version="[2.9.0.1,2.9.4.0)",akka.util.c
+ ps;version="[2.0.0,3.0.0)",scala;version="[2.9.0.1,2.9.4.0)",akka;ver
+ sion="[2.0.0,3.0.0)",akka.routing;version="[2.0.0,3.0.0)",akka.dispat
+ ch;version="[2.0.0,3.0.0)",akka.actor;version="[2.0.0,3.0.0)",scala.m
+ ath;version="[2.9.0.1,2.9.4.0)",scala.util;version="[2.9.0.1,2.9.4.0)
+ ",scala.reflect;version="[2.9.0.1,2.9.4.0)",scala.io;version="[2.9.0.
+ 1,2.9.4.0)",akka.event;version="[2.0.0,3.0.0)",scala.ref;version="[2.
+ 9.0.1,2.9.4.0)",akka.util;version="[2.0.0,3.0.0)",scala.collection.ge
+ neric;version="[2.9.0.1,2.9.4.0)"
 Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.core.swt;singleton:=true
-Import-Package: akka;version="[2.0.0,3.0.0)",
- akka.actor;version="[2.0.0,3.0.0)",
- akka.dispatch;version="[2.0.0,3.0.0)",
- akka.event;version="[2.0.0,3.0.0)",
- akka.routing;version="[2.0.0,3.0.0)",
- akka.util;version="[2.0.0,3.0.0)",
- akka.util.cps;version="[2.0.0,3.0.0)",
- akka.util.duration;version="[2.0.0,3.0.0)",
- com.typesafe.config;version="[0.4.1,0.5.0)",
- scala;version="[2.9.0.1,2.9.4.0)",
- scala.collection;version="[2.9.0.1,2.9.4.0)",
- scala.collection.generic;version="[2.9.0.1,2.9.4.0)",
- scala.collection.immutable;version="[2.9.0.1,2.9.4.0)",
- scala.collection.interfaces;version="[2.9.0.1,2.9.4.0)",
- scala.collection.mutable;version="[2.9.0.1,2.9.4.0)",
- scala.io;version="[2.9.0.1,2.9.4.0)",
- scala.math;version="[2.9.0.1,2.9.4.0)",
- scala.ref;version="[2.9.0.1,2.9.4.0)",
- scala.reflect;version="[2.9.0.1,2.9.4.0)",
- scala.reflect.generic;version="[2.9.0.1,2.9.4.0)",
- scala.runtime;version="[2.9.0.1,2.9.4.0)",
- scala.util;version="[2.9.0.1,2.9.4.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 

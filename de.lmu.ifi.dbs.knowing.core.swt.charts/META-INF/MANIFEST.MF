@@ -1,28 +1,27 @@
 Manifest-Version: 1.0
-Export-Package: de.lmu.ifi.dbs.knowing.core.swt.charts,de.lmu.ifi.dbs.
- knowing.core.swt.charts.events
-Require-Bundle: de.lmu.ifi.dbs.knowing.presenter;bundle-version="[0.1.3,1.0.0)",
- de.lmu.ifi.dbs.knowing.core;bundle-version="[0.1.3,1.0.0)",
- de.lmu.ifi.dbs.knowing.core.swt;bundle-version="[0.1.3,1.0.0)",
- org.eclipse.swt;bundle-version="3.6.0",
- org.eclipse.jface;bundle-version="3.7.0"
+Require-Bundle: org.eclipse.jface;bundle-version="3.7.0",org.eclipse.s
+ wt;bundle-version="3.6.0",de.lmu.ifi.dbs.knowing.presenter;bundle-ver
+ sion="[0.1.3,1.0.0)",de.lmu.ifi.dbs.knowing.core;bundle-version="[0.1
+ .3,1.0.0)",de.lmu.ifi.dbs.knowing.core.swt;bundle-version="[0.1.3,1.0
+ .0)"
+Export-Package: de.lmu.ifi.dbs.knowing.core.swt.charts.events,de.lmu.i
+ fi.dbs.knowing.core.swt.charts
 Bundle-Vendor: LMU Munich - Database Systems Group
 Bundle-ActivationPolicy: lazy
 Bundle-Version: 0.1.7.qualifier
 Bundle-Name: Knowing SWT JFreeChart
-Bundle-ManifestVersion: 2
 Bundle-Activator: de.lmu.ifi.dbs.knowing.core.swt.charts.internal.Acti
  vator
-Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.core.swt.charts
+Bundle-ManifestVersion: 2
 Import-Package: org.jfree.util,org.jfree.chart,org.jfree,org.jfree.dat
  a.function,org.jfree.chart.labels,org.jfree.layout,org.jfree.chart.an
  notations,scala.reflect.generic;version="[2.9.0.1,2.9.4.0)",scala.col
  lection.interfaces;version="[2.9.0.1,2.9.4.0)",org.jfree.experimental
  .chart.swt.editor,akka.routing;version="[2.0.0,3.0.0)",org.jfree.char
- t.plot.dial,org.jfree.data.gantt,org.jfree.chart.demo,scala.io;versio
- n="[2.9.0.1,2.9.4.0)",scala.reflect;version="[2.9.0.1,2.9.4.0)",org.j
- free.data.xy,org.jfree.chart.title,org.jfree.experimental.chart.swt,s
- cala.ref;version="[2.9.0.1,2.9.4.0)",org.jfree.experimental.chart.dem
+ t.plot.dial,org.jfree.data.gantt,org.jfree.chart.demo,scala.reflect;v
+ ersion="[2.9.0.1,2.9.4.0)",scala.io;version="[2.9.0.1,2.9.4.0)",org.j
+ free.data.xy,org.jfree.chart.title,scala.ref;version="[2.9.0.1,2.9.4.
+ 0)",org.jfree.experimental.chart.swt,org.jfree.experimental.chart.dem
  o,akka.util.duration;version="[2.0.0,3.0.0)",org.jfree.data.xml,org.j
  free.chart.needle,org.jfree.data.resources,org.jfree.chart.axis,scala
  .runtime;version="[2.9.0.1,2.9.4.0)",org.jfree.experimental.swt,org.j
@@ -34,22 +33,23 @@ Import-Package: org.jfree.util,org.jfree.chart,org.jfree,org.jfree.dat
  a.time,scala.collection.immutable;version="[2.9.0.1,2.9.4.0)",scala.c
  ollection;version="[2.9.0.1,2.9.4.0)",org.jfree.data.contour,org.jfre
  e.ui,org.jfree.base.modules,org.jfree.data.statistics,org.jfree.exper
- imental.chart.renderer.xy,org.jfree.chart.entity,scala;version="[2.9.
- 0.1,2.9.4.0)",org.jfree.chart.urls,org.jfree.ui.about,org.jfree.chart
+ imental.chart.renderer.xy,scala;version="[2.9.0.1,2.9.4.0)",org.jfree
+ .chart.entity,org.jfree.chart.urls,org.jfree.ui.about,org.jfree.chart
  .block,org.jfree.chart.util,scala.collection.parallel;version="[2.9.0
  .1,2.9.4.0)",org.jfree.data.io,scala.util;version="[2.9.0.1,2.9.4.0)"
- ,org.jfree.data.category,org.jfree.data.time.ohlc,org.jfree.chart.pan
- el,scala.collection.parallel.immutable;version="[2.9.0.1,2.9.4.0)",sc
+ ,org.jfree.data.category,org.jfree.data.time.ohlc,scala.collection.pa
+ rallel.immutable;version="[2.9.0.1,2.9.4.0)",org.jfree.chart.panel,sc
  ala.parallel;version="[2.9.0.1,2.9.4.0)",org.jfree.chart.renderer,org
- .jfree.chart.imagemap,org.jfree.chart.editor,scala.collection.mutable
- ;version="[2.9.0.1,2.9.4.0)",org.jfree.date,org.jfree.base.config,org
- .jfree.chart.resources,akka.util.cps;version="[2.0.0,3.0.0)",org.jfre
- e.ui.action,scala.collection.parallel.mutable;version="[2.9.0.1,2.9.4
- .0)",org.jfree.resources,akka;version="[2.0.0,3.0.0)",org.jfree.data.
- general,org.jfree.experimental.chart.swt.demo,org.jfree.ui.tabbedui,o
- rg.jfree.data,akka.actor;version="[2.0.0,3.0.0)",org.jfree.chart.plot
- ,org.jfree.chart.event,org.jfree.base.log,org.jfree.base,org.jfree.ch
- art.encoders,org.jfree.data.jdbc,scala.collection.generic;version="[2
- .9.0.1,2.9.4.0)"
+ .jfree.chart.imagemap,scala.collection.mutable;version="[2.9.0.1,2.9.
+ 4.0)",org.jfree.chart.editor,org.jfree.date,org.jfree.base.config,sca
+ la.collection.parallel.mutable;version="[2.9.0.1,2.9.4.0)",org.jfree.
+ ui.action,akka.util.cps;version="[2.0.0,3.0.0)",org.jfree.chart.resou
+ rces,org.jfree.resources,akka;version="[2.0.0,3.0.0)",org.jfree.ui.ta
+ bbedui,org.jfree.experimental.chart.swt.demo,org.jfree.data.general,a
+ kka.actor;version="[2.0.0,3.0.0)",org.jfree.data,org.jfree.chart.even
+ t,org.jfree.chart.plot,org.jfree.base.log,org.jfree.base,org.jfree.ch
+ art.encoders,scala.collection.generic;version="[2.9.0.1,2.9.4.0)",org
+ .jfree.data.jdbc
+Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.core.swt.charts
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 

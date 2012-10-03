@@ -1,14 +1,13 @@
 Manifest-Version: 1.0
-Export-Package: de.lmu.ifi.dbs.knowing.launcher
 Require-Bundle: de.lmu.ifi.dbs.knowing.core;bundle-version="0.1.4"
+Export-Package: de.lmu.ifi.dbs.knowing.launcher
 Bundle-ActivationPolicy: lazy
 Bundle-Version: 0.1.7.qualifier
 Bundle-Name: Knowing Launcher
-Bundle-ManifestVersion: 2
 Bundle-Activator: de.lmu.ifi.dbs.knowing.launcher.internal.Activator
-Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.launcher;singleton:=true
-Import-Package: scala.collection;version="[2.9.0.1,2.9.4.0)",scala.col
- lection.immutable;version="[2.9.0.1,2.9.4.0)",scala.text;version="[2.
+Bundle-ManifestVersion: 2
+Import-Package: scala.collection.immutable;version="[2.9.0.1,2.9.4.0)"
+ ,scala.collection;version="[2.9.0.1,2.9.4.0)",scala.text;version="[2.
  9.0.1,2.9.4.0)",com.typesafe.config;version="[0.4.1,0.5.0)",scala.ref
  lect.generic;version="[2.9.0.1,2.9.4.0)",scala.collection.interfaces;
  version="[2.9.0.1,2.9.4.0)",scala;version="[2.9.0.1,2.9.4.0)",scala.c
@@ -25,12 +24,13 @@ Import-Package: scala.collection;version="[2.9.0.1,2.9.4.0)",scala.col
  mbinator;version="[2.9.0.1,2.9.4.0)",scala.util.regexp;version="[2.9.
  0.1,2.9.4.0)",scala.runtime;version="[2.9.0.1,2.9.4.0)",scala.collect
  ion.parallel.mutable;version="[2.9.0.1,2.9.4.0)",scala.util.parsing.a
- st;version="[2.9.0.1,2.9.4.0)",scala.util.logging;version="[2.9.0.1,2
- .9.4.0)",scala.util.parsing.combinator.lexical;version="[2.9.0.1,2.9.
- 4.0)",scala.util.parsing.json;version="[2.9.0.1,2.9.4.0)",scala.util.
- parsing.combinator.syntactical;version="[2.9.0.1,2.9.4.0)",org.osgi.f
- ramework;version="1.6.0",scala.util.parsing.combinator.token;version=
- "[2.9.0.1,2.9.4.0)",scala.util.parsing.input;version="[2.9.0.1,2.9.4.
+ st;version="[2.9.0.1,2.9.4.0)",scala.util.parsing.json;version="[2.9.
+ 0.1,2.9.4.0)",scala.util.parsing.combinator.lexical;version="[2.9.0.1
+ ,2.9.4.0)",scala.util.logging;version="[2.9.0.1,2.9.4.0)",scala.util.
+ parsing.combinator.syntactical;version="[2.9.0.1,2.9.4.0)",scala.util
+ .parsing.combinator.token;version="[2.9.0.1,2.9.4.0)",org.osgi.framew
+ ork;version="1.6.0",scala.util.parsing.input;version="[2.9.0.1,2.9.4.
  0)",scala.collection.generic;version="[2.9.0.1,2.9.4.0)"
+Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.launcher;singleton:=true
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 
