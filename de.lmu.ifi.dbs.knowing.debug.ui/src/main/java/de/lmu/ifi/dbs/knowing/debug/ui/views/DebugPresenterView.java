@@ -106,7 +106,14 @@ public class DebugPresenterView extends ViewPart implements ILaunchesListener2, 
 				return;
 
 			if (currentLaunch != null) {
-				MessageDialog.openError(getSite().getShell(), "Another DPU is currently running", "Stop the other instance running.");
+			    getSite().getShell().getDisplay().asyncExec(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        MessageDialog.openError(getSite().getShell(), "Another DPU is currently running", "Stop the other instance running.");                        
+                    }
+                });
+				
 				// Ask what to do. Stop current or new launch
 				launch.terminate();
 				return;
