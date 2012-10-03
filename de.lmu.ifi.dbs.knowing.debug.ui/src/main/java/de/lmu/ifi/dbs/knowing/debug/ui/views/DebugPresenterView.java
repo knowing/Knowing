@@ -135,7 +135,7 @@ public class DebugPresenterView extends ViewPart implements ILaunchesListener2, 
 
 	@Override
 	public void launchesTerminated(ILaunch[] launches) {
-		if (launches.length == 0)
+		if (launches.length == 0 || currentLaunch == null)
 			return;
 
 		for (int i = 0; i < launches.length; i++) {
