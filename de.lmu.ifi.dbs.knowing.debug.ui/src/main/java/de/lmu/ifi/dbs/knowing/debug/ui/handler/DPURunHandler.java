@@ -36,6 +36,7 @@ import de.lmu.ifi.dbs.knowing.debug.core.launching.DPULaunchConfigurationDelegat
 import de.lmu.ifi.dbs.knowing.debug.ui.interal.Activator;
 import de.lmu.ifi.dbs.knowing.debug.ui.launching.BundlesResolver;
 import de.lmu.ifi.dbs.knowing.debug.ui.views.DebugPresenterView;
+import de.lmu.ifi.dbs.knowing.launcher.LaunchConfiguration;
 
 /**
  * 
@@ -86,11 +87,11 @@ public class DPURunHandler extends SapphireActionHandler {
 
 	private ILaunchConfiguration setLaunchAttributes(ILaunchConfigurationWorkingCopy configuration, IDataProcessingUnit dpu,
 			SapphireRenderingContext context) throws CoreException {
-		// Add OSGi settings
-		configuration.setAttribute(DPULaunchConfigurationDelegate.SOURCE_PATH_PROVIDER, "org.eclipse.pde.ui.workbenchClasspathProvider");
-		configuration.setAttribute(DPULaunchConfigurationDelegate.VM_ARGUMENTS, "-Declipse.ignoreApp=true -Dosgi.noShutdown=true");
-		configuration.setAttribute(DPULaunchConfigurationDelegate.PROGRAM_ARGUMENTS,
-				"-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog -console");
+		
+	    // Add OSGi settings
+		configuration.setAttribute(LaunchConfiguration.SOURCE_PATH_PROVIDER_KEY(), LaunchConfiguration.SOURCE_PATH_PROVIDER());
+		configuration.setAttribute(LaunchConfiguration.VM_ARGUMENTS_KEY(), LaunchConfiguration.VM_ARGUMENTS());
+		configuration.setAttribute(LaunchConfiguration.PROGRAM_ARGUMENTS_KEY(), LaunchConfiguration.PROGRAM_ARGUMENTS());
 
 		configuration.setAttribute("automaticAdd", true);
 		configuration.setAttribute("automaticValidate", false);

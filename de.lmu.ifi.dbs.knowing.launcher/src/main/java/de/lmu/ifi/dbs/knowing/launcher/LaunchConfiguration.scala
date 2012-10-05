@@ -50,6 +50,14 @@ object LaunchConfiguration {
   lazy val APPLICATION_CONF_FILE = "config.file"
   lazy val APPLICATION_CONF_URL = "config.url"
 
+  lazy val VM_ARGUMENTS_KEY = "org.eclipse.jdt.launching.VM_ARGUMENTS";
+  lazy val PROGRAM_ARGUMENTS_KEY = "org.eclipse.jdt.launching.PROGRAM_ARGUMENTS";
+  lazy val SOURCE_PATH_PROVIDER_KEY = "org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER";
+
+  lazy val SOURCE_PATH_PROVIDER = "org.eclipse.pde.ui.workbenchClasspathProvider"
+  lazy val VM_ARGUMENTS = "-Declipse.ignoreApp=true -Dosgi.noShutdown=true"
+  lazy val PROGRAM_ARGUMENTS = "-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog -console"
+
   val REQUIRED_BUNDLES = List(
     "ch.qos.logback.classic@default:default",
     "ch.qos.logback.core@default:default",
@@ -57,7 +65,7 @@ object LaunchConfiguration {
     "com.typesafe.config@default:default",
     "com.typesafe.akka.actor@default:default",
     "com.typesafe.akka.slf4j@default:default",
-    "de.lmu.ifi.dbs.knowing.core@default:true", 
+    "de.lmu.ifi.dbs.knowing.core@default:true",
     "de.lmu.ifi.dbs.knowing.debug.presenter@default:true",
     "de.lmu.ifi.dbs.knowing.debug.launcher@default:true",
     "de.lmu.ifi.dbs.knowing.launcher@default:false",

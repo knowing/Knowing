@@ -58,7 +58,7 @@ public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDeleg
 	public static final String	LAUNCH_TYPE_CATEGORY	= "Knowing";
 
 	/* ======================================= */
-	/* = Constants are only internally used = */
+	/* = Constants are only internally used  = */
 	/* = see knowing.launcher/reference.conf = */
 	/* ======================================= */
 
@@ -71,9 +71,6 @@ public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDeleg
 
 	public static final String	DPU_PARAMETERS			= "knowing.dpu.parameters";
 
-	public static final String	VM_ARGUMENTS			= "org.eclipse.jdt.launching.VM_ARGUMENTS";
-	public static final String	PROGRAM_ARGUMENTS		= "org.eclipse.jdt.launching.PROGRAM_ARGUMENTS";
-	public static final String	SOURCE_PATH_PROVIDER	= "org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER";
 
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
@@ -81,7 +78,7 @@ public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDeleg
 		String projectName = configuration.getAttribute(DPU_PROJECT, (String) null);
 		String relativePath = configuration.getAttribute(DPU_PATH, (String) null);
 		String execPath = configuration.getAttribute(DPU_EXECUTION_PATH, System.getProperty("user.home"));
-		String vmArguments = configuration.getAttribute(VM_ARGUMENTS, (String) null);
+		String vmArguments = configuration.getAttribute(LaunchConfiguration.VM_ARGUMENTS_KEY(), (String) null);
 		IFile dpuFile = findDPUFile(projectName, relativePath);
 		if (!dpuFile.exists())
 			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, "DPU doesn't exist! " + dpuFile.getLocationURI()));
@@ -99,6 +96,7 @@ public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDeleg
 		if (!Files.isWritable(executionPath))
 			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, "Execution path is not writeable!"));
 
+		// Typesafe config which is written to file
 		Map<String, Object> confMap = new HashMap<>();
 		confMap.put("dpu.name", dpu.getName().getContent());
 		confMap.put("dpu.uri", dpuFile.getLocationURI().toString());
@@ -121,7 +119,7 @@ public class DPULaunchConfigurationDelegate extends OSGiLaunchConfigurationDeleg
 		// Set application.conf path
 		String arguments = vmArguments + " -D" + LaunchConfiguration.APPLICATION_CONF_FILE() + "=" + applicationConf.toAbsolutePath();
 		ILaunchConfigurationWorkingCopy copy = configuration.getWorkingCopy();
-		copy.setAttribute(VM_ARGUMENTS, arguments);
+		copy.setAttribute(LaunchConfiguration.VM_ARGUMENTS_KEY(), arguments);
 		super.launch(copy, mode, launch, monitor);
 
 	}

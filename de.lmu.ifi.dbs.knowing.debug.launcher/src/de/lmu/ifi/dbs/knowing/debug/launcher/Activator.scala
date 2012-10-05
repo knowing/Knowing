@@ -38,31 +38,31 @@ class Activator extends BundleActivator {
 
   def start(context: BundleContext) = {
 
-
     val configFile = System.getProperty(LaunchConfiguration.APPLICATION_CONF_FILE)
     log.debug("Found config.file property " + configFile)
 
     val config = ConfigFactory.load()
     val launchConfig = new LaunchConfiguration(config)
-      val dpu = launchConfig.dpu
-      val reference = Option(context.getServiceReference(classOf[IEvaluateService]))
-      if (reference.isDefined) {
-        try {
-          val evaluateService = context.getService(reference.get)
+    val dpu = launchConfig.dpu
+    val reference = Option(context.getServiceReference(classOf[IEvaluateService]))
+    if (reference.isDefined) {
+      try {
+        val evaluateService = context.getService(reference.get)
+        //Only use default ActorSystem()
+        val name = "debug-system" + System.currentTimeMillis
+        val uiFactory = TypedActor(ActorSystem(name, config, classOf[ActorSystem].getClassLoader))
+          .typedActorOf(TypedProps(classOf[UIFactory[_]], new DebugUIFactory(launchConfig.executionPath)))
 
-          //Only use default ActorSystem()
-          val name = "debug-system" + System.currentTimeMillis
-          val uiFactory = TypedActor(ActorSystem(name, config, classOf[ActorSystem].getClassLoader))
-              .typedActorOf(TypedProps(classOf[UIFactory[_]], new DebugUIFactory(launchConfig.executionPath)))
-          evaluateService.evaluate(dpu, Paths.get(launchConfig.executionPath).toUri, uiFactory, null, null, null, null)
-        } catch {
-          case e: ValidationException => System.err.println(e.getErrors());
-        }
+        log.info("Starting evaluation on ActorSystem " + name)
+        evaluateService.evaluate(dpu, Paths.get(launchConfig.executionPath).toUri, uiFactory, null, null, null, null)
+      } catch {
+        case e: ValidationException => log.error(e.getErrors.toString);
       }
+    }
   }
 
   def stop(context: BundleContext) = {
-
+    log.info("Stopping DebugLauncher Bundle")
   }
 
 }
