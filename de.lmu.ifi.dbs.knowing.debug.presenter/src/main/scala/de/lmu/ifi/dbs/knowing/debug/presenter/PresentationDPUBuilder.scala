@@ -15,6 +15,7 @@ import de.lmu.ifi.dbs.knowing.core.util.{ DPUBuilder, DPUUtil }
 import de.lmu.ifi.dbs.knowing.core.processing.INodeProperties
 import weka.core.converters.ArffLoader
 import java.util.Properties
+import weka.core.converters.ArffLoader
 
 /**
  * Creates a DPU to present the results of the execution process.
