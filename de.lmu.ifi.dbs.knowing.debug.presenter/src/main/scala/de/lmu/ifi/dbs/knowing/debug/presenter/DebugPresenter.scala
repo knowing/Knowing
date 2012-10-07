@@ -34,11 +34,13 @@ class DebugPresenter extends TPresenter[Path] {
   private var nodeId: String = _
 
   def buildPresentation(instances: Instances) = try {
-    log.info("Writing instances[" + instances.relationName + "] to file " + file)
+    log.info("Writing instances[" + instances.relationName + " | " + instances.size + "] to file " + file)
     saver.setInstances(new Instances(instances, 0))
     for (i <- 0 until instances.size) {
       saver.writeIncremental(instances.get(i))
     }
+    // Flush buffer
+    saver.getWriter.flush
   } catch {
     case e: IOException => log.error("Error on writing Instances[" + instances.relationName + "]", e)
   }
