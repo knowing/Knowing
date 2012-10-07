@@ -53,7 +53,7 @@ public class DebugUIFactory implements UIFactory<Path> {
             Files.deleteIfExists(progressPath);
             Files.createFile(progressPath);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("IOError creating DebugUIFactory", e);
         }
 
     }
@@ -72,8 +72,7 @@ public class DebugUIFactory implements UIFactory<Path> {
             Files.deleteIfExists(targetFile);
             Files.createFile(targetFile);
         } catch (IOException e) {
-            e.printStackTrace();
-            // TODO handle exception - write log or something
+            log.error("IOError creating container targetfile " + targetFile, e);
         }
 
         return targetFile;
@@ -86,7 +85,7 @@ public class DebugUIFactory implements UIFactory<Path> {
                 ProgressWriter log = new ProgressWriter(w)) {
             log.write(actor, status);
         } catch (IOException e) {
-            e.printStackTrace();
+            DebugUIFactory.log.error("IOError on appending to progress file", e);
         }
     }
 
