@@ -59,21 +59,30 @@ object LaunchConfiguration {
   lazy val PROGRAM_ARGUMENTS = "-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog -console"
 
   val REQUIRED_BUNDLES = List(
+    // Logging
     "ch.qos.logback.classic@default:default",
     "ch.qos.logback.core@default:default",
     "ch.qos.logback.slf4j@default:default",
+
+    // Typesafe 
     "com.typesafe.config@default:default",
     "com.typesafe.akka.actor@default:default",
     "com.typesafe.akka.slf4j@default:default",
+
+    // Knowing stuff
     "de.lmu.ifi.dbs.knowing.core@default:true",
     "de.lmu.ifi.dbs.knowing.debug.presenter@default:true",
-    "de.lmu.ifi.dbs.knowing.debug.launcher@default:true",
+    "de.lmu.ifi.dbs.knowing.debug.launcher@5:true",
     "de.lmu.ifi.dbs.knowing.launcher@default:false",
     "de.lmu.ifi.dbs.knowing.presenter@default:default",
     "nz.ac.waikato.cs.weka@default:default",
+
+    // Console
     "org.apache.felix.gogo.command@default:default",
     "org.apache.felix.gogo.runtime@default:default",
     "org.apache.felix.gogo.shell@default:default",
+
+    // Equinox
     "org.eclipse.core.contenttype@default:default",
     "org.eclipse.core.expressions@default:default",
     "org.eclipse.core.filesystem@default:default",
@@ -90,6 +99,8 @@ object LaunchConfiguration {
     "org.eclipse.equinox.util@default:default",
     "org.eclipse.osgi.services@default:default",
     "org.eclipse.osgi@-1:true",
+
+    // Sapphire
     "org.eclipse.sapphire.java@default:default",
     "org.eclipse.sapphire.modeling.xml@default:default",
     "org.eclipse.sapphire.modeling@default:default",
@@ -98,6 +109,8 @@ object LaunchConfiguration {
     "org.eclipse.sapphire.platform@default:default",
     "org.eclipse.sapphire.workspace@default:default",
     "org.eclipse.wst.common.uriresolver@default:default",
+
+    // 
     "org.scala-ide.scala.library@default:default",
     "org.slf4j.api@default:default")
 
