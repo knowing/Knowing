@@ -259,6 +259,13 @@
 			<layout>p2</layout>
 			<url>http://download.eclipse.org/releases/juno</url>
 		</repository>
+        <!-- 
+		<repository>
+			<id>eclipse-indigo</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/releases/indigo</url>
+		</repository>
+        -->
 		<repository>
 			<id>eclipse-sapphire</id>
 			<layout>p2</layout>
@@ -305,9 +312,14 @@
 			<url>http://repo.typesafe.com/typesafe/releases</url>
 		</repository>
 		<repository>
-			<id>eclipse-scala-ide</id>
+			<id>eclipse-scala-ide-juno</id>
 			<layout>p2</layout>
-			<!--<url>http://download.scala-ide.org/nightly-update-juno-master-29x</url> -->
+		    <url>http://download.scala-ide.org/nightly-update-juno-master-29x</url>
+			<!--<url>http://download.scala-ide.org/releases-29/milestone/site</url> -->
+		</repository>
+		<repository>
+			<id>eclipse-scala-ide-indigo</id>
+			<layout>p2</layout>
 			<url>http://download.scala-ide.org/releases-29/milestone/site</url>
 		</repository>
 

@@ -20,6 +20,9 @@
    <requires>
       <import feature="de.lmu.ifi.dbs.knowing.core.feature" version="0.1.7.qualifier"/>
       <import feature="de.lmu.ifi.dbs.knowing.core.swt.feature" version="0.1.7.qualifier"/>
+      <import feature="org.eclipse.sapphire.ui" version="0.5.3.201209191432"/>
+      <import feature="org.eclipse.sapphire.ui.swt.gef" version="0.5.3.201209191432"/>
+      <import feature="org.eclipse.sapphire.ui.swt.xml.editor" version="0.5.3.201209191432"/>
    </requires>
 
    <plugin
