@@ -28,7 +28,7 @@
       <wizard
             category="de.lmu.ifi.dbs.knowing.debug.ui.knowing"
             class="de.lmu.ifi.dbs.knowing.debug.ui.wizard.NewDPUWizard"
-            icon="icons/dpu_16.png"
+            icon="src/main/resources/icons/dpu_16.png"
             id="de.lmu.ifi.dbs.knowing.ui.NewDPUWizard"
             name="New DataProcessingUnit">
       </wizard>
@@ -114,7 +114,7 @@
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
             configTypeID="de.lmu.ifi.dbs.knowing.debug.core.DPULaunchConfigurationType"
-            icon="icons/knowing-logo-trans-12.png"
+            icon="src/main/resources/icons/knowing-logo-trans-12.png"
             id="de.lmu.ifi.dbs.knowing.debug.ui.DPUlaunchConfigurationTypeImage">
       </launchConfigurationTypeImage>
    </extension>
@@ -122,9 +122,41 @@
          point="org.eclipse.ui.views">
       <view
             class="de.lmu.ifi.dbs.knowing.debug.ui.views.DebugPresenterView"
-            icon="icons/knowing-logo-trans-16.png"
+            icon="src/main/resources/icons/knowing-logo-trans-16.png"
             id="de.lmu.ifi.dbs.knowing.debug.ui.views.DebugPresenterView"
             name="Debug Presenter">
       </view>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.ui.ide.workbench"
+            description="Knowing IDE"
+            name="Knowing IDE">
+         <property
+               name="aboutText"
+               value="This is the text shown in the product about dialog.">
+         </property>
+         <property
+               name="aboutImage"
+               value="images/knowing-about.png">
+         </property>
+         <property
+               name="appName"
+               value="Knowing IDE">
+         </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
+         </property>
+         <property
+               name="windowImages"
+               value="icons/knowing-logo-16.png,icons/knowing-logo-32.png">
+         </property>
+         <property
+               name="cssTheme"
+               value="org.eclipse.e4.ui.css.theme.e4_default">
+         </property>
+      </product>
    </extension>
 </plugin>

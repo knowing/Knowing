@@ -10,4 +10,35 @@
 	</parent>
 	<artifactId>de.lmu.ifi.dbs.knowing.ide.updatesite</artifactId>
 	<packaging>eclipse-repository</packaging>
+    <build>
+        <plugins>
+        	<plugin>
+    			<artifactId>maven-resources-plugin</artifactId>
+    			<version>2.6</version>
+        		<executions>
+        				<execution>
+        				    <id>copy-resources</id>
+        				    <!-- here the phase you need -->
+        				    <phase>compile</phase>
+        				    <goals>
+        				        <goal>copy-resources</goal>
+        				    </goals>
+        				    <configuration>
+        				        <outputDirectory>${project.build.directory}/products/knowing.ide</outputDirectory>
+        				        <resources>          
+        				            <resource>
+        				                <directory>${basedir}/icons</directory>
+        				                <includes>
+                                            <include>**/*.xpm</include>
+                                            <include>**/*.ico</include>
+                                        </includes>
+        				                <filtering>true</filtering>
+        				            </resource>
+        				        </resources>              
+        				    </configuration>            
+        				</execution>
+        		</executions>
+    		</plugin>
+        </plugins>
+    </build>
 </project>

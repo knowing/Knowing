@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Knowing IDE" uid="Knowing IDE" id="org.eclipse.platform.ide" application="org.eclipse.ui.ide.workbench" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="Knowing IDE" uid="knowing.ide" id="org.eclipse.platform.ide" application="org.eclipse.ui.ide.workbench" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
-      <image path="eclipse_lg.gif"/>
+      <image path="/de.lmu.ifi.dbs.knowing.debug.ui/src/main/resources/images/knowing-about.png"/>
       <text>
          %productBlurb
       </text>
@@ -14,20 +14,22 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-consoleLog -clean -console -consoleLog</programArgs>
-      <vmArgs>-Dosgi.requiredJavaVersion=1.5 -XX:MaxPermSize=256m -Xms40m -Xmx512m</vmArgs>
+      <vmArgs>-Dosgi.requiredJavaVersion=1.5 -XX:MaxPermSize=256m -Xms40m -Xmx1024m</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
-   <windowImages i16="eclipse.gif" i32="eclipse32.gif" i48="eclipse48.gif" i64="eclipse.png" i128="eclipse32.png"/>
+   <windowImages i16="de.lmu.ifi.dbs.knowing.debug.ui/icons/knowing-logo-16.png" i32="de.lmu.ifi.dbs.knowing.debug.ui/icons/knowing-logo-32.png" i48="de.lmu.ifi.dbs.knowing.debug.ui/icons/knowing-logo-48.png" i64="de.lmu.ifi.dbs.knowing.debug.ui/icons/knowing-logo-64.png" i128="de.lmu.ifi.dbs.knowing.debug.ui/icons/knowing-logo-128.png"/>
 
    <splash
+      location="de.lmu.ifi.dbs.knowing.debug.ui"
       startupProgressRect="0,280,455,15"
       startupMessageRect="7,220,441,20"
       startupForegroundColor="C8D5EA" />
    <launcher>
+      <linux icon="knowing-logo.xpm"/>
       <solaris/>
-      <win useIco="false">
+      <win useIco="true">
+         <ico path="knowing-logo.ico"/>
          <bmp/>
       </win>
    </launcher>

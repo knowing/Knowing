@@ -61,4 +61,4 @@ Import-Package: akka;version="[2.0.0,3.0.0)",
  scala.util.matching;version="[2.9.0.1,2.9.4.0)"
 Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.debug.ui;singleton:=true
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-
+Eclipse-BundleShape: dir
