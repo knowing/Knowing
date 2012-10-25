@@ -11,7 +11,7 @@ import de.lmu.ifi.dbs.knowing.core.model.IDataProcessingUnit
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.test._
 import de.lmu.ifi.dbs.knowing.test.EventMatchers._
-import de.lmu.ifi.dbs.knowing.core.weka._
+import de.lmu.ifi.dbs.knowing.weka.io._
 import java.nio.file.Paths
 import org.eclipse.sapphire.modeling.xml.{ RootXmlResource, XmlResourceStore }
 import org.eclipse.sapphire.modeling.{ ResourceStoreException, UrlResourceStore }
@@ -69,8 +69,8 @@ class ArffLoaderTest extends FunSuite with KnowingTestKit with BeforeAndAfter {
     results should have(port("train"))
 
     //Check Instances are correct
-    results should have(name("iris")) 	//equal to: dataset.relationName should equal("iris")
-    results should have(size(150))		//equal to: dataset.size should equal(150)
+    results should have(name("iris")) //equal to: dataset.relationName should equal("iris")
+    results should have(size(150)) //equal to: dataset.size should equal(150)
 
     //Check attributes are correct
     results should have(attribute(Attribute.NUMERIC, 4))

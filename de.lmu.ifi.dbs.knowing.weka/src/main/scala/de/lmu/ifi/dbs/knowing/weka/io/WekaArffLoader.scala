@@ -8,7 +8,7 @@
 ** LMU Munich - Database Systems Group							**
 ** http://www.dbs.ifi.lmu.de/									**
 \*																*/
-package de.lmu.ifi.dbs.knowing.core.weka
+package de.lmu.ifi.dbs.knowing.weka.io
 
 import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.factory._
