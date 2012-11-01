@@ -20,6 +20,8 @@ import de.lmu.ifi.dbs.knowing.core.service._
 import de.lmu.ifi.dbs.knowing.core.util.OSGIUtil
 import de.lmu.ifi.dbs.knowing.core.validation._
 import de.lmu.ifi.dbs.knowing.weka.io._
+import de.lmu.ifi.dbs.knowing.weka.classifier._
+import de.lmu.ifi.dbs.knowing.weka.clusterer._
 import Activator._
 
 class Activator extends BundleActivator {
@@ -42,6 +44,9 @@ class Activator extends BundleActivator {
     osgiUtil.registerLoader(new ExtendedWekaArffLoaderFactory, ExtendedWekaArffLoaderFactory.id)
     osgiUtil.registerLoader(new WekaArffLoaderFactory)
     osgiUtil.registerSaver(new WekaArffSaverFactory)
+    osgiUtil.registerProcessor(new WekaNaiveBayesFactory)
+    osgiUtil.registerProcessor(new WekaBayesNetFactory)
+    osgiUtil.registerProcessor(new WekaSimpleKMeansFactory)
   }
 
 }

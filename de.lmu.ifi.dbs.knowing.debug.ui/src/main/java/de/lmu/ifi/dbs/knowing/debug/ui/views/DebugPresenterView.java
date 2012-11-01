@@ -36,7 +36,6 @@ import java.util.concurrent.TimeoutException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchesListener2;
@@ -87,7 +86,7 @@ public class DebugPresenterView extends ViewPart implements ILaunchesListener2, 
         uiFactory = UIFactories.newTabUIFactoryInstance(container, ID);
 
         // FIXME issue #61
-        DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+        // DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
     }
 
     @Override
@@ -183,12 +182,6 @@ public class DebugPresenterView extends ViewPart implements ILaunchesListener2, 
 
     @Override
     public void launchesRemoved(ILaunch[] launches) {
-    }
-
-    @Override
-    public void dispose() {
-        DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
-        super.dispose();
     }
 
     @Override

@@ -1,6 +1,4 @@
 Manifest-Version: 1.0
-Service-Component: OSGI-INF/naiveBayes.xml, OSGI-INF/bayesNet.xml, OSG
- I-INF/simpleKMeans.xml
 Require-Bundle: de.lmu.ifi.dbs.knowing.core;bundle-version="[0.1.3,1.0
  .0)"
 Bundle-Version: 0.1.7.qualifier

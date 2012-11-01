@@ -34,166 +34,166 @@ import com.typesafe.config.{ ConfigException, ConfigFactory, Config }
  */
 class EvaluateService extends IEvaluateService {
 
-	private lazy val log = LoggerFactory.getLogger(classOf[IEvaluateService])
+  private lazy val log = LoggerFactory.getLogger(classOf[IEvaluateService])
 
-	/** 1..1 relation */
-	private var factoryDirectory: IFactoryDirectory = _
+  /** 1..1 relation */
+  private var factoryDirectory: IFactoryDirectory = _
 
-	/** 1..1 relation */
-	private var dpuDirectory: IDPUDirectory = _
+  /** 1..1 relation */
+  private var dpuDirectory: IDPUDirectory = _
 
-	/** 1..1 relation */
-	private var modelStore: IModelStore = _
+  /** 1..1 relation */
+  private var modelStore: IModelStore = _
 
-	/** 1..1 relation */
-	private var resourceStore: IResourceStore = _
+  /** 1..1 relation */
+  private var resourceStore: IResourceStore = _
 
-	/** 0..n relation */
-	private var uiFactories = new ArrayBuffer[UIFactory[_]]()
+  /** 0..n relation */
+  private var uiFactories = new ArrayBuffer[UIFactory[_]]()
 
-	/** 1..1 relation */
-	private var actorSystemManager: IActorSystemManager = _
+  /** 1..1 relation */
+  private var actorSystemManager: IActorSystemManager = _
 
-	@throws(classOf[ValidationException])
-	@throws(classOf[KnowingException])
-	def evaluate(config: Config): ActorRef = {
+  @throws(classOf[ValidationException])
+  @throws(classOf[KnowingException])
+  def evaluate(config: Config): ActorRef = {
 
-		//Resolve DPU
-		val dpu = (config.hasPath(DPU), config.hasPath(DPU_PATH)) match {
-			case (true, _) => dpuDirectory.getDPU(config.getString(DPU)) getOrElse {
-				throw new ConfigException.BadValue("dpu", "DPU with id " + config.getString(DPU) + " could not be found")
-			}
-			case (false, true) => try {
-				val url = new URL(config.getString(DPU_PATH))
-				DPUUtil.deserialize(url)
-			} catch {
-				case e: MalformedURLException => throw new ConfigException.BadValue(DPU, "DPU path incorrect", e)
-			}
-			case _ => throw new ConfigException.Missing(DPU + " or " + DPU_PATH)
-		}
+    //Resolve DPU
+    val dpu = (config.hasPath(DPU), config.hasPath(DPU_PATH)) match {
+      case (true, _) => dpuDirectory.getDPU(config.getString(DPU)) getOrElse {
+        throw new ConfigException.BadValue("dpu", "DPU with id " + config.getString(DPU) + " could not be found")
+      }
+      case (false, true) => try {
+        val url = new URL(config.getString(DPU_PATH))
+        DPUUtil.deserialize(url)
+      } catch {
+        case e: MalformedURLException => throw new ConfigException.BadValue(DPU, "DPU path incorrect", e)
+      }
+      case _ => throw new ConfigException.Missing(DPU + " or " + DPU_PATH)
+    }
 
-		//Resolve execution path
-		val execPath = try {
-			if (!config.hasPath(EXECUTION_PATH))
-				throw new ConfigException.Missing(EXECUTION_PATH)
-			val url = new URL(config.getString(EXECUTION_PATH))
-			url.toURI
-		} catch {
-			case e: MalformedURLException => throw new ConfigException.BadValue(DPU, "Execution path incorrect", e)
-		}
+    //Resolve execution path
+    val execPath = try {
+      if (!config.hasPath(EXECUTION_PATH))
+        throw new ConfigException.Missing(EXECUTION_PATH)
+      val url = new URL(config.getString(EXECUTION_PATH))
+      url.toURI
+    } catch {
+      case e: MalformedURLException => throw new ConfigException.BadValue(DPU, "Execution path incorrect", e)
+    }
 
-		//Resolve UIFactory
-		if (!config.hasPath(UIFACTORY))
-			throw new ConfigException.Missing(UIFACTORY)
+    //Resolve UIFactory
+    if (!config.hasPath(UIFACTORY))
+      throw new ConfigException.Missing(UIFACTORY)
 
-		val uiFactoryId = config.getString(UIFACTORY)
-		val uiFactory = uiFactories.find(e => e.getId.equals(uiFactoryId)) getOrElse {
-			throw new ConfigException.BadValue(UIFACTORY, "No UIFactory with id " + uiFactoryId + " found")
-		}
+    val uiFactoryId = config.getString(UIFACTORY)
+    val uiFactory = uiFactories.find(e => e.getId.equals(uiFactoryId)) getOrElse {
+      throw new ConfigException.BadValue(UIFACTORY, "No UIFactory with id " + uiFactoryId + " found")
+    }
 
-		//Resolve ActorSystem
-		val system = config.hasPath(SYSTEM) match {
-			case false => uiFactory.getSystem
-			case true => actorSystemManager.getSystem(config.getString(SYSTEM)) getOrElse {
-				throw new ConfigException.BadValue(UIFACTORY, "No ActorSystem with name " + config.getString(SYSTEM) + " found")
-			}
-		}
-		
-		//Resolve Parameters
-		val parameters = new Properties
-		if(config.hasPath("parameters")){
-			val parameterConf = config.getConfig("parameters")
-			val it = parameterConf.entrySet.iterator
-			while(it.hasNext) {
-				val e = it.next
-				parameters.setProperty(e.getKey, e.getValue.unwrapped.toString)
-			}
-		}
+    //Resolve ActorSystem
+    val system = config.hasPath(SYSTEM) match {
+      case false => uiFactory.getSystem
+      case true => actorSystemManager.getSystem(config.getString(SYSTEM)) getOrElse {
+        throw new ConfigException.BadValue(UIFACTORY, "No ActorSystem with name " + config.getString(SYSTEM) + " found")
+      }
+    }
 
-		//Evaluate
-		evaluate(dpu, execPath, uiFactory, system, parameters, null, null)
-	}
+    //Resolve Parameters
+    val parameters = new Properties
+    if (config.hasPath("parameters")) {
+      val parameterConf = config.getConfig("parameters")
+      val it = parameterConf.entrySet.iterator
+      while (it.hasNext) {
+        val e = it.next
+        parameters.setProperty(e.getKey, e.getValue.unwrapped.toString)
+      }
+    }
 
-	/**
-	 * Instantiates DPUExecturo and runs the DPU
-	 * @see IEvaluationService
-	 */
-	@throws(classOf[ValidationException])
-	@throws(classOf[KnowingException])
-	def evaluate(dpu: IDataProcessingUnit, execPath: URI,
-		ui: UIFactory[_],
-		system: ActorSystem,
-		parameters: Properties,
-		input: MutableMap[String, InputStream],
-		output: MutableMap[String, OutputStream]): ActorRef = {
-		
-		//Apply parameters and validate DPU before running
-		val exeDPU = DPUUtil.applyProperties(dpu, parameters);
+    //Evaluate
+    evaluate(dpu, execPath, uiFactory, system, parameters, null, null)
+  }
 
-		DPUValidation.runtime(exeDPU) match {
-			case validation if validation.hasErrors() => throw new ValidationException("Error on validation.", validation)
-			case validation if validation.hasWarnings() => log.warn("DPU has warnings: " + validation.getWarnings)
-			case validation => log.info("DPU validation successfull!")
-		}
+  /**
+   * Instantiates DPUExecturo and runs the DPU
+   * @see IEvaluationService
+   */
+  @throws(classOf[ValidationException])
+  @throws(classOf[KnowingException])
+  def evaluate(dpu: IDataProcessingUnit, execPath: URI,
+    ui: UIFactory[_],
+    system: ActorSystem,
+    parameters: Properties,
+    input: MutableMap[String, InputStream],
+    output: MutableMap[String, OutputStream]): ActorRef = {
 
-		val io = (input, output) match {
-			case (null, null) => (new HashMap[String, InputStream], new HashMap[String, OutputStream])
-			case (input, null) => (input, new HashMap[String, OutputStream])
-			case (null, output) => (new HashMap[String, InputStream], output)
-			case (input, output) => (input, output)
-		}
+    //Apply parameters and validate DPU before running
+    val exeDPU = DPUUtil.applyProperties(dpu, parameters);
 
-		val executor = system match {
-			case null => 
-			  ui.getSystem.actorOf(Props(
-			      new DPUExecutor(exeDPU, ui, execPath, factoryDirectory, modelStore, resourceStore, io._1, io._2)),
-			      dpu.getName.getContent.replaceAll(" ", "_") + "-" + System.nanoTime)
-			case _ => system.actorOf(Props(
-			      new DPUExecutor(exeDPU, ui, execPath, factoryDirectory, modelStore, resourceStore, io._1, io._2)),
-			      dpu.getName.getContent.replaceAll(" ", "_") + "-" + System.nanoTime)
-		}
+    DPUValidation.runtime(exeDPU) match {
+      case validation if validation.hasErrors => throw new ValidationException("Error on validation. " + validation.getErrors, validation)
+      case validation if validation.hasWarnings => log.warn("DPU has warnings: " + validation.getWarnings)
+      case validation => log.info("DPU validation successfull!")
+    }
 
-		executor ! Start()
-		executor
-	}
+    val io = (input, output) match {
+      case (null, null) => (new HashMap[String, InputStream], new HashMap[String, OutputStream])
+      case (input, null) => (input, new HashMap[String, OutputStream])
+      case (null, output) => (new HashMap[String, InputStream], output)
+      case (input, output) => (input, output)
+    }
 
-	def activate() {
-		log.debug("EvaluateService activated")
-	}
+    val executor = system match {
+      case null =>
+        ui.getSystem.actorOf(Props(
+          new DPUExecutor(exeDPU, ui, execPath, factoryDirectory, modelStore, resourceStore, io._1, io._2)),
+          dpu.getName.getContent.replaceAll(" ", "_") + "-" + System.nanoTime)
+      case _ => system.actorOf(Props(
+        new DPUExecutor(exeDPU, ui, execPath, factoryDirectory, modelStore, resourceStore, io._1, io._2)),
+        dpu.getName.getContent.replaceAll(" ", "_") + "-" + System.nanoTime)
+    }
 
-	/** bind factory service */
-	def bindDirectoryService(service: IFactoryDirectory) = factoryDirectory = service
+    executor ! Start()
+    executor
+  }
 
-	/** unbind factory service */
-	def unbindDirectoryService(service: IFactoryDirectory) = factoryDirectory = null
+  def activate() {
+    log.debug("EvaluateService activated")
+  }
 
-	/** bind dpu service */
-	def bindDPUDirectoryService(service: IDPUDirectory) = dpuDirectory = service
+  /** bind factory service */
+  def bindDirectoryService(service: IFactoryDirectory) = factoryDirectory = service
 
-	/** unbind dpu service */
-	def unbindDPUDirectoryService(service: IDPUDirectory) = dpuDirectory = null
+  /** unbind factory service */
+  def unbindDirectoryService(service: IFactoryDirectory) = factoryDirectory = null
 
-	/** bind factory service */
-	def bindModelStoreService(service: IModelStore) = modelStore = service
+  /** bind dpu service */
+  def bindDPUDirectoryService(service: IDPUDirectory) = dpuDirectory = service
 
-	/** unbind factory service */
-	def unbindModelStoreService(service: IModelStore) = modelStore = null
+  /** unbind dpu service */
+  def unbindDPUDirectoryService(service: IDPUDirectory) = dpuDirectory = null
 
-	/** bind factory service */
-	def bindResourceStoreService(service: IResourceStore) = resourceStore = service
+  /** bind factory service */
+  def bindModelStoreService(service: IModelStore) = modelStore = service
 
-	/** unbind factory service */
-	def unbindResourceStoreService(service: IResourceStore) = resourceStore = null
+  /** unbind factory service */
+  def unbindModelStoreService(service: IModelStore) = modelStore = null
 
-	/** bind UIFactory service */
-	def bindUIFactory(service: UIFactory[_]) = uiFactories += service
+  /** bind factory service */
+  def bindResourceStoreService(service: IResourceStore) = resourceStore = service
 
-	/** unbind UIFactory service */
-	def unbindUIFactory(service: UIFactory[_]) = uiFactories -= service
+  /** unbind factory service */
+  def unbindResourceStoreService(service: IResourceStore) = resourceStore = null
 
-	/** bind ActorSystemManager */
-	def bindActorSystemManager(service: IActorSystemManager) = actorSystemManager = service
+  /** bind UIFactory service */
+  def bindUIFactory(service: UIFactory[_]) = uiFactories += service
 
-	/** unbind ActorSystemManager */
-	def unbindActorSystemManager(service: IActorSystemManager) = actorSystemManager = null
+  /** unbind UIFactory service */
+  def unbindUIFactory(service: UIFactory[_]) = uiFactories -= service
+
+  /** bind ActorSystemManager */
+  def bindActorSystemManager(service: IActorSystemManager) = actorSystemManager = service
+
+  /** unbind ActorSystemManager */
+  def unbindActorSystemManager(service: IActorSystemManager) = actorSystemManager = null
 }
