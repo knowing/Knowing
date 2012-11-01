@@ -41,334 +41,334 @@ import weka.core.Instances
  * @version 0.3
  */
 class DPUExecutor(dpu: IDataProcessingUnit,
-	uifactory: UIFactory[_],
-	execPath: URI,
-	directory: IFactoryDirectory,
-	modelStore: IModelStore,
-	resourceStore: IResourceStore,
-	loaderInput: MutableMap[String, InputStream] = MutableMap(),
-	saverOutput: MutableMap[String, OutputStream] = MutableMap()) extends Actor with TSender with ActorLogging {
+    uifactory: UIFactory[_],
+    execPath: URI,
+    directory: IFactoryDirectory,
+    modelStore: IModelStore,
+    resourceStore: IResourceStore,
+    loaderInput: MutableMap[String, InputStream] = MutableMap(),
+    saverOutput: MutableMap[String, OutputStream] = MutableMap()) extends Actor with TSender with ActorLogging {
 
-//	self.faultHandler = OneForOneStrategy(List(classOf[Throwable]), 5, 5000)
-	
-	//TODO implement supervisor strategy
-	//http://doc.akka.io/docs/akka/2.0.1/scala/fault-tolerance.html
+    //	self.faultHandler = OneForOneStrategy(List(classOf[Throwable]), 5, 5000)
 
-	/** NodeID -> (actor, type) */
-	var actors = MutableMap[String, (ActorRef, NodeType)]()
+    //TODO implement supervisor strategy
+    //http://doc.akka.io/docs/akka/2.0.1/scala/fault-tolerance.html
 
-	/** ActorPath -> NodeID */
-	var actorsByPath = MutableMap[ActorPath, String]()
+    /** NodeID -> (actor, type) */
+    var actors = MutableMap[String, (ActorRef, NodeType)]()
 
-	/** Status map holding: ActorPath -> Reference, Status, Timestamp */
-	val statusMap: MutableMap[ActorPath, (ActorRef, Status, Long)] = MutableMap()
-	val events = ListBuffer[String]()
+    /** ActorPath -> NodeID */
+    var actorsByPath = MutableMap[ActorPath, String]()
 
-	/** data mining process log */
-	var processHistory: IProcessHistory = _
+    /** Status map holding: ActorPath -> Reference, Status, Timestamp */
+    val statusMap: MutableMap[ActorPath, (ActorRef, Status, Long)] = MutableMap()
+    val events = ListBuffer[String]()
 
-	//Initialize processHistory
-	val configuration = dpu.getConfiguration
-	configuration.getHistory.getContent.booleanValue match {
-		case true =>
-			val path = configuration.getOutput.getContent
-			val resolved = configuration.getAbsolute.getContent.booleanValue match {
-				case true => path
-				case false => new Path(execPath.getPath + path.toOSString)
-			}
-			try {
-				//Creating FileResourceStore
-				val file = path.toFile
-				val store = new RootXmlResource(new XmlResourceStore(new FileResourceStore(file)))
-				processHistory = IProcessHistory.TYPE.instantiate(store)
-				processHistory.setName(dpu.getName.getContent)
-//				self.dispatcher = new LoggableDispatcher("LoggableDispatcher", this)
-			} catch {
-				case e: IOException => e.printStackTrace()
-			}
-		case false =>
-	}
+    /** data mining process log */
+    var processHistory: IProcessHistory = _
 
-	//Time-to-life in ms
-	private val ttl = 2500L
+    //Initialize processHistory
+    val configuration = dpu.getConfiguration
+    configuration.getHistory.getContent.booleanValue match {
+        case true =>
+            val path = configuration.getOutput.getContent
+            val resolved = configuration.getAbsolute.getContent.booleanValue match {
+                case true  => path
+                case false => new Path(execPath.getPath + path.toOSString)
+            }
+            try {
+                //Creating FileResourceStore
+                val file = path.toFile
+                val store = new RootXmlResource(new XmlResourceStore(new FileResourceStore(file)))
+                processHistory = IProcessHistory.TYPE.instantiate(store)
+                processHistory.setName(dpu.getName.getContent)
+                //				self.dispatcher = new LoggableDispatcher("LoggableDispatcher", this)
+            } catch {
+                case e: IOException => e.printStackTrace()
+            }
+        case false =>
+    }
 
-	def receive = {
-		case Register(actor, in, out) => register(actor, in, out)
+    //Time-to-life in ms
+    private val ttl = 2500L
 
-		case Start | Start() => evaluate
+    def receive = {
+        case Register(actor, in, out) => register(actor, in, out)
 
-		case UpdateUI | UpdateUI() => uifactory update (self, UpdateUI())
+        case Start | Start()          => evaluate
 
-		case e: ExceptionEvent =>
-			log.warning(e.details + "\n" + e.throwable + "\n" + e.throwable.getStackTraceString)
-			handleStatus(e)
+        case UpdateUI | UpdateUI()    => uifactory update (self, UpdateUI())
 
-		case status: Status => handleStatus(status)
+        case e: ExceptionEvent =>
+            log.warning(e.details + "\n" + e.throwable + "\n" + e.throwable.getStackTraceString)
+            handleStatus(e)
 
-		case uiEvent: UIEvent => handleUIEvent(uiEvent)
+        case status: Status   => handleStatus(status)
 
-		case event: Event => //Do nothing
+        case uiEvent: UIEvent => handleUIEvent(uiEvent)
 
-		case msg => log.warning("Unkown Message: " + msg)
-	}
+        case event: Event     => //Do nothing
 
-	override def postStop = shutdownSupervisor
+        case msg              => log.warning("Unkown Message: " + msg)
+    }
 
-	/**
-	 * Run the process!
-	 */
-	def evaluate {
-		initialize()
-		connectActors()
-		
-		//TODO save actor node ids
-		actorsByPath = actors map { case (id, (actor, _)) => (actor.path -> id) }
-		actors foreach { case (_, (actor, _)) => actor ! Start() }
-	}
+    override def postStop = shutdownSupervisor
 
-	/*=======================================================*/
-	/*============= CREATE AND INITIALIZE NODES =============*/
-	/*=======================================================*/
+    /**
+     * Run the process!
+     */
+    def evaluate {
+        initialize()
+        connectActors()
 
-	/**
-	 * Configure UIFactory
-	 * Create and configure actors for each node
-	 */
-	def initialize() {
-		initializeUIFactory()
-		initializeNodes()
-		checkInputOutputMaps()
-		uifactory update (self, Finished())
-	}
+        //TODO save actor node ids
+        actorsByPath = actors map { case (id, (actor, _)) => (actor.path -> id) }
+        actors foreach { case (_, (actor, _)) => actor ! Start() }
+    }
 
-	def initializeUIFactory() {
-		uifactory setSupervisorContext (context)
-		uifactory update (self, Created())
-		uifactory update (self, Progress("initialize", 0, dpu.getNodes.size))
-	}
+    /*=======================================================*/
+    /*============= CREATE AND INITIALIZE NODES =============*/
+    /*=======================================================*/
 
-	def initializeNodes() {
-		dpu.getNodes foreach (node => {
+    /**
+     * Configure UIFactory
+     * Create and configure actors for each node
+     */
+    def initialize() {
+        initializeUIFactory()
+        initializeNodes()
+        checkInputOutputMaps()
+        uifactory update (self, Finished())
+    }
 
-			val factory = directory.getFactory(node.getFactoryId.getText)
-			factory match {
-				case Some(f) =>
-					//Create actor
-					val actor = f.getInstance(RootExecutionContext(dpu, node),context)
-					context.watch(actor)
-//					actor.setDispatcher(self.dispatcher)
-					//Check for special nodes(presenter,loader,saver) and init
-					(node.getId.getContent, node.getType.getContent) match {
-						case (_, NodeType.PRESENTER) => actor ! UIFactoryEvent(uifactory, node)
+    def initializeUIFactory() {
+        uifactory setSupervisorContext (context)
+        uifactory update (self, Created())
+        uifactory update (self, Progress("initialize", 0, dpu.getNodes.size))
+    }
 
-						case (id, NodeType.LOADER) if loaderInput.containsKey(id) =>
-							actor ! ConfigureInput(ResultsUtil.UNKOWN_SOURCE, loaderInput(id))
-							loaderInput.remove(id)
-						case (id, NodeType.SAVER) if saverOutput.containsKey(id) =>
-							actor ! ConfigureOutput(ResultsUtil.UNKOWN_SOURCE, saverOutput(id))
-							saverOutput.remove(id)
-						case _ => //no special treatment
-					}
+    def initializeNodes() {
+        dpu.getNodes foreach (node => {
 
-					//Configure with properties
-					actor ! Configure(configureProperties(node, f))
-					//Add to internal map
-					actors += (node.getId.getContent -> (actor, node.getType.getContent))
-					statusMap += (actor.path -> (actor, Created(), systemTime))
-					uifactory update (actor, Created())
-					uifactory update (self, Progress("initialize", 1, dpu.getNodes.size))
-				case None =>
-					self ! ExceptionEvent(new Exception, "No factory found for: " + node.getFactoryId.getText)
-					self ! PoisonPill
-			}
-		})
-	}
+            val factory = directory.getFactory(node.getFactoryId.getText)
+            factory match {
+                case Some(f) =>
+                    //Create actor
+                    val actor = f.getInstance(RootExecutionContext(dpu, node), context)
+                    context.watch(actor)
+                    //					actor.setDispatcher(self.dispatcher)
+                    //Check for special nodes(presenter,loader,saver) and init
+                    (node.getId.getContent, node.getType.getContent) match {
+                        case (_, NodeType.PRESENTER) => actor ! UIFactoryEvent(uifactory, node)
 
-	def checkInputOutputMaps() {
-		(loaderInput.nonEmpty, saverOutput.nonEmpty) match {
-			case (true, true) =>
-				self ! ExceptionEvent(new Exception,
-					"Input and OuputMap refer to nonexisting nodes. \n loaderInput: " + loaderInput.keySet + " \n saverOutput: " + saverOutput.keySet)
-				self ! PoisonPill
-			case (true, false) =>
-				self ! ExceptionEvent(new Exception, "InputMap refer to nonexisting nodes. \n loaderInput: " + loaderInput.keySet
-					+ "\n Loader nodes " + DPUUtil.loaderNodes(dpu).foreach(n => print(n + ", ")))
-				self ! PoisonPill
-			case (false, true) =>
-				self ! ExceptionEvent(new Exception, "OutputMap refer to nonexisting nodes. \n saverOutput: " + saverOutput.keySet
-					+ "\n Saver nodes " + DPUUtil.saverNodes(dpu).foreach(n => print(n + ", ")))
-				self ! PoisonPill
-			case (false, false) => log.debug("All input/output maps have been processed successfully")
-		}
-	}
+                        case (id, NodeType.LOADER) if loaderInput.containsKey(id) =>
+                            actor ! ConfigureInput(ResultsUtil.UNKOWN_SOURCE, loaderInput(id))
+                            loaderInput.remove(id)
+                        case (id, NodeType.SAVER) if saverOutput.containsKey(id) =>
+                            actor ! ConfigureOutput(ResultsUtil.UNKOWN_SOURCE, saverOutput(id))
+                            saverOutput.remove(id)
+                        case _ => //no special treatment
+                    }
 
-	/*=======================================================*/
-	/*================== CONFIGURE NODES ====================*/
-	/*=======================================================*/
+                    //Configure with properties
+                    actor ! Configure(configureProperties(node, f))
+                    //Add to internal map
+                    actors += (node.getId.getContent -> (actor, node.getType.getContent))
+                    statusMap += (actor.path -> (actor, Created(), systemTime))
+                    uifactory update (actor, Created())
+                    uifactory update (self, Progress("initialize", 1, dpu.getNodes.size))
+                case None =>
+                    self ! ExceptionEvent(new Exception, "No factory found for: " + node.getFactoryId.getText)
+                    self ! PoisonPill
+            }
+        })
+    }
 
-	/**
-	 * Adds the DPU_PATH property to the property configuration
-	 */
-	def configureProperties(node: INode, f: TFactory): Properties = {
-		val properties = nodeProperties(node)
-		properties setProperty (TLoader.EXE_PATH, execPath.toString)
+    def checkInputOutputMaps() {
+        (loaderInput.nonEmpty, saverOutput.nonEmpty) match {
+            case (true, true) =>
+                self ! ExceptionEvent(new Exception,
+                    "Input and OuputMap refer to nonexisting nodes. \n loaderInput: " + loaderInput.keySet + " \n saverOutput: " + saverOutput.keySet)
+                self ! PoisonPill
+            case (true, false) =>
+                self ! ExceptionEvent(new Exception, "InputMap refer to nonexisting nodes. \n loaderInput: " + loaderInput.keySet
+                    + "\n Loader nodes " + DPUUtil.loaderNodes(dpu).foreach(n => print(n + ", ")))
+                self ! PoisonPill
+            case (false, true) =>
+                self ! ExceptionEvent(new Exception, "OutputMap refer to nonexisting nodes. \n saverOutput: " + saverOutput.keySet
+                    + "\n Saver nodes " + DPUUtil.saverNodes(dpu).foreach(n => print(n + ", ")))
+                self ! PoisonPill
+            case (false, false) => log.debug("All input/output maps have been processed successfully")
+        }
+    }
 
-		val defProperties = new Properties(f.createDefaultProperties)
-		defProperties.put(INodeProperties.DEBUG, "false")
+    /*=======================================================*/
+    /*================== CONFIGURE NODES ====================*/
+    /*=======================================================*/
 
-		//Check FILE | URL | DIR properties
-		val urlKey = properties.containsKey(INodeProperties.URL)
-		val dirKey = properties.containsKey(DIR)
-		val fileKey = properties.containsKey(FILE)
-		(urlKey, fileKey, dirKey) match {
-			case (true, _, _) =>
-			case (_, true, _) => TStreamResolver.resolveFromFileSystem(properties, FILE, TStreamResolver.acceptAbsoluteFile) match {
-				case Some(p) if Files.exists(p) => log.debug("File found " + p) //perfect!
-				case Some(p) if !Files.exists(p) =>
-					log.warning("File input for Node " + node.getId.getContent + " could be resolved, but doesn't exists " + p)
-					resourceStore.getResource(node) match {
-						case None => log.warning("Default resource [" + properties.getProperty(FILE) + "] for Node " + node.getId.getContent + " couldn't be found")
-						case Some(url) =>
-							log.debug("Set input URL to " + url.toString)
-							properties.removeKey(FILE)
-							properties.setProperty(INodeProperties.URL, url.toString)
-					}
-				case None =>
-					log.warning("File input for Node " + node.getId.getContent + " could not be resolved. Wrong filename or path.")
-					val file = properties.getProperty(FILE)
-					resourceStore.getResource(file) match {
-						case None => log.warning("Default resource [" + file + "] for Node [" + node.getId.getContent + "] couldn't be found")
-						case Some(url) =>
-							log.debug("Set input URL to " + url.toString)
-							properties.removeKey(FILE)
-							properties.setProperty(INodeProperties.URL, url.toString)
-					}
+    /**
+     * Adds the DPU_PATH property to the property configuration
+     */
+    def configureProperties(node: INode, f: TFactory): Properties = {
+        val properties = nodeProperties(node)
+        properties setProperty (TLoader.EXE_PATH, execPath.toString)
 
-			}
+        val defProperties = new Properties(f.createDefaultProperties)
+        defProperties.put(INodeProperties.DEBUG, "false")
 
-			case (_, false, dir) =>
-			case (_, _, _) =>
-		}
-		//Check DESERIALIZE property
-		properties.containsKey(DESERIALIZE) match {
-			case true =>
-				log.debug("Node " + node.getId.getContent + " has deserialize property")
-				TStreamResolver.resolveFromFileSystem(properties, DESERIALIZE, TStreamResolver.acceptAbsoluteFile) match {
-					case Some(p) if Files.exists(p) => log.debug(" File exists " + p) //perfect!
-					case Some(p) if !Files.exists(p) =>
-						log.warning("Deserialize input for Node " + node.getId.getContent + " could be resolved, but doesn't exists " + p)
-						modelStore.getModel(node) match {
-							case None => log.warning("Default model [" + properties.getProperty(DESERIALIZE) + "] for Node [" + node.getId.getContent + "] couldn't be found")
-							case Some(url) =>
-								log.debug("Set input DESERIALIZE to " + url.toString)
-								properties.setProperty(DESERIALIZE, url.toString)
-						}
+        //Check FILE | URL | DIR properties
+        val urlKey = properties.containsKey(INodeProperties.URL)
+        val dirKey = properties.containsKey(DIR)
+        val fileKey = properties.containsKey(FILE)
+        (urlKey, fileKey, dirKey) match {
+            case (true, _, _) =>
+            case (_, true, _) => TStreamResolver.resolveFromFileSystem(properties, FILE, TStreamResolver.acceptAbsoluteFile) match {
+                case Some(p) if Files.exists(p) => log.debug("File found " + p) //perfect!
+                case Some(p) if !Files.exists(p) =>
+                    log.warning("File input for Node " + node.getId.getContent + " could be resolved, but doesn't exists " + p)
+                    resourceStore.getResource(node) match {
+                        case None => log.warning("Default resource [" + properties.getProperty(FILE) + "] for Node " + node.getId.getContent + " couldn't be found")
+                        case Some(url) =>
+                            log.debug("Set input URL to " + url.toString)
+                            properties.removeKey(FILE)
+                            properties.setProperty(INodeProperties.URL, url.toString)
+                    }
+                case None =>
+                    log.warning("File input for Node " + node.getId.getContent + " could not be resolved. Wrong filename or path.")
+                    val file = properties.getProperty(FILE)
+                    resourceStore.getResource(file) match {
+                        case None => log.warning("Default resource [" + file + "] for Node [" + node.getId.getContent + "] couldn't be found")
+                        case Some(url) =>
+                            log.debug("Set input URL to " + url.toString)
+                            properties.removeKey(FILE)
+                            properties.setProperty(INodeProperties.URL, url.toString)
+                    }
 
-					case None =>
-						log.warning("Deserialize input for Node " + node.getId.getContent + " could not be resolved. Wrong filename or path.")
-						val file = properties.getProperty(DESERIALIZE)
-						modelStore.getModel(file) match {
-							case None => log.warning("Default model [" + file + "] for Node [" + node.getId.getContent + "] couldn't be found")
-							case Some(url) =>
-								log.debug("Set input DESERIALIZE to " + url.toString)
-								properties.setProperty(DESERIALIZE, url.toString)
-						}
-				}
-			case false => log.debug("Node " + node.getId.getContent + " has NO deserialize property")
-		}
+            }
 
-		properties foreach { case (v, k) => defProperties setProperty (v, k) }
-		new ImmutableProperties(defProperties)
-	}
+            case (_, false, dir) =>
+            case (_, _, _)       =>
+        }
+        //Check DESERIALIZE property
+        properties.containsKey(DESERIALIZE) match {
+            case true =>
+                log.debug("Node " + node.getId.getContent + " has deserialize property")
+                TStreamResolver.resolveFromFileSystem(properties, DESERIALIZE, TStreamResolver.acceptAbsoluteFile) match {
+                    case Some(p) if Files.exists(p) => log.debug(" File exists " + p) //perfect!
+                    case Some(p) if !Files.exists(p) =>
+                        log.warning("Deserialize input for Node " + node.getId.getContent + " could be resolved, but doesn't exists " + p)
+                        modelStore.getModel(node) match {
+                            case None => log.warning("Default model [" + properties.getProperty(DESERIALIZE) + "] for Node [" + node.getId.getContent + "] couldn't be found")
+                            case Some(url) =>
+                                log.debug("Set input DESERIALIZE to " + url.toString)
+                                properties.setProperty(DESERIALIZE, url.toString)
+                        }
 
-	/*=======================================================*/
-	/*=================== CONNECT NODES =====================*/
-	/*=======================================================*/
+                    case None =>
+                        log.warning("Deserialize input for Node " + node.getId.getContent + " could not be resolved. Wrong filename or path.")
+                        val file = properties.getProperty(DESERIALIZE)
+                        modelStore.getModel(file) match {
+                            case None => log.warning("Default model [" + file + "] for Node [" + node.getId.getContent + "] couldn't be found")
+                            case Some(url) =>
+                                log.debug("Set input DESERIALIZE to " + url.toString)
+                                properties.setProperty(DESERIALIZE, url.toString)
+                        }
+                }
+            case false => log.debug("Node " + node.getId.getContent + " has NO deserialize property")
+        }
 
-	/**
-	 *
-	 */
-	def connectActors() {
-		dpu.getEdges foreach (edge => {
-			val source = actors(edge.getSource.getContent)._1
-			val sourcePort = Some(edge.getSourcePort.getContent)
-			val target = actors(edge.getTarget.getContent)._1
-			val targetPort = Some(edge.getTargetPort.getContent)
-			source ! Register(target, sourcePort, targetPort)
-		})
-	}
+        properties foreach { case (v, k) => defProperties setProperty (v, k) }
+        new ImmutableProperties(defProperties)
+    }
 
-	/*=======================================================*/
-	/*=============== LIFECYCLE MANAGEMENT ==================*/
-	/*=======================================================*/
+    /*=======================================================*/
+    /*=================== CONNECT NODES =====================*/
+    /*=======================================================*/
 
-	/**
-	 * On each status update the supervisor checks if the
-	 * process has finished.
-	 */
-	def handleStatus(status: Status) {
-		uifactory update (sender, status)
-		statusMap update (sender.path, (sender, status, systemTime))
-		status match {
+    /**
+     *
+     */
+    def connectActors() {
+        dpu.getEdges foreach (edge => {
+            val source = actors(edge.getSource.getContent)._1
+            val sourcePort = Some(edge.getSourcePort.getContent)
+            val target = actors(edge.getTarget.getContent)._1
+            val targetPort = Some(edge.getTargetPort.getContent)
+            source ! Register(target, sourcePort, targetPort)
+        })
+    }
 
-			//Only check if finished if a "finishing" event arrives
-			case Ready() | Finished() => if (finished) {
-				log.info("Evaluation finished. Stopping schedules and supervisor")
-				//schedules foreach (future => future.cancel(true))
-				shutdownSupervisor
-				uifactory update (self, UpdateUI())
-				uifactory update (self, Shutdown())
-				context.stop(self)
-			}
+    /*=======================================================*/
+    /*=============== LIFECYCLE MANAGEMENT ==================*/
+    /*=======================================================*/
 
-			//Process seems to be going on
-			case _ => //nothing happens
-		}
+    /**
+     * On each status update the supervisor checks if the
+     * process has finished.
+     */
+    def handleStatus(status: Status) {
+        uifactory update (sender, status)
+        statusMap update (sender.path, (sender, status, systemTime))
+        status match {
 
-	}
+            //Only check if finished if a "finishing" event arrives
+            case Ready() | Finished() => if (finished) {
+                log.info("Evaluation finished. Stopping schedules and supervisor")
+                //schedules foreach (future => future.cancel(true))
+                shutdownSupervisor
+                uifactory update (self, UpdateUI())
+                uifactory update (self, Shutdown())
+                context.stop(self)
+            }
 
-	def shutdownSupervisor() {
-		processHistory match {
-			case null =>
-			case history => history.resource.save
-		}
-		actors foreach { case (_, (actor, _)) => context.stop(actor) }
+            //Process seems to be going on
+            case _ => //nothing happens
+        }
 
-		//Set ActorRefs free
-		actors = MutableMap[String, (ActorRef, NodeType)]()
-		actorsByPath = MutableMap[ActorPath, String]()
-	}
+    }
 
-	/**
-	 * Sends the UIEvent to every presenter.
-	 */
-	def handleUIEvent(event: UIEvent) {
-		//TODO GraphSupervisor -> UIEvent should contain field "id" to specify presenter
-		actors filter {
-			case (_, (_, NodeType.PRESENTER)) => true
-			case _ => false
-		} foreach {
-			case (_, (actor, _)) => actor ! event
-		}
-	}
+    def shutdownSupervisor() {
+        processHistory match {
+            case null    =>
+            case history => history.resource.save
+        }
+        actors foreach { case (_, (actor, _)) => context.stop(actor) }
 
-	/**
-	 * <p>Evaluation process is finished if: <p>
-	 * 1) All actors have status Finished | Ready
-	 * 2) One actor timed out
-	 */
-	def finished: Boolean = !statusMap.exists {
-		case (_, (_, status, lastTimestamp)) =>
-			status match {
-				case Running() | Progress(_, _, _) | Waiting() => true
-				case _ => false
-			}
-	}
+        //Set ActorRefs free
+        actors = MutableMap[String, (ActorRef, NodeType)]()
+        actorsByPath = MutableMap[ActorPath, String]()
+    }
+
+    /**
+     * Sends the UIEvent to every presenter.
+     */
+    def handleUIEvent(event: UIEvent) {
+        //TODO GraphSupervisor -> UIEvent should contain field "id" to specify presenter
+        actors filter {
+            case (_, (_, NodeType.PRESENTER)) => true
+            case _                            => false
+        } foreach {
+            case (_, (actor, _)) => actor ! event
+        }
+    }
+
+    /**
+     * <p>Evaluation process is finished if: <p>
+     * 1) All actors have status Finished | Ready
+     * 2) One actor timed out
+     */
+    def finished: Boolean = !statusMap.exists {
+        case (_, (_, status, lastTimestamp)) =>
+            status match {
+                case Running() | Progress(_, _, _) | Waiting() => true
+                case _                                         => false
+            }
+    }
 
 }
 
 object DPUExecutor {
-	val logEvents = EventType.values map (e => (e, false)) toMap
+    val logEvents = EventType.values map (e => (e, false)) toMap
 }
 
 /* =============================================================== */

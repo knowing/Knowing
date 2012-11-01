@@ -24,50 +24,50 @@ import Activator._
 
 class Activator extends BundleActivator {
 
-  def start(context: BundleContext) = {
-    Activator.context = context
-    osgiUtil = new OSGIUtil(context)
-    registerServices
+    def start(context: BundleContext) = {
+        Activator.context = context
+        osgiUtil = new OSGIUtil(context)
+        registerServices
 
-    dpuDirectory = new ServiceTracker[IDPUDirectory, IDPUDirectory](context, classOf[IDPUDirectory], null)
-    dpuDirectory.open
+        dpuDirectory = new ServiceTracker[IDPUDirectory, IDPUDirectory](context, classOf[IDPUDirectory], null)
+        dpuDirectory.open
 
-    factoryDirectory = new ServiceTracker[IFactoryDirectory, IFactoryDirectory](context, classOf[IFactoryDirectory], null)
-    factoryDirectory.open
-  }
+        factoryDirectory = new ServiceTracker[IFactoryDirectory, IFactoryDirectory](context, classOf[IFactoryDirectory], null)
+        factoryDirectory.open
+    }
 
-  def stop(context: BundleContext) = {
-    Activator.context = null
-    osgiUtil.deregisterAll
-    osgiUtil = null
+    def stop(context: BundleContext) = {
+        Activator.context = null
+        osgiUtil.deregisterAll
+        osgiUtil = null
 
-    dpuDirectory.close
-    dpuDirectory = null
+        dpuDirectory.close
+        dpuDirectory = null
 
-    factoryDirectory.close
-    factoryDirectory = null
-  }
+        factoryDirectory.close
+        factoryDirectory = null
+    }
 
-  private def registerServices {
-    osgiUtil.registerProcessor(new CrossValidatorFactory, CrossValidatorFactory.id)
-    osgiUtil.registerProcessor(new XCrossValidatorFactory, XCrossValidatorFactory.id)
-    osgiUtil.registerProcessor(new AttributeCrossValidatorFactory)
-    osgiUtil.registerProcessor(new ConfusionMatrixFactory)
-  }
+    private def registerServices {
+        osgiUtil.registerProcessor(new CrossValidatorFactory, CrossValidatorFactory.id)
+        osgiUtil.registerProcessor(new XCrossValidatorFactory, XCrossValidatorFactory.id)
+        osgiUtil.registerProcessor(new AttributeCrossValidatorFactory)
+        osgiUtil.registerProcessor(new ConfusionMatrixFactory)
+    }
 
 }
 
 object Activator {
 
-  val PLUGIN_ID = "de.lmu.ifi.dbs.knowing.core"
+    val PLUGIN_ID = "de.lmu.ifi.dbs.knowing.core"
 
-  private var context: BundleContext = null
-  private var osgiUtil: OSGIUtil = _
+    private var context: BundleContext = null
+    private var osgiUtil: OSGIUtil = _
 
-  var providerTracker: ServiceTracker[IDPUProvider, IDPUProvider] = _
-  var dpuDirectory: ServiceTracker[IDPUDirectory, IDPUDirectory] = _
-  var factoryDirectory: ServiceTracker[IFactoryDirectory, IFactoryDirectory] = _
+    var providerTracker: ServiceTracker[IDPUProvider, IDPUProvider] = _
+    var dpuDirectory: ServiceTracker[IDPUDirectory, IDPUDirectory] = _
+    var factoryDirectory: ServiceTracker[IFactoryDirectory, IFactoryDirectory] = _
 
-  def getContext(): BundleContext = context
+    def getContext(): BundleContext = context
 }
 
