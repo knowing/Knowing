@@ -20,6 +20,7 @@ import de.lmu.ifi.dbs.knowing.core.events._
 import de.lmu.ifi.dbs.knowing.core.exceptions._
 import java.util.Properties
 import weka.core.{ Instance, Instances, Attribute }
+import de.lmu.ifi.dbs.knowing.core.util.OSGIUtil.getFactoryDirectory
 import de.lmu.ifi.dbs.knowing.core.processing.SubExecutionContext
 import de.lmu.ifi.dbs.knowing.core.processing.ExecutionContext
 
@@ -137,7 +138,10 @@ class XCrossValidator(val factoryDirectory: Option[IFactoryDirectory] = None) ex
     }
 
     def configure(properties: Properties) = {
-        factory = new CrossValidatorFactory(factoryDirectory)
+        factory = factoryDirectory match {
+            case Some(_) => new CrossValidatorFactory(factoryDirectory)
+            case None    => new CrossValidatorFactory(Some(getFactoryDirectory))
+        }
         //Set properties for this XCrossValidator
         val strFolds = properties.getProperty(CrossValidatorFactory.FOLDS, "10")
         folds = strFolds.toInt
@@ -156,7 +160,10 @@ class XCrossValidator(val factoryDirectory: Option[IFactoryDirectory] = None) ex
         returns
     }
 
-    def query(query: Instances): Instances = throw new UnsupportedOperationException("XCrossValidator accepts Results() on port " + TRAIN + " and " + TEST)
+    def query(query: Instances): Instances = {
+        throwException(new UnsupportedOperationException("XCrossValidator accepts Results() on port " + TRAIN + " and " + TEST),
+            "XCrossValidator accepts Results() on port " + TRAIN + " and " + TEST)
+    }
 
     def getClassLabels(): Array[String] = classLabels
 

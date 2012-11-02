@@ -222,7 +222,7 @@ class CrossValidator(val factoryDirectory: Option[IFactoryDirectory]) extends TP
         val cFactory = factoryDir.getFactory(cFactoryId)
         cFactory match {
             case Some(f) => classifierFactory = f
-            case None    => throw new Exception("No Factory with " + cFactoryId + " found!")
+            case None    => throwException(new IllegalArgumentException("No Factory with " + cFactoryId + " found!"), "No Factory with " + cFactoryId + " found!")
         }
 
         val fFactoryId = properties.getProperty(CrossValidatorFactory.FILTER)
