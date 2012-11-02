@@ -1,9 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<feature
-      id="de.lmu.ifi.dbs.knowing.ui.feature"
-      label="Knowing IDE Feature"
-      version="0.1.7.qualifier"
-      provider-name="LMU Munich - Database Systems Group">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><feature id="de.lmu.ifi.dbs.knowing.ui.feature" label="Knowing IDE Feature" provider-name="LMU Munich - Database Systems Group" version="0.2.0.qualifier">
 
    <description url="">
       %description
@@ -25,39 +20,14 @@
       <import feature="org.eclipse.sapphire.ui.swt.xml.editor" version="0.5.3.201209191432"/>
    </requires>
 
-   <plugin
-         id="de.lmu.ifi.dbs.knowing.debug.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="de.lmu.ifi.dbs.knowing.debug.core" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="de.lmu.ifi.dbs.knowing.debug.launcher"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="de.lmu.ifi.dbs.knowing.debug.launcher" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="de.lmu.ifi.dbs.knowing.debug.presenter"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="de.lmu.ifi.dbs.knowing.debug.presenter" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="de.lmu.ifi.dbs.knowing.debug.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="de.lmu.ifi.dbs.knowing.debug.ui" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="de.lmu.ifi.dbs.knowing.launcher"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="de.lmu.ifi.dbs.knowing.launcher" install-size="0" unpack="false" version="0.0.0"/>
 
 </feature>

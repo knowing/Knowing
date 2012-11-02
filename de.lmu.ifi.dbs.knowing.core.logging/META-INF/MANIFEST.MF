@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Fragment-Host: ch.qos.logback.classic;bundle-version="0.9.29"
-Bundle-Version: 0.1.7.qualifier
+Bundle-Version: 0.2.0.qualifier
 Bundle-Name: Knowing Logging
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: de.lmu.ifi.dbs.knowing.core.logging

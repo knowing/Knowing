@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><feature id="de.lmu.ifi.dbs.knowing.weka.feature" label="Knowing WEKA Feature" provider-name="LMU Munich - Database Systems Group" version="0.1.7.qualifier">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><feature id="de.lmu.ifi.dbs.knowing.weka.feature" label="Knowing WEKA Feature" provider-name="LMU Munich - Database Systems Group" version="0.2.0.qualifier">
 
    <description url="">
       %description

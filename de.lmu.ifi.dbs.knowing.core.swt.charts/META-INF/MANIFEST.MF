@@ -8,7 +8,7 @@ Export-Package: de.lmu.ifi.dbs.knowing.core.swt.charts.events,de.lmu.i
  fi.dbs.knowing.core.swt.charts
 Bundle-Vendor: LMU Munich - Database Systems Group
 Bundle-ActivationPolicy: lazy
-Bundle-Version: 0.1.7.qualifier
+Bundle-Version: 0.2.0.qualifier
 Bundle-Name: Knowing SWT JFreeChart
 Bundle-Activator: de.lmu.ifi.dbs.knowing.core.swt.charts.internal.Acti
  vator

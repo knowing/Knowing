@@ -1,8 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<feature
-      id="de.lmu.ifi.dbs.knowing.core.feature"
-      label="Knowing Core Feature"
-      version="0.1.7.qualifier">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><feature id="de.lmu.ifi.dbs.knowing.core.feature" label="Knowing Core Feature" version="0.2.0.qualifier">
 
    <description url="">
       %description
@@ -24,99 +20,38 @@
    </url>
 
    <requires>
-      <import plugin="org.scala-ide.scala.library" version="2.9.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sapphire.java" version="0.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sapphire.modeling" version="0.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sapphire.modeling.xml" version="0.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sapphire.osgi" version="0.5.0" match="greaterOrEqual"/>
+      <import match="greaterOrEqual" plugin="org.scala-ide.scala.library" version="2.9.1"/>
+      <import match="greaterOrEqual" plugin="org.eclipse.sapphire.java" version="0.5.0"/>
+      <import match="greaterOrEqual" plugin="org.eclipse.sapphire.modeling" version="0.5.0"/>
+      <import match="greaterOrEqual" plugin="org.eclipse.sapphire.modeling.xml" version="0.5.0"/>
+      <import match="greaterOrEqual" plugin="org.eclipse.sapphire.osgi" version="0.5.0"/>
       <import plugin="org.eclipse.wst.common.uriresolver"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.osgi.services"/>
    </requires>
 
-   <plugin
-         id="de.lmu.ifi.dbs.knowing.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="de.lmu.ifi.dbs.knowing.core" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="nz.ac.waikato.cs.weka"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="nz.ac.waikato.cs.weka" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="de.lmu.ifi.dbs.knowing.core.common"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="de.lmu.ifi.dbs.knowing.core.common" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="de.lmu.ifi.dbs.knowing.presenter"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="de.lmu.ifi.dbs.knowing.presenter" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="de.lmu.ifi.dbs.knowing.launcher"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="de.lmu.ifi.dbs.knowing.launcher" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="com.typesafe.config"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="com.typesafe.config" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="com.typesafe.akka.actor"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="com.typesafe.akka.actor" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="com.typesafe.akka.slf4j"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="com.typesafe.akka.slf4j" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="ch.qos.logback.classic"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="ch.qos.logback.classic" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="ch.qos.logback.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="ch.qos.logback.core" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="ch.qos.logback.slf4j"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
+   <plugin download-size="0" fragment="true" id="ch.qos.logback.slf4j" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.slf4j.api"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.slf4j.api" install-size="0" unpack="false" version="0.0.0"/>
 
 </feature>

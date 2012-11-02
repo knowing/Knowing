@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.lmu.ifi.dbs.knowing</groupId>
 	<artifactId>Knowing</artifactId>
-	<version>0.1.7-SNAPSHOT</version>
+	<version>0.2.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<properties>
 		<tycho.version>0.15.0</tycho.version>
@@ -337,7 +337,7 @@
 		<repository>
 			<id>eclipse-scala-ide-juno</id>
 			<layout>p2</layout>
-		    <url>http://download.scala-ide.org/nightly-update-juno-master-29x</url>
+		    <url>http://download.scala-ide.org/sdk/e38/scala29/dev/site/</url>
 			<!--<url>http://download.scala-ide.org/releases-29/milestone/site</url> -->
 		</repository>
 		<repository>
