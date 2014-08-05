@@ -12,9 +12,9 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
+				<groupId>com.mysema.maven</groupId>
 				<artifactId>apt-maven-plugin</artifactId>
-				<version>1.0-alpha-5-SNAPSHOT</version>
+				<version>1.1.2</version>
 				<executions>
 					<execution>
 						<goals>
